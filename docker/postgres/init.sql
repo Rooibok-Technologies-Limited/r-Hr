@@ -3348,3 +3348,30 @@ INSERT INTO ci_paye_bands (company_id, min_income, max_income, rate_percent, eff
 ALTER TABLE ci_payroll ADD COLUMN paye_tax NUMERIC(12,2) DEFAULT 0;
 ALTER TABLE ci_payroll ADD COLUMN nssf_employee NUMERIC(12,2) DEFAULT 0;
 ALTER TABLE ci_payroll ADD COLUMN nssf_employer NUMERIC(12,2) DEFAULT 0;
+
+-- Phase 7.3: Expense Claims
+CREATE TABLE ci_expenses (
+    expense_id      SERIAL PRIMARY KEY,
+    company_id      INTEGER NOT NULL,
+    employee_id     INTEGER NOT NULL,
+    category_id     INTEGER,
+    amount          NUMERIC(12,2) NOT NULL,
+    currency        VARCHAR(10) DEFAULT 'UGX',
+    description     TEXT,
+    expense_date    DATE NOT NULL,
+    receipt_path    VARCHAR(300),
+    status          VARCHAR(20) DEFAULT 'pending',
+    approved_by     INTEGER,
+    approved_at     TIMESTAMP WITH TIME ZONE,
+    payroll_month   VARCHAR(7),
+    created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+CREATE INDEX idx_expenses_company ON ci_expenses(company_id, status);
+CREATE INDEX idx_expenses_employee ON ci_expenses(employee_id, expense_date);
+
+CREATE TABLE ci_expense_categories (
+    category_id     SERIAL PRIMARY KEY,
+    company_id      INTEGER NOT NULL,
+    category_name   VARCHAR(100) NOT NULL,
+    is_active       SMALLINT DEFAULT 1
+);

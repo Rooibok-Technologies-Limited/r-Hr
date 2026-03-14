@@ -1,0 +1,947 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Rooibok HR System API",
+    "version": "1.0.0",
+    "description": "REST API for Rooibok HR System. Used by mobile apps, kiosks, and hardware integrations.",
+    "contact": {
+      "name": "Rooibok Support",
+      "url": "https://rooibok.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "API v1"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "description": "Returns the current server health status, API version, and timestamp. No authentication required.",
+        "operationId": "healthCheck",
+        "tags": ["System"],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Server is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "version": {
+                      "type": "string",
+                      "example": "1.0.0"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2026-03-15T10:30:00Z"
+                    }
+                  },
+                  "required": ["status", "version", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/token": {
+      "post": {
+        "summary": "Get JWT token",
+        "description": "Authenticate with email and password to receive a JWT bearer token. The token must be included in the Authorization header for all protected endpoints.",
+        "operationId": "getToken",
+        "tags": ["Authentication"],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "admin@company.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "example": "securepassword123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token issued successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "invalid_credentials",
+                  "message": "The provided email or password is incorrect."
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests — rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/attendance/clock-in": {
+      "post": {
+        "summary": "Clock in employee",
+        "description": "Record a clock-in event for an employee. Optionally include GPS coordinates for geofencing validation.",
+        "operationId": "clockIn",
+        "tags": ["Attendance"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClockRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Clock-in recorded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Clock-in recorded"
+                    },
+                    "attendance_id": {
+                      "type": "integer",
+                      "example": 1042
+                    },
+                    "clock_in": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2026-03-15T08:00:00Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error (e.g., already clocked in)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/attendance/clock-out": {
+      "post": {
+        "summary": "Clock out employee",
+        "description": "Record a clock-out event for an employee. Optionally include GPS coordinates for geofencing validation.",
+        "operationId": "clockOut",
+        "tags": ["Attendance"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClockRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Clock-out recorded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Clock-out recorded"
+                    },
+                    "attendance_id": {
+                      "type": "integer",
+                      "example": 1042
+                    },
+                    "clock_out": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2026-03-15T17:00:00Z"
+                    },
+                    "total_hours": {
+                      "type": "number",
+                      "format": "float",
+                      "example": 9.0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error (e.g., not clocked in)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/attendance/status": {
+      "get": {
+        "summary": "Get attendance status",
+        "description": "Retrieve the current attendance status for a specific employee, including whether they are clocked in and today's total hours.",
+        "operationId": "attendanceStatus",
+        "tags": ["Attendance"],
+        "parameters": [
+          {
+            "name": "employee_id",
+            "in": "query",
+            "required": true,
+            "description": "The ID of the employee to check",
+            "schema": {
+              "type": "integer",
+              "example": 42
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current attendance status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "employee_id": {
+                      "type": "integer",
+                      "example": 42
+                    },
+                    "is_clocked_in": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "clock_in_time": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true,
+                      "example": "2026-03-15T08:00:00Z"
+                    },
+                    "clock_out_time": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true,
+                      "example": null
+                    },
+                    "total_hours_today": {
+                      "type": "number",
+                      "format": "float",
+                      "example": 4.5
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "Employee not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/employee/{id}": {
+      "get": {
+        "summary": "Get employee details",
+        "description": "Retrieve detailed information about a specific employee by their ID.",
+        "operationId": "getEmployee",
+        "tags": ["Employees"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Employee ID",
+            "schema": {
+              "type": "integer",
+              "example": 42
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Employee details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employee"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "Employee not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visitors/check-in": {
+      "post": {
+        "summary": "Visitor check-in",
+        "description": "Register a new visitor check-in. Used by visitor kiosks and mobile apps at reception.",
+        "operationId": "visitorCheckIn",
+        "tags": ["Visitors"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VisitorCheckIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Visitor checked in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Visitor checked in"
+                    },
+                    "visitor_id": {
+                      "type": "integer",
+                      "example": 305
+                    },
+                    "check_in_time": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2026-03-15T09:15:00Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/subscription/status": {
+      "get": {
+        "summary": "Subscription status",
+        "description": "Retrieve the current subscription status for the authenticated company, including plan details and expiry.",
+        "operationId": "subscriptionStatus",
+        "tags": ["Subscription"],
+        "responses": {
+          "200": {
+            "description": "Current subscription status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "plan": {
+                      "type": "string",
+                      "example": "professional"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["active", "trial", "expired", "cancelled"],
+                      "example": "active"
+                    },
+                    "expires_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2026-12-31T23:59:59Z"
+                    },
+                    "employee_limit": {
+                      "type": "integer",
+                      "example": 50
+                    },
+                    "employee_count": {
+                      "type": "integer",
+                      "example": 32
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/webhooks/stripe": {
+      "post": {
+        "summary": "Stripe webhook receiver",
+        "description": "Receives Stripe payment event notifications. Verified via Stripe webhook signature (stripe-signature header). Do not call directly.",
+        "operationId": "webhookStripe",
+        "tags": ["Webhooks"],
+        "security": [],
+        "parameters": [
+          {
+            "name": "stripe-signature",
+            "in": "header",
+            "required": true,
+            "description": "Stripe webhook signature for payload verification",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Stripe event payload. See Stripe docs for event structure.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "evt_1234567890"
+                  },
+                  "type": {
+                    "type": "string",
+                    "example": "checkout.session.completed"
+                  },
+                  "data": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid signature or payload"
+          }
+        }
+      }
+    },
+    "/webhooks/mtn": {
+      "post": {
+        "summary": "MTN Mobile Money webhook receiver",
+        "description": "Receives MTN Mobile Money payment notifications. Verified via provider-specific signature. Do not call directly.",
+        "operationId": "webhookMtn",
+        "tags": ["Webhooks"],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "MTN MoMo callback payload",
+                "properties": {
+                  "financialTransactionId": {
+                    "type": "string",
+                    "example": "FT123456789"
+                  },
+                  "externalId": {
+                    "type": "string",
+                    "example": "order-001"
+                  },
+                  "amount": {
+                    "type": "string",
+                    "example": "50000"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "example": "UGX"
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "SUCCESSFUL"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload or signature"
+          }
+        }
+      }
+    },
+    "/webhooks/airtel": {
+      "post": {
+        "summary": "Airtel Money webhook receiver",
+        "description": "Receives Airtel Money payment notifications. Verified via provider-specific signature. Do not call directly.",
+        "operationId": "webhookAirtel",
+        "tags": ["Webhooks"],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Airtel Money callback payload",
+                "properties": {
+                  "transaction": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "TXN987654321"
+                      },
+                      "status_code": {
+                        "type": "string",
+                        "example": "TS"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Transaction successful"
+                      },
+                      "airtel_money_id": {
+                        "type": "string",
+                        "example": "AM0012345"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload or signature"
+          }
+        }
+      }
+    },
+    "/webhooks/zkteco": {
+      "post": {
+        "summary": "ZKTeco device webhook receiver",
+        "description": "Receives attendance events pushed from ZKTeco biometric devices (fingerprint/face recognition terminals). Verified via device-specific credentials.",
+        "operationId": "webhookZkteco",
+        "tags": ["Webhooks"],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "ZKTeco push event payload",
+                "properties": {
+                  "device_sn": {
+                    "type": "string",
+                    "description": "Device serial number",
+                    "example": "ZKTECO-A001"
+                  },
+                  "employee_id": {
+                    "type": "integer",
+                    "description": "Mapped employee ID",
+                    "example": 42
+                  },
+                  "punch_time": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2026-03-15T08:01:23Z"
+                  },
+                  "punch_type": {
+                    "type": "integer",
+                    "description": "0 = check-in, 1 = check-out",
+                    "enum": [0, 1],
+                    "example": 0
+                  },
+                  "verify_type": {
+                    "type": "integer",
+                    "description": "Verification method (1=fingerprint, 2=face, 3=card, 4=password)",
+                    "example": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Attendance event processed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload or device not registered"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TokenResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "JWT bearer token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          },
+          "expires_in": {
+            "type": "integer",
+            "description": "Token lifetime in seconds",
+            "example": 3600
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 1
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "example": "admin@company.com"
+              },
+              "role": {
+                "type": "string",
+                "example": "admin"
+              },
+              "company_id": {
+                "type": "integer",
+                "example": 1
+              }
+            }
+          }
+        },
+        "required": ["token", "expires_in", "user"]
+      },
+      "ClockRequest": {
+        "type": "object",
+        "required": ["employee_id"],
+        "properties": {
+          "employee_id": {
+            "type": "integer",
+            "description": "The employee to clock in/out",
+            "example": 42
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double",
+            "description": "GPS latitude for geofencing",
+            "example": -1.2921
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double",
+            "description": "GPS longitude for geofencing",
+            "example": 36.8219
+          }
+        }
+      },
+      "Employee": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 42
+          },
+          "first_name": {
+            "type": "string",
+            "example": "John"
+          },
+          "last_name": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john.doe@company.com"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+256700000000"
+          },
+          "department": {
+            "type": "string",
+            "example": "Engineering"
+          },
+          "designation": {
+            "type": "string",
+            "example": "Senior Developer"
+          },
+          "date_of_joining": {
+            "type": "string",
+            "format": "date",
+            "example": "2024-01-15"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "inactive", "terminated"],
+            "example": "active"
+          },
+          "company_id": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "VisitorCheckIn": {
+        "type": "object",
+        "required": ["visitor_name"],
+        "properties": {
+          "visitor_name": {
+            "type": "string",
+            "description": "Full name of the visitor",
+            "example": "Jane Smith"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Visitor phone number",
+            "example": "+256700111222"
+          },
+          "whom_to_visit": {
+            "type": "string",
+            "description": "Name of the person being visited",
+            "example": "John Doe"
+          },
+          "purpose": {
+            "type": "string",
+            "description": "Reason for the visit",
+            "example": "Business meeting"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Machine-readable error code",
+            "example": "validation_error"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message",
+            "example": "The employee_id field is required."
+          }
+        },
+        "required": ["error", "message"]
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token obtained from POST /auth/token"
+      }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "Missing or invalid JWT token",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "error": "unauthorized",
+              "message": "Token is missing, expired, or invalid."
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "System",
+      "description": "System health and status endpoints"
+    },
+    {
+      "name": "Authentication",
+      "description": "JWT token issuance"
+    },
+    {
+      "name": "Attendance",
+      "description": "Employee clock-in/out and attendance tracking"
+    },
+    {
+      "name": "Employees",
+      "description": "Employee information"
+    },
+    {
+      "name": "Visitors",
+      "description": "Visitor management and kiosk integration"
+    },
+    {
+      "name": "Subscription",
+      "description": "Company subscription and plan status"
+    },
+    {
+      "name": "Webhooks",
+      "description": "Inbound webhook receivers for payment providers and hardware devices. These endpoints are called by external services and verified via provider-specific signatures."
+    }
+  ]
+}

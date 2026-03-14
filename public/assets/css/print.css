@@ -1,0 +1,28 @@
+@media print {
+    .sidebar, .navbar, .breadcrumb, .btn, footer,
+    .pcoded-header, .pcoded-navbar, .pcoded-main-container > .pcoded-wrapper > .pcoded-content > .pcoded-inner-content > .main-body > .page-wrapper > .page-header,
+    .export-bar, .card-header-right, .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_paginate, .no-print {
+        display: none !important;
+    }
+    .invoice-container, .card {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    body {
+        font-size: 12pt;
+        color: #000 !important;
+        background: #fff !important;
+    }
+    @page {
+        size: A4;
+        margin: 15mm;
+    }
+    a[href]:after {
+        content: none !important;
+    }
+}

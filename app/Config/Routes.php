@@ -398,6 +398,24 @@ $routes->post('erp/leave-list-server', 'Erp\Leave::leave_list_server', ['filter'
 $routes->post('erp/invoices-list-server', 'Erp\Invoices::invoices_list_server', ['filter' => 'checklogin']);
 $routes->post('erp/visitors-list-server', 'Erp\Visitors::visitors_list_server', ['filter' => 'checklogin']);
 
+// Phase 7.3: Expense Claims
+$routes->get('erp/expenses/', 'Erp\Expenses::index', ['filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/expenses/list/', 'Erp\Expenses::expenses_list', ['filter' => 'checklogin']);
+$routes->post('erp/expenses/add/', 'Erp\Expenses::add_expense', ['filter' => 'checklogin']);
+$routes->post('erp/expenses/approve/', 'Erp\Expenses::approve_expense', ['filter' => 'checklogin']);
+$routes->post('erp/expenses/reject/', 'Erp\Expenses::reject_expense', ['filter' => 'checklogin']);
+$routes->post('erp/expenses/delete/', 'Erp\Expenses::delete_expense', ['filter' => 'checklogin']);
+$routes->get('erp/expense-categories/', 'Erp\Expenses::categories', ['filter' => 'checklogin']);
+$routes->post('erp/expenses/add-category/', 'Erp\Expenses::add_category', ['filter' => 'checklogin']);
+$routes->post('erp/expenses/update-category/', 'Erp\Expenses::update_category', ['filter' => 'checklogin']);
+$routes->post('erp/expenses/delete-category/', 'Erp\Expenses::delete_category', ['filter' => 'checklogin']);
+$routes->get('erp/expense-report/', 'Erp\Expenses::expense_report', ['filter' => 'checklogin']);
+
+// API Documentation (Swagger UI)
+$routes->get('api/docs', function () {
+	return redirect()->to('/api-docs/index.html');
+});
+
 // REST API v1
 $routes->group('api/v1', ['namespace' => 'App\Controllers\Api\V1', 'filter' => 'throttle:60,1'], function ($routes) {
 	$routes->post('auth/token', 'Auth::token');
