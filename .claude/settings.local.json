@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(du:*)",
+      "Bash(grep:*)",
+      "Bash(echo:*)",
+      "Bash(ls:*)",
+      "Bash(/tmp/hr_structure.txt:*)",
+      "Read(//tmp/**)",
+      "Bash(cd:*)",
+      "Bash(cat:*)",
+      "Bash(netstat:*)",
+      "Bash(docker ps:*)"
+    ]
+  }
+}

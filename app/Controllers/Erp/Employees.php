@@ -2926,4 +2926,52 @@ class Employees extends BaseController {
 			$this->output($Return);
 		}
 	}
+
+	/**
+	 * Return QR code URL for an employee as JSON.
+	 */
+	public function employee_qr($id)
+	{
+		$session = \Config\Services::session();
+		if (!$session->has('sup_username')) {
+			return $this->response->setJSON(['error' => 'Unauthorized'])->setStatusCode(401);
+		}
+
+		$UsersModel = new UsersModel();
+		$employee   = $UsersModel->where('user_id', $id)->first();
+		if (!$employee) {
+			return $this->response->setJSON(['error' => 'Employee not found'])->setStatusCode(404);
+		}
+
+		$qrGen = new \App\Libraries\QrCodeGenerator();
+		$qrUrl = $qrGen->getEmployeeQrUrl((int) $id, 200);
+
+		return $this->response->setJSON([
+			'employee_id' => $id,
+			'qr_url'      => $qrUrl,
+			'name'        => $employee['first_name'] . ' ' . $employee['last_name'],
+		]);
+	}
+
+	/**
+	 * Render printable A6 ID card with QR code.
+	 */
+	public function employee_id_card($id)
+	{
+		$session = \Config\Services::session();
+		if (!$session->has('sup_username')) {
+			$session->setFlashdata('err_not_logged_in', lang('Dashboard.err_not_logged_in'));
+			return redirect()->to(site_url('erp/login'));
+		}
+
+		$UsersModel = new UsersModel();
+		$employee   = $UsersModel->where('user_id', $id)->first();
+		if (!$employee) {
+			$session->setFlashdata('unauthorized_module', lang('Dashboard.xin_error_unauthorized_module'));
+			return redirect()->to(site_url('erp/desk'));
+		}
+
+		$data['employee_id'] = $id;
+		return view('erp/employees/employee_qr_card', $data);
+	}
 }

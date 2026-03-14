@@ -119,4 +119,22 @@ class Home extends BaseController {
 
 		return redirect()->to(site_url('erp/desk'));
 	}
+
+	/**
+	 * Attendance kiosk — fullscreen QR scanner for employee clock-in.
+	 * No auth required; kiosk runs on a dedicated tablet.
+	 */
+	public function kiosk()
+	{
+		return view('erp/kiosk/attendance_kiosk');
+	}
+
+	/**
+	 * Visitor kiosk — self-service visitor check-in form.
+	 * No auth required; kiosk runs on a dedicated tablet.
+	 */
+	public function visitor_kiosk()
+	{
+		return view('erp/kiosk/visitor_kiosk');
+	}
 }

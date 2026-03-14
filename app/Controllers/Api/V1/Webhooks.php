@@ -220,4 +220,108 @@ class Webhooks extends ApiBaseController
         // Implemented in Phase 3.4
         return $this->response->setStatusCode(200)->setJSON(['received' => true]);
     }
+
+    /**
+     * POST /api/v1/webhooks/zkteco
+     *
+     * ZKTeco / RFID biometric devices push attendance data via HTTP.
+     * Supports both XML and JSON payload formats (firmware-dependent).
+     */
+    public function zkteco()
+    {
+        $contentType = $this->request->getHeaderLine('Content-Type');
+        $body = $this->request->getBody();
+
+        $records = [];
+
+        if (strpos($contentType, 'xml') !== false || strpos($body, '<?xml') === 0) {
+            // Parse XML format
+            $xml = @simplexml_load_string($body);
+            if ($xml === false) {
+                log_message('error', 'ZKTeco webhook: failed to parse XML payload');
+                return $this->response->setStatusCode(400)->setJSON(['error' => 'Invalid XML']);
+            }
+            foreach ($xml->Row as $row) {
+                $records[] = [
+                    'employee_id' => (string) $row->PIN,
+                    'punch_time'  => (string) $row->DateTime,
+                    'device_id'   => (string) ($row->DeviceID ?? 'unknown'),
+                    'verify_type' => (string) ($row->VerifyType ?? 'fingerprint'),
+                ];
+            }
+        } else {
+            // Parse JSON format
+            $data = json_decode($body, true);
+            if (isset($data['records'])) {
+                $records = $data['records'];
+            } elseif (isset($data['PIN'])) {
+                $records[] = $data;
+            }
+        }
+
+        $processed = 0;
+
+        foreach ($records as $record) {
+            $employeeId = $record['employee_id'] ?? $record['PIN'] ?? null;
+            $punchTime  = $record['punch_time'] ?? $record['DateTime'] ?? date('Y-m-d H:i:s');
+
+            if (!$employeeId) {
+                continue;
+            }
+
+            // Find employee by employee_id field or user_id
+            $user = $this->db->table('ci_erp_users')
+                ->where('employee_id', $employeeId)
+                ->orWhere('user_id', $employeeId)
+                ->get()->getRowArray();
+
+            if (!$user) {
+                log_message('warning', 'ZKTeco webhook: no user found for employee_id ' . $employeeId);
+                continue;
+            }
+
+            // Determine if this is clock-in or clock-out
+            $today = date('Y-m-d', strtotime($punchTime));
+            $existing = $this->db->table('ci_timesheet')
+                ->where('employee_id', $user['user_id'])
+                ->where('attendance_date', $today)
+                ->orderBy('time_attendance_id', 'DESC')
+                ->get()->getRowArray();
+
+            if (!$existing) {
+                // Clock in
+                $this->db->table('ci_timesheet')->insert([
+                    'company_id'        => $user['company_id'],
+                    'employee_id'       => $user['user_id'],
+                    'attendance_date'   => $today,
+                    'clock_in'          => $punchTime,
+                    'clock_in_out'      => 0,
+                    'total_work'        => '00:00',
+                    'attendance_status' => 'Present',
+                ]);
+            } elseif (empty($existing['clock_out']) || $existing['clock_in_out'] == 0) {
+                // Clock out
+                $clockIn  = new \DateTime($existing['clock_in']);
+                $clockOut = new \DateTime($punchTime);
+                $diff     = $clockIn->diff($clockOut);
+                $totalWork = $diff->format('%h:%I');
+
+                $this->db->table('ci_timesheet')
+                    ->where('time_attendance_id', $existing['time_attendance_id'])
+                    ->update([
+                        'clock_out'    => $punchTime,
+                        'clock_in_out' => 1,
+                        'total_work'   => $totalWork,
+                    ]);
+            }
+            $processed++;
+        }
+
+        log_message('info', 'ZKTeco webhook: processed ' . $processed . ' of ' . count($records) . ' records');
+
+        return $this->response->setStatusCode(200)->setJSON([
+            'received'  => true,
+            'processed' => $processed,
+        ]);
+    }
 }

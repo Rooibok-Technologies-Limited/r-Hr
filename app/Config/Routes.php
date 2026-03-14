@@ -37,6 +37,10 @@ $routes->get('cookies', 'Home::cookies');
 $routes->get('terms', 'Home::terms');
 $routes->get('demo', 'Home::demo');
 
+// Kiosk modes (no auth — tablet/kiosk devices)
+$routes->get('kiosk', 'Home::kiosk');
+$routes->get('visitor-kiosk', 'Home::visitor_kiosk');
+
 // Landing Page CMS (super_user)
 $routes->get('erp/landing-page/', 'Erp\Landingpage::index', ['filter' => 'checklogin']);
 $routes->post('erp/landing-page/save/', 'Erp\Landingpage::save_section', ['filter' => 'checklogin']);
@@ -157,6 +161,8 @@ $routes->get('erp/staff-grid/', 'Employees::staff_grid', ['namespace' => 'App\Co
 $routes->get('erp/staff-dashboard/', 'Employees::staff_dashboard', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/organization-chart/', 'Employees::staff_chart', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/employee-details/(:segment)', 'Employees::staff_details', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/employee-qr/(:num)', 'Erp\Employees::employee_qr/$1', ['filter' => 'checklogin']);
+$routes->get('erp/employee-id-card/(:num)', 'Erp\Employees::employee_id_card/$1', ['filter' => 'checklogin']);
 // awards
 $routes->get('erp/awards-list/', 'Awards::index', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/award-view/(:segment)', 'Awards::award_view', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
@@ -287,6 +293,9 @@ $routes->get('erp/manual-attendance/', 'Timesheet::update_attendance', ['namespa
 $routes->get('erp/monthly-attendance-view/', 'Timesheet::monthly_timesheet', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/monthly-attendance/', 'Timesheet::monthly_timesheet_filter', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/timesheet-calendar/', 'Timesheet::timesheet_calendar', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+// live attendance dashboard (Phase 6.4)
+$routes->get('erp/attendance-live/', 'AttendanceLive::index', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->get('erp/attendance-live/stream/', 'AttendanceLive::stream', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 // overtime request
 $routes->get('erp/overtime-request/', 'Timesheet::overtime_request', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 // custom fields
@@ -398,6 +407,7 @@ $routes->group('api/v1', ['namespace' => 'App\Controllers\Api\V1', 'filter' => '
 	$routes->post('webhooks/stripe', 'Webhooks::stripe');
 	$routes->post('webhooks/mtn', 'Webhooks::mtn');
 	$routes->post('webhooks/airtel', 'Webhooks::airtel');
+	$routes->post('webhooks/zkteco', 'Webhooks::zkteco');
 
 	$routes->group('', ['filter' => 'jwt'], function ($routes) {
 		$routes->post('attendance/clock-in', 'Attendance::clockIn');
