@@ -390,6 +390,19 @@ $routes->get('erp/broadcasts/templates/', 'Broadcasts::templates', ['namespace' 
 $routes->post('erp/broadcasts/save-template/', 'Broadcasts::save_template', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->get('erp/broadcasts/recipient-count/', 'Broadcasts::recipient_count', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 
+// Phase 10.7–10.8: Archive Portal (super_user only)
+$routes->get('erp/archive/', 'Erp\Archive::index', ['filter' => 'checklogin']);
+$routes->get('erp/archive/companies/', 'Erp\Archive::companies', ['filter' => 'checklogin']);
+$routes->get('erp/archive/company/(:num)', 'Erp\Archive::company_detail/$1', ['filter' => 'checklogin']);
+$routes->get('erp/archive/search/', 'Erp\Archive::search', ['filter' => 'checklogin']);
+$routes->get('erp/archive/contacts/', 'Erp\Archive::contacts', ['filter' => 'checklogin']);
+$routes->get('erp/archive/contacts-list/', 'Erp\Archive::contacts_list', ['filter' => 'checklogin']);
+$routes->get('erp/archive/vault/', 'Erp\Archive::vault', ['filter' => 'checklogin']);
+$routes->get('erp/archive/download/(:num)', 'Erp\Archive::download_bundle/$1', ['filter' => 'checklogin']);
+$routes->get('erp/archive/settings/', 'Erp\Archive::settings', ['filter' => 'checklogin']);
+$routes->post('erp/archive/trigger/', 'Erp\Archive::trigger_archive', ['filter' => 'checklogin']);
+$routes->post('erp/archive/restore/(:num)', 'Erp\Archive::restore_company/$1', ['filter' => 'checklogin']);
+
 // Server-side DataTables endpoints
 $routes->post('erp/employees-list-server', 'Erp\Employees::employees_list_server', ['filter' => 'checklogin']);
 $routes->post('erp/attendance-list-server', 'Erp\Timesheet::attendance_list_server', ['filter' => 'checklogin']);
@@ -410,6 +423,12 @@ $routes->post('erp/expenses/add-category/', 'Erp\Expenses::add_category', ['filt
 $routes->post('erp/expenses/update-category/', 'Erp\Expenses::update_category', ['filter' => 'checklogin']);
 $routes->post('erp/expenses/delete-category/', 'Erp\Expenses::delete_category', ['filter' => 'checklogin']);
 $routes->get('erp/expense-report/', 'Erp\Expenses::expense_report', ['filter' => 'checklogin']);
+
+// Archive Export (Phase 10.10)
+$routes->get('erp/archive/export/', 'Erp\ArchiveExport::export', ['filter' => 'checklogin']);
+
+// Unsubscribe (Phase 10.11)
+$routes->get('unsubscribe', 'Unsubscribe::index');
 
 // API Documentation (Swagger UI)
 $routes->get('api/docs', function () {

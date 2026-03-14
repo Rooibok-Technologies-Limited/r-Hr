@@ -171,6 +171,8 @@ $xin_system = $SystemModel->where('setting_id', 1)->first();
       <!-- footer area start -->
       <?php echo view('frontend/components/footer'); ?>
       <!-- footer area end -->
+      <!-- Cookie consent banner -->
+      <?php echo view('frontend/components/cookie_banner'); ?>
       <!-- JS here -->
       <?php echo view('frontend/components/htmlfooter'); ?>
    </body>

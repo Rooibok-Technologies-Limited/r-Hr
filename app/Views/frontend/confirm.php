@@ -48,6 +48,8 @@
          <!-- sign up area end -->
       </main>
       <!-- footer area end -->
+      <!-- Cookie consent banner -->
+      <?php echo view('frontend/components/cookie_banner'); ?>
       <!-- JS here -->
       <?php echo view('frontend/components/htmlfooter'); ?>
    </body>

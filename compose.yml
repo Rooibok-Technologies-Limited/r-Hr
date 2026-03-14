@@ -61,6 +61,25 @@ services:
     networks:
       - rooibok_net
 
+  postgres_archive:
+    image: postgres:16-alpine
+    container_name: rooibok_archive
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       rooibok_archive
+      POSTGRES_USER:     ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - pg_archive_data:/var/lib/postgresql/data
+      - ./docker/postgres/archive_schema.sql:/docker-entrypoint-initdb.d/01_archive_schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d rooibok_archive"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - rooibok_net
+
   redis:
     image: redis:7-alpine
     container_name: rooibok_redis
@@ -107,6 +126,7 @@ services:
 
 volumes:
   pg_data:
+  pg_archive_data:
   redis_data:
   uploads_data:
   certbot_data:

@@ -3375,3 +3375,17 @@ CREATE TABLE ci_expense_categories (
     category_name   VARCHAR(100) NOT NULL,
     is_active       SMALLINT DEFAULT 1
 );
+
+-- ─────────────────────────────────────────────
+-- Phase 10: Data Archive Subsystem
+-- ─────────────────────────────────────────────
+
+-- Backblaze B2 credentials
+ALTER TABLE ci_erp_settings ADD COLUMN b2_account_id      VARCHAR(100);
+ALTER TABLE ci_erp_settings ADD COLUMN b2_application_key VARCHAR(200);
+ALTER TABLE ci_erp_settings ADD COLUMN b2_bucket_name     VARCHAR(100);
+ALTER TABLE ci_erp_settings ADD COLUMN b2_active          SMALLINT DEFAULT 0;
+
+-- Marketing consent on users
+ALTER TABLE ci_erp_users ADD COLUMN marketing_consent SMALLINT DEFAULT 0;
+ALTER TABLE ci_erp_users ADD COLUMN consent_date TIMESTAMP WITH TIME ZONE;

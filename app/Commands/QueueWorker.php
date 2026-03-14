@@ -236,9 +236,169 @@ class QueueWorker extends BaseCommand
 
     /**
      * Phase 10: Archive vault bundle generation.
+     *
+     * Payload actions:
+     *   - generate_bundle: Create a ZIP vault bundle with all archived
+     *     data for a company, compute SHA-256 checksum, and update the
+     *     snapshot record.
      */
     private function handleArchive(array $payload): void
     {
-        CLI::write('  Archive job: ' . json_encode($payload));
+        $action = $payload['action'] ?? '';
+
+        if ($action === 'generate_bundle') {
+            $this->generateVaultBundle($payload);
+        } else {
+            CLI::write('  Archive job: unknown action — ' . json_encode($payload), 'light_red');
+        }
+    }
+
+    /**
+     * Generate a ZIP vault bundle containing all archived data for a company.
+     *
+     * 1. Query all archive tables for the company
+     * 2. Write each dataset as a JSON file in a temp directory
+     * 3. Create a ZIP archive
+     * 4. Compute SHA-256 checksum
+     * 5. Move bundle to storage path
+     * 6. Update snapshot record with path and checksum
+     * 7. Clean up temp directory
+     */
+    private function generateVaultBundle(array $payload): void
+    {
+        $companyId = $payload['company_id'] ?? 0;
+
+        if (! $companyId) {
+            CLI::write('  Vault bundle: missing company_id', 'light_red');
+            return;
+        }
+
+        $archDb = \Config\Database::connect('archive');
+
+        // Find the latest snapshot for this company
+        $snapshot = $archDb->table('arc_company_snapshots')
+            ->where('source_company_id', $companyId)
+            ->orderBy('archived_at', 'DESC')
+            ->get()
+            ->getRowArray();
+
+        if (! $snapshot) {
+            CLI::write("  Vault bundle: no snapshot found for company #{$companyId}", 'light_red');
+            return;
+        }
+
+        $snapshotId = $snapshot['snapshot_id'];
+        $timestamp  = time();
+        $tmpDir     = sys_get_temp_dir() . '/archive_' . $companyId . '_' . $timestamp;
+
+        if (! mkdir($tmpDir, 0755, true)) {
+            CLI::write("  Vault bundle: failed to create temp dir {$tmpDir}", 'light_red');
+            return;
+        }
+
+        CLI::write("  Generating vault bundle for company #{$companyId}...");
+
+        // Write JSON files for each archived data type
+        $datasets = [
+            'snapshot'   => [$snapshot],
+            'employees'  => $archDb->table('arc_employees')
+                ->where('source_company_id', $companyId)
+                ->get()->getResultArray(),
+            'attendance' => $archDb->table('arc_attendance')
+                ->where('source_company_id', $companyId)
+                ->get()->getResultArray(),
+            'payroll'    => $archDb->table('arc_payroll')
+                ->where('source_company_id', $companyId)
+                ->get()->getResultArray(),
+            'leaves'     => $archDb->table('arc_leaves')
+                ->where('source_company_id', $companyId)
+                ->get()->getResultArray(),
+            'system_logs' => $archDb->table('arc_system_logs')
+                ->where('source_company_id', $companyId)
+                ->get()->getResultArray(),
+            'contacts'   => $archDb->table('arc_contacts')
+                ->where('snapshot_id', $snapshotId)
+                ->get()->getResultArray(),
+        ];
+
+        foreach ($datasets as $name => $data) {
+            $jsonPath = $tmpDir . '/' . $name . '.json';
+            file_put_contents($jsonPath, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+            CLI::write("    Written {$name}.json (" . count($data) . ' records)');
+        }
+
+        // Write a manifest
+        $manifest = [
+            'company_id'   => $companyId,
+            'snapshot_id'  => $snapshotId,
+            'company_name' => $snapshot['company_name'] ?? 'Unknown',
+            'generated_at' => date('Y-m-d H:i:s'),
+            'datasets'     => array_map(fn($d) => count($d), $datasets),
+        ];
+        file_put_contents($tmpDir . '/manifest.json', json_encode($manifest, JSON_PRETTY_PRINT));
+
+        // Create ZIP bundle
+        $zipFilename = "vault_company_{$companyId}_{$timestamp}.zip";
+        $storagePath = WRITEPATH . 'vault_bundles';
+
+        if (! is_dir($storagePath)) {
+            mkdir($storagePath, 0755, true);
+        }
+
+        $zipPath = $storagePath . '/' . $zipFilename;
+        $zip     = new \ZipArchive();
+
+        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
+            CLI::write("  Vault bundle: failed to create ZIP at {$zipPath}", 'light_red');
+            $this->cleanupDir($tmpDir);
+            return;
+        }
+
+        // Add all files from temp dir to the ZIP
+        $files = glob($tmpDir . '/*.json');
+        foreach ($files as $file) {
+            $zip->addFile($file, basename($file));
+        }
+        $zip->close();
+
+        // Compute SHA-256 checksum
+        $checksum = hash_file('sha256', $zipPath);
+
+        // Update snapshot with bundle path and checksum
+        $archDb->table('arc_company_snapshots')
+            ->where('snapshot_id', $snapshotId)
+            ->update([
+                'vault_bundle_path' => 'vault_bundles/' . $zipFilename,
+                'vault_checksum'    => $checksum,
+            ]);
+
+        // Clean up temp directory
+        $this->cleanupDir($tmpDir);
+
+        CLI::write("  Vault bundle created: {$zipFilename} (SHA-256: {$checksum})", 'green');
+    }
+
+    /**
+     * Recursively remove a temporary directory and its contents.
+     */
+    private function cleanupDir(string $dir): void
+    {
+        if (! is_dir($dir)) {
+            return;
+        }
+
+        $items = scandir($dir);
+        foreach ($items as $item) {
+            if ($item === '.' || $item === '..') {
+                continue;
+            }
+            $path = $dir . '/' . $item;
+            if (is_dir($path)) {
+                $this->cleanupDir($path);
+            } else {
+                unlink($path);
+            }
+        }
+        rmdir($dir);
     }
 }
