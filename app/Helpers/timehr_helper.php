@@ -406,6 +406,10 @@ if( !function_exists('erp_company_settings') ){
 			$company_id = $user_info['company_id'];
 		} else if($user_info['user_type'] == 'customer'){
 			$company_id = $user_info['company_id'];
+		} else if($user_info['user_type'] == 'super_user'){
+			$company_id = $user_info['company_id'] > 0 ? $user_info['company_id'] : 2;
+		} else {
+			$company_id = 0;
 		}
 
 		$cache = \Config\Services::cache();
