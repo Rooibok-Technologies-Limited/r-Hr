@@ -55,6 +55,7 @@ $routes->get('erp/', 'Home::index', ['namespace' => 'App\Controllers']);
 $routes->get('erp/login', 'Home::index', ['namespace' => 'App\Controllers']);
 $routes->post('erp/auth/login/', 'Auth::login', ['namespace' => 'App\Controllers\Erp']);
 $routes->get('erp/desk', 'Dashboard::index', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/system-logout', 'Logout::index', ['namespace' => 'App\Controllers\Erp']);
 $routes->get('erp/set-language/(:segment)', 'Dashboard::language/$1', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/forgot-password/', 'Auth::forgot_password', ['namespace' => 'App\Controllers\Erp']);
 $routes->get('erp/verified-password/', 'Auth::verified_password', ['namespace' => 'App\Controllers\Erp']);
