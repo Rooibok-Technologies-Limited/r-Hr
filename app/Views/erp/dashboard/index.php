@@ -34,6 +34,9 @@ if($user['user_type'] == 'customer'){
 } elseif($user['user_type'] == 'company'){
 	$inf = 'company';
 	echo view('erp/dashboard/company_dashboard');
+} elseif($user['user_type'] == 'super_user'){
+	$inf = 'super_admin_dashboard';
+	echo view('erp/dashboard/super_admin_dashboard');
 } else {
 	$inf = 'staff_dashboard';
 	echo view('erp/dashboard/staff_dashboard');
