@@ -66,16 +66,7 @@ endif;
                   <li> <a href="<?= site_url('contact');?>">
                     <?= lang('Frontend.xin_contact_us');?>
                     </a> </li>
-                  <li class="has-dropdown">
-                     <a href="#!"><?= $flg_icn;?></a>
-                     <ul class="submenu">
-                     	<?php foreach($language as $lang):?>
-                        <li><a href="<?= site_url('erp/dashboard/language/');?><?= $lang['language_code'];?>">
-                        <img src="<?= base_url();?>/public/uploads/languages_flag/<?= $lang['language_flag'];?>" width="16" height="11" /> <?= $lang['language_name'];?>
-                        </a></li>
-                        <?php endforeach;?>
-                     </ul>
-                  </li>
+                  <!-- Language selector removed — English only -->
                 </ul>
                 </nav>
              </div>

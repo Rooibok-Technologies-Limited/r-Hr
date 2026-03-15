@@ -396,6 +396,12 @@ if( !function_exists('erp_company_settings') ){
 		$session = \Config\Services::session();
 		$usession = $session->get('sup_username');
 
+		// No session — return default company settings (company_id=2)
+		if (empty($usession) || !isset($usession['sup_user_id'])) {
+			$CompanysettingsModel = new \App\Models\CompanysettingsModel();
+			return $CompanysettingsModel->where('company_id', 2)->first();
+		}
+
 		$UsersModel = new \App\Models\UsersModel();
 		$CompanysettingsModel = new \App\Models\CompanysettingsModel();
 
