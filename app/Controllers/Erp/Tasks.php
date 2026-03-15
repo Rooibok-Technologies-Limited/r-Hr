@@ -1096,18 +1096,18 @@ class Tasks extends BaseController {
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if($user_info['user_type'] == 'staff'){
 			$get_tasks = $TasksModel->where('company_id',$user_info['company_id'])->countAllResults();
-			$not_started = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', 0)->countAllResults();
-			$in_progress = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', 1)->countAllResults();
-			$completed = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', 2)->countAllResults();
-			$cancelled = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', 3)->countAllResults();
-			$hold = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', 4)->countAllResults();
+			$not_started = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', '0')->countAllResults();
+			$in_progress = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', '1')->countAllResults();
+			$completed = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', '2')->countAllResults();
+			$cancelled = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', '3')->countAllResults();
+			$hold = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', '4')->countAllResults();
 		} else {
 			$get_tasks = $TasksModel->where('company_id',$usession['sup_user_id'])->countAllResults();
-			$not_started = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', 0)->countAllResults();
-			$in_progress = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', 1)->countAllResults();
-			$completed = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', 2)->countAllResults();
-			$cancelled = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', 3)->countAllResults();
-			$hold = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', 4)->countAllResults();
+			$not_started = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', '0')->countAllResults();
+			$in_progress = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', '1')->countAllResults();
+			$completed = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', '2')->countAllResults();
+			$cancelled = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', '3')->countAllResults();
+			$hold = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', '4')->countAllResults();
 		}
 		/* Define return | here result is used to return user data and error for error message */
 		$Return = array('not_started'=>'', 'in_progress'=>'','completed'=>'', 'cancelled'=>'','hold'=>'', 'not_started_lb'=>'', 'in_progress_lb'=>'','completed_lb'=>'', 'cancelled_lb'=>'','hold_lb'=>'',);
@@ -1176,18 +1176,18 @@ class Tasks extends BaseController {
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if($user_info['user_type'] == 'staff'){
 			$get_tasks = $TasksModel->where('company_id',$user_info['company_id'])->countAllResults();
-			$not_started = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', 0)->countAllResults();
-			$in_progress = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', 1)->countAllResults();
-			$completed = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', 2)->countAllResults();
-			$cancelled = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', 3)->countAllResults();
-			$hold = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', 4)->countAllResults();
+			$not_started = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', '0')->countAllResults();
+			$in_progress = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', '1')->countAllResults();
+			$completed = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', '2')->countAllResults();
+			$cancelled = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', '3')->countAllResults();
+			$hold = $TasksModel->where('company_id',$user_info['company_id'])->where('task_status', '4')->countAllResults();
 		} else {
 			$get_tasks = $TasksModel->where('company_id',$usession['sup_user_id'])->countAllResults();
-			$not_started = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', 0)->countAllResults();
-			$in_progress = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', 1)->countAllResults();
-			$completed = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', 2)->countAllResults();
-			$cancelled = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', 3)->countAllResults();
-			$hold = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', 4)->countAllResults();
+			$not_started = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', '0')->countAllResults();
+			$in_progress = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', '1')->countAllResults();
+			$completed = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', '2')->countAllResults();
+			$cancelled = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', '3')->countAllResults();
+			$hold = $TasksModel->where('company_id',$usession['sup_user_id'])->where('task_status', '4')->countAllResults();
 		}
 		/* Define return | here result is used to return user data and error for error message */
 		$Return = array('not_started'=>'', 'in_progress'=>'','completed'=>'', 'cancelled'=>'','hold'=>'', 'not_started_lb'=>'', 'in_progress_lb'=>'','completed_lb'=>'', 'cancelled_lb'=>'','hold_lb'=>'',);
@@ -1224,11 +1224,12 @@ class Tasks extends BaseController {
 		$TasksModel = new TasksModel();
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		$_project = $ProjectsModel->where('client_id',$usession['sup_user_id'])->first();
-		$not_started = $TasksModel->where('project_id',$_project['project_id'])->where('task_status', 0)->countAllResults();
-		$in_progress = $TasksModel->where('project_id',$_project['project_id'])->where('task_status', 1)->countAllResults();
-		$completed = $TasksModel->where('project_id',$_project['project_id'])->where('task_status', 2)->countAllResults();
-		$cancelled = $TasksModel->where('project_id',$_project['project_id'])->where('task_status', 3)->countAllResults();
-		$hold = $TasksModel->where('project_id',$_project['project_id'])->where('task_status', 4)->countAllResults();
+		$project_id = !empty($_project) ? $_project['project_id'] : 0;
+		$not_started = $TasksModel->where('project_id',$project_id)->where('task_status', '0')->countAllResults();
+		$in_progress = $TasksModel->where('project_id',$project_id)->where('task_status', '1')->countAllResults();
+		$completed = $TasksModel->where('project_id',$project_id)->where('task_status', '2')->countAllResults();
+		$cancelled = $TasksModel->where('project_id',$project_id)->where('task_status', '3')->countAllResults();
+		$hold = $TasksModel->where('project_id',$project_id)->where('task_status', '4')->countAllResults();
 		/* Define return | here result is used to return user data and error for error message */
 		$Return = array('not_started'=>'', 'in_progress'=>'','completed'=>'', 'cancelled'=>'','hold'=>'', 'not_started_lb'=>'', 'in_progress_lb'=>'','completed_lb'=>'', 'cancelled_lb'=>'','hold_lb'=>'',);
 		// not_started

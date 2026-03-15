@@ -17,8 +17,8 @@ $session = \Config\Services::session();
 $router = service('router');
 
 $username = $session->get('sup_username');
-$user_id = $username['sup_user_id'];
-$user_info = $UsersModel->where('user_id', $user_id)->first();
+$user_id = (!empty($username) && is_array($username)) ? ($username['sup_user_id'] ?? 0) : 0;
+$user_info = $user_id ? $UsersModel->where('user_id', $user_id)->first() : null;
 $company_types = $ConstantsModel->where('type','company_type')->orderBy('constants_id', 'ASC')->findAll();
 ?>
 <?= view('default/htmlheader');?>
@@ -32,7 +32,7 @@ $company_types = $ConstantsModel->where('type','company_type')->orderBy('constan
 <!-- [ Pre-loader ] End --> 
 <!-- [ Mobile header ] start -->
 <div class="pc-mob-header pc-header">
-  <div class="pcm-logo"> <img src="<?= base_url();?>/public/uploads/logo/<?= $xin_system['logo'];?>" alt="" class="logo logo-lg"> </div>
+  <div class="pcm-logo"> <img src="<?= base_url();?>/public/uploads/logo/<?= $xin_system['logo'] ?? '';?>" alt="" class="logo logo-lg"> </div>
   <div class="pcm-toolbar"> <a href="#!" class="pc-head-link" id="mobile-collapse">
     <div class="hamburger hamburger--arrowturn">
       <div class="hamburger-box">
@@ -43,7 +43,8 @@ $company_types = $ConstantsModel->where('type','company_type')->orderBy('constan
 </div>
 <!-- [ Mobile header ] End --> 
 <!-- [ navigation menu ] start -->
-<nav class="pc-sidebar light-sidebar">
+<?php $_sb_theme = (erp_company_settings()['theme_sidebar'] ?? 'light') . '-sidebar'; ?>
+<nav class="pc-sidebar <?= $_sb_theme; ?>">
   <div class="navbar-wrapper">
     <div class="navbar-content">
       <?= view('default/left_menu')?>
@@ -67,30 +68,17 @@ $company_types = $ConstantsModel->where('type','company_type')->orderBy('constan
                             <h5>Sample Page</h5>
                         </div>-->
             <ul class="breadcrumb">
-              
-              <?php if($router->controllerName() == '\App\Controllers\Erp\Dashboard') { ?>
-              <li class="breadcrumb-item">
-                <div class="align-middle">
-                    <img src="<?= staff_profile_photo($user_id);?>" alt="" class="img-radius wid-40 align-top m-r-15">
-                    <div class="d-inline-block">
-                      <a href="<?= site_url('erp/my-profile');?>">
-                      <h6><?= $user_info['first_name'].' '.$user_info['last_name'];?>
-                        <p class="text-muted m-b-0">@<?= $user_info['username'];?></p></h6>
-                      </a>
-                    </div>
-                </div>
-                </li>
-                <?php } else {?>
                 <li class="breadcrumb-item"><a href="<?= site_url('erp/desk')?>">
 					<?= lang('Dashboard.dashboard_title');?>
                     </a></li>
+                <?php if($router->controllerName() != '\App\Controllers\Erp\Dashboard') { ?>
                   <li class="breadcrumb-item">
-                    <?= $breadcrumbs;?>
+                    <?= $breadcrumbs ?? '';?>
                   </li>
                 <?php } ?>
             </ul>
           </div>
-          <?php if($user_info['user_type'] != 'customer' && $user_info['user_type'] != 'super_user' && $user_info['user_type'] != 'staff'){?>
+          <?php $_ut = $user_info['user_type'] ?? ''; if($_ut != 'customer' && $_ut != 'super_user' && $_ut != 'staff'){?>
           <?php $profile_completeness = dashboard_profile_completeness();?>
           <div class="col-md-4 text-md-rdight">
             <div class="row align-items-center">
@@ -131,9 +119,7 @@ $company_types = $ConstantsModel->where('type','company_type')->orderBy('constan
           <?php } else {?>
           <?php $colval = '6';?>
           <?php }?>
-          <div class="col-md-<?= $colval;?> text-md-right"> <a class="btn btn-smb btn-outline-primary rounded-pill" href="<?= site_url('erp/system-logout')?>"><i class="feather icon-power"></i>
-            <?= lang('Main.xin_logout');?>
-            </a> </div>
+          <div class="col-md-<?= $colval;?> text-md-right"></div>
         </div>
       </div>
     </div>

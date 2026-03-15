@@ -39,11 +39,16 @@ class Settings extends BaseController {
 		$session = \Config\Services::session();
 		$usession = $session->get('sup_username');
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
-		if(!$session->has('sup_username')){ 
+		if(!$session->has('sup_username')){
 			$session->setFlashdata('err_not_logged_in',lang('Dashboard.err_not_logged_in'));
 			return redirect()->to(site_url('erp/login'));
 		}
-		if($user_info['user_type'] != 'company'){
+		// Super admins always have access to settings
+		if(!empty($user_info) && $user_info['user_type'] == 'super_user'){
+			// allowed
+		} elseif(!empty($user_info) && $user_info['user_type'] == 'company'){
+			// company admins allowed
+		} else {
 			if(!in_array('settings1',staff_role_resource())) {
 				$session->setFlashdata('unauthorized_module',lang('Dashboard.xin_error_unauthorized_module'));
 				return redirect()->to(site_url('erp/desk'));
@@ -59,18 +64,22 @@ class Settings extends BaseController {
 		
 	}
 	public function constants()
-	{		
+	{
 		$SystemModel = new SystemModel();
 		$UsersModel = new UsersModel();
 		$RolesModel = new RolesModel();
 		$session = \Config\Services::session();
 		$usession = $session->get('sup_username');
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
-		if(!$session->has('sup_username')){ 
+		if(!$session->has('sup_username')){
 			$session->setFlashdata('err_not_logged_in',lang('Dashboard.err_not_logged_in'));
 			return redirect()->to(site_url('erp/login'));
 		}
-		if($user_info['user_type'] != 'company'){
+		if(!empty($user_info) && $user_info['user_type'] == 'super_user'){
+			// allowed
+		} elseif(!empty($user_info) && $user_info['user_type'] == 'company'){
+			// allowed
+		} else {
 			if(!in_array('settings2',staff_role_resource())) {
 				$session->setFlashdata('unauthorized_module',lang('Dashboard.xin_error_unauthorized_module'));
 				return redirect()->to(site_url('erp/desk'));
@@ -85,8 +94,82 @@ class Settings extends BaseController {
 		return view('erp/layout/layout_main', $data); //page load
 		
 	}
+	public function theme_settings()
+	{
+		$SystemModel = new SystemModel();
+		$UsersModel = new UsersModel();
+		$session = \Config\Services::session();
+		$usession = $session->get('sup_username');
+		$xin_system = $SystemModel->where('setting_id', 1)->first();
+		$xin_com = erp_company_settings();
+		$data['title'] = 'Theme Settings | ' . ($xin_system['application_name'] ?? 'Rooibok HR');
+		$data['path_url'] = 'theme_settings';
+		$data['breadcrumbs'] = 'Theme Settings';
+		$data['xin_system'] = $xin_system;
+		$data['xin_com'] = $xin_com;
+		$data['subview'] = view('erp/settings/theme_settings', $data);
+		return view('erp/layout/layout_main', $data);
+	}
+
+	public function save_theme()
+	{
+		$Return = array('result'=>'', 'error'=>'', 'csrf_hash'=>'');
+		$Return['csrf_hash'] = csrf_hash();
+
+		$session = \Config\Services::session();
+		$usession = $session->get('sup_username');
+
+		$header_bg = strip_tags(trim($this->request->getPost('header_background') ?? ''));
+		$login_page = strip_tags(trim($this->request->getPost('login_page') ?? ''));
+		$login_text = strip_tags(trim($this->request->getPost('login_page_text') ?? ''));
+		$auth_bg = strip_tags(trim($this->request->getPost('auth_background') ?? ''));
+
+		$CompanysettingsModel = new \App\Models\CompanysettingsModel();
+		$UsersModel = new UsersModel();
+		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
+
+		// For super_user, update the default company settings (company_id=2)
+		// For company users, update their own company settings
+		if (!empty($user_info) && $user_info['user_type'] == 'super_user') {
+			$company_id = $user_info['company_id'] > 0 ? $user_info['company_id'] : 2;
+		} else {
+			$company_id = $usession['sup_user_id'] ?? 0;
+		}
+
+		$theme_primary = strip_tags(trim($this->request->getPost('theme_primary') ?? '#7267EF'));
+		$theme_secondary = strip_tags(trim($this->request->getPost('theme_secondary') ?? '#6c757d'));
+		$theme_success = strip_tags(trim($this->request->getPost('theme_success') ?? '#17C666'));
+		$theme_sidebar = strip_tags(trim($this->request->getPost('theme_sidebar') ?? 'light'));
+
+		// Update company settings
+		$com_data = [
+			'header_background' => $header_bg,
+			'login_page' => $login_page,
+			'login_page_text' => $login_text,
+			'theme_primary' => $theme_primary,
+			'theme_secondary' => $theme_secondary,
+			'theme_success' => $theme_success,
+			'theme_sidebar' => $theme_sidebar,
+		];
+		$CompanysettingsModel->where('company_id', $company_id)->set($com_data)->update();
+
+		// Clear cache so changes take effect immediately
+		$cache = \Config\Services::cache();
+		$cache->delete('company_settings_' . $company_id);
+
+		// Update system auth background
+		if (!empty($auth_bg)) {
+			$SystemModel = new SystemModel();
+			$SystemModel->update(1, ['auth_background' => $auth_bg]);
+		}
+
+		$Return['result'] = 'Theme settings updated successfully.';
+		$this->output($Return);
+		exit;
+	}
+
 	public function database_backup()
-	{		
+	{
 		$SystemModel = new SystemModel();
 		$UsersModel = new UsersModel();
 		$session = \Config\Services::session();
@@ -112,17 +195,20 @@ class Settings extends BaseController {
 		
 	}
 	public function email_templates()
-	{		
+	{
 		$SystemModel = new SystemModel();
 		$UsersModel = new UsersModel();
 		$session = \Config\Services::session();
 		$usession = $session->get('sup_username');
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
-		if(!$session->has('sup_username')){ 
-			$session->setFlashdata('err_not_logged_in',lang('Dashboard.err_not_logged_in'));
+		if(!$session->has('sup_username')){
 			return redirect()->to(site_url('erp/login'));
 		}
-		if($user_info['user_type'] != 'company'){
+		if(!empty($user_info) && $user_info['user_type'] == 'super_user'){
+			// allowed
+		} elseif(!empty($user_info) && $user_info['user_type'] == 'company'){
+			// allowed
+		} else {
 			if(!in_array('settings3',staff_role_resource())) {
 				$session->setFlashdata('unauthorized_module',lang('Dashboard.xin_error_unauthorized_module'));
 				return redirect()->to(site_url('erp/desk'));
@@ -138,17 +224,20 @@ class Settings extends BaseController {
 		
 	}
 	public function sms_templates()
-	{		
+	{
 		$SystemModel = new SystemModel();
 		$UsersModel = new UsersModel();
 		$session = \Config\Services::session();
 		$usession = $session->get('sup_username');
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
-		if(!$session->has('sup_username')){ 
-			$session->setFlashdata('err_not_logged_in',lang('Dashboard.err_not_logged_in'));
+		if(!$session->has('sup_username')){
 			return redirect()->to(site_url('erp/login'));
 		}
-		if($user_info['user_type'] != 'company'){
+		if(!empty($user_info) && $user_info['user_type'] == 'super_user'){
+			// allowed
+		} elseif(!empty($user_info) && $user_info['user_type'] == 'company'){
+			// allowed
+		} else {
 			if(!in_array('settings3',staff_role_resource())) {
 				$session->setFlashdata('unauthorized_module',lang('Dashboard.xin_error_unauthorized_module'));
 				return redirect()->to(site_url('erp/desk'));
@@ -1632,8 +1721,8 @@ class Settings extends BaseController {
 
 		$xin_system = $SystemModel->where('setting_id', 1)->first();
 		$data['title'] = 'Super Admin Settings | ' . $xin_system['application_name'];
-		$data['path_url'] = 'settings';
-		$data['breadcrumbs'] = 'Super Admin Settings';
+		$data['path_url'] = $tab === 'tax' ? 'tax_settings' : 'payment_settings';
+		$data['breadcrumbs'] = $tab === 'tax' ? 'Tax Configuration' : 'Payment Gateways';
 		$data['tab'] = $tab;
 		$data['subview'] = view('erp/settings/super_settings', $data);
 		return view('erp/layout/layout_main', $data);

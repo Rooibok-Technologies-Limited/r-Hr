@@ -101,7 +101,7 @@ $xin_system = $SystemModel->where('setting_id', 1)->first();
 				} else {
 					$plan_duration = lang('Membership.xin_subscription_unlimit');
 				}
-				$converted = currency_converter($r['price']);
+				$converted = 0; try { $converted = currency_converter($r['price']); } catch(\Exception $e) { $converted = $r['price']; }
 				?>
                   <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
                      <div class="price__item white-bg mb-30 transition-3 fix wow fadeInUp" data-wow-delay=".3s">

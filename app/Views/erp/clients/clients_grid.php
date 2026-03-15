@@ -38,6 +38,7 @@ $roles = $RolesModel->orderBy('role_id', 'ASC')->findAll();
 $xin_system = $SystemModel->where('setting_id', 1)->first();
 
 $employee_id = generate_random_employeeid();
+$get_animate = '';
 ?>
 <?php if(in_array('client2',staff_role_resource()) || $user_info['user_type'] == 'company') { ?>
 <div id="accordion">

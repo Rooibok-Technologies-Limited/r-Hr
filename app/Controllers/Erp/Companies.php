@@ -91,59 +91,45 @@ class Companies extends BaseController {
 		$xin_system = $SystemModel->where('setting_id', 1)->first();
 		$data = array();
 		
-          foreach($company as $r) {						
-		  			
-				$view = '<a href="'.site_url('erp/company-detail/'). uencode($r['user_id']) . '"><span data-toggle="tooltip" data-placement="top" data-state="primary" title="'.lang('Main.xin_view').'"><button type="button" class="btn icon-btn btn-sm btn-light-primary waves-effect waves-light"><i class="feather icon-arrow-right"></i></button></span></a>';
-				$delete = '<span data-toggle="tooltip" data-placement="top" data-state="danger" title="'.lang('Main.xin_delete').'"><button type="button" class="btn icon-btn btn-sm btn-light-danger waves-effect waves-light delete" data-toggle="modal" data-target=".delete-modal" data-record-id="'. uencode($r['user_id']) . '"><i class="feather icon-trash-2"></i></button></span>';
+          foreach($company as $r) {
 			$company_types = $ConstantsModel->where('constants_id', $r['company_type_id'])->first();
 			$all_countries = $CountryModel->where('country_id', $r['country'])->first();
-			// membership
 			$company_membership = $CompanymembershipModel->where('company_id', $r['user_id'])->first();
-			$membership = $MembershipModel->where('membership_id', $company_membership['membership_id'])->first();
-			if($membership['plan_duration'] == '1'){
-				$subscription = '<span class="text-success">'.lang('Membership.xin_subscription_monthly').'</span>';
-				$iprice = number_to_currency($membership['price'], $xin_system['default_currency'],null,2);
-			
-			} elseif($membership['plan_duration'] == '2') {
-				$subscription = '<span class="text-info">'.lang('Membership.xin_subscription_yearly').'</span>';
-				$iprice = number_to_currency($membership['price'], $xin_system['default_currency'],null,2);
-			} elseif($membership['plan_duration'] == '3') {
-				$subscription = '<span class="text-info">'.lang('Membership.xin_subscription_unlimit').'</span>';
-				$iprice = number_to_currency($membership['price'], $xin_system['default_currency'],null,2);
-			}
-			$mp_subs = $membership['membership_type'].'<br><div class="small">'.$iprice.'/'.$subscription.'</div>';
-			$combhr = $edit.$view.$delete;
-			if($r['profile_photo']=='no'){
-				$profile_picture = base_url().'/public/uploads/default_profile.jpg';
+			$membership = !empty($company_membership) ? $MembershipModel->where('membership_id', $company_membership['membership_id'])->first() : null;
+
+			// Company cell: avatar + name + email
+			$avatar = staff_profile_photo($r['user_id']);
+			$cname = '<div class="d-flex align-items-center">'
+				.'<img src="'.$avatar.'" alt="" class="img-radius mr-2" width="36" height="36">'
+				.'<div><strong>'.esc($r['company_name']).'</strong><br><small class="text-muted">'.esc($r['email']).'</small></div>'
+				.'</div>';
+
+			// Contact
+			$contact = esc($r['first_name'].' '.$r['last_name']);
+
+			// Plan badge
+			if(!empty($membership)){
+				$plan = '<span class="badge badge-light-primary">'.esc($membership['membership_type']).'</span>'
+					.'<br><small class="text-muted">UGX '.number_format($membership['price'],0).'</small>';
 			} else {
-				$profile_picture = base_url().'/public/uploads/users/thumb/'.$r['profile_photo'];
+				$plan = '<span class="text-muted">No Plan</span>';
 			}
-			$cname = '<div class="d-inline-block align-middle">
-				<img src="'.staff_profile_photo($r['user_id']).'" alt="user image" class="img-radius align-top m-r-15" style="width:40px;">
-				<div class="d-inline-block">
-					<h6 class="m-b-0">'.$r['company_name'].'</h6>
-					<p class="m-b-0">'.$r['email'].'</p>
-				</div>
-			</div>'; 
-			//status
-			if($r['is_active']==1){
-				$status = '<span class="badge badge-light-success">'.lang('Main.xin_employees_active').'</span>';
-			} else {
-				$status = '<span class="badge badge-light-danger">'.lang('Main.xin_employees_inactive').'</span>';
-			}
-			$links = '
-				'.$cname.'
-				<div class="overlay-edit">
-					'.$combhr.'
-				</div>
-			';						 			  				
-			$data[] = array(
-				$links,
-				$company_types['category_name'],
-				$mp_subs,
-				$all_countries['country_name'],
-				$status,
-			);
+
+			// Country
+			$country = !empty($all_countries) ? esc($all_countries['country_name']) : 'N/A';
+
+			// Status
+			$status = $r['is_active']==1
+				? '<span class="badge badge-light-success">Active</span>'
+				: '<span class="badge badge-light-danger">Inactive</span>';
+
+			// Actions
+			$actions = '<div class="text-center">'
+				.'<a href="'.site_url('erp/company-detail/'.uencode($r['user_id'])).'" class="btn btn-sm btn-light-primary mr-1" title="View"><i class="feather icon-eye"></i></a>'
+				.'<button type="button" class="btn btn-sm btn-light-danger delete" data-toggle="modal" data-target=".delete-modal" data-record-id="'.uencode($r['user_id']).'" title="Delete"><i class="feather icon-trash-2"></i></button>'
+				.'</div>';
+
+			$data[] = array($cname, $contact, $plan, $country, $status, $actions);
 		}
           $output = array(
                //"draw" => $draw,
@@ -365,6 +351,11 @@ class Companies extends BaseController {
 					// Send mail end
 				}
 				$Return['result'] = lang('Company.xin_success_add_company');
+				// Notify all super admins
+				$supers = $UsersModel->where('user_type','super_user')->findAll();
+				foreach($supers as $su) {
+					create_notification($su['user_id'], 'New company registered', esc($company_name).' has been added to the system.', site_url('erp/companies-list'));
+				}
 			} else {
 				$Return['error'] = lang('Main.xin_error_msg');
 			}
@@ -727,6 +718,11 @@ class Companies extends BaseController {
 			if ($result == TRUE) {
 				
 				$Return['result'] = lang('Company.xin_success_update_company_subscription');
+				// Notify super admins
+				$supers = $UsersModel->where('user_type','super_user')->findAll();
+				foreach($supers as $su) {
+					create_notification($su['user_id'], 'Subscription updated', 'A company subscription plan was changed.', site_url('erp/companies-list'));
+				}
 			} else {
 				$Return['error'] = lang('Main.xin_error_msg');
 			}

@@ -149,14 +149,15 @@ if( !function_exists('user_attendance_monthly_value') ){
 // single user
 if( !function_exists('staff_profile_photo') ){
 	function staff_profile_photo($user_id){
-		// get session
-		$session = \Config\Services::session();
-		$usession = $session->get('sup_username');
-		
 		$UsersModel = new \App\Models\UsersModel();
 		$user_info = $UsersModel->where('user_id', $user_id)->first();
-		if($user_info['user_type'] != 'customer'){
-			if($user_info['profile_photo'] == '' || $user_info['profile_photo'] == 'no'){
+		if(empty($user_info)){
+			return base_url().'/public/uploads/users/default/default_profile.jpg';
+		}
+		$default_img = base_url().'/public/uploads/users/default/default_profile.jpg';
+		if(($user_info['user_type'] ?? '') != 'customer'){
+			$thumb_file = FCPATH . 'uploads/users/thumb/' . $user_info['profile_photo'];
+			if(empty($user_info['profile_photo']) || $user_info['profile_photo'] == 'no' || !file_exists($thumb_file)){
 				if($user_info['gender']==1) {
 					$user_img = base_url().'/public/uploads/users/default/default_profile.jpg';
 				} else {
@@ -255,9 +256,15 @@ if( !function_exists('user_company_info') ){
 		// get session
 		$session = \Config\Services::session();
 		$usession = $session->get('sup_username');
+		if(empty($usession) || !is_array($usession) || empty($usession['sup_user_id'])){
+			return 0;
+		}
 		$UsersModel = new \App\Models\UsersModel();
-				
+
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
+		if(empty($user_info)){
+			return 0;
+		}
 		if($user_info['user_type'] == 'company'){
 			$company_id = $usession['sup_user_id'];
 		} else if($user_info['user_type'] == 'staff'){
@@ -276,16 +283,26 @@ if( !function_exists('company_membership_details') ){
 		// get session
 		$session = \Config\Services::session();
 		$usession = $session->get('sup_username');
-		//use CodeIgniter\I18n\Time;
-		//new \App\I18n\Time();
+		if(empty($usession) || !is_array($usession) || empty($usession['sup_user_id'])){
+			return array('plan_msg' => '', 'plan_duration' => '', 'diff_days' => 300*100);
+		}
 		$UsersModel = new \App\Models\UsersModel();
 		$MembershipModel = new \App\Models\MembershipModel();
 		$CompanymembershipModel = new \App\Models\CompanymembershipModel();
-	
+
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
-					
+		if(empty($user_info)){
+			return array('plan_msg' => '', 'plan_duration' => '', 'diff_days' => 300*100);
+		}
+
 		$company_membership = $CompanymembershipModel->where('company_id', $usession['sup_user_id'])->first();
+		if(empty($company_membership)){
+			return array('plan_msg' => '', 'plan_duration' => '', 'diff_days' => 300*100);
+		}
 		$subs_plan = $MembershipModel->where('membership_id', $company_membership['membership_id'])->first();
+		if(empty($subs_plan)){
+			return array('plan_msg' => '', 'plan_duration' => '', 'diff_days' => 300*100);
+		}
 		
 		if($subs_plan['plan_duration']==1){
 			if($subs_plan['membership_id']==1){
@@ -342,27 +359,39 @@ if( !function_exists('company_membership_details') ){
 // company membership || In-Active|Active
 if( !function_exists('company_membership_activation') ){
 	function company_membership_activation(){
-		
+
 		// get session
 		$session = \Config\Services::session();
 		$usession = $session->get('sup_username');
-		//use CodeIgniter\I18n\Time;
-		//new \App\I18n\Time();
+		if(empty($usession) || !is_array($usession) || empty($usession['sup_user_id'])){
+			return 0;
+		}
 		$UsersModel = new \App\Models\UsersModel();
 		$MembershipModel = new \App\Models\MembershipModel();
 		$CompanymembershipModel = new \App\Models\CompanymembershipModel();
-	
+
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
+		if(empty($user_info)){
+			return 0;
+		}
 		if($user_info['user_type'] == 'company'){
 			$company_id = $usession['sup_user_id'];
 		} else if($user_info['user_type'] == 'staff'){
 			$company_id = $user_info['company_id'];
 		} else if($user_info['user_type'] == 'customer'){
 			$company_id = $user_info['company_id'];
+		} else {
+			$company_id = $usession['sup_user_id'];
 		}
-		
+
 		$company_membership = $CompanymembershipModel->where('company_id', $company_id)->first();
+		if(empty($company_membership)){
+			return 0;
+		}
 		$subs_plan = $MembershipModel->where('membership_id', $company_membership['membership_id'])->first();
+		if(empty($subs_plan)){
+			return 0;
+		}
 		
 		if($subs_plan['plan_duration']==1){
 			$time = Time::parse($company_membership['update_at'], 'Asia/Karachi');
@@ -396,16 +425,20 @@ if( !function_exists('erp_company_settings') ){
 		$session = \Config\Services::session();
 		$usession = $session->get('sup_username');
 
-		// No session — return default company settings (company_id=2)
-		if (empty($usession) || !isset($usession['sup_user_id'])) {
-			$CompanysettingsModel = new \App\Models\CompanysettingsModel();
+		$CompanysettingsModel = new \App\Models\CompanysettingsModel();
+
+		// No session or invalid session — return default company settings
+		if (empty($usession) || !is_array($usession) || empty($usession['sup_user_id'])) {
 			return $CompanysettingsModel->where('company_id', 2)->first();
 		}
 
 		$UsersModel = new \App\Models\UsersModel();
-		$CompanysettingsModel = new \App\Models\CompanysettingsModel();
 
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
+		// User not found in DB — return defaults
+		if(empty($user_info)){
+			return $CompanysettingsModel->where('company_id', 2)->first();
+		}
 		if($user_info['user_type'] == 'company'){
 			$company_id = $usession['sup_user_id'];
 		} else if($user_info['user_type'] == 'staff'){

@@ -45,6 +45,7 @@ if($user_info['user_type'] == 'staff'){
 $all_countries = $CountryModel->orderBy('country_id', 'ASC')->findAll();
 $religion = $ConstantsModel->where('type','religion')->orderBy('constants_id', 'ASC')->findAll();
 $roles = $RolesModel->orderBy('role_id', 'ASC')->findAll();
+$get_animate = '';
 $selected_shift = $ShiftModel->where('office_shift_id', $employee_detail['office_shift_id'])->first();
 ?>
 

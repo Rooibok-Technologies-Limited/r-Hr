@@ -1720,18 +1720,18 @@ class Projects extends BaseController {
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if($user_info['user_type'] == 'staff'){
 			$get_projects = $ProjectsModel->where('company_id',$user_info['company_id'])->countAllResults();
-			$not_started = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', 0)->countAllResults();
-			$in_progress = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', 1)->countAllResults();
-			$completed = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', 2)->countAllResults();
-			$cancelled = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', 3)->countAllResults();
-			$hold = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', 4)->countAllResults();
+			$not_started = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', '0')->countAllResults();
+			$in_progress = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', '1')->countAllResults();
+			$completed = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', '2')->countAllResults();
+			$cancelled = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', '3')->countAllResults();
+			$hold = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', '4')->countAllResults();
 		} else {
 			$get_projects = $ProjectsModel->where('company_id',$usession['sup_user_id'])->countAllResults();
-			$not_started = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', 0)->countAllResults();
-			$in_progress = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', 1)->countAllResults();
-			$completed = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', 2)->countAllResults();
-			$cancelled = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', 3)->countAllResults();
-			$hold = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', 4)->countAllResults();
+			$not_started = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', '0')->countAllResults();
+			$in_progress = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', '1')->countAllResults();
+			$completed = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', '2')->countAllResults();
+			$cancelled = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', '3')->countAllResults();
+			$hold = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', '4')->countAllResults();
 		}
 		/* Define return | here result is used to return user data and error for error message */
 		$Return = array('not_started'=>'', 'in_progress'=>'','completed'=>'', 'cancelled'=>'','hold'=>'', 'not_started_lb'=>'', 'in_progress_lb'=>'','completed_lb'=>'', 'cancelled_lb'=>'','hold_lb'=>'',);
@@ -1801,18 +1801,18 @@ class Projects extends BaseController {
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if($user_info['user_type'] == 'staff'){
 			$get_projects = $ProjectsModel->where('company_id',$user_info['company_id'])->countAllResults();
-			$not_started = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', 0)->countAllResults();
-			$in_progress = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', 1)->countAllResults();
-			$completed = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', 2)->countAllResults();
-			$cancelled = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', 3)->countAllResults();
-			$hold = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', 4)->countAllResults();
+			$not_started = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', '0')->countAllResults();
+			$in_progress = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', '1')->countAllResults();
+			$completed = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', '2')->countAllResults();
+			$cancelled = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', '3')->countAllResults();
+			$hold = $ProjectsModel->where('company_id',$user_info['company_id'])->where('status', '4')->countAllResults();
 		} else {
 			$get_projects = $ProjectsModel->where('company_id',$usession['sup_user_id'])->countAllResults();
-			$not_started = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', 0)->countAllResults();
-			$in_progress = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', 1)->countAllResults();
-			$completed = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', 2)->countAllResults();
-			$cancelled = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', 3)->countAllResults();
-			$hold = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', 4)->countAllResults();
+			$not_started = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', '0')->countAllResults();
+			$in_progress = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', '1')->countAllResults();
+			$completed = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', '2')->countAllResults();
+			$cancelled = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', '3')->countAllResults();
+			$hold = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('status', '4')->countAllResults();
 		}
 		/* Define return | here result is used to return user data and error for error message */
 		$Return = array('not_started'=>'', 'in_progress'=>'','completed'=>'', 'cancelled'=>'','hold'=>'', 'not_started_lb'=>'', 'in_progress_lb'=>'','completed_lb'=>'', 'cancelled_lb'=>'','hold_lb'=>'',);
@@ -1849,11 +1849,11 @@ class Projects extends BaseController {
 		$ProjectsModel = new ProjectsModel();
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		$get_projects = $ProjectsModel->where('client_id',$usession['sup_user_id'])->countAllResults();
-		$not_started = $ProjectsModel->where('client_id',$usession['sup_user_id'])->where('status', 0)->countAllResults();
-		$in_progress = $ProjectsModel->where('client_id',$usession['sup_user_id'])->where('status', 1)->countAllResults();
-		$completed = $ProjectsModel->where('client_id',$usession['sup_user_id'])->where('status', 2)->countAllResults();
-		$cancelled = $ProjectsModel->where('client_id',$usession['sup_user_id'])->where('status', 3)->countAllResults();
-		$hold = $ProjectsModel->where('client_id',$usession['sup_user_id'])->where('status', 4)->countAllResults();
+		$not_started = $ProjectsModel->where('client_id',$usession['sup_user_id'])->where('status', '0')->countAllResults();
+		$in_progress = $ProjectsModel->where('client_id',$usession['sup_user_id'])->where('status', '1')->countAllResults();
+		$completed = $ProjectsModel->where('client_id',$usession['sup_user_id'])->where('status', '2')->countAllResults();
+		$cancelled = $ProjectsModel->where('client_id',$usession['sup_user_id'])->where('status', '3')->countAllResults();
+		$hold = $ProjectsModel->where('client_id',$usession['sup_user_id'])->where('status', '4')->countAllResults();
 		/* Define return | here result is used to return user data and error for error message */
 		$Return = array('not_started'=>'', 'in_progress'=>'','completed'=>'', 'cancelled'=>'','hold'=>'', 'not_started_lb'=>'', 'in_progress_lb'=>'','completed_lb'=>'', 'cancelled_lb'=>'','hold_lb'=>'',);
 		// not_started
@@ -1888,15 +1888,15 @@ class Projects extends BaseController {
 		$ProjectsModel = new ProjectsModel();
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if($user_info['user_type'] == 'staff'){
-			$highest = $ProjectsModel->where('company_id',$user_info['company_id'])->where('priority', 1)->countAllResults();
-			$high = $ProjectsModel->where('company_id',$user_info['company_id'])->where('priority', 2)->countAllResults();
-			$normal = $ProjectsModel->where('company_id',$user_info['company_id'])->where('priority', 3)->countAllResults();
-			$low = $ProjectsModel->where('company_id',$user_info['company_id'])->where('priority', 4)->countAllResults();
+			$highest = $ProjectsModel->where('company_id',$user_info['company_id'])->where('priority', '1')->countAllResults();
+			$high = $ProjectsModel->where('company_id',$user_info['company_id'])->where('priority', '2')->countAllResults();
+			$normal = $ProjectsModel->where('company_id',$user_info['company_id'])->where('priority', '3')->countAllResults();
+			$low = $ProjectsModel->where('company_id',$user_info['company_id'])->where('priority', '4')->countAllResults();
 		} else {
-			$highest = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('priority', 1)->countAllResults();
-			$high = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('priority', 2)->countAllResults();
-			$normal = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('priority', 3)->countAllResults();
-			$low = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('priority', 4)->countAllResults();
+			$highest = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('priority', '1')->countAllResults();
+			$high = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('priority', '2')->countAllResults();
+			$normal = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('priority', '3')->countAllResults();
+			$low = $ProjectsModel->where('company_id',$usession['sup_user_id'])->where('priority', '4')->countAllResults();
 		}
 		/* Define return | here result is used to return user data and error for error message */
 		$Return = array('highest'=>'','high'=>'','normal'=>'','low'=>'','highest_lb'=>'','high_lb'=>'','normal_lb'=>'','low_lb'=>'');

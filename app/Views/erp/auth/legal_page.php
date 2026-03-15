@@ -12,7 +12,7 @@ $favicon = base_url().'/public/uploads/logo/favicon/'.$xin_system['favicon'];
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<link rel="icon" type="image/x-icon" href="<?= $favicon; ?>">
+<link rel="icon" type="image/png" href="<?= $favicon; ?>">
 <link rel="stylesheet" href="<?= base_url('public/assets/fonts/feather.css'); ?>">
 <link rel="stylesheet" href="<?= base_url('public/assets/css/style.css'); ?>">
 <style>

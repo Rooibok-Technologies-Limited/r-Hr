@@ -41,18 +41,27 @@ class BaseController extends Controller
 		
 		$UsersModel = new \App\Models\UsersModel();
 		$SystemModel = new \App\Models\SystemModel();
-		if(!empty($usession)){
+		if(!empty($usession) && is_array($usession) && !empty($usession['sup_user_id'])){
 			$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
-			if($user_info['user_type'] == 'super_user'){
+			if(empty($user_info)){
+				// Stale/invalid session — user no longer exists in DB. Destroy it.
+				$session->destroy();
+			} else if($user_info['user_type'] == 'super_user'){
 				$xin_system = $SystemModel->where('setting_id', 1)->first();
-				$language->setLocale($xin_system['default_language']);
-				date_default_timezone_set($xin_system['system_timezone']);
+				if(!empty($xin_system)){
+					$language->setLocale($xin_system['default_language']);
+					date_default_timezone_set($xin_system['system_timezone']);
+				}
 			} else {
 				$xin_system = erp_company_settings();
-				$language->setLocale($xin_system['default_language']);
-				date_default_timezone_set($xin_system['system_timezone']);
+				if(!empty($xin_system)){
+					$language->setLocale($xin_system['default_language']);
+					date_default_timezone_set($xin_system['system_timezone']);
+				}
 			}
-			$language->setLocale($session->lang);
+			if(!empty($session->lang)){
+				$language->setLocale($session->lang);
+			}
 		}
 		//use App\Models\SystemModel;
 		//--------------------------------------------------------------------
@@ -62,6 +71,14 @@ class BaseController extends Controller
 		// $this->session = \Config\Services::session();
 	}
 	
+	/**
+	 * Strip commas from a POST value (for numeric fields like price, amount, salary)
+	 */
+	protected function numericPost(string $field): string {
+		$val = strip_tags(trim($this->request->getPost($field) ?? ''));
+		return str_replace(',', '', $val);
+	}
+
 	/*Function to set JSON output*/
 	public function output($Return=array()){
 		/*Set response header*/

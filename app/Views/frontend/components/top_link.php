@@ -26,17 +26,21 @@ if (!empty($usession) && isset($usession['sup_user_id'])) {
 	}
 }
 $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
-$session_lang = $session->lang;
+$session_lang = $session->lang ?? null;
+$flg_icn = '<img src="'.base_url().'/public/uploads/languages_flag/gb.gif"> English';
+$lg_code = 'en';
 if(!empty($session_lang)):
 	$lang_code = $LanguageModel->where('language_code', $session_lang)->first();
-	$flg_icn = '<img src="'.base_url().'/public/uploads/languages_flag/'.$lang_code['language_flag'].'"> '.$lang_code['language_name'];
-	$lg_code = $session_lang;
-elseif($xin_system['default_language']!=''):
+	if(!empty($lang_code)):
+		$flg_icn = '<img src="'.base_url().'/public/uploads/languages_flag/'.$lang_code['language_flag'].'"> '.$lang_code['language_name'];
+		$lg_code = $session_lang;
+	endif;
+elseif(!empty($xin_system['default_language'])):
 	$lg_code = $xin_system['default_language'];
 	$lang_code = $LanguageModel->where('language_code', $xin_system['default_language'])->first();
-	$flg_icn = '<img src="'.base_url().'/public/uploads/languages_flag/'.$lang_code['language_flag'].'"> '.$lang_code['language_name'];
-else:
-	$flg_icn = '<img src="'.base_url().'/public/uploads/languages_flag/gb.gif"> English';	
+	if(!empty($lang_code)):
+		$flg_icn = '<img src="'.base_url().'/public/uploads/languages_flag/'.$lang_code['language_flag'].'"> '.$lang_code['language_name'];
+	endif;
 endif;
 ?>
 <header>

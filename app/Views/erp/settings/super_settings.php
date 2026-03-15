@@ -10,16 +10,18 @@ $UsersModel  = new UsersModel();
 
 $session  = \Config\Services::session();
 $usession = $session->get('sup_username');
-$user     = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
+$_uid = (!empty($usession) && is_array($usession)) ? ($usession['sup_user_id'] ?? 0) : 0;
+$user     = $_uid ? $UsersModel->where('user_id', $_uid)->first() : null;
 $settings = $SystemModel->where('setting_id', 1)->first();
 $tab      = $tab ?? 'payments';
+$active_tab = in_array($tab, ['payments','mtn','airtel']) ? 'payments' : 'tax';
 ?>
 
 <div class="row">
 <div class="col-lg-12">
 <div class="card">
   <div class="card-header">
-    <h5>Super Admin Settings</h5>
+    <h5><?= $active_tab == 'payments' ? 'Payment Gateways' : 'Tax Configuration'; ?></h5>
     <ul class="nav nav-tabs card-header-tabs" id="superSettingsTabs">
       <li class="nav-item">
         <a class="nav-link <?= $tab === 'payments' ? 'active' : '' ?>" data-toggle="tab" href="#tab-stripe">Stripe</a>

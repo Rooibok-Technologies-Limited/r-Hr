@@ -9,9 +9,9 @@ $ActivityModel = new ActivityModel();
 $session = \Config\Services::session();
 $usession = $session->get('sup_username');
 $request = \Config\Services::request();
-
-$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
-if($user_info['user_type'] == 'staff'){
+$_uid_f = (!empty($usession) && is_array($usession)) ? ($usession['sup_user_id'] ?? 0) : 0;
+$user_info = $_uid_f ? $UsersModel->where('user_id', $_uid_f)->first() : null;
+if(!empty($user_info) && $user_info['user_type'] == 'staff'){
 	$company_id = $user_info['company_id'];
 	$activities = $ActivityModel->where('company_id', $company_id)->where('staff_id', $usession['sup_user_id'])->findAll();
 } else {

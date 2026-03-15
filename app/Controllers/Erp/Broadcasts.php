@@ -501,7 +501,7 @@ class Broadcasts extends BaseController
         }
 
         $data['title']       = 'Broadcast Templates | ' . $xin_system['application_name'];
-        $data['path_url']    = 'broadcasts';
+        $data['path_url']    = 'broadcast_templates';
         $data['breadcrumbs'] = 'Broadcast Templates';
         $data['templates']   = $templates;
         $data['user_info']   = $user_info;

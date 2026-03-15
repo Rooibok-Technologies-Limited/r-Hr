@@ -21,7 +21,7 @@ $role_user = $UserRolesModel->where('role_id', 1)->first();
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Place favicon.ico in the root directory -->
-  <link rel="shortcut icon" type="image/x-icon" href="<?= base_url();?>/public/uploads/logo/favicon/<?= $xin_system['favicon'];?>">
+  <link rel="icon" type="image/png" href="<?= base_url();?>/public/uploads/logo/favicon/<?= $xin_system['favicon'] ?? '';?>">
   <!-- CSS here -->
   <link rel="stylesheet" href="<?= base_url();?>/public/frontend/assets/css/preloader.css">
   <link rel="stylesheet" href="<?= base_url();?>/public/frontend/assets/css/bootstrap.min.css">

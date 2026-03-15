@@ -59,6 +59,15 @@ $routes->get('erp/', 'Home::login', ['namespace' => 'App\Controllers']);
 $routes->get('erp/login', 'Home::login', ['namespace' => 'App\Controllers']);
 $routes->post('erp/auth/login', 'Auth::login', ['namespace' => 'App\Controllers\Erp']);
 $routes->get('erp/desk', 'Dashboard::index', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/dashboard/revenue-chart', 'Dashboard::revenue_chart', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/dashboard/kpi-refresh', 'Dashboard::kpi_refresh', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/global-search', 'Dashboard::global_search', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/notifications', 'Dashboard::notifications', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/notifications-page', 'Dashboard::notifications_page', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->post('erp/notifications/mark-read', 'Dashboard::mark_notification_read', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->post('erp/notifications/mark-all-read', 'Dashboard::mark_all_read', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->post('erp/notifications/delete', 'Dashboard::delete_notification', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->post('erp/notifications/delete-all', 'Dashboard::delete_all_notifications', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/system-logout', 'Logout::index', ['namespace' => 'App\Controllers\Erp']);
 $routes->get('erp/set-language/(:segment)', 'Dashboard::language/$1', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/forgot-password', 'Auth::forgot_password', ['namespace' => 'App\Controllers\Erp']);
@@ -104,6 +113,8 @@ $routes->match(['get', 'post'], 'erp/settings/currency_type_info', 'Settings::cu
 $routes->match(['get', 'post'], 'erp/settings/update_currency_type', 'Settings::update_currency_type', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
 $routes->match(['get', 'post'], 'erp/settings/delete_currency_type', 'Settings::delete_currency_type', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
 //9: System||Database Backup
+$routes->get('erp/theme-settings', 'Settings::theme_settings', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->post('erp/settings/save_theme', 'Settings::save_theme', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/system-backup', 'Settings::database_backup', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
 $routes->match(['get', 'post'], 'erp/settings/create_database_backup', 'Settings::create_database_backup', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
 $routes->match(['get', 'post'], 'erp/settings/delete_db_backup', 'Settings::delete_db_backup', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
@@ -113,6 +124,19 @@ $routes->get('erp/email-templates', 'Settings::email_templates', ['namespace' =>
 $routes->match(['get', 'post'], 'erp/settings/update_template', 'Settings::update_template', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
 $routes->get('erp/sms-templates', 'Settings::sms_templates', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
 $routes->match(['get', 'post'], 'erp/settings/update_sms_template', 'Settings::update_template', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
+// AJAX list endpoints for settings DataTables
+$routes->get('erp/settings/company_type_list', 'Settings::company_type_list', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/settings/religion_list', 'Settings::religion_list', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/settings/currency_list', 'Settings::currency_list', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/settings/payment_method_list', 'Settings::payment_method_list', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/settings/email_template_list', 'Settings::email_template_list', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/settings/sms_template_list', 'Settings::sms_template_list', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/settings/database_backup_list', 'Settings::database_backup_list', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/settings/read', 'Settings::read', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/settings/add_religion_info', 'Settings::add_religion_info', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/settings/update_religion_info', 'Settings::update_religion_info', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/settings/delete_religion_type', 'Settings::delete_religion_type', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/settings/update_currency', 'Settings::update_currency', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 
 /***************************************************************************************************************/
 /***************************************************************************************************************/
@@ -1077,10 +1101,8 @@ $routes->match(['get','post'], 'erp/orgchart/delete_node', 'Orgchart::delete_nod
 // Unsubscribe (Phase 10.11)
 $routes->get('unsubscribe', 'Unsubscribe::index');
 
-// API Documentation (Swagger UI)
-$routes->get('api/docs', function () {
-	return redirect()->to('/api-docs/index.html');
-});
+// API Documentation
+$routes->get('api/docs', 'Home::api_docs', ['namespace' => 'App\Controllers']);
 
 // REST API v1
 $routes->group('api/v1', ['namespace' => 'App\Controllers\Api\V1', 'filter' => 'throttle:60,1'], function ($routes) {

@@ -1,75 +1,74 @@
-$(document).ready(function() {		
-	/* Edit data */ /*Form Submit*/
+$(document).ready(function() {
+	/* Edit user personal info */
 	$("#edit_user").submit(function(e){
+		e.preventDefault();
 		var fd = new FormData(this);
-		var obj = $(this), action = obj.attr('name');
 		fd.append("is_ajax", 1);
-		fd.append("type", 'edit_record');
-		fd.append("form", action);
-		e.preventDefault();		
+		fd.append("type", "edit_record");
+		fd.append("form", $(this).attr('name'));
 		$.ajax({
-			url: e.target.action,
+			url: $(this).attr('action'),
 			type: "POST",
-			data:  fd,
+			data: fd,
+			dataType: "json",
 			contentType: false,
 			cache: false,
-			processData:false,
-			success: function(JSON)
-			{
-				if (JSON.error != '') {
-					toastr.error(JSON.error);
-					$('input[name="csrf_token"]').val(JSON.csrf_hash);
-					Ladda.stopAll();
+			processData: false,
+			success: function(data) {
+				if (data.error && data.error !== '') {
+					toastr.error(data.error);
 				} else {
-					toastr.success(JSON.result);
-					$('input[name="csrf_token"]').val(JSON.csrf_hash);
-					Ladda.stopAll();
+					toastr.success(data.result || 'Updated successfully');
 				}
+				if (data.csrf_hash) {
+					$('input[name="csrf_token"]').val(data.csrf_hash);
+				}
+				try { Ladda.stopAll(); } catch(ex){}
 			},
-			error: function() 
-			{
-				toastr.error(JSON.error);
-				$('input[name="csrf_token"]').val(JSON.csrf_hash);
-				Ladda.stopAll();
-			} 	        
-	   });
+			error: function(xhr, status, err) {
+				var msg = 'Save failed'; try { var r = JSON.parse(xhr.responseText); if(r.error) msg = r.error; } catch(ex){ msg = xhr.status + ': ' + (err || status); } toastr.error(msg);
+				try { Ladda.stopAll(); } catch(ex){}
+			}
+		});
 	});
-	/* Edit data */ /*Form Submit*/
+
+	/* Update profile photo */
 	$("#ci_logo").submit(function(e){
+		e.preventDefault();
 		var fd = new FormData(this);
-		var obj = $(this), action = obj.attr('name');
 		fd.append("is_ajax", 1);
-		fd.append("type", 'edit_record');
-		fd.append("form", action);
-		e.preventDefault();		
+		fd.append("type", "edit_record");
+		fd.append("form", $(this).attr('name'));
 		$.ajax({
-			url: e.target.action,
+			url: $(this).attr('action'),
 			type: "POST",
-			data:  fd,
+			data: fd,
+			dataType: "json",
 			contentType: false,
 			cache: false,
-			processData:false,
-			success: function(JSON)
-			{
-				if (JSON.error != '') {
-					toastr.error(JSON.error);
-					$('input[name="csrf_token"]').val(JSON.csrf_hash);
-					Ladda.stopAll();
+			processData: false,
+			success: function(data) {
+				if (data.error && data.error !== '') {
+					toastr.error(data.error);
 				} else {
-					toastr.success(JSON.result);
-					$('input[name="csrf_token"]').val(JSON.csrf_hash);
-					Ladda.stopAll();
-					setTimeout(function(){
-						window.location = '';
-					}, 3000);
+					toastr.success(data.result || 'Photo updated');
+					setTimeout(function(){ window.location.reload(); }, 1500);
 				}
+				if (data.csrf_hash) {
+					$('input[name="csrf_token"]').val(data.csrf_hash);
+				}
+				try { Ladda.stopAll(); } catch(ex){}
 			},
-			error: function() 
-			{
-				toastr.error(JSON.error);
-				$('input[name="csrf_token"]').val(JSON.csrf_hash);
-				Ladda.stopAll();
-			} 	        
-	   });
+			error: function(xhr, status, err) {
+				var msg = 'Upload failed'; try { var r = JSON.parse(xhr.responseText); if(r.error) msg = r.error; } catch(ex){ msg = xhr.status + ': ' + (err || status); } toastr.error(msg);
+				try { Ladda.stopAll(); } catch(ex){}
+			}
+		});
+	});
+
+	/* Show selected filename */
+	$('.custom-file-input').on('change', function(){
+		var fileName = $(this).val().split('\\').pop();
+		$(this).next('.custom-file-label').html(fileName || 'Choose file...');
 	});
 });

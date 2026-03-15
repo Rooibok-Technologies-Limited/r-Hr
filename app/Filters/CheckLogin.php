@@ -18,8 +18,17 @@ class CheckLogin implements FilterInterface
 			return redirect()->to(site_url('erp/login'));
 		}
 		$usession = $session->get('sup_username');
+
+		// Validate session structure
+		if (!is_array($usession) || empty($usession['sup_user_id'])) {
+			$session->destroy();
+			return redirect()->to(site_url('erp/login'));
+		}
+
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
-		if($user_info['is_active']!=1) {
+
+		// User no longer exists in DB (stale session after power loss, DB reset, etc.)
+		if (empty($user_info) || $user_info['is_active'] != 1) {
 			$session->destroy();
 			return redirect()->to(site_url('erp/login'));
 		}

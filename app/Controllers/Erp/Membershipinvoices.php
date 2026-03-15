@@ -75,42 +75,52 @@ class Membershipinvoices extends BaseController {
 		$xin_system = $SystemModel->where('setting_id', 1)->first();
 		
 		$data = array();
-		
-          foreach($billing as $r) {						
-		  	
+
+          foreach($billing as $r) {
 			$membership = $MembershipModel->where('membership_id', $r['membership_id'])->first();
 			$company = $UsersModel->where('user_id', $r['company_id'])->first();
-			if($r['subscription'] == 'monthly'){
-				$subscription = '<span class="text-success">'.lang('Membership.xin_subscription_monthly').'</span>';
-			} else {
-				$subscription = '<span class="text-info">'.lang('Membership.xin_subscription_yearly').'</span>';
-			}
-			$mp_subs = $membership['membership_type'];	
-			$price = number_to_currency($r['membership_price'], $xin_system['default_currency'],null,2);
 
-			$transaction_date = set_date_format($r['transaction_date']);
+			// Invoice link
+			$invoice_id = '<a href="'.site_url('erp/billing-detail/'.uencode($r['membership_invoice_id'])).'"><strong>'.esc($r['invoice_id'] ?? '#'.$r['membership_invoice_id']).'</strong></a>';
+
+			// Company
+			$companyName = $company ? esc($company['company_name']) : 'N/A';
+
+			// Plan
+			$planName = !empty($membership) ? esc($membership['membership_type']) : esc($r['membership_type'] ?? 'N/A');
+
+			// Amount
+			$amount = '<strong>UGX '.number_format((float)($r['membership_price'] ?? 0), 0).'</strong>';
+
+			// Payment method with icon
+			$method = esc($r['payment_method'] ?? 'N/A');
 			if($r['payment_method'] == 'Stripe'){
-				$invoice_url = $r['receipt_url'];
-				$target_blnk = 'target="_blank"';
-				$logo = '<i class="fab fa-cc-'.$r['source_info'].'"></i>';
+				$method = '<i class="feather icon-credit-card text-primary mr-1"></i>' . $method;
+			} elseif(stripos($r['payment_method'] ?? '', 'mtn') !== false){
+				$method = '<i class="feather icon-smartphone text-warning mr-1"></i>' . $method;
 			} else {
-				$invoice_url = site_url('erp/billing-detail').'/'.uencode($r['membership_invoice_id']);
-				$logo = '<i class="fab fa-cc-paypal text-primary"></i>';
-				$target_blnk = '';
+				$method = '<i class="feather icon-dollar-sign text-muted mr-1"></i>' . $method;
 			}
-			$invoice_id = '<a target="_blank" href="'.site_url('erp/billing-detail').'/'.uencode($r['membership_invoice_id']).'"><span>'.$r['invoice_id'].'</span></a>';					 			  			$links = '
-				'.$invoice_id.'
-				<div class="overlay-edit">
-					<a target="_blank" '.$target_blnk.' href="'.$invoice_url . '"><button type="button" class="btn btn-sm btn-icon btn-light-primary"><i class="feather icon-download"></i></button></a>
-				</div>
-			';
+
+			// Date
+			$date = !empty($r['transaction_date']) ? date('d M Y', strtotime(str_replace('/','-',$r['transaction_date']))) : 'N/A';
+
+			// Actions
+			$actions = '<div class="text-center">';
+			if(!empty($r['receipt_url'])){
+				$actions .= '<a href="'.esc($r['receipt_url']).'" target="_blank" class="btn btn-sm btn-light-primary mr-1" title="Receipt"><i class="feather icon-external-link"></i></a>';
+			}
+			$actions .= '<a href="'.site_url('erp/billing-detail/'.uencode($r['membership_invoice_id'])).'" class="btn btn-sm btn-light-info" title="View"><i class="feather icon-eye"></i></a>';
+			$actions .= '</div>';
+
 			$data[] = array(
-				$links,
-				$company['company_name'],
-				$mp_subs,
-				$price,
-				$logo.' '.$r['payment_method'],
-				$transaction_date,
+				$invoice_id,
+				$companyName,
+				$planName,
+				$amount,
+				$method,
+				$date,
+				$actions,
 			);
 		}
           $output = array(

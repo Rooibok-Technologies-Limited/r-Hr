@@ -8,15 +8,14 @@ $UserRolesModel = new RolesModel();
 $UsersModel = new UsersModel();
 
 $xin_system = $SystemModel->where('setting_id', 1)->first();
-$router = service('router'); 
-$favicon = base_url().'/public/uploads/logo/favicon/'.$xin_system['favicon'];
+$router = service('router');
+$favicon = !empty($xin_system['favicon']) ? base_url().'/public/uploads/logo/favicon/'.$xin_system['favicon'] : '';
 
 $session = \Config\Services::session();
-$router = service('router');
 
 $username = $session->get('sup_username');
-$user_id = $username['sup_user_id'];
-$user_info = $UsersModel->where('user_id', $user_id)->first();
+$user_id = (!empty($username) && is_array($username)) ? ($username['sup_user_id'] ?? 0) : 0;
+$user_info = $user_id ? $UsersModel->where('user_id', $user_id)->first() : null;
 $xin_com_system = erp_company_settings();
 ?>
 <!DOCTYPE html>
@@ -38,7 +37,7 @@ $xin_com_system = erp_company_settings();
     <meta name="author" content="erp" />
 
     <!-- Favicon icon -->
-    <link rel="icon" href="<?= base_url();?>/public/uploads/logo/favicon/<?= $xin_system['favicon'];?>" type="image/x-icon">
+    <link rel="icon" href="<?= base_url();?>/public/uploads/logo/favicon/<?= $xin_system['favicon'] ?? '';?>" type="image/png">
 
     <!-- font css -->
     <link rel="stylesheet" href="<?= base_url();?>/public/assets/fonts/font-awsome-pro/css/pro.min.css">
@@ -48,8 +47,40 @@ $xin_com_system = erp_company_settings();
     <!-- vendor css -->
     <link rel="stylesheet" href="<?= base_url();?>/public/assets/css/style.css">
     <link rel="stylesheet" href="<?= base_url();?>/public/assets/css/customizer.css">
+    <link rel="stylesheet" href="<?= base_url();?>/public/assets/css/sa-dashboard.css">
     
     <link rel="stylesheet" href="<?= base_url();?>/public/assets/css/layout-modern.css">
+    <?php
+    // Apply saved theme colors as CSS variables
+    $_theme_com = erp_company_settings();
+    $_tp = $_theme_com['theme_primary'] ?? '#7267EF';
+    $_ts = $_theme_com['theme_secondary'] ?? '#6c757d';
+    $_ta = $_theme_com['theme_success'] ?? '#17C666';
+    if ($_tp !== '#7267EF' || $_ts !== '#6c757d' || $_ta !== '#17C666'):
+    ?>
+    <style>
+    :root {
+      --primary: <?= $_tp; ?> !important;
+      --secondary: <?= $_ts; ?> !important;
+      --success: <?= $_ta; ?> !important;
+      --blue: <?= $_tp; ?>;
+    }
+    .btn-primary { background-color: <?= $_tp; ?>; border-color: <?= $_tp; ?>; }
+    .btn-primary:hover { background-color: <?= $_tp; ?>; border-color: <?= $_tp; ?>; opacity: 0.9; }
+    .btn-outline-primary { color: <?= $_tp; ?>; border-color: <?= $_tp; ?>; }
+    .btn-outline-primary:hover { background-color: <?= $_tp; ?>; border-color: <?= $_tp; ?>; color: #fff; }
+    .text-primary { color: <?= $_tp; ?> !important; }
+    .bg-primary { background-color: <?= $_tp; ?> !important; }
+    .badge-primary { background-color: <?= $_tp; ?>; }
+    .badge-light-primary { background: <?= $_tp; ?>1a; color: <?= $_tp; ?>; }
+    a { color: <?= $_tp; ?>; }
+    .pc-sidebar .pc-navbar .pc-item.active > .pc-link { color: <?= $_tp; ?>; }
+    .nav-tabs .nav-link.active { color: <?= $_tp; ?>; border-bottom-color: <?= $_tp; ?>; }
+    </style>
+    <?php endif; ?>
+    <?php
+    $_sidebar_theme = $_theme_com['theme_sidebar'] ?? 'light';
+    ?>
     <link rel="stylesheet" href="<?= base_url();?>/public/assets/css/plugins/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="<?= base_url();?>/public/assets/css/plugins/select2.min.css">
     <link rel="stylesheet" href="<?= base_url('public/assets/plugins/toastr/toastr.css');?>">

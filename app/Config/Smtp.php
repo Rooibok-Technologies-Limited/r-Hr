@@ -171,5 +171,3 @@ class Smtp extends BaseConfig
 	 */
 	public $DSN = false;
 }
-
-}

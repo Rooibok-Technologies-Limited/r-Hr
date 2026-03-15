@@ -212,23 +212,23 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
     <?= lang('Dashboard.left_warnings');?>
     </span> </a> </li>
   <!-- Broadcasts -->
-  <li class="pc-item"><a href="<?= site_url('erp/broadcasts/');?>" class="pc-link "><span class="pc-micon"><i data-feather="send"></i></span><span class="pc-mtext">
+  <li class="pc-item"><a href="<?= site_url('erp/broadcasts');?>" class="pc-link "><span class="pc-micon"><i data-feather="send"></i></span><span class="pc-mtext">
     Broadcasts
     </span></a></li>
   <!-- Expenses -->
-  <li class="pc-item"><a href="<?= site_url('erp/expenses/');?>" class="pc-link "><span class="pc-micon"><i data-feather="dollar-sign"></i></span><span class="pc-mtext">
+  <li class="pc-item"><a href="<?= site_url('erp/expenses');?>" class="pc-link "><span class="pc-micon"><i data-feather="dollar-sign"></i></span><span class="pc-mtext">
     Expenses
     </span></a></li>
   <!-- Org Chart -->
-  <li class="pc-item"><a href="<?= site_url('erp/org-chart/');?>" class="pc-link "><span class="pc-micon"><i data-feather="git-merge"></i></span><span class="pc-mtext">
+  <li class="pc-item"><a href="<?= site_url('erp/org-chart');?>" class="pc-link "><span class="pc-micon"><i data-feather="git-merge"></i></span><span class="pc-mtext">
     Org Chart
     </span></a></li>
   <!-- Live Attendance -->
-  <li class="pc-item"><a href="<?= site_url('erp/attendance-live/');?>" class="pc-link "><span class="pc-micon"><i data-feather="activity"></i></span><span class="pc-mtext">
+  <li class="pc-item"><a href="<?= site_url('erp/attendance-live');?>" class="pc-link "><span class="pc-micon"><i data-feather="activity"></i></span><span class="pc-mtext">
     Live Attendance
     </span></a></li>
   <!-- Subscription Invoices -->
-  <li class="pc-item"><a href="<?= site_url('erp/subscription-invoices/');?>" class="pc-link "><span class="pc-micon"><i data-feather="file-text"></i></span><span class="pc-mtext">
+  <li class="pc-item"><a href="<?= site_url('erp/subscription-invoices');?>" class="pc-link "><span class="pc-micon"><i data-feather="file-text"></i></span><span class="pc-mtext">
     Subscription Invoices
     </span></a></li>
 </ul>

@@ -1,6 +1,39 @@
 <?php
 //Process String
 
+// Create a notification for a user
+if(!function_exists('create_notification')) {
+	function create_notification(int $user_id, string $title, string $body = '', string $link = '', int $company_id = 0): void {
+		$db = \Config\Database::connect();
+		// Ensure link is a full URL
+		if (!empty($link) && strpos($link, 'http') !== 0) {
+			$link = site_url(ltrim($link, '/'));
+		}
+		$db->table('ci_notifications')->insert([
+			'user_id'    => $user_id,
+			'company_id' => $company_id,
+			'title'      => $title,
+			'body'       => $body,
+			'link'       => $link,
+			'is_read'    => 0,
+			'created_at' => date('Y-m-d H:i:s'),
+		]);
+	}
+}
+
+// Safe session getter — returns validated session array or null.
+// Prevents "array offset on null" crashes from stale/corrupt sessions.
+if( !function_exists('get_safe_session') ){
+	function get_safe_session(){
+		$session = \Config\Services::session();
+		$usession = $session->get('sup_username');
+		if(!empty($usession) && is_array($usession) && !empty($usession['sup_user_id'])){
+			return $usession;
+		}
+		return null;
+	}
+}
+
 // Cached system settings lookup — replaces env() calls for API keys
 if( !function_exists('system_setting') ){
 	function system_setting(string $key): string {
@@ -69,9 +102,8 @@ if( !function_exists('super_user_role_resource') ){
 
 	function super_user_role_resource(){
 
-		// get session
-		$session = \Config\Services::session();
-		$usession = $session->get('sup_username');
+		$usession = get_safe_session();
+		if(!$usession) return [];
 		$userId = $usession['sup_user_id'];
 
 		$cache = \Config\Services::cache();
@@ -85,7 +117,9 @@ if( !function_exists('super_user_role_resource') ){
 		$SuperroleModel = new \App\Models\SuperroleModel();
 
 		$user = $UsersModel->where('user_id', $userId)->first();
+		if(empty($user)) return [];
 		$role_user = $SuperroleModel->where('role_id', $user['user_role_id'])->first();
+		if(empty($role_user) || empty($role_user['role_resources'])) return [];
 		$role_resources_ids = explode(',',$role_user['role_resources']);
 
 		$cache->save($cacheKey, $role_resources_ids, 3600);
@@ -95,15 +129,15 @@ if( !function_exists('super_user_role_resource') ){
 if( !function_exists('set_date_format') ){
 	//set currency sign
 	function set_date_format($date) {
-		
-		// get session
-		$session = \Config\Services::session();
-		$usession = $session->get('sup_username');
-		
+
+		$usession = get_safe_session();
+		if(!$usession) return date("Y-m-d", strtotime($date));
+
 		$UsersModel = new \App\Models\UsersModel();
 		$SystemModel = new \App\Models\SystemModel();
-		
+
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
+		if(empty($user_info)) return date("Y-m-d", strtotime($date));
 		$com_xin_system = erp_company_settings();
 		if($user_info['user_type'] == 'super_user'){
 			
@@ -196,17 +230,18 @@ if( !function_exists('set_date_format') ){
 if( !function_exists('js_set_date_format') ){
 	//set currency sign
 	function js_set_date_format() {
-		
-		// get session
-		$session = \Config\Services::session();
-		$usession = $session->get('sup_username');
-		
+
+		$usession = get_safe_session();
+		if(!$usession) return 'YYYY-MM-DD';
+
 		$UsersModel = new \App\Models\UsersModel();
 		$SystemModel = new \App\Models\SystemModel();
-		
+
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
-		
+		if(empty($user_info)) return 'YYYY-MM-DD';
+
 		$xin_system = erp_company_settings();
+		if(empty($xin_system)) return 'YYYY-MM-DD';
 		// date format
 		if($xin_system['date_format_xi']=='Y-m-d'){
 			$d_format = 'YYYY-MM-DD';
@@ -328,9 +363,8 @@ if( !function_exists('staff_role_resource') ){
 // get user role > links > all
 	function staff_role_resource(){
 
-		// get session
-		$session = \Config\Services::session();
-		$usession = $session->get('sup_username');
+		$usession = get_safe_session();
+		if(!$usession) return [];
 		$userId = $usession['sup_user_id'];
 
 		$cache = \Config\Services::cache();

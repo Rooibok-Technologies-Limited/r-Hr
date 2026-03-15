@@ -1,3 +1,4 @@
+<?php $get_animate = ''; ?>
 <div class="ui-bordered px-4 pt-4 mb-4">
   <?php $attributes = array('name' => 'xin-form', 'id' => 'xin-form', 'autocomplete' => 'off');?>
         <?php $hidden = array('_user' => 1);?>

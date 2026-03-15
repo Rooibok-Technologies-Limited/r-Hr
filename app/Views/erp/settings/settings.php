@@ -20,7 +20,8 @@ $usession = $session->get('sup_username');
 $request = \Config\Services::request();
 $router = service('router');
 
-$user = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
+$_uid = (!empty($usession) && is_array($usession)) ? ($usession['sup_user_id'] ?? 0) : 0;
+$user = $_uid ? $UsersModel->where('user_id', $_uid)->first() : null;
 $currency = $ConstantsModel->where('type','currency_type')->orderBy('constants_id', 'ASC')->findAll();
 $language = $LanguageModel->where('is_active', 1)->orderBy('language_id', 'ASC')->findAll();
 $xin_system = $SystemModel->where('setting_id', 1)->first();
@@ -31,116 +32,11 @@ $company_types = $ConstantsModel->where('type','company_type')->orderBy('constan
 $setup_modules = unserialize($xin_com_system['setup_modules']);
 ?>
 
-<div id="smartwizard-2" class="border-bottom smartwizard-example sw-main sw-theme-default mt-2">
-  <ul class="nav nav-tabs step-anchor">
-    <?php if(in_array('settings1',staff_role_resource()) || $user['user_type']== 'company') { ?>
-    <li class="nav-item active"> <a href="<?= site_url('erp/system-settings');?>" class="mb-3 nav-link"> <span class="sw-done-icon feather icon-check-circle"></span> <span class="sw-icon feather icon-settings"></span>
-      <?= lang('Main.left_settings');?>
-      <div class="text-muted small">
-        <?= lang('Main.xin_set_up');?>
-        <?= lang('Main.left_settings');?>
-      </div>
-      </a> </li>
-    <?php } ?>
-    <?php if(in_array('settings2',staff_role_resource()) || $user['user_type']== 'company') { ?>
-    <li class="nav-item clickable"> <a href="<?= site_url('erp/system-constants');?>" class="mb-3 nav-link"> <span class="sw-done-icon feather icon-check-circle"></span> <span class="sw-icon feather icon-activity"></span>
-      <?= lang('Main.left_constants');?>
-      <div class="text-muted small">
-        <?= lang('Main.xin_set_up');?>
-        <?= lang('Main.left_constants');?>
-      </div>
-      </a> </li>
-    <?php } ?>
-    <?php if(in_array('settings3',staff_role_resource()) || $user['user_type']== 'company') { ?>
-    <li class="nav-item clickable"> <a href="<?= site_url('erp/email-templates');?>" class="mb-3 nav-link"> <span class="sw-done-icon feather icon-check-circle"></span> <span class="sw-icon feather icon-mail"></span>
-      <?= lang('Main.left_email_templates');?>
-      <div class="text-muted small">
-        <?= lang('Main.xin_set_up');?>
-        <?= lang('Main.left_email_templates');?>
-      </div>
-      </a> </li>
-    <?php } ?>
-    <?php if(in_array('settings7',staff_role_resource()) || $user['user_type']== 'company') { ?>
-    <li class="nav-item clickable"> <a href="<?= site_url('erp/sms-templates');?>" class="mb-3 nav-link"> <span class="sw-done-icon feather icon-check-circle"></span> <span class="sw-icon feather icon-message-circle"></span>
-      <?= lang('Main.xin_sms_templates');?>
-      <div class="text-muted small">
-        <?= lang('Main.xin_set_up');?>
-        <?= lang('Main.xin_sms_templates');?>
-      </div>
-      </a> </li>
-    <?php } ?>
-    <?php if(in_array('settings4',staff_role_resource()) || $user['user_type']== 'company') { ?>
-    <li class="nav-item clickable"> <a href="<?= site_url('erp/all-languages');?>" class="mb-3 nav-link"> <span class="sw-done-icon feather icon-check-circle"></span> <span class="sw-icon feather icon-flag"></span>
-      <?= lang('Main.xin_multi_language');?>
-      <div class="text-muted small">
-        <?= lang('Main.xin_set_up');?>
-        <?= lang('Main.xin_multi_language');?>
-      </div>
-      </a> </li>
-    <?php } ?>
-    <?php if($user['user_type'] == 'super_user') { ?>
-    <li class="nav-item clickable"> <a href="<?= site_url('erp/system-payment-settings');?>" class="mb-3 nav-link"> <span class="sw-done-icon feather icon-check-circle"></span> <span class="sw-icon feather icon-credit-card"></span>
-      Payments
-      <div class="text-muted small">Stripe, MTN, Airtel</div>
-      </a> </li>
-    <li class="nav-item clickable"> <a href="<?= site_url('erp/system-sms-settings');?>" class="mb-3 nav-link"> <span class="sw-done-icon feather icon-check-circle"></span> <span class="sw-icon feather icon-smartphone"></span>
-      SMS
-      <div class="text-muted small">SMS Provider Config</div>
-      </a> </li>
-    <li class="nav-item clickable"> <a href="<?= site_url('erp/system-api-settings');?>" class="mb-3 nav-link"> <span class="sw-done-icon feather icon-check-circle"></span> <span class="sw-icon feather icon-lock"></span>
-      API &amp; Security
-      <div class="text-muted small">JWT, Rate Limiting</div>
-      </a> </li>
-    <li class="nav-item clickable"> <a href="<?= site_url('erp/system-tax-settings');?>" class="mb-3 nav-link"> <span class="sw-done-icon feather icon-check-circle"></span> <span class="sw-icon feather icon-percent"></span>
-      Tax (PAYE/NSSF)
-      <div class="text-muted small">Tax Configuration</div>
-      </a> </li>
-    <?php } ?>
-  </ul>
-</div>
-<hr class="border-light m-0 mb-3">
-<?php if(in_array('settings1',staff_role_resource()) || $user['user_type']== 'company') { ?>
+<?php if(($user['user_type'] ?? '') == 'super_user' || in_array('settings1',staff_role_resource()) || ($user['user_type'] ?? '') == 'company') { ?>
 <div class="row">
-<!-- start -->
-<div class="col-lg-3">
-  <div class="card user-card user-card-1">
-    <div class="card-body pb-0">
-      <div class="media user-about-block align-items-center mt-0 mb-3">
-        <div class="position-relative d-inline-block">
-          <div class="certificated-badge"> <a href="javascript:void(0)" class="mb-3 nav-link"><span class="sw-icon fas fa-cog"></span></a> </div>
-        </div>
-        <div class="media-body ml-3">
-          <h6 class="mb-1">
-            <?= lang('Main.left_settings');?>
-          </h6>
-          <p class="mb-0 text-muted">
-            <?= lang('Main.header_configuration');?>
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="nav flex-column nav-pills list-group list-group-flush list-pills" id="user-set-tab" role="tablist" aria-orientation="vertical"> <a class="nav-link list-group-item list-group-item-action active" id="account-settings-tab" data-toggle="pill" href="#account-settings" role="tab" aria-controls="account-settings" aria-selected="true"> <span class="f-w-500"><i class="feather icon-disc m-r-10 h5 "></i>
-      <?= lang('Main.xin_system');?>
-      </span> <span class="float-right"><i class="feather icon-chevron-right"></i></span> </a> <a class="nav-link list-group-item list-group-item-action" id="account-system-logos-tab" data-toggle="pill" href="#account-system-logos" role="tab" aria-controls="account-system-logos" aria-selected="false"> <span class="f-w-500"><i class="feather icon-image m-r-10 h5 "></i>
-      <?= lang('Main.xin_system_logos');?>
-      </span> <span class="float-right"><i class="feather icon-chevron-right"></i></span> </a> <a class="nav-link list-group-item list-group-item-action" id="account-payment-tab" data-toggle="pill" href="#account-payment" role="tab" aria-controls="account-payment" aria-selected="false"> <span class="f-w-500"><i class="feather icon-credit-card m-r-10 h5 "></i>
-      <?= lang('Main.xin_acc_payment_gateway');?>
-      </span> <span class="float-right"><i class="feather icon-chevron-right"></i></span> </a> <a class="nav-link list-group-item list-group-item-action" id="account-notification-tab" data-toggle="pill" href="#account-notification" role="tab" aria-controls="account-notification" aria-selected="false"> <span class="f-w-500"><i class="feather icon-crosshair m-r-10 h5 "></i>
-      <?= lang('Main.xin_notification_position');?>
-      </span> <span class="float-right"><i class="feather icon-chevron-right"></i></span> </a> <a class="nav-link list-group-item list-group-item-action" id="user-set-email-tab" data-toggle="pill" href="#user-set-email" role="tab" aria-controls="user-set-email" aria-selected="false"> <span class="f-w-500"><i class="feather icon-mail m-r-10 h5 "></i>
-      <?= lang('Main.xin_email_notifications');?>
-      </span> <span class="float-right"><i class="feather icon-chevron-right"></i></span> </a> <a class="nav-link list-group-item list-group-item-action" id="user-set-sms-tab" data-toggle="pill" href="#user-set-sms" role="tab" aria-controls="user-set-sms" aria-selected="false"> <span class="f-w-500"><i class="feather icon-message-circle m-r-10 h5 "></i>
-      <?= lang('Main.xin_sms_settings');?>
-      </span> <span class="float-right"><i class="feather icon-chevron-right"></i></span> </a> <a class="nav-link list-group-item list-group-item-action" id="user-set-modules-tab" data-toggle="pill" href="#user-set-modules" role="tab" aria-controls="user-set-modules" aria-selected="false"> <span class="f-w-500"><i class="feather icon-target m-r-10 h5 "></i>
-      <?= lang('Main.xin_setup_modules');?>
-      </span> <span class="float-right"><i class="feather icon-chevron-right"></i></span> </a> <a class="nav-link list-group-item list-group-item-action" id="user-set-theme-tab" data-toggle="pill" href="#user-set-theme" role="tab" aria-controls="user-set-theme" aria-selected="false"> <span class="f-w-500"><i class="feather icon-layout m-r-10 h5 "></i>
-      <?= lang('Main.xin_theme_settings');?>
-      </span> <span class="float-right"><i class="feather icon-chevron-right"></i></span> </a></div>
-  </div>
-</div>
-<div class="col-lg-9">
-  <div class="tab-content" id="user-set-tabContent">
-    <div class="tab-pane fade show active" id="account-settings" role="tabpanel" aria-labelledby="account-settings-tab">
+<div class="col-12">
+
+<!-- Section: System -->
       <div class="card">
         <div class="card-header">
           <h5><i data-feather="disc" class="icon-svg-primary wid-20"></i><span class="p-l-5">
@@ -273,8 +169,8 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
         </div>
         <?= form_close(); ?>
       </div>
-    </div>
-    <div class="tab-pane fade" id="account-system-logos" role="tabpanel" aria-labelledby="account-system-logos-tab">
+
+<!-- Section: Logos & Branding -->
       <div class="card">
         <div class="card-header">
           <h5><i data-feather="image" class="icon-svg-primary wid-20"></i><span class="p-l-5">
@@ -418,7 +314,8 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
         </div>
       </div>
     </div>
-    <div class="tab-pane fade" id="account-payment" role="tabpanel" aria-labelledby="account-payment-tab">
+    <!-- Section: Payment Gateway (hidden — moved to Payments & Tax sidebar) -->
+    <div class="d-none">
       <div class="card">
         <div class="card-header">
           <h5> <i data-feather="credit-card" class="icon-svg-primary wid-20"></i><span class="p-l-5">
@@ -476,7 +373,8 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
         <?= form_close(); ?>
       </div>
     </div>
-    <div class="tab-pane fade" id="account-notification" role="tabpanel" aria-labelledby="account-notification-tab">
+
+<!-- Section: Notification Position -->
       <div class="card">
         <div class="card-header">
           <h5><i data-feather="crosshair" class="icon-svg-primary wid-20"></i><span class="p-l-5">
@@ -548,7 +446,8 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
         <?= form_close(); ?>
       </div>
     </div>
-    <div class="tab-pane fade" id="user-set-email" role="tabpanel" aria-labelledby="user-set-email-tab">
+    <!-- Section: Email Settings (hidden — moved to Email Templates sidebar) -->
+    <div class="d-none">
       <div class="card">
         <div class="card-header">
           <h5><i data-feather="mail" class="icon-svg-primary wid-20"></i><span class="p-l-5">
@@ -593,7 +492,8 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
         <?= form_close(); ?>
       </div>
     </div>
-    <div class="tab-pane fade" id="user-set-sms" role="tabpanel" aria-labelledby="user-set-sms-tab">
+    <!-- Section: SMS Settings (hidden — moved to SMS Templates sidebar) -->
+    <div class="d-none">
       <div class="card">
         <div class="card-header">
           <h5><i data-feather="message-circle" class="icon-svg-primary wid-20"></i><span class="p-l-5">
@@ -659,7 +559,8 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
         <?= form_close(); ?>
       </div>
     </div>
-    <div class="tab-pane fade" id="user-set-modules" role="tabpanel" aria-labelledby="user-set-modules-tab">
+
+<!-- Section: Setup Modules -->
       <div class="card">
         <div class="card-header">
           <h5><i data-feather="target" class="icon-svg-primary wid-20"></i><span class="p-l-5">
@@ -777,13 +678,20 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
         <?= form_close(); ?>
       </div>
     </div>
-    <div class="tab-pane fade" id="user-set-theme" role="tabpanel" aria-labelledby="user-set-theme-tab">
+
+<!-- Theme Settings — moved to its own page -->
       <div class="card">
-        <div class="card-header">
-          <h5><i data-feather="layout" class="icon-svg-primary wid-20"></i><span class="p-l-5">
-            <?= lang('Main.xin_theme_settings');?>
-            </span></h5>
+        <div class="card-body text-center py-4">
+          <i class="feather icon-layout" data-feather="layout"></i>
+          <h6 class="mt-2">Theme Settings</h6>
+          <p class="text-muted small">Header theme, login page style, and background images have moved to their own page.</p>
+          <a href="<?= site_url('erp/theme-settings'); ?>" class="btn btn-primary btn-sm">Go to Theme Settings</a>
         </div>
+      </div>
+      <div class="d-none">
+      <!-- Hidden: old theme form kept for backwards compatibility -->
+      <div class="card">
+        <div class="card-header"><h5>Old Theme</h5></div>
         <?php $attributes = array('name' => 'layout_info', 'id' => 'layout_info', 'autocomplete' => 'off');?>
         <?php $hidden = array('token' => uencode($xin_com_system['company_id']));?>
         <?= form_open('erp/profile/layout_info', $attributes, $hidden);?>
@@ -942,7 +850,8 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
         </div>
         <?= form_close(); ?>
       </div>
-    </div>
-  </div>
-</div>
+      </div><!-- end d-none -->
+
+</div><!-- col-12 -->
+</div><!-- row -->
 <?php } ?>

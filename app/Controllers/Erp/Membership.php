@@ -78,49 +78,39 @@ class Membership extends BaseController {
 		$membership = $MembershipModel->orderBy('membership_id', 'ASC')->findAll();
 		$xin_system = $SystemModel->where('setting_id', 1)->first();
 		$data = array();
-		$avatar_array = array('badge badge-danger','badge badge-primary','badge badge-info','badge badge-success','badge badge-warning','badge badge-secondary','badge badge-dark');
-		$i=0;
-        foreach($membership as $r) {						
-		  			
-				$view = '<a href="'.site_url('erp/membership-detail/'). uencode($r['membership_id']) . '"><span data-toggle="tooltip" data-placement="top" data-state="primary" title="'.lang('Main.xin_view').'"><button type="button" class="btn icon-btn btn-sm btn-light-primary waves-effect waves-light"><i class="feather icon-arrow-right"></i></button></span></a>';
-				$view_modal = '<span data-toggle="tooltip" data-placement="top" data-state="primary" title="'.lang('Main.xin_view').'"><button type="button" class="btn icon-btn btn-sm btn-light-success waves-effect waves-light" data-toggle="modal" data-target=".view-modal-data" data-field_id="'. uencode($r['membership_id']) . '"><span class="fa fa-eye"></span></button></span>';
-				if($r['membership_id'] != 1){
-					$delete = '<span data-toggle="tooltip" data-placement="top" data-state="danger" title="'.lang('Main.xin_delete').'"><button type="button" class="btn icon-btn btn-sm btn-light-danger waves-effect waves-light delete" data-toggle="modal" data-target=".delete-modal" data-record-id="'. uencode($r['membership_id']) . '"><i class="feather icon-trash-2"></i></button></span>';
-				} else {
-					$delete = '';
-				}
-			$price = number_to_currency($r['price'], $xin_system['default_currency'],null,2);
-			$subs_str_plan = substr($r['membership_type'], 0, 1);
-			$plan2= $r['membership_type'];
-			/*'<div class="media align-items-center">
-				<span class="bg-avatar d-block ui-w-30 '.$avatar_array[$i].'">'.$subs_str_plan.'</span>
-				<div class="media-body flex-basis-auto pl-3">
-				  <div>'.$r['membership_type'].'</div>
-				</div>
-			  </div>';*/
+        foreach($membership as $r) {
+			// Plan name with badge
+			$plan_name = '<strong>'.esc($r['membership_type']).'</strong>';
+
+			// Duration
 			if($r['plan_duration']==1){
-				$plan_duration = lang('Membership.xin_subscription_monthly');
+				$plan_duration = '<span class="badge badge-light-info">Monthly</span>';
 			} else if($r['plan_duration']==2){
-				$plan_duration = lang('Membership.xin_subscription_yearly');
+				$plan_duration = '<span class="badge badge-light-primary">Yearly</span>';
 			} else {
-				$plan_duration = lang('Membership.xin_subscription_unlimit');
-			}	
-			$combhr = $view_modal.$view.$delete;
-			$_price = '<h6 class="mb-1 text-success">'.$price.'</h6>';
-			$links = '
-				'.$plan2.'
-				<div class="overlay-edit">
-					'.$combhr.'
-				</div>
-			';						 			  				
+				$plan_duration = '<span class="badge badge-light-success">Unlimited</span>';
+			}
+
+			// Price
+			$price = '<strong>UGX '.number_format((float)$r['price'], 0).'</strong>';
+
+			// Actions
+			$actions = '<div class="text-center">'
+				.'<a href="'.site_url('erp/membership-detail/'.uencode($r['membership_id'])).'" class="btn btn-sm btn-light-primary mr-1" title="View"><i class="feather icon-eye"></i></a>';
+			if($r['membership_id'] != 1){
+				$actions .= '<button type="button" class="btn btn-sm btn-light-danger delete" data-toggle="modal" data-target=".delete-modal" data-record-id="'.uencode($r['membership_id']).'" title="Delete"><i class="feather icon-trash-2"></i></button>';
+			}
+			$actions .= '</div>';
+
 			$data[] = array(
-				$links,
-				'<h6 class="mb-1 text-primary">'.$r['subscription_id'].'</h6>',
+				$plan_name,
+				esc($r['subscription_id']),
 				$plan_duration,
-				$_price,
-				$r['total_employees']
+				$price,
+				$r['total_employees'],
+				$actions,
 			);
-		$i++; }
+		}
           $output = array(
                //"draw" => $draw,
 			   "data" => $data
@@ -176,7 +166,7 @@ class Membership extends BaseController {
 			}
 		}
 		$membership_type = strip_tags(trim($this->request->getPost('membership_type')));
-		$price = strip_tags(trim($this->request->getPost('price')));
+		$price = $this->numericPost('price');
 		$plan_duration = strip_tags(trim($this->request->getPost('plan_duration')));
 		$total_employees = strip_tags(trim($this->request->getPost('total_employees')));
 		$description = strip_tags(trim($this->request->getPost('description')));	
@@ -249,7 +239,7 @@ class Membership extends BaseController {
 				$this->output($Return);
 			}
 			$membership_type = strip_tags(trim($this->request->getPost('membership_type')));
-			$price = strip_tags(trim($this->request->getPost('price')));
+			$price = $this->numericPost('price');
 			$plan_duration = strip_tags(trim($this->request->getPost('plan_duration')));
 			$total_employees = strip_tags(trim($this->request->getPost('total_employees')));
 			$description = strip_tags(trim($this->request->getPost('description')));		
@@ -480,7 +470,7 @@ class Membership extends BaseController {
 		// Check super admin
 		$UsersModel = new UsersModel();
 		$user = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
-		if ($user['user_type'] !== 'super') {
+		if ($user['user_type'] !== 'super_user') {
 			$session->setFlashdata('unauthorized_module', lang('Dashboard.xin_error_unauthorized_module'));
 			return redirect()->to(site_url('erp/desk'));
 		}
@@ -506,36 +496,43 @@ class Membership extends BaseController {
 
 		$db = \Config\Database::connect();
 		$UsersModel = new UsersModel();
-		$SystemModel = new SystemModel();
-		$xin_system = $SystemModel->where('setting_id', 1)->first();
+		$MembershipModel = new MembershipModel();
 
 		$invoices = $db->table('ci_subscription_invoices')
 			->orderBy('invoice_id', 'DESC')
-			->get()
-			->getResultArray();
+			->get();
+		$invoices = $invoices ? $invoices->getResultArray() : [];
 
 		$data = array();
 		foreach ($invoices as $r) {
 			$company = $UsersModel->where('user_id', $r['company_id'])->first();
 			$companyName = $company ? esc($company['company_name']) : 'N/A';
 
+			$plan = $MembershipModel->where('membership_id', $r['membership_id'])->first();
+			$planName = $plan ? esc($plan['membership_type']) : 'N/A';
+
 			$statusBadge = ($r['status'] === 'paid')
-				? '<span class="badge badge-success">Paid</span>'
-				: '<span class="badge badge-warning">' . ucfirst($r['status']) . '</span>';
+				? '<span class="badge badge-light-success">Paid</span>'
+				: '<span class="badge badge-light-warning">' . ucfirst(esc($r['status'] ?? 'pending')) . '</span>';
 
-			$downloadBtn = '<a href="' . site_url('erp/subscription-invoice-download/' . $r['invoice_id']) . '" class="btn btn-sm btn-icon btn-light-primary" data-toggle="tooltip" title="Download PDF"><i class="feather icon-download"></i></a>';
+			$actions = '<div class="text-center">';
+			if (!empty($r['pdf_path'])) {
+				$actions .= '<a href="' . site_url('erp/subscription-invoice-download/' . $r['invoice_id']) . '" class="btn btn-sm btn-light-primary" title="Download PDF"><i class="feather icon-download"></i></a>';
+			}
+			$actions .= '</div>';
 
-			$amount = number_format((float)$r['amount'], 0, '.', ',') . ' ' . $r['currency'];
+			$amount = '<strong>UGX ' . number_format((float)$r['amount'], 0) . '</strong>';
+			$date = $r['issued_at'] ? date('d M Y', strtotime($r['issued_at'])) : 'N/A';
 
 			$data[] = array(
-				'<strong>' . esc($r['invoice_number']) . '</strong>',
+				'<strong>' . esc($r['invoice_number'] ?? '#'.$r['invoice_id']) . '</strong>',
 				$companyName,
-				date('d M Y', strtotime($r['created_at'])),
-				esc($r['plan_name']),
+				$date,
+				$planName,
 				$amount,
-				esc($r['payment_method']),
+				esc($r['payment_method'] ?? 'N/A'),
 				$statusBadge,
-				$downloadBtn,
+				$actions,
 			);
 		}
 

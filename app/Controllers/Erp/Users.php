@@ -100,44 +100,38 @@ class Users extends BaseController {
 		$xin_system = $SystemModel->where('setting_id', 1)->first();
 		
 		$data = array();
-		
-          foreach($users as $r) {						
-		  			
-				$view = '<a href="'.site_url('erp/user-detail/'). uencode($r['user_id']) . '"><span data-toggle="tooltip" data-placement="top" data-state="primary" title="'.lang('Main.xin_view').'"><button type="button" class="btn icon-btn btn-sm btn-light-primary waves-effect waves-light"><i class="feather icon-arrow-right"></i></button></span></a>';
-				if($r['user_id']!=1){
-					$delete = '<span data-toggle="tooltip" data-placement="top" data-state="danger" title="'.lang('Main.xin_delete').'"><button type="button" class="btn icon-btn btn-sm btn-light-danger waves-effect waves-light delete" data-toggle="modal" data-target=".delete-modal" data-record-id="'. uencode($r['user_id']) . '"><i class="feather icon-trash-2"></i></button></span>';
-				} else {
-					$delete = '';
-				}
+
+          foreach($users as $r) {
 			$role = $SuperroleModel->where('role_id', $r['user_role_id'])->first();
-			if($r['is_active']==1){
-				$status = '<span class="badge badge-outline-success">'.lang('Main.xin_employees_active').'</span>';
-			} else {
-				$status = '<span class="badge badge-outline-danger">'.lang('Main.xin_employees_inactive').'</span>';
-			}
 			$country_info = $CountryModel->where('country_id', $r['country'])->first();
-			$name = $r['first_name'].' '.$r['last_name'];
-			$uname = '<div class="d-inline-block align-middle">
-				<img src="'.base_url().'/public/uploads/users/thumb/'.$r['profile_photo'].'" alt="user image" class="img-radius align-top m-r-15" style="width:40px;">
-				<div class="d-inline-block">
-					<h6 class="m-b-0">'.$name.'</h6>
-					<p class="m-b-0">'.$r['email'].'</p>
-				</div>
-			</div>';   
-			$combhr = $view.$delete;
-			$links = '
-				'.$uname.'
-				<div class="overlay-edit">
-					'.$combhr.'
-				</div>
-			';
-									 			  				
+
+			// Name with avatar
+			$avatar = staff_profile_photo($r['user_id']);
+			$name = '<div class="d-flex align-items-center">'
+				.'<img src="'.$avatar.'" alt="" class="img-radius mr-2" width="36" height="36">'
+				.'<div><strong>'.esc($r['first_name'].' '.$r['last_name']).'</strong><br><small class="text-muted">'.esc($r['email']).'</small></div>'
+				.'</div>';
+
+			// Status
+			$status = $r['is_active']==1
+				? '<span class="badge badge-light-success">Active</span>'
+				: '<span class="badge badge-light-danger">Inactive</span>';
+
+			// Actions
+			$actions = '<div class="text-center">'
+				.'<a href="'.site_url('erp/user-detail/'.uencode($r['user_id'])).'" class="btn btn-sm btn-light-primary mr-1" title="View"><i class="feather icon-eye"></i></a>';
+			if($r['user_id'] != 1){
+				$actions .= '<button type="button" class="btn btn-sm btn-light-danger delete" data-toggle="modal" data-target=".delete-modal" data-record-id="'.uencode($r['user_id']).'" title="Delete"><i class="feather icon-trash-2"></i></button>';
+			}
+			$actions .= '</div>';
+
 			$data[] = array(
-				$links,
-				$r['contact_number'],
-				$role['role_name'],
-				$country_info['country_name'],
-				$status
+				$name,
+				esc($r['contact_number'] ?? ''),
+				!empty($role) ? esc($role['role_name']) : 'N/A',
+				!empty($country_info) ? esc($country_info['country_name']) : 'N/A',
+				$status,
+				$actions,
 			);
 		}
           $output = array(
@@ -487,8 +481,8 @@ class Users extends BaseController {
 
 			$role_name = strip_tags(trim($this->request->getPost('role_name')));
 			$role_access = strip_tags(trim($this->request->getPost('role_access')));
-			$role_resources_field = strip_tags(trim($this->request->getPost('role_resources')));
-			$role_resources = implode(',',$role_resources_field);
+			$role_resources_field = $this->request->getPost('role_resources');
+			$role_resources = is_array($role_resources_field) ? implode(',', array_filter($role_resources_field)) : ($role_resources_field ?? '0');
 			$data = [
 				'role_name' => $role_name,
 				'role_access'  => $role_access,
@@ -521,7 +515,6 @@ class Users extends BaseController {
 		if ($this->request->getPost('type') === 'edit_record') {
 			$Return = array('result'=>'', 'error'=>'', 'csrf_hash'=>'');
 			$Return['csrf_hash'] = csrf_hash();
-			$image = service('image');
 			// set rules
 			$validated = $this->validate([
 				'file' => [
@@ -532,31 +525,38 @@ class Users extends BaseController {
 			]);
 			if (!$validated) {
 				$Return['error'] = lang('Main.xin_error_profile_picture_field');
-			} else {
-				$avatar = $this->request->getFile('file');
-				$file_name = $avatar->getName();
-				$avatar->move('public/uploads/users/');
-				$image->withFile(filesrc($file_name))
-				->fit(100, 100, 'center')
-				->save('public/uploads/users/thumb/'.$file_name);
-			}
-			if($Return['error']!=''){
 				$this->output($Return);
+				exit;
 			}
+
+			$avatar = $this->request->getFile('file');
+			$file_name = $avatar->getRandomName();
+			$upload_path = FCPATH . 'uploads/users/';
+			$thumb_path  = FCPATH . 'uploads/users/thumb/';
+
+			// Ensure directories exist
+			if (!is_dir($upload_path)) mkdir($upload_path, 0777, true);
+			if (!is_dir($thumb_path))  mkdir($thumb_path, 0777, true);
+
+			$avatar->move($upload_path, $file_name);
+
+			// Create thumbnail
+			try {
+				$image = service('image');
+				$image->withFile($upload_path . $file_name)
+					->fit(100, 100, 'center')
+					->save($thumb_path . $file_name);
+			} catch (\Exception $e) {
+				// Copy original as thumb if resize fails
+				copy($upload_path . $file_name, $thumb_path . $file_name);
+			}
+
 			$id = udecode(strip_tags(trim($this->request->getPost('token'))));
-			if ($validated) {
-				$UsersModel = new UsersModel();
-					
-				
-				$Return['result'] = lang('Main.xin_profile_picture_success_updated');
-				$data = [
-					'profile_photo'  => $file_name
-				];
-				$result = $UsersModel->update($id, $data);
-				$Return['csrf_hash'] = csrf_hash();	
-			} else {
-				$Return['error'] = lang('Main.xin_error_msg');
-			}
+			$UsersModel = new UsersModel();
+			$data = ['profile_photo' => $file_name];
+			$result = $UsersModel->update($id, $data);
+			$Return['csrf_hash'] = csrf_hash();
+			$Return['result'] = lang('Main.xin_profile_picture_success_updated');
 			$this->output($Return);
 			exit;
 		} else {
@@ -603,7 +603,8 @@ class Users extends BaseController {
 			$role_name = strip_tags(trim($this->request->getPost('role_name')));
 			$role_access = strip_tags(trim($this->request->getPost('role_access')));
 			$id = udecode(strip_tags(trim($this->request->getPost('token'))));
-			$role_resources = implode(',',strip_tags(trim($this->request->getPost('role_resources'))));
+			$role_resources_field = $this->request->getPost('role_resources');
+			$role_resources = is_array($role_resources_field) ? implode(',', array_filter($role_resources_field)) : ($role_resources_field ?? '0');
 			$data = [
 				'role_name' => $role_name,
 				'role_access'  => $role_access,
@@ -636,31 +637,28 @@ class Users extends BaseController {
 		$roles = $SuperroleModel->orderBy('role_id', 'ASC')->findAll();		
 		$data = array();
 		
-          foreach($roles as $r) {						
-		  			
-				$edit = '<span data-toggle="tooltip" data-placement="top" data-state="primary" title="'.lang('Main.xin_edit').'"><button type="button" class="btn icon-btn btn-sm btn-light-primary waves-effect waves-light" data-toggle="modal" data-target=".edit-modal-data" data-field_id="'. uencode($r['role_id']) . '"><i class="feather icon-edit"></i></button></span>';
-				if($r['role_id']!=1){
-					$delete = '<span data-toggle="tooltip" data-placement="top" data-state="danger" title="'.lang('Main.xin_delete').'"><button type="button" class="btn icon-btn btn-sm btn-light-danger waves-effect waves-light delete" data-toggle="modal" data-target=".delete-modal" data-record-id="'. uencode($r['role_id']) . '"><i class="feather icon-trash-2"></i></button></span>';
-				} else {
-					$delete = '';
-				}
-				
-			$combhr = $edit.$delete;
-			if($r['role_access']==1){
-				$role_access = '<span class="text-success">'.lang('Users.xin_role_all_menu').'</span';
-			} else {
-				$role_access = '<span class="text-info">'.lang('Users.xin_role_cmenu').'</span';
+          foreach($roles as $r) {
+			// Access level badge
+			$role_access = ($r['role_access'] ?? '') == '1'
+				? '<span class="badge badge-light-success">Full Access</span>'
+				: '<span class="badge badge-light-info">Custom</span>';
+
+			// Date
+			$date = !empty($r['created_at']) ? date('d M Y', strtotime(str_replace('/','-',$r['created_at']))) : 'N/A';
+
+			// Actions
+			$actions = '<div class="text-center">'
+				.'<button type="button" class="btn btn-sm btn-light-primary mr-1" data-toggle="modal" data-target=".edit-modal-data" data-field_id="'.uencode($r['role_id']).'" title="Edit"><i class="feather icon-edit"></i></button>';
+			if($r['role_id'] != 1){
+				$actions .= '<button type="button" class="btn btn-sm btn-light-danger delete" data-toggle="modal" data-target=".delete-modal" data-record-id="'.uencode($r['role_id']).'" title="Delete"><i class="feather icon-trash-2"></i></button>';
 			}
-			$links = '
-				'.$r['role_name'].'
-				<div class="overlay-edit">
-					'.$combhr.'
-				</div>
-			';						 			  				
+			$actions .= '</div>';
+
 			$data[] = array(
-				$links,
+				'<strong>'.esc($r['role_name']).'</strong>',
 				$role_access,
-				$r['created_at']
+				$date,
+				$actions,
 			);
 		}
           $output = array(

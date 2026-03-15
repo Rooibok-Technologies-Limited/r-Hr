@@ -223,6 +223,21 @@ $user_info = $UsersModel->where('user_id', $session['sup_user_id'])->first();
     
     <script type="text/javascript" src="<?php echo base_url();?>/public/assets/plugins/kendo/kendo.all.min.js"></script>
     <script src="<?php echo base_url();?>/public/assets/plugins/kendo/kendo.timezones.min.js"></script>
+	<script type="text/javascript">
+	// Auto-format number inputs with commas and strip on submit
+	$(document).ready(function(){
+		$(document).on('input','input[type="number"], input[name="price"], input[name="amount"], input[name="basic_salary"], input[name="contract_amount"], input[name="total_employees"], input[name="membership_price"]',function(){
+			var v = this.value.replace(/,/g,'');
+			if(!isNaN(v) && v !== '') this.value = Number(v).toLocaleString('en-US');
+		});
+		$(document).on('submit','form',function(){
+			$(this).find('input').each(function(){
+				if(this.value && /,/.test(this.value) && !isNaN(this.value.replace(/,/g,'')))
+					this.value = this.value.replace(/,/g,'');
+			});
+		});
+	});
+	</script>
 	<script type="text/javascript" src="<?= base_url().'/public/module_scripts/'.$path_url.'.js'; ?>"></script>
     <?php if($router->controllerName() == '\App\Controllers\Erp\Dashboard') { ?>
     	<?php if($user_info['user_type'] == 'staff'){ ?>

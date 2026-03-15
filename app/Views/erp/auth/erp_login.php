@@ -32,7 +32,7 @@ $username = $session->get('sup_username');
 <meta name="author" content="erp" />
 
 <!-- Favicon icon -->
-<link rel="icon" type="image/x-icon" href="<?= $favicon;?>">
+<link rel="icon" type="image/png" href="<?= $favicon;?>">
 
 <!-- font css -->
 <link rel="stylesheet" href="<?= base_url('public/assets/fonts/font-awsome-pro/css/pro.min.css');?>">

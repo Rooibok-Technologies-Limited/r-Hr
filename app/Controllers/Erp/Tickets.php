@@ -839,11 +839,11 @@ class Tickets extends BaseController {
 		$TicketsModel = new TicketsModel();
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if($user_info['user_type'] == 'staff'){
-			$open = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_status', 1)->countAllResults();
-			$closed = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_status', 2)->countAllResults();
+			$open = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_status', '1')->countAllResults();
+			$closed = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_status', '2')->countAllResults();
 		} else {
-			$open = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_status', 1)->countAllResults();
-			$closed = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_status', 2)->countAllResults();
+			$open = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_status', '1')->countAllResults();
+			$closed = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_status', '2')->countAllResults();
 		}
 		/* Define return | here result is used to return user data and error for error message */
 		$Return = array('open_count'=>'', 'open_label'=>'','closed'=>'', 'closed_label'=>'');
@@ -871,15 +871,15 @@ class Tickets extends BaseController {
 		$TicketsModel = new TicketsModel();
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if($user_info['user_type'] == 'staff'){
-			$low = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_priority', 1)->countAllResults();
-			$medium = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_priority', 2)->countAllResults();
-			$high = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_priority', 3)->countAllResults();
-			$critical = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_priority', 4)->countAllResults();
+			$low = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_priority', '1')->countAllResults();
+			$medium = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_priority', '2')->countAllResults();
+			$high = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_priority', '3')->countAllResults();
+			$critical = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_priority', '4')->countAllResults();
 		} else {
-			$low = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_priority', 1)->countAllResults();
-			$medium = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_priority', 2)->countAllResults();
-			$high = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_priority', 3)->countAllResults();
-			$critical = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_priority', 4)->countAllResults();
+			$low = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_priority', '1')->countAllResults();
+			$medium = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_priority', '2')->countAllResults();
+			$high = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_priority', '3')->countAllResults();
+			$critical = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_priority', '4')->countAllResults();
 		}
 		/* Define return | here result is used to return user data and error for error message */
 		$Return = array('low_count'=>'','medium_count'=>'','high_count'=>'','critical_count'=>'','low_labt'=>'','medium_lab'=>'','high_lab'=>'','critical_lab'=>'');
@@ -913,11 +913,11 @@ class Tickets extends BaseController {
 		$TicketsModel = new TicketsModel();
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if($user_info['user_type'] == 'staff'){
-			$open = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_status', 1)->countAllResults();
-			$closed = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_status', 2)->countAllResults();
+			$open = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_status', '1')->countAllResults();
+			$closed = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_status', '2')->countAllResults();
 		} else {
-			$open = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_status', 1)->countAllResults();
-			$closed = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_status', 2)->countAllResults();
+			$open = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_status', '1')->countAllResults();
+			$closed = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_status', '2')->countAllResults();
 		}
 		/* Define return | here result is used to return user data and error for error message */
 		$Return = array('open_count'=>'', 'open_label'=>'','closed'=>'', 'closed_label'=>'');
@@ -945,15 +945,15 @@ class Tickets extends BaseController {
 		$TicketsModel = new TicketsModel();
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if($user_info['user_type'] == 'staff'){
-			$low = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_priority', 1)->countAllResults();
-			$medium = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_priority', 2)->countAllResults();
-			$high = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_priority', 3)->countAllResults();
-			$critical = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_priority', 4)->countAllResults();
+			$low = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_priority', '1')->countAllResults();
+			$medium = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_priority', '2')->countAllResults();
+			$high = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_priority', '3')->countAllResults();
+			$critical = $TicketsModel->where('company_id',$user_info['company_id'])->where('ticket_priority', '4')->countAllResults();
 		} else {
-			$low = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_priority', 1)->countAllResults();
-			$medium = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_priority', 2)->countAllResults();
-			$high = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_priority', 3)->countAllResults();
-			$critical = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_priority', 4)->countAllResults();
+			$low = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_priority', '1')->countAllResults();
+			$medium = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_priority', '2')->countAllResults();
+			$high = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_priority', '3')->countAllResults();
+			$critical = $TicketsModel->where('company_id',$usession['sup_user_id'])->where('ticket_priority', '4')->countAllResults();
 		}
 		/* Define return | here result is used to return user data and error for error message */
 		$Return = array('low_count'=>'','medium_count'=>'','high_count'=>'','critical_count'=>'','low_labt'=>'','medium_lab'=>'','high_lab'=>'','critical_lab'=>'');

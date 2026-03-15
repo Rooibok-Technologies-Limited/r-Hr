@@ -27,20 +27,22 @@ $session = \Config\Services::session();
 $usession = $session->get('sup_username');
 $request = \Config\Services::request();
 $xin_system = erp_company_settings();
-$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
+$_uid_cd = (!empty($usession) && is_array($usession)) ? ($usession['sup_user_id'] ?? 0) : 0;
+$user_info = $_uid_cd ? $UsersModel->where('user_id', $_uid_cd)->first() : null;
 $company_id = user_company_info();
 $total_staff = $UsersModel->where('company_id', $company_id)->where('user_type','staff')->countAllResults();
 $total_projects = $ProjectsModel->where('company_id',$company_id)->countAllResults();
 $total_tickets = $TicketsModel->where('company_id',$company_id)->countAllResults();
-$open = $TicketsModel->where('company_id',$company_id)->where('ticket_status', 1)->countAllResults();
-$closed = $TicketsModel->where('company_id',$company_id)->where('ticket_status', 2)->countAllResults();
-	
+$open = $TicketsModel->where('company_id',$company_id)->where('ticket_status', '1')->countAllResults();
+$closed = $TicketsModel->where('company_id',$company_id)->where('ticket_status', '2')->countAllResults();
+
 // membership
-$company_membership = $CompanymembershipModel->where('company_id', $usession['sup_user_id'])->first();
-$subs_plan = $MembershipModel->where('membership_id', $company_membership['membership_id'])->first();
-$current_time = Time::now('Asia/Karachi');
+$company_membership = $CompanymembershipModel->where('company_id', $_uid_cd)->first();
+$subs_plan = !empty($company_membership) ? $MembershipModel->where('membership_id', $company_membership['membership_id'])->first() : null;
+$current_time = Time::now('Africa/Kampala');
 $company_membership_details = company_membership_details();
-if($company_membership_details['diff_days'] < 8){
+$_diff_days = $company_membership_details['diff_days'] ?? 999;
+if($_diff_days < 8){
 	$alert_bg = 'alert-danger';
 } else {
 	$alert_bg = 'alert-warning';

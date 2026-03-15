@@ -109,8 +109,8 @@ $(document).ready(function() {
 						toastr.success(JSON.result);
 					}, true);
 					$('input[name="csrf_token"]').val(JSON.csrf_hash);
-					$('#xin-form')[0].reset(); // To reset form fields
-					$('.add-form').removeClass('show');
+					$('#xin-form')[0].reset();
+					$('#addCompanyModal').modal('hide');
 					Ladda.stopAll();
 				}
 			},

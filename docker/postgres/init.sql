@@ -3,6 +3,15 @@
 -- Converted from MySQL schema
 --
 
+-- Safe timestamp parser: handles both DD-MM-YYYY and YYYY-MM-DD formats
+CREATE OR REPLACE FUNCTION safe_to_timestamp(text) RETURNS timestamp AS $$
+BEGIN
+  BEGIN RETURN $1::timestamp; EXCEPTION WHEN OTHERS THEN
+    BEGIN RETURN TO_TIMESTAMP($1, 'DD-MM-YYYY HH24:MI:SS'); EXCEPTION WHEN OTHERS THEN RETURN NULL; END;
+  END;
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
 --
 -- Database: erp_hrsale
 --

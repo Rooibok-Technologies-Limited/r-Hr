@@ -17,6 +17,7 @@ $all_countries = $CountryModel->orderBy('country_id', 'ASC')->findAll();
 $roles = $SuperroleModel->orderBy('role_id', 'ASC')->findAll();
 $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 $xin_system = $SystemModel->where('setting_id', 1)->first();
+$get_animate = '';
 ?>
 
 <div class="pc-wizard-subtitle" id="detailswizard3v">

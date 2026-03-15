@@ -29,12 +29,8 @@ class Home extends BaseController {
 	public function index()
 	{
 		$SystemModel = new SystemModel();
-		$session = \Config\Services::session();
-		if($session->has('sup_username')){
-			return redirect()->to(site_url('erp/desk'));
-		}
 		$xin_system = $SystemModel->where('setting_id', 1)->first();
-		$data['title'] = $xin_system['application_name'];
+		$data['title'] = $xin_system['application_name'] ?? 'Rooibok HR';
 		$data['xin_system'] = $xin_system;
 		return view('frontend/home', $data);
 	}
@@ -180,5 +176,17 @@ class Home extends BaseController {
 	public function visitor_kiosk()
 	{
 		return view('erp/kiosk/visitor_kiosk');
+	}
+
+	/**
+	 * API Documentation page — shows REST API endpoints.
+	 */
+	public function api_docs()
+	{
+		$SystemModel = new SystemModel();
+		$xin_system = $SystemModel->where('setting_id', 1)->first();
+		$data['title'] = 'API Documentation | ' . ($xin_system['application_name'] ?? 'Rooibok HR');
+		$data['xin_system'] = $xin_system;
+		return view('frontend/api_docs', $data);
 	}
 }
