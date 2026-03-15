@@ -12,12 +12,12 @@ $core = new Core();
 if(!empty($_POST) && $_POST['is_ajax']=='1' && $_POST['type']=='install'){
     /* Define return | here result is used to return user data and error for error message */
     $Return = array('result'=>'', 'error'=>'');
-	
+
 	$hostname = $_POST['hostname'];
 	$username = $_POST['username'];
 	$password = $_POST['password'];
 	$database = $_POST['database'];
-	
+
 	/* Server side PHP input validation */
     if($hostname==='') {
         $Return['error'] = 'The hostname field is required.';
@@ -28,37 +28,44 @@ if(!empty($_POST) && $_POST['is_ajax']=='1' && $_POST['type']=='install'){
     }*/ else if($database==='') {
         $Return['error'] = 'The database field is required.';
     }
-		
-   	/*Display Error. */		
+
+   	/*Display Error. */
     if($Return['error']!=''){
         $core->output($Return);
     }
 	// First create tables for database, then write the config file
-	// Connect to the database
-	$mysqli = new mysqli($hostname,$username,$password,$database);
-
-	// Check for errors
-	if(mysqli_connect_errno()) {
-		$Return['error'] = 'The database you are trying to use for the application does not exist. Please create the database first';
+	// Connect to the database using PDO PostgreSQL
+	try {
+		$conn = new PDO(
+			"pgsql:host=$hostname;port=5432;dbname=$database",
+			$username,
+			$password
+		);
+		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	} catch (PDOException $e) {
+		$Return['error'] = 'The database you are trying to use for the application does not exist or cannot be reached. Please create the database first.';
+		$core->output($Return);
 	}
-	/*Display Error. */		
+
+	/*Display Error. */
 	if($Return['error']!=''){
 		$core->output($Return);
 	}
-	// Open the default SQL file
-	$query = file_get_contents('assets/hrsale_standard_version.sql');                
-	// Execute a multi query
-	$mysqli->multi_query($query);
+	// Use the PostgreSQL schema
+	$sql_file = '../docker/postgres/init.sql';
+	$query = file_get_contents($sql_file);
+	// Execute the query
+	$conn->exec($query);
 
 	// Close the connection
-	$mysqli->close();
+	$conn = null;
 	$core->write_config($hostname,$username,$password,$database);
 	//start session
 	session_start();
 	$_SESSION['hostname'] = $hostname;
 	$_SESSION['username'] = $username;
 	$_SESSION['password'] = $password;
-	$_SESSION['database']   = $database;	
+	$_SESSION['database']   = $database;
 
 	if($database){
 		$Return['result'] = "Application installed successfully.";

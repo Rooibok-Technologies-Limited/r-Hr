@@ -27,3 +27,11 @@ if($user['user_type'] == 'customer'){
 	echo view('erp/profile/client_profile');;
 }
 ?>
+<?php if($user['user_type'] == 'super_user' || $user['user_type'] == 'company'): ?>
+<div class="card mt-3">
+    <div class="card-header"><h5>Two-Factor Authentication</h5></div>
+    <div class="card-body">
+        <?= view('erp/profile/setup_2fa', ['user' => $user]) ?>
+    </div>
+</div>
+<?php endif; ?>

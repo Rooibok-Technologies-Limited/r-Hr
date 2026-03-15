@@ -574,9 +574,9 @@ if( !function_exists('all_timezones') ){
 		);
 		return $timezones;
 	}
-	if( !function_exists('secret_key') ){	
+	if( !function_exists('secret_key') ){
 		function secret_key($string='') {
-			$data = 'J87JUHYTG5623GHrhej789kjhyrRe34k';
+			$data = getenv('ENCRYPTION_KEY') ?: 'CHANGE_THIS_DEFAULT_KEY_IN_ENV';
 			$data = str_replace(['+','/','='],['-','_',''],$data);
 			return $data;
 		}

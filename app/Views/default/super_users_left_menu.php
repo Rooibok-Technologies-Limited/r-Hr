@@ -67,4 +67,20 @@ $xin_system = $SystemModel->where('setting_id', 1)->first();
   <li class="pc-item"><a href="<?= site_url('erp/system-backup');?>" class="pc-link "><span class="pc-micon"><i data-feather="download-cloud"></i></span><span class="pc-mtext">
     <?= lang('Main.header_db_log');?>
     </span></a></li>
+  <!-- Archive Portal -->
+  <li class="pc-item"><a href="<?= site_url('erp/archive/');?>" class="pc-link "><span class="pc-micon"><i data-feather="archive"></i></span><span class="pc-mtext">
+    Archive Portal
+    </span></a></li>
+  <!-- Landing Page CMS -->
+  <li class="pc-item"><a href="<?= site_url('erp/landing-page/');?>" class="pc-link "><span class="pc-micon"><i data-feather="layout"></i></span><span class="pc-mtext">
+    Landing Page CMS
+    </span></a></li>
+  <!-- API Docs -->
+  <li class="pc-item"><a href="<?= site_url('api/docs');?>" class="pc-link "><span class="pc-micon"><i data-feather="book"></i></span><span class="pc-mtext">
+    API Docs
+    </span></a></li>
+  <!-- All Subscription Invoices -->
+  <li class="pc-item"><a href="<?= site_url('erp/all-subscription-invoices/');?>" class="pc-link "><span class="pc-micon"><i data-feather="file-text"></i></span><span class="pc-mtext">
+    All Subscription Invoices
+    </span></a></li>
 </ul>

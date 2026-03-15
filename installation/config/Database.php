@@ -30,25 +30,25 @@ class Database extends \CodeIgniter\Database\Config
 	 * @var array
 	 */
 	public $default = [
-		'DSN'      => 'mysql:host=%HOSTNAME%;dbname=%DATABASE%',
+		'DSN'      => 'pgsql:host=%HOSTNAME%;port=5432;dbname=%DATABASE%',
 		'hostname' => '%HOSTNAME%',
 		'username' => '%USERNAME%',
 		'password' => '%PASSWORD%',
 		'database' => '%DATABASE%',
-		'DBDriver' => 'MySQLi',
+		'DBDriver' => 'Postgre',
 		'DBPrefix' => '',
 		'pConnect' => true,
 		'DBDebug'  => (ENVIRONMENT !== 'production'),
 		'cacheOn'  => false,
 		'cacheDir' => '',
 		'charset'  => 'utf8',
-		'DBCollat' => 'utf8_general_ci',
+		'DBCollat' => '',
 		'swapPre'  => '',
 		'encrypt'  => false,
 		'compress' => false,
 		'strictOn' => false,
 		'failover' => [],
-		'port'     => 3306,
+		'port'     => 5432,
 	];
 
 	/**

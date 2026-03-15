@@ -135,7 +135,7 @@
                               <button class="w-btn w-btn-11 w-100" type="submit"> <span></span>Install</button>
                               <div class="sign__new mt-20">
                                  <p class="text-danger">Please make sure the app/Config/Database.php file is writable.</p>
-                                 <p><strong>Example:</strong> <code>chmod 777 app/Config/Database.php</code></p>
+                                 <p><strong>Example:</strong> <code>chmod 644 app/Config/Database.php</code></p>
                               </div>
                            </form>
                         </div>

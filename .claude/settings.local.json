@@ -11,7 +11,8 @@
       "Bash(cd:*)",
       "Bash(cat:*)",
       "Bash(netstat:*)",
-      "Bash(docker ps:*)"
+      "Bash(docker ps:*)",
+      "Bash(wc:*)"
     ]
   }
 }

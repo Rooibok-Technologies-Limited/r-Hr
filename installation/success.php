@@ -1,4 +1,9 @@
-<?php session_start(); ?>
+<?php
+session_start();
+// Create install lock file to prevent re-installation
+@mkdir('../writable', 0755, true);
+file_put_contents('../writable/install.lock', date('Y-m-d H:i:s'));
+?>
 <?php $back_asset_url = '../public/assets';?>
 <?php $asset_url = '../public/frontend/assets';?>
 <!doctype html>

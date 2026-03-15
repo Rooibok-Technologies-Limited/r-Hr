@@ -83,4 +83,5 @@ $xin_com_system = erp_company_settings();
     <link rel="stylesheet" href="<?= base_url();?>/public/assets/css/plugins/ekko-lightbox.css">
     <link rel="stylesheet" href="<?= base_url();?>/public/assets/css/plugins/lightbox.min.css">
     <?php } ?>
+    <link rel="stylesheet" href="<?= site_url('public/assets/css/print.css') ?>" media="print">
 </head>

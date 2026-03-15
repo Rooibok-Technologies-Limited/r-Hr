@@ -100,6 +100,11 @@ $cmodule_attributes = $Moduleattributes->where('company_id',$company_id)->where(
           </div>
         </div>
       </div>
+      <div class="text-center mb-3">
+        <a href="<?= site_url('erp/employee-id-card/'.udecode($segment_id)) ?>" class="btn btn-sm btn-outline-primary" target="_blank">
+            <i class="feather icon-credit-card"></i> ID Card / QR
+        </a>
+      </div>
       <ul class="list-group list-group-flush mb-3">
         <li class="list-group-item"> <span class="f-w-500"><i class="feather icon-user m-r-10"></i>
           <?= lang('Employees.xin_manager');?>

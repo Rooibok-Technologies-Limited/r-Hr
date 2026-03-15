@@ -1146,14 +1146,10 @@ class Profile extends BaseController {
 			$Return['csrf_hash'] = csrf_hash();
 			// set rules
 			$validation->setRules([
-					'paypal_email' => 'required',
 					'stripe_secret_key' => 'required',
 					'stripe_publishable_key' => 'required'
 				],
 				[   // Errors
-					'paypal_email' => [
-						'required' => lang('Main.xin_error_paypal_email_field'),
-					],
 					'stripe_secret_key' => [
 						'required' => lang('Main.xin_error_stripe_secret_key_field'),
 					],
@@ -1164,9 +1160,7 @@ class Profile extends BaseController {
 			);
 			$validation->withRequest($this->request)->run();
 			//check error
-			if ($validation->hasError('paypal_email')) {
-				$Return['error'] = $validation->getError('paypal_email');
-			} elseif($validation->hasError('stripe_secret_key')){
+			if($validation->hasError('stripe_secret_key')){
 				$Return['error'] = $validation->getError('stripe_secret_key');
 			} elseif($validation->hasError('stripe_publishable_key')){
 				$Return['error'] = $validation->getError('stripe_publishable_key');
@@ -1175,17 +1169,11 @@ class Profile extends BaseController {
 				$this->output($Return);
 			}
 		}
-		$paypal_email = strip_tags(trim($this->request->getPost('paypal_email')));
-		$paypal_sandbox = strip_tags(trim($this->request->getPost('paypal_sandbox')));
-		$paypal_active = strip_tags(trim($this->request->getPost('paypal_active')));
 		$stripe_secret_key = strip_tags(trim($this->request->getPost('stripe_secret_key')));
 		$stripe_publishable_key = strip_tags(trim($this->request->getPost('stripe_publishable_key')));
 		$stripe_active = strip_tags(trim($this->request->getPost('stripe_active')));
 		$id = udecode(strip_tags(trim($this->request->getPost('token'))));
 		$data = [
-            'paypal_email' => $paypal_email,
-            'paypal_sandbox'  => $paypal_sandbox,
-			'paypal_active'  => $paypal_active,
 			'stripe_secret_key'  => $stripe_secret_key,
 			'stripe_publishable_key'  => $stripe_publishable_key,
 			'stripe_active'  => $stripe_active

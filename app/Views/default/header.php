@@ -232,6 +232,15 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
                         <?php endforeach;?>
                     </div>
                 </li>
+                <li class="pc-h-item" style="position:relative;">
+                    <a href="#" class="pc-head-link mr-0" data-toggle="dropdown">
+                        <i data-feather="bell"></i>
+                        <span class="badge badge-danger" id="notification-count" style="display:none;position:absolute;top:5px;right:5px;font-size:10px;"></span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right notification-dropdown" style="width:320px;max-height:400px;overflow-y:auto;">
+                        <div class="p-3 text-center text-muted" id="notification-list">No new notifications</div>
+                    </div>
+                </li>
                 <?php if(in_array('todo_ist',staff_role_resource()) || $user['user_type']== 'company' || $user['user_type']== 'customer' || $user['user_type']== 'super_user') {?>
                 <li class="pc-h-item">
                     <a class="pc-head-link mr-0" data-toggle="tooltip" data-placement="top" title="<?= lang('Main.xin_todo_ist');?>" href="<?= site_url('erp/todo-list');?>">

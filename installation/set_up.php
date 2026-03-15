@@ -1,7 +1,7 @@
 <?php
 if((empty($_SERVER['HTTP_X_REQUESTED_WITH']) or strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) != 'xmlhttprequest') or empty($_POST)){
 	/*Detect AJAX and POST request*/
- 
+
 }
 session_start();
 
@@ -14,11 +14,19 @@ $core = new Core();
 if(!empty($_POST) && $_POST['is_ajax']=='1' && $_POST['type']=='set_up'){
     /* Define return | here result is used to return user data and error for error message */
     $Return = array('result'=>'', 'error'=>'');
-	$conn = new mysqli($_SESSION['hostname'],$_SESSION['username'],$_SESSION['password'],$_SESSION['database']);
-	// Check connection
-	if ($conn->connect_error) {
-	  die("Connection failed: " . $conn->connect_error);
+
+	try {
+		$conn = new PDO(
+			"pgsql:host={$_SESSION['hostname']};port=5432;dbname={$_SESSION['database']}",
+			$_SESSION['username'],
+			$_SESSION['password']
+		);
+		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	} catch (PDOException $e) {
+		$Return['error'] = "Connection failed: " . $e->getMessage();
+		$core->output($Return);
 	}
+
 	$company_name = $_POST['company_name'];
 	$first_name = $_POST['first_name'];
 	$last_name = $_POST['last_name'];
@@ -26,7 +34,7 @@ if(!empty($_POST) && $_POST['is_ajax']=='1' && $_POST['type']=='set_up'){
 	$email = $_POST['email'];
 	$password = $_POST['password'];
 	$system_timezone = $_POST['system_timezone'];
-	
+
 	/* Server side PHP input validation */
     if($company_name==='') {
         $Return['error'] = 'The company name field is required.';
@@ -45,24 +53,24 @@ if(!empty($_POST) && $_POST['is_ajax']=='1' && $_POST['type']=='set_up'){
     } else if(strlen($password) < 6) {
 		 $Return['error'] = 'The password must be at least 6 characters.';
 	}
-		
-   	/*Display Error. */		
+
+   	/*Display Error. */
     if($Return['error']!=''){
         $core->output($Return);
     }
-	
+
 	$options = array('cost' => 12);
 	$password_hash = password_hash($password, PASSWORD_BCRYPT, $options);
-	$user_sql = "UPDATE ci_erp_users SET company_name='$company_name',first_name='$first_name',last_name='$last_name',email='$email',username='$username',password='$password_hash' WHERE user_id=2";
-	//$conn->query($user_sql);
 
-	if ($conn->query($user_sql) === TRUE) {
-		
+	$stmt = $conn->prepare("UPDATE ci_erp_users SET company_name=?, first_name=?, last_name=?, email=?, username=?, password=? WHERE user_id=2");
+
+	if ($stmt->execute([$company_name, $first_name, $last_name, $email, $username, $password_hash])) {
+
 		$_SESSION['admin_username'] = $username;
 	  	$Return['result'] = "You have successfully installed the HRSALE - The Ultimate HRM.";
 	} else {
-	  $Return['error'] = "Error updating record: " . $conn->error;
-	}		
+	  $Return['error'] = "Error updating record.";
+	}
 	/*Return*/
 	$core->output($Return);
 }

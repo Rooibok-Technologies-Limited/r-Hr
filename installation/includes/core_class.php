@@ -40,20 +40,23 @@ class Core {
 		// Write the new database.php file
 		$handle = fopen($output_path,'w+');
 
-		// Chmod the file, in case the user forgot
-		@chmod($output_path,0777);
+		// Chmod the file with secure permissions (owner read/write only)
+		@chmod($output_path,0644);
 
 		// Verify file permissions
 		if(is_writable($output_path)) {
 
 			// Write the file
 			if(fwrite($handle,$new)) {
+				fclose($handle);
 				return true;
 			} else {
+				fclose($handle);
 				return false;
 			}
 
 		} else {
+			if($handle) { fclose($handle); }
 			return false;
 		}
 	}

@@ -43,8 +43,7 @@ class Autoload extends AutoloadConfig
 		APP_NAMESPACE => APPPATH, // For custom app namespace
 		'Config'      => APPPATH . 'Config',
 		'Dompdf'      => APPPATH . 'ThirdParty/dompdf/src',
-		'Stripe'      => APPPATH . 'Stripe',
-		'Paypal'      => APPPATH . 'Paypal/Paypal.php'
+		'Stripe'      => APPPATH . 'Stripe'
 	];
 
 	/**

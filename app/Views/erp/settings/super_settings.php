@@ -335,3 +335,22 @@ $tab      = $tab ?? 'payments';
 </div>
 </div>
 </div>
+
+<script>
+document.querySelectorAll('[id^="form-"]').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        formData.append('type', 'edit_record');
+        fetch(site_url + '/erp/settings/save_super_settings/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.result) toastr.success(data.result);
+            if (data.error) toastr.error(data.error);
+        });
+    });
+});
+</script>

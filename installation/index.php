@@ -1,4 +1,9 @@
-<?php session_start(); ?>
+<?php
+if (file_exists('../writable/install.lock')) {
+    die('Installation already completed. Delete writable/install.lock to re-install.');
+}
+session_start();
+?>
 <?php $back_asset_url = '../public/assets';?>
 <?php $asset_url = '../public/frontend/assets';?>
 <?php

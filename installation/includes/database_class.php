@@ -2,21 +2,20 @@
 
 class Database {
 
-	// Function to the database and tables and fill them with the default data
+	// Function to connect to the database and verify it exists
 	function create_database($data)
 	{
-		// Connect to the database
-		$mysqli = new mysqli($data['hostname'],$data['username'],$data['password'],'');
-
-		// Check for errors
-		if(mysqli_connect_errno())
+		try {
+			// Connect to PostgreSQL (connect to the target database directly)
+			$this->conn = new PDO(
+				"pgsql:host={$data['hostname']};port=5432;dbname={$data['database']}",
+				$data['username'],
+				$data['password']
+			);
+			$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		} catch (PDOException $e) {
 			return false;
-
-		// Create the prepared statement
-		$mysqli->query("CREATE DATABASE IF NOT EXISTS ".$data['database']);
-
-		// Close the connection
-		$mysqli->close();
+		}
 
 		return true;
 	}
@@ -24,20 +23,24 @@ class Database {
 	// Function to create the tables and fill them with the default data
 	function create_tables($data)
 	{
-		// Connect to the database
-		$mysqli = new mysqli($data['hostname'],$data['username'],$data['password'],$data['database']);
+		try {
+			// Connect to the database
+			$conn = new PDO(
+				"pgsql:host={$data['hostname']};port=5432;dbname={$data['database']}",
+				$data['username'],
+				$data['password']
+			);
+			$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-		// Check for errors
-		if(mysqli_connect_errno())
+			// Open the default SQL file
+			$query = file_get_contents('assets/install_timehrm.sql');
+			// Execute the query
+			$conn->exec($query);
+
+			$conn = null;
+		} catch (PDOException $e) {
 			return false;
-
-		// Open the default SQL file
-		$query = file_get_contents('assets/install_timehrm.sql');                
-		// Execute a multi query
-		$mysqli->multi_query($query);
-
-		// Close the connection
-		$mysqli->close();
+		}
 
 		return true;
 	}

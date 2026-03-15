@@ -126,7 +126,10 @@ class Database extends \CodeIgniter\Database\Config
 			$this->default['password'] = $pass;
 		}
 
-		// Archive DB uses same credentials
+		// Archive DB credentials
+		if ($archHost = getenv('ARCHIVE_DB_HOST')) {
+			$this->archive['hostname'] = $archHost;
+		}
 		if ($user = getenv('DB_USER')) {
 			$this->archive['username'] = $user;
 		}

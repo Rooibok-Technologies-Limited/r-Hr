@@ -320,10 +320,14 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
     <?= lang('Dashboard.xin_estimates');?>
     </span></a></li>
   <?php } ?>
-  <?php if(in_array('disciplinary1',staff_role_resource()) || in_array('case_type1',staff_role_resource())) {?>   
+  <?php if(in_array('disciplinary1',staff_role_resource()) || in_array('case_type1',staff_role_resource())) {?>
   <!-- Disciplinary -->
   <li class="pc-item"> <a href="<?= site_url('erp/disciplinary-cases');?>" class="pc-link"> <span class="pc-micon"><i data-feather="alert-circle"></i></span><span class="pc-mtext">
     <?= lang('Dashboard.left_warnings');?>
     </span> </a> </li>
   <?php } ?>
+  <!-- Expenses -->
+  <li class="pc-item"><a href="<?= site_url('erp/expenses/');?>" class="pc-link "><span class="pc-micon"><i data-feather="dollar-sign"></i></span><span class="pc-mtext">
+    Expenses
+    </span></a></li>
 </ul>

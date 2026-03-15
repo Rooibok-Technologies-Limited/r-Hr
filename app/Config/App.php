@@ -23,7 +23,15 @@ class App extends BaseConfig
 	| environments.
 	|
 	*/
-	public $baseURL = 'http://localhost/hrsale/';
+	public $baseURL;
+
+	public function __construct()
+	{
+		parent::__construct();
+		$this->baseURL = getenv('APP_BASEURL') ?: 'http://localhost';
+	}
+
+	// Original default kept for reference: 'http://localhost/hrsale/'
 
 	/*
 	|--------------------------------------------------------------------------
@@ -126,7 +134,7 @@ class App extends BaseConfig
 	| secure, the user will be redirected to a secure version of the page
 	| and the HTTP Strict Transport Security header will be set.
 	*/
-	public $forceGlobalSecureRequests = false;
+	public $forceGlobalSecureRequests = true;
 
 	/*
 	|--------------------------------------------------------------------------
@@ -187,7 +195,7 @@ class App extends BaseConfig
 	public $sessionCookieName        = 'ci_session';
 	public $sessionExpiration        = 7200;
 	public $sessionSavePath          = WRITEPATH . 'session';
-	public $sessionMatchIP           = false;
+	public $sessionMatchIP           = true;
 	public $sessionTimeToUpdate      = 300;
 	public $sessionRegenerateDestroy = false;
 
@@ -209,8 +217,8 @@ class App extends BaseConfig
 	public $cookiePrefix   = '';
 	public $cookieDomain   = '';
 	public $cookiePath     = '/';
-	public $cookieSecure   = false;
-	public $cookieHTTPOnly = false;
+	public $cookieSecure   = true;
+	public $cookieHTTPOnly = true;
 
 	/*
 	|--------------------------------------------------------------------------
@@ -266,5 +274,5 @@ class App extends BaseConfig
 	|   - http://www.html5rocks.com/en/tutorials/security/content-security-policy/
 	|   - http://www.w3.org/TR/CSP/
 	*/
-	public $CSPEnabled = false;
+	public $CSPEnabled = true;
 }
