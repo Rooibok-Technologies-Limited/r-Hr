@@ -52,8 +52,8 @@ $routes->post('erp/landing-page/upload/', 'Erp\Landingpage::upload_image', ['fil
 // ERP|TimeHRM
 ///$routes->get('erp/{locale}/dashboard', 'Dashboard::language', ['namespace' => 'App\Controllers\Erp']);
 $routes->get('erp/', 'Home::index', ['namespace' => 'App\Controllers']);
-$routes->get('erp/login', 'Auth::login', ['namespace' => 'App\Controllers\Erp']);
-$routes->match(['get', 'post'], 'erp/auth/login/', 'Auth::login', ['namespace' => 'App\Controllers\Erp']);
+$routes->get('erp/login', 'Home::index', ['namespace' => 'App\Controllers']);
+$routes->post('erp/auth/login/', 'Auth::login', ['namespace' => 'App\Controllers\Erp']);
 $routes->get('erp/desk', 'Dashboard::index', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/set-language/(:segment)', 'Dashboard::language/$1', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/forgot-password/', 'Auth::forgot_password', ['namespace' => 'App\Controllers\Erp']);
