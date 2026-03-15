@@ -67,7 +67,7 @@ if(!empty($_POST) && $_POST['is_ajax']=='1' && $_POST['type']=='set_up'){
 	if ($stmt->execute([$company_name, $first_name, $last_name, $email, $username, $password_hash])) {
 
 		$_SESSION['admin_username'] = $username;
-	  	$Return['result'] = "You have successfully installed the HRSALE - The Ultimate HRM.";
+	  	$Return['result'] = "You have successfully installed Rooibok HR System.";
 	} else {
 	  $Return['error'] = "Error updating record.";
 	}

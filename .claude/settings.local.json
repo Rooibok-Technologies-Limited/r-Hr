@@ -12,7 +12,8 @@
       "Bash(cat:*)",
       "Bash(netstat:*)",
       "Bash(docker ps:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(docker exec:*)"
     ]
   }
 }
