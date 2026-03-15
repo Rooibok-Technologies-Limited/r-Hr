@@ -23,15 +23,7 @@ class App extends BaseConfig
 	| environments.
 	|
 	*/
-	public $baseURL;
-
-	public function __construct()
-	{
-		parent::__construct();
-		$this->baseURL = getenv('APP_BASEURL') ?: 'http://localhost';
-	}
-
-	// Original default kept for reference: 'http://localhost/hrsale/'
+	public $baseURL = 'http://localhost';
 
 	/*
 	|--------------------------------------------------------------------------
