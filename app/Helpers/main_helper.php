@@ -21,12 +21,19 @@ if( !function_exists('system_setting') ){
 
 		// Decrypt sensitive keys stored as base64-encoded encrypted values
 		if ($value !== '' && in_array($key, $sensitive)) {
-			try {
-				$encrypter = \Config\Services::encrypter();
-				$value = $encrypter->decrypt(base64_decode($value));
-			} catch (\Exception $e) {
-				// If decryption fails, return raw value (may not be encrypted yet)
+			$encKey = getenv('ENCRYPTION_KEY') ?: '';
+			if (!empty($encKey)) {
+				try {
+					$encrypter = \Config\Services::encrypter();
+					$decrypted = $encrypter->decrypt(base64_decode($value));
+					if ($decrypted !== false) {
+						$value = $decrypted;
+					}
+				} catch (\Exception $e) {
+					// Decryption failed — return raw value (not encrypted yet)
+				}
 			}
+			// If no encryption key configured, return raw value as-is
 		}
 
 		return $value;

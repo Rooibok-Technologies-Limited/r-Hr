@@ -3404,7 +3404,7 @@ ALTER TABLE ci_erp_users ADD COLUMN IF NOT EXISTS consent_date TIMESTAMP WITH TI
 -- 1. Super Admin user (user_id = 1)
 -- ---------------------------------------------------------
 INSERT INTO ci_erp_users (user_id, user_role_id, user_type, company_id, first_name, last_name, email, username, password, company_name, trading_name, registration_no, government_tax, company_type_id, profile_photo, contact_number, gender, address_1, address_2, city, state, zipcode, country, last_login_date, last_logout_date, last_login_ip, is_logged_in, is_active, created_at, is_demo) VALUES
-(1, 0, 'super_user', 0, 'Super', 'Admin', 'admin@hrsale.com', 'superadmin', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', NULL, NULL, NULL, NULL, NULL, 'default.png', '0700000000', '1', NULL, NULL, 'Kampala', 'Central', '00000', 229, NULL, NULL, NULL, 0, 1, '15-03-2026 00:00:00', 0);
+(1, 0, 'super_user', 0, 'Super', 'Admin', 'admin@hrsale.com', 'superadmin', '$2y$12$OBdbnAKSrrO1UAQBpHvvfOPIOE5/n2xECEDUWPDoYdsgUT1mdBfoa', NULL, NULL, NULL, NULL, NULL, 'default.png', '0700000000', '1', NULL, NULL, 'Kampala', 'Central', '00000', 229, NULL, NULL, NULL, 0, 1, '15-03-2026 00:00:00', 0);
 
 -- ---------------------------------------------------------
 -- 2. Roles in ci_erp_users_role
@@ -3447,11 +3447,11 @@ INSERT INTO ci_office_shifts (office_shift_id, company_id, shift_name, monday_in
 -- 6. Staff employees (user_ids 3-7)
 -- ---------------------------------------------------------
 INSERT INTO ci_erp_users (user_id, user_role_id, user_type, company_id, first_name, last_name, email, username, password, company_name, trading_name, registration_no, government_tax, company_type_id, profile_photo, contact_number, gender, address_1, address_2, city, state, zipcode, country, last_login_date, last_logout_date, last_login_ip, is_logged_in, is_active, created_at, is_demo) VALUES
-(3, 3, 'staff', 2, 'Alice', 'Nakamya', 'alice.nakamya@hrsale.com', 'alice.nakamya', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', NULL, NULL, NULL, NULL, NULL, 'default.png', '0701000001', '2', 'Plot 10, Bombo Rd', NULL, 'Kampala', 'Central', '10101', 229, NULL, NULL, NULL, 0, 1, '15-03-2026 00:00:00', 0),
-(4, 3, 'staff', 2, 'Brian', 'Ochieng', 'brian.ochieng@hrsale.com', 'brian.ochieng', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', NULL, NULL, NULL, NULL, NULL, 'default.png', '0702000002', '1', 'Plot 22, Jinja Rd', NULL, 'Kampala', 'Central', '10102', 229, NULL, NULL, NULL, 0, 1, '15-03-2026 00:00:00', 0),
-(5, 3, 'staff', 2, 'Catherine', 'Auma', 'catherine.auma@hrsale.com', 'catherine.auma', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', NULL, NULL, NULL, NULL, NULL, 'default.png', '0703000003', '2', 'Plot 5, Entebbe Rd', NULL, 'Kampala', 'Central', '10103', 229, NULL, NULL, NULL, 0, 1, '15-03-2026 00:00:00', 0),
-(6, 3, 'staff', 2, 'Daniel', 'Mugisha', 'daniel.mugisha@hrsale.com', 'daniel.mugisha', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', NULL, NULL, NULL, NULL, NULL, 'default.png', '0704000004', '1', 'Plot 8, Nakasero Hill', NULL, 'Kampala', 'Central', '10104', 229, NULL, NULL, NULL, 0, 1, '15-03-2026 00:00:00', 0),
-(7, 3, 'staff', 2, 'Eva', 'Birungi', 'eva.birungi@hrsale.com', 'eva.birungi', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', NULL, NULL, NULL, NULL, NULL, 'default.png', '0705000005', '2', 'Plot 15, Ntinda Rd', NULL, 'Kampala', 'Central', '10105', 229, NULL, NULL, NULL, 0, 1, '15-03-2026 00:00:00', 0);
+(3, 3, 'staff', 2, 'Alice', 'Nakamya', 'alice.nakamya@hrsale.com', 'alice.nakamya', '$2y$12$OBdbnAKSrrO1UAQBpHvvfOPIOE5/n2xECEDUWPDoYdsgUT1mdBfoa', NULL, NULL, NULL, NULL, NULL, 'default.png', '0701000001', '2', 'Plot 10, Bombo Rd', NULL, 'Kampala', 'Central', '10101', 229, NULL, NULL, NULL, 0, 1, '15-03-2026 00:00:00', 0),
+(4, 3, 'staff', 2, 'Brian', 'Ochieng', 'brian.ochieng@hrsale.com', 'brian.ochieng', '$2y$12$OBdbnAKSrrO1UAQBpHvvfOPIOE5/n2xECEDUWPDoYdsgUT1mdBfoa', NULL, NULL, NULL, NULL, NULL, 'default.png', '0702000002', '1', 'Plot 22, Jinja Rd', NULL, 'Kampala', 'Central', '10102', 229, NULL, NULL, NULL, 0, 1, '15-03-2026 00:00:00', 0),
+(5, 3, 'staff', 2, 'Catherine', 'Auma', 'catherine.auma@hrsale.com', 'catherine.auma', '$2y$12$OBdbnAKSrrO1UAQBpHvvfOPIOE5/n2xECEDUWPDoYdsgUT1mdBfoa', NULL, NULL, NULL, NULL, NULL, 'default.png', '0703000003', '2', 'Plot 5, Entebbe Rd', NULL, 'Kampala', 'Central', '10103', 229, NULL, NULL, NULL, 0, 1, '15-03-2026 00:00:00', 0),
+(6, 3, 'staff', 2, 'Daniel', 'Mugisha', 'daniel.mugisha@hrsale.com', 'daniel.mugisha', '$2y$12$OBdbnAKSrrO1UAQBpHvvfOPIOE5/n2xECEDUWPDoYdsgUT1mdBfoa', NULL, NULL, NULL, NULL, NULL, 'default.png', '0704000004', '1', 'Plot 8, Nakasero Hill', NULL, 'Kampala', 'Central', '10104', 229, NULL, NULL, NULL, 0, 1, '15-03-2026 00:00:00', 0),
+(7, 3, 'staff', 2, 'Eva', 'Birungi', 'eva.birungi@hrsale.com', 'eva.birungi', '$2y$12$OBdbnAKSrrO1UAQBpHvvfOPIOE5/n2xECEDUWPDoYdsgUT1mdBfoa', NULL, NULL, NULL, NULL, NULL, 'default.png', '0705000005', '2', 'Plot 15, Ntinda Rd', NULL, 'Kampala', 'Central', '10105', 229, NULL, NULL, NULL, 0, 1, '15-03-2026 00:00:00', 0);
 
 -- ---------------------------------------------------------
 -- 7. Staff details for employees
@@ -3481,7 +3481,7 @@ INSERT INTO ci_holidays (holiday_id, company_id, event_name, description, start_
 -- 9. Demo company user (user_id = 8, is_demo = 1)
 -- ---------------------------------------------------------
 INSERT INTO ci_erp_users (user_id, user_role_id, user_type, company_id, first_name, last_name, email, username, password, company_name, trading_name, registration_no, government_tax, company_type_id, profile_photo, contact_number, gender, address_1, address_2, city, state, zipcode, country, last_login_date, last_logout_date, last_login_ip, is_logged_in, is_active, created_at, is_demo) VALUES
-(8, 2, 'company', 0, 'Demo', 'Company', 'demo@hrsale.com', 'demo', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Demo Corp', 'TRD-DEMO', 'RG-DEMO', 'TX-DEMO', 3, 'default.png', '0700000008', '1', 'Plot 1, Demo Street', NULL, 'Kampala', 'Central', '00000', 229, NULL, NULL, NULL, 0, 1, '15-03-2026 00:00:00', 1);
+(8, 2, 'company', 0, 'Demo', 'Company', 'demo@hrsale.com', 'demo', '$2y$12$OBdbnAKSrrO1UAQBpHvvfOPIOE5/n2xECEDUWPDoYdsgUT1mdBfoa', 'Demo Corp', 'TRD-DEMO', 'RG-DEMO', 'TX-DEMO', 3, 'default.png', '0700000008', '1', 'Plot 1, Demo Street', NULL, 'Kampala', 'Central', '00000', 229, NULL, NULL, NULL, 0, 1, '15-03-2026 00:00:00', 1);
 
 -- ---------------------------------------------------------
 -- 10. Leave type constants (5 types for company_id = 2)
@@ -3515,3 +3515,6 @@ SELECT setval('ci_holidays_holiday_id_seq', (SELECT COALESCE(MAX(holiday_id), 1)
 SELECT setval('ci_erp_users_details_staff_details_id_seq', (SELECT COALESCE(MAX(staff_details_id), 1) FROM ci_erp_users_details));
 SELECT setval('ci_erp_constants_constants_id_seq', (SELECT COALESCE(MAX(constants_id), 1) FROM ci_erp_constants));
 SELECT setval('ci_expense_categories_category_id_seq', (SELECT COALESCE(MAX(category_id), 1) FROM ci_expense_categories));
+
+-- Set JWT secret for API auth
+UPDATE ci_erp_settings SET jwt_secret = 'rooibok_dev_jwt_secret_key_2026_abcdef' WHERE setting_id = 1;
