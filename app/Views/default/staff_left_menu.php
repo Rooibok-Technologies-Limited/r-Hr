@@ -13,7 +13,8 @@ $CompanymembershipModel = new CompanymembershipModel();
 $session = \Config\Services::session();
 $router = service('router');
 $usession = $session->get('sup_username');
-$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
+$_uid_s = (!empty($usession) && is_array($usession)) ? ($usession['sup_user_id'] ?? 0) : 0;
+$user_info = $_uid_s ? $UsersModel->where('user_id', $_uid_s)->first() : null;
 $xin_system = $SystemModel->where('setting_id', 1)->first();
 ?>
 <?php $arr_mod = select_module_class($router->controllerName(),$router->methodName()); ?>

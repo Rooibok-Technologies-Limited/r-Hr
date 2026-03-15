@@ -891,6 +891,46 @@
 .sa-sb-dark { background: #2c2c3e; }
 .sa-sb-item { height: 10px; background: rgba(128,128,128,0.3); border-radius: 3px; margin-bottom: 6px; }
 
+/* ── Staff Dashboard: Attendance Heatmap ── */
+.sa-hm-cell {
+  width: 22px;
+  height: 22px;
+  border-radius: 3px;
+  margin: 2px;
+  background: #e9ecef;
+}
+.sa-hm-present { background: #28a745; }
+.sa-hm-absent { background: #dc3545; }
+.sa-hm-late { background: #ffc107; }
+.sa-hm-leave { background: #17a2b8; }
+.sa-hm-empty { background: #e9ecef; }
+.sa-hm-today { outline: 2px solid #333; outline-offset: 1px; }
+
+.sa-hm-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+/* Pulse animation for "In progress" */
+.sa-pulse {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  margin-right: 4px;
+  animation: sa-pulse-anim 1.5s infinite;
+}
+
+@keyframes sa-pulse-anim {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
 /* ── Sidebar Scroll Fix ── */
 .pc-sidebar .navbar-content {
   height: calc(100vh - 70px);

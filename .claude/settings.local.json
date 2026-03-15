@@ -20,7 +20,13 @@
       "Read(//c/xampp/php/**)",
       "Read(//c/laragon/bin/**)",
       "Bash(/c/xampp/php/php.exe -l E:/Projects/hr/app/Config/Routes.php 2>&1)",
-      "Bash(for url:*)"
+      "Bash(for url:*)",
+      "Bash(docker compose:*)",
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Read(//e/Projects/hr/**)",
+      "Bash(done)",
+      "Bash(docker cp:*)"
     ]
   }
 }

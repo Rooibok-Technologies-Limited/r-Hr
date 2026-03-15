@@ -379,9 +379,10 @@ if( !function_exists('staff_role_resource') ){
 
 		// get userinfo and role
 		$user_info = $UsersModel->where('user_id', $userId)->first();
+		if(empty($user_info)) return [];
 		$role_user = $RolesModel->where('role_id', $user_info['user_role_id'])->first();
-		if($user_info['user_type'] == 'staff'){
-			$role_resources_ids = explode(',',$role_user['role_resources']);
+		if(!empty($role_user) && $user_info['user_type'] == 'staff'){
+			$role_resources_ids = !empty($role_user['role_resources']) ? explode(',',$role_user['role_resources']) : [];
 		} else {
 			$role_resources_ids = array(0,0);
 		}
