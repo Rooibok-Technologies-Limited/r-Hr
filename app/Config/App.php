@@ -23,7 +23,7 @@ class App extends BaseConfig
 	| environments.
 	|
 	*/
-	public $baseURL = 'http://localhost';
+	public $baseURL = 'http://localhost:8080';
 
 	/*
 	|--------------------------------------------------------------------------
