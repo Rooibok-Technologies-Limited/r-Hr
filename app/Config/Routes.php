@@ -31,6 +31,9 @@ $routes->setAutoRoute(false);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 
+// Root landing page
+$routes->get('/', 'Home::index');
+
 // Landing page, legal pages, demo
 $routes->get('privacy', 'Home::privacy');
 $routes->get('cookies', 'Home::cookies');
@@ -49,6 +52,7 @@ $routes->post('erp/landing-page/upload/', 'Erp\Landingpage::upload_image', ['fil
 // ERP|TimeHRM
 ///$routes->get('erp/{locale}/dashboard', 'Dashboard::language', ['namespace' => 'App\Controllers\Erp']);
 $routes->get('erp/', 'Home::index', ['namespace' => 'App\Controllers']);
+$routes->get('erp/login', 'Auth::login', ['namespace' => 'App\Controllers\Erp']);
 $routes->match(['get', 'post'], 'erp/auth/login/', 'Auth::login', ['namespace' => 'App\Controllers\Erp']);
 $routes->get('erp/desk', 'Dashboard::index', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/set-language/(:segment)', 'Dashboard::language/$1', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);

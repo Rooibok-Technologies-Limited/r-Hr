@@ -13,7 +13,9 @@
       "Bash(netstat:*)",
       "Bash(docker ps:*)",
       "Bash(wc:*)",
-      "Bash(docker exec:*)"
+      "Bash(docker exec:*)",
+      "Bash(docker restart:*)",
+      "Bash(curl:*)"
     ]
   }
 }
