@@ -13,13 +13,17 @@ $session = \Config\Services::session();
 $usession = $session->get('sup_username');
 $request = \Config\Services::request();
 $router = service('router');
-$user = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 $locale = service('request')->getLocale();
 $language = $LanguageModel->where('is_active', 1)->orderBy('language_id', 'ASC')->findAll();
-if($user['user_type'] == 'super_user'){
-	$xin_system = $SystemModel->where('setting_id', 1)->first();
-} else {
-	$xin_system = erp_company_settings();
+
+// Handle both logged-in and public (no session) access
+$user = null;
+$xin_system = $SystemModel->where('setting_id', 1)->first();
+if (!empty($usession) && isset($usession['sup_user_id'])) {
+	$user = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
+	if ($user && $user['user_type'] != 'super_user') {
+		$xin_system = erp_company_settings() ?: $xin_system;
+	}
 }
 $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
 $session_lang = $session->lang;

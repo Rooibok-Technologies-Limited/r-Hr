@@ -34,7 +34,11 @@ $routes->setAutoRoute(false);
 // Root landing page
 $routes->get('/', 'Home::index');
 
-// Landing page, legal pages, demo
+// Frontend pages
+$routes->get('features', 'Home::features');
+$routes->get('pricing', 'Home::pricing');
+$routes->get('contact', 'Home::contact');
+$routes->get('register', 'Home::register');
 $routes->get('privacy', 'Home::privacy');
 $routes->get('cookies', 'Home::cookies');
 $routes->get('terms', 'Home::terms');
@@ -51,8 +55,8 @@ $routes->post('erp/landing-page/upload/', 'Erp\Landingpage::upload_image', ['fil
 
 // ERP|TimeHRM
 ///$routes->get('erp/{locale}/dashboard', 'Dashboard::language', ['namespace' => 'App\Controllers\Erp']);
-$routes->get('erp/', 'Home::index', ['namespace' => 'App\Controllers']);
-$routes->get('erp/login', 'Home::index', ['namespace' => 'App\Controllers']);
+$routes->get('erp/', 'Home::login', ['namespace' => 'App\Controllers']);
+$routes->get('erp/login', 'Home::login', ['namespace' => 'App\Controllers']);
 $routes->post('erp/auth/login/', 'Auth::login', ['namespace' => 'App\Controllers\Erp']);
 $routes->get('erp/desk', 'Dashboard::index', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/system-logout', 'Logout::index', ['namespace' => 'App\Controllers\Erp']);

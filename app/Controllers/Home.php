@@ -22,28 +22,72 @@ use App\Models\LandingContentModel;
 
 class Home extends BaseController {
 
+	/**
+	 * Landing page — public marketing site for visitors.
+	 * Logged-in users are redirected to their dashboard.
+	 */
 	public function index()
 	{
 		$SystemModel = new SystemModel();
 		$session = \Config\Services::session();
 		if($session->has('sup_username')){
-			return redirect()->to(site_url('erp/desk?module=dashboard'));
+			return redirect()->to(site_url('erp/desk'));
+		}
+		$xin_system = $SystemModel->where('setting_id', 1)->first();
+		$data['title'] = $xin_system['application_name'];
+		$data['xin_system'] = $xin_system;
+		return view('frontend/home', $data);
+	}
+
+	/**
+	 * Login page — shows the login form.
+	 */
+	public function login()
+	{
+		$SystemModel = new SystemModel();
+		$session = \Config\Services::session();
+		if($session->has('sup_username')){
+			return redirect()->to(site_url('erp/desk'));
 		}
 		$xin_system = $SystemModel->where('setting_id', 1)->first();
 		$data['title'] = $xin_system['application_name'].' | '.lang('Login.xin_login_title');
+		return view('erp/auth/erp_login', $data);
+	}
 
-		// Load landing page content from CMS
-		$LandingContentModel = new LandingContentModel();
-		$data['hero']         = $LandingContentModel->getSection('hero');
-		$data['features']     = $LandingContentModel->getJson('features', 'cards');
-		$data['stats']        = $LandingContentModel->getJson('stats', 'figures');
-		$data['testimonials'] = $LandingContentModel->getJson('testimonials', 'items');
-		$data['faq']          = $LandingContentModel->getJson('faq', 'items');
-		$data['contact']      = $LandingContentModel->getSection('contact');
-		$data['footer']       = $LandingContentModel->getSection('footer');
-		$data['seo']          = $LandingContentModel->getSection('seo');
+	public function features()
+	{
+		$SystemModel = new SystemModel();
+		$xin_system = $SystemModel->where('setting_id', 1)->first();
+		$data['title'] = 'Features | ' . $xin_system['application_name'];
+		$data['xin_system'] = $xin_system;
+		return view('frontend/features', $data);
+	}
 
-		return view('erp/auth/erp_login',$data);
+	public function pricing()
+	{
+		$SystemModel = new SystemModel();
+		$xin_system = $SystemModel->where('setting_id', 1)->first();
+		$data['title'] = 'Pricing | ' . $xin_system['application_name'];
+		$data['xin_system'] = $xin_system;
+		return view('frontend/pricing', $data);
+	}
+
+	public function contact()
+	{
+		$SystemModel = new SystemModel();
+		$xin_system = $SystemModel->where('setting_id', 1)->first();
+		$data['title'] = 'Contact | ' . $xin_system['application_name'];
+		$data['xin_system'] = $xin_system;
+		return view('frontend/contact', $data);
+	}
+
+	public function register()
+	{
+		$SystemModel = new SystemModel();
+		$xin_system = $SystemModel->where('setting_id', 1)->first();
+		$data['title'] = 'Register | ' . $xin_system['application_name'];
+		$data['xin_system'] = $xin_system;
+		return view('frontend/register', $data);
 	}
 
 	/**
