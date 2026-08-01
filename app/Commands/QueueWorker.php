@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 
 namespace App\Commands;
 
@@ -29,6 +33,7 @@ class QueueWorker extends BaseCommand
     private array $tubes = [
         'payroll',
         'emails',
+        'sms',
         'payments',
         'broadcasts',
         'archive_vault',
@@ -85,6 +90,7 @@ class QueueWorker extends BaseCommand
         match ($tube) {
             'payroll'       => $this->handlePayroll($payload),
             'emails'        => $this->handleEmail($payload),
+            'sms'           => $this->handleSms($payload),
             'payments'      => $this->handlePayment($payload),
             'broadcasts'    => $this->handleBroadcast($payload),
             'archive_vault' => $this->handleArchive($payload),
@@ -136,6 +142,31 @@ class QueueWorker extends BaseCommand
             CLI::write('  Email sent to ' . ($payload['to'] ?? '?'));
         } else {
             throw new \RuntimeException('Email send failed: ' . $email->printDebugger(['headers']));
+        }
+    }
+
+    /**
+     * Send an SMS through the configured gateway.
+     *
+     * Expected payload keys: to, message
+     * Optional: user_id (for logging).
+     */
+    private function handleSms(array $payload): void
+    {
+        $to      = trim((string) ($payload['to'] ?? ''));
+        $message = (string) ($payload['message'] ?? '');
+
+        if ($to === '' || $message === '') {
+            CLI::write('  SMS job: missing to/message — skipping', 'light_red');
+            return;
+        }
+
+        $provider = \Config\Services::smsProvider(false);
+
+        if ($provider->send($to, $message)) {
+            CLI::write("  SMS sent to {$to}");
+        } else {
+            throw new \RuntimeException("SMS send failed for {$to}");
         }
     }
 
@@ -214,10 +245,16 @@ class QueueWorker extends BaseCommand
         // --- SMS ---
         if (in_array('sms', $channels) && $phone && $bodySms) {
             try {
-                // Use available SMS gateway (placeholder — integrate with actual provider)
-                $updateData['sms_sent']   = 1;
-                $updateData['sms_status'] = 'sent';
-                CLI::write("  SMS queued to {$phone}");
+                $provider = \Config\Services::smsProvider(false);
+                if ($provider->send($phone, $bodySms)) {
+                    $updateData['sms_sent']   = 1;
+                    $updateData['sms_status'] = 'sent';
+                    CLI::write("  SMS sent to {$phone}");
+                } else {
+                    $errors[] = 'sms: gateway rejected';
+                    $updateData['sms_status'] = 'failed';
+                    CLI::write('  SMS send failed for ' . $phone, 'light_red');
+                }
             } catch (\Throwable $e) {
                 $errors[] = 'sms: ' . $e->getMessage();
                 $updateData['sms_status'] = 'failed';

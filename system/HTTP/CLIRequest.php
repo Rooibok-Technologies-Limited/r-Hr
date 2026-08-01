@@ -202,18 +202,18 @@ class CLIRequest extends Request
 				}
 				else
 				{
-					$this->segments[] = filter_var($arg, FILTER_SANITIZE_STRING);
+					$this->segments[] = filter_var($arg, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 				}
 
 				continue;
 			}
 
-			$arg   = filter_var(ltrim($arg, '-'), FILTER_SANITIZE_STRING);
+			$arg   = filter_var(ltrim($arg, '-'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 			$value = null;
 
 			if (isset($args[$i + 1]) && mb_strpos($args[$i + 1], '-') !== 0)
 			{
-				$value       = filter_var($args[$i + 1], FILTER_SANITIZE_STRING);
+				$value       = filter_var($args[$i + 1], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 				$optionValue = true;
 			}
 

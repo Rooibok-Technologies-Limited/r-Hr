@@ -6,6 +6,11 @@ services:
       dockerfile: docker/php/Dockerfile
     container_name: rooibok_app
     restart: unless-stopped
+    # Run php-fpm as the host bind-mount owner (uid 1000) so the framework can
+    # write writable/ (sessions, cache, logs). Without this, fpm runs as
+    # www-data and cannot write the host-owned tree — every request 500s on the
+    # first session write, with no log (the log dir is unwritable too).
+    user: "1000:1000"
     volumes:
       - .:/var/www/html
       - uploads_data:/var/www/html/public/uploads
@@ -31,7 +36,7 @@ services:
     container_name: rooibok_nginx
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "12000:80"
       - "443:443"
     volumes:
       - .:/var/www/html:ro
@@ -106,7 +111,7 @@ services:
       PGADMIN_DEFAULT_EMAIL:    ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASS}
     ports:
-      - "5050:80"
+      - "12020:80"
     depends_on:
       - postgres
     networks:

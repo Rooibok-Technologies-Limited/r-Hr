@@ -49,7 +49,9 @@ $app       = require realpath($bootstrap) ?: $bootstrap;
 $console = new CodeIgniter\CLI\Console($app);
 
 // We want errors to be shown when using it from the CLI.
-error_reporting(-1);
+// CI 4.1.3 predates PHP 8.2; mask deprecations so framework-internal
+// deprecation notices don't abort CLI commands (real errors still show).
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 ini_set('display_errors', '1');
 
 // Show basic information before we do anything else.
