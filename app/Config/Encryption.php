@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 
 namespace Config;
 
@@ -24,6 +28,16 @@ class Encryption extends BaseConfig
 	 * @var string
 	 */
 	public $key = '';
+
+	public function __construct()
+	{
+		parent::__construct();
+		// The project's .env uses ENCRYPTION_KEY (not CI4's default
+		// `encryption.key`); wire it here so Services::encrypter() has a seed.
+		if ($this->key === '') {
+			$this->key = getenv('ENCRYPTION_KEY') ?: (getenv('encryption.key') ?: '');
+		}
+	}
 
 	/**
 	 * --------------------------------------------------------------------------

@@ -97,5 +97,18 @@ Source fallback `app/Config/App.php` `$baseURL` → `http://localhost:12000`.
   (phase 2): instrument auth login/logout, user/role changes, and every F2
   disbursement transition. Prod hardening: grant app role INSERT+SELECT only on
   ci_audit_log.
-- **F2 disbursement — target both MTN MoMo + Airtel Money** (driver abstraction
-  from the start), per user decision.
+- **F2 disbursement — phase 1 DONE (2026-08-01).** `ci_employee_payout_methods`
+  (encrypted destination, last4 in clear); driver abstraction
+  `App\Libraries\Disbursement\*` (interface + MTN MoMo + Airtel + Null +
+  `service('disbursement')->for($type)` factory, degrades to Null until creds).
+  `service('payoutMethods')`: add → verify (provider name-lookup + one-time code
+  to the MSISDN, no money moved) → confirm → set-primary, all audited (F1).
+  Controller `Erp/PayoutMethods` (erp/payout-methods/*) sends the code via SMS,
+  never returns it. Wired `Config\Encryption::$key` from `ENCRYPTION_KEY` (was
+  unset → encrypter threw / system_setting silently fell back to raw). Verified
+  end-to-end against the Null/sandbox driver.
+  Phase 2 next: disbursement batches (`ci_disbursement_batches`/`ci_disbursements`),
+  maker-checker approval, transfer via the driver against MoMo/Airtel **sandbox**,
+  webhook (`Api/V1/Webhooks`) + status-poll reconciliation, idempotency keys.
+  Go-live: set mtn_*/airtel_* creds in Settings; follow the payments skill KYC
+  checklist. UI: add a payout-methods panel to the employee profile.

@@ -478,6 +478,13 @@ $routes->match(['get','post'], 'erp/companies/update_company_info', 'Companies::
 $routes->match(['get','post'], 'erp/companies/read', 'Companies::read', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/companies/delete_company', 'Companies::delete_company', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 
+// Payout methods — capture + verify employee payout destinations — ROADMAP F2
+$routes->get('erp/payout-methods', 'PayoutMethods::list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/payout-methods/add', 'PayoutMethods::add', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/payout-methods/verify-start', 'PayoutMethods::verify_start', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/payout-methods/verify-confirm', 'PayoutMethods::verify_confirm', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/payout-methods/set-primary', 'PayoutMethods::set_primary', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+
 // Super Admin: Audit Log (read-only compliance trail) — ROADMAP F1
 $routes->get('erp/audit-log', 'AuditLog::index', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->get('erp/audit-log/data', 'AuditLog::data', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);

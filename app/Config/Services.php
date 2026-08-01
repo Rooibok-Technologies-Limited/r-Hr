@@ -48,6 +48,30 @@ class Services extends BaseService
 	}
 
 	/**
+	 * Employee payout destinations — capture + verification (ROADMAP F2).
+	 */
+	public static function payoutMethods($getShared = true)
+	{
+		if ($getShared) {
+			return static::getSharedInstance('payoutMethods');
+		}
+
+		return new \App\Libraries\PayoutMethods();
+	}
+
+	/**
+	 * Outbound money-movement manager (MoMo / Airtel; degrades to no-op).
+	 */
+	public static function disbursement($getShared = true)
+	{
+		if ($getShared) {
+			return static::getSharedInstance('disbursement');
+		}
+
+		return new \App\Libraries\Disbursement\Disbursement();
+	}
+
+	/**
 	 * Outbound SMS gateway, selected from the `sms_gateway` system setting.
 	 *
 	 * Returns a NullSmsProvider (no-op) when SMS is inactive (`sms_active` off)
