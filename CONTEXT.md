@@ -107,8 +107,20 @@ Source fallback `app/Config/App.php` `$baseURL` → `http://localhost:12000`.
   never returns it. Wired `Config\Encryption::$key` from `ENCRYPTION_KEY` (was
   unset → encrypter threw / system_setting silently fell back to raw). Verified
   end-to-end against the Null/sandbox driver.
-  Phase 2 next: disbursement batches (`ci_disbursement_batches`/`ci_disbursements`),
-  maker-checker approval, transfer via the driver against MoMo/Airtel **sandbox**,
-  webhook (`Api/V1/Webhooks`) + status-poll reconciliation, idempotency keys.
-  Go-live: set mtn_*/airtel_* creds in Settings; follow the payments skill KYC
-  checklist. UI: add a payout-methods panel to the employee profile.
+- **F2 disbursement — phase 2 DONE (2026-08-01).** `ci_disbursement_batches` +
+  `ci_disbursements` (state machine created→pending→successful|failed, `reference`
+  UUID unique = idempotency key). `service('disbursementEngine')`: buildBatch
+  (skips employees without a verified method), approve (**maker-checker**:
+  approver≠preparer), process (transfer with the reference persisted first),
+  applyTerminal (**write-once, idempotent** — the double-credit guard), reconcile
+  (status poll), handleCallback. `spark disbursements:reconcile [batch_id]` cron
+  backstop. Webhooks `Api/V1/Webhooks::mtn|airtel` wired (raw-store, HMAC verify
+  when a *_callback_secret is set, idempotent apply, always 200). Maker-checker
+  controller `Erp/Disbursements` (list/build/approve/process/reconcile). Fixed a
+  latent `->insert($row, true)` bug (2nd arg is escape, not return-id) in
+  addMethod + buildBatch — now `insertID()`. Verified end-to-end incl. duplicate
+  webhook = no-op.
+  Phase 3 next: MoMo/Airtel **sandbox** creds in Settings → real transfer()/
+  status() round-trip; payroll-period → batch builder (read ci_payslips net);
+  batch dashboard UI + caps; payments-skill KYC/go-live checklist.
+  Also: add a payout-methods panel to the employee profile (F2 phase-1 UI).

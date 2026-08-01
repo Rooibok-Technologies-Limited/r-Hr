@@ -67,7 +67,8 @@ class PayoutMethods
             'is_active'    => 1,
             'created_at'   => $now,
         ];
-        $id = $this->db->table(self::TABLE)->insert($row, true);
+        $this->db->table(self::TABLE)->insert($row);
+        $id = $this->db->insertID();
 
         service('audit')->record('payout_method.added', [
             'entity_type' => 'payout_method',
@@ -213,6 +214,41 @@ class PayoutMethods
             'is_primary' => (int) $r['is_primary'] === 1,
             'verified'   => ! empty($r['verified_at']),
         ], $rows);
+    }
+
+    /**
+     * The employee's payable method: verified + active, primary preferred.
+     * Returns the raw row (or null) — used by the disbursement engine.
+     */
+    public function primaryVerifiedFor(int $employeeId): ?array
+    {
+        return $this->db->table(self::TABLE)
+            ->where('employee_id', $employeeId)
+            ->where('is_active', 1)
+            ->where('verified_at IS NOT NULL', null, false)
+            ->orderBy('is_primary', 'DESC')->orderBy('method_id', 'ASC')
+            ->get()->getRowArray() ?: null;
+    }
+
+    /**
+     * Decrypted destination for a method that is safe to pay (verified+active).
+     * Returns null when the method is missing, inactive, or unverified — so the
+     * engine can never pay an unverified destination.
+     *
+     * @return array{account:string, type:string, provider:?string, name:?string}|null
+     */
+    public function payable(int $methodId): ?array
+    {
+        $m = $this->find($methodId);
+        if (! $m || (int) $m['is_active'] !== 1 || empty($m['verified_at'])) {
+            return null;
+        }
+        return [
+            'account'  => $this->decrypt($m['account_enc']),
+            'type'     => $m['type'],
+            'provider' => $m['provider'],
+            'name'     => $m['account_name'],
+        ];
     }
 
     // ------------------------------------------------------------------

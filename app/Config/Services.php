@@ -72,6 +72,18 @@ class Services extends BaseService
 	}
 
 	/**
+	 * Batch payout engine — prepare / approve / process / reconcile (ROADMAP F2).
+	 */
+	public static function disbursementEngine($getShared = true)
+	{
+		if ($getShared) {
+			return static::getSharedInstance('disbursementEngine');
+		}
+
+		return new \App\Libraries\Disbursement\DisbursementEngine();
+	}
+
+	/**
 	 * Outbound SMS gateway, selected from the `sms_gateway` system setting.
 	 *
 	 * Returns a NullSmsProvider (no-op) when SMS is inactive (`sms_active` off)

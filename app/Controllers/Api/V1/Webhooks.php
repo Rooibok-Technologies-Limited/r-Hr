@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 
 namespace App\Controllers\Api\V1;
 
@@ -200,25 +204,72 @@ class Webhooks extends ApiBaseController
     }
 
     /**
-     * POST /api/v1/webhooks/mtn
+     * POST /api/v1/webhooks/mtn — MoMo disbursement callback (ROADMAP F2).
      *
-     * Placeholder for MTN Mobile Money callback — implemented in Phase 3.3.
+     * MoMo posts the transaction with our externalId/referenceId and a status
+     * (SUCCESSFUL|FAILED|PENDING). We apply the terminal outcome idempotently.
      */
     public function mtn()
     {
-        // Implemented in Phase 3.3
-        return $this->response->setStatusCode(200)->setJSON(['received' => true]);
+        return $this->handleDisbursementCallback('mtn', function (array $body) {
+            $ref    = $body['externalId'] ?? $body['referenceId'] ?? ($body['financialTransactionId'] ?? '');
+            $map    = ['SUCCESSFUL' => 'successful', 'FAILED' => 'failed', 'PENDING' => 'pending'];
+            $status = $map[strtoupper((string) ($body['status'] ?? ''))] ?? 'unknown';
+            return [$ref, $status, $body['financialTransactionId'] ?? null];
+        });
     }
 
     /**
-     * POST /api/v1/webhooks/airtel
-     *
-     * Placeholder for Airtel Money callback — implemented in Phase 3.4.
+     * POST /api/v1/webhooks/airtel — Airtel Money disbursement callback.
      */
     public function airtel()
     {
-        // Implemented in Phase 3.4
-        return $this->response->setStatusCode(200)->setJSON(['received' => true]);
+        return $this->handleDisbursementCallback('airtel', function (array $body) {
+            $tx     = $body['transaction'] ?? $body['data']['transaction'] ?? [];
+            $ref    = $tx['id'] ?? ($body['reference'] ?? '');
+            $code   = strtoupper((string) ($tx['status'] ?? ($tx['status_code'] ?? '')));
+            $map    = ['TS' => 'successful', 'TF' => 'failed', 'TA' => 'pending', 'TIP' => 'pending'];
+            return [$ref, $map[$code] ?? 'unknown', $tx['airtel_money_id'] ?? null];
+        });
+    }
+
+    /**
+     * Shared disbursement-callback handler: store raw, (optionally) verify the
+     * signature, look up by our reference, apply the terminal state once, and
+     * always 200 for known/duplicate deliveries so the provider stops retrying.
+     *
+     * @param callable(array):array{0:string,1:string,2:?string} $extract
+     */
+    private function handleDisbursementCallback(string $source, callable $extract)
+    {
+        $raw  = $this->request->getBody() ?? '';
+        $body = json_decode($raw, true) ?: [];
+
+        // Signature verification (enforced only when a secret is configured, so
+        // sandbox works without one; production MUST set it). [SECURITY]
+        helper('main');
+        $secret = system_setting($source === 'mtn' ? 'mtn_callback_secret' : 'airtel_callback_secret');
+        if (! empty($secret)) {
+            $sig      = $this->request->getHeaderLine('X-Callback-Signature') ?: $this->request->getHeaderLine('X-Signature');
+            $expected = hash_hmac('sha256', $raw, $secret);
+            if (! hash_equals($expected, (string) $sig)) {
+                log_message('warning', '[Webhook:{s}] signature mismatch', ['s' => $source]);
+                return $this->response->setStatusCode(401)->setJSON(['error' => 'invalid signature']);
+            }
+        }
+
+        [$reference, $status, $providerTxnId] = $extract($body);
+        if ($reference === '' || $status === 'unknown') {
+            log_message('warning', '[Webhook:{s}] unparseable callback: {b}', ['s' => $source, 'b' => mb_substr($raw, 0, 500)]);
+            return $this->response->setStatusCode(200)->setJSON(['received' => true]);
+        }
+        if ($status === 'pending') {
+            return $this->response->setStatusCode(200)->setJSON(['received' => true]);
+        }
+
+        $result = service('disbursementEngine')->handleCallback($reference, $status, $providerTxnId, $raw);
+        // Unknown reference → 200 + log (avoid provider retry storms).
+        return $this->response->setStatusCode(200)->setJSON(['received' => true, 'applied' => $result['applied'] ?? false]);
     }
 
     /**

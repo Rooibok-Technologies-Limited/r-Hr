@@ -478,6 +478,13 @@ $routes->match(['get','post'], 'erp/companies/update_company_info', 'Companies::
 $routes->match(['get','post'], 'erp/companies/read', 'Companies::read', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/companies/delete_company', 'Companies::delete_company', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 
+// Disbursements — maker-checker batch payouts — ROADMAP F2 phase 2
+$routes->get('erp/disbursements/list', 'Disbursements::list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/disbursements/build', 'Disbursements::build', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/disbursements/approve', 'Disbursements::approve', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/disbursements/process', 'Disbursements::process', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/disbursements/reconcile', 'Disbursements::reconcile', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+
 // Payout methods — capture + verify employee payout destinations — ROADMAP F2
 $routes->get('erp/payout-methods', 'PayoutMethods::list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->post('erp/payout-methods/add', 'PayoutMethods::add', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
