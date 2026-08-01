@@ -68,6 +68,25 @@ class Disbursements extends BaseController
         return $this->response->setJSON($res + ['csrf_hash' => csrf_hash()]);
     }
 
+    /** POST erp/disbursements/build-payroll — {period, company_id?}. */
+    public function build_payroll()
+    {
+        if (! ($a = $this->admin())) {
+            return $this->deny();
+        }
+        $period    = trim((string) $this->request->getPost('period'));
+        $companyId = $this->request->getPost('company_id');
+        if ($period === '') {
+            return $this->response->setJSON(['ok' => false, 'reason' => 'period required']);
+        }
+        $res = service('disbursementEngine')->buildFromPayroll(
+            $period,
+            $companyId !== null && $companyId !== '' ? (int) $companyId : null,
+            ['prepared_by' => $a[0]]
+        );
+        return $this->response->setJSON($res + ['csrf_hash' => csrf_hash()]);
+    }
+
     /** POST erp/disbursements/approve — {batch_id}. Maker-checker enforced in the engine. */
     public function approve()
     {

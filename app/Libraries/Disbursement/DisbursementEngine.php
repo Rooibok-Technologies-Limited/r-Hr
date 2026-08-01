@@ -49,6 +49,7 @@ class DisbursementEngine
         $currency  = $opts['currency'] ?? 'UGX';
         $pm        = service('payoutMethods');
         $now       = date('Y-m-d H:i:s');
+        $caps      = $this->caps();
 
         $lines   = [];
         $skipped = [];
@@ -58,6 +59,10 @@ class DisbursementEngine
             $amount = round((float) ($it['amount'] ?? 0), 2);
             if ($eid <= 0 || $amount <= 0) {
                 $skipped[] = ['employee_id' => $eid, 'reason' => 'invalid employee or amount'];
+                continue;
+            }
+            if ($caps['per_txn'] > 0 && $amount > $caps['per_txn']) {
+                $skipped[] = ['employee_id' => $eid, 'reason' => 'exceeds per-transaction cap'];
                 continue;
             }
             $method = $pm->primaryVerifiedFor($eid);
@@ -117,6 +122,51 @@ class DisbursementEngine
     }
 
     /**
+     * Prepare a batch from a payroll month's net pay. Reads ci_payslips for the
+     * period, skips payslips already covered by a non-failed disbursement for
+     * that period (no double-pay), then delegates to buildBatch.
+     *
+     * @return array{ok:bool,batch_id?:int,count?:int,total?:float,skipped?:array,reason?:string}
+     */
+    public function buildFromPayroll(string $salaryMonth, ?int $companyId = null, array $opts = []): array
+    {
+        $q = $this->db->table('ci_payslips')
+            ->select('staff_id, net_salary')
+            ->where('salary_month', $salaryMonth)
+            ->where('net_salary >', 0);
+        if ($companyId !== null) {
+            $q->where('company_id', $companyId);
+        }
+        $payslips = $q->get()->getResultArray();
+
+        // Employees already paid (or in flight) for this exact period.
+        $already = array_column($this->db->table(self::D_TABLE)->select('employee_id')
+            ->join(self::B_TABLE, self::B_TABLE . '.batch_id = ' . self::D_TABLE . '.batch_id')
+            ->where(self::B_TABLE . '.reference_period', $salaryMonth)
+            ->whereIn(self::D_TABLE . '.status', ['created', 'pending', 'successful'])
+            ->get()->getResultArray(), 'employee_id');
+        $already = array_flip(array_map('intval', $already));
+
+        $items = [];
+        foreach ($payslips as $p) {
+            if (isset($already[(int) $p['staff_id']])) {
+                continue;
+            }
+            $items[] = ['employee_id' => (int) $p['staff_id'], 'amount' => (float) $p['net_salary']];
+        }
+
+        if ($items === []) {
+            return ['ok' => false, 'reason' => 'no unpaid payslips for ' . $salaryMonth];
+        }
+
+        return $this->buildBatch($items, array_merge($opts, [
+            'source'     => 'payroll',
+            'period'     => $salaryMonth,
+            'company_id' => $companyId,
+        ]));
+    }
+
+    /**
      * Approve a draft batch. Maker-checker: the approver must differ from the
      * preparer.
      *
@@ -167,6 +217,23 @@ class DisbursementEngine
         if (! in_array($batch['status'], ['approved', 'processing'], true)) {
             return ['ok' => false, 'reason' => 'batch must be approved before processing'];
         }
+
+        // Safety caps (0 = unlimited) — refuse BEFORE any money moves.
+        $caps = $this->caps();
+        if ($caps['per_run'] > 0 && (float) $batch['total_amount'] > $caps['per_run']) {
+            return ['ok' => false, 'reason' => 'batch total exceeds per-run cap'];
+        }
+        if ($caps['per_day'] > 0) {
+            $todaySent = (float) $this->db->table(self::D_TABLE)
+                ->selectSum('amount')
+                ->whereIn('status', ['pending', 'successful'])
+                ->where('created_at >=', date('Y-m-d 00:00:00'))
+                ->get()->getRow()->amount;
+            if ($todaySent + (float) $batch['total_amount'] > $caps['per_day']) {
+                return ['ok' => false, 'reason' => 'would exceed per-day cap'];
+            }
+        }
+
         $this->db->table(self::B_TABLE)->where('batch_id', $batchId)->update(['status' => 'processing']);
 
         $pm    = service('payoutMethods');
@@ -315,6 +382,22 @@ class DisbursementEngine
     private function batch(int $batchId): ?array
     {
         return $this->db->table(self::B_TABLE)->where('batch_id', $batchId)->get()->getRowArray() ?: null;
+    }
+
+    /**
+     * Payout caps from system settings (0/unset = unlimited). A safety net so a
+     * fat-fingered amount or a runaway batch can't drain the float.
+     *
+     * @return array{per_txn:float,per_run:float,per_day:float}
+     */
+    private function caps(): array
+    {
+        helper('main');
+        return [
+            'per_txn' => (float) (system_setting('disbursement_max_per_txn') ?: 0),
+            'per_run' => (float) (system_setting('disbursement_max_per_run') ?: 0),
+            'per_day' => (float) (system_setting('disbursement_max_per_day') ?: 0),
+        ];
     }
 
     private function currentUser(): ?int

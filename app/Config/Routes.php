@@ -481,6 +481,7 @@ $routes->match(['get','post'], 'erp/companies/delete_company', 'Companies::delet
 // Disbursements — maker-checker batch payouts — ROADMAP F2 phase 2
 $routes->get('erp/disbursements/list', 'Disbursements::list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->post('erp/disbursements/build', 'Disbursements::build', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/disbursements/build-payroll', 'Disbursements::build_payroll', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->post('erp/disbursements/approve', 'Disbursements::approve', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->post('erp/disbursements/process', 'Disbursements::process', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->post('erp/disbursements/reconcile', 'Disbursements::reconcile', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
