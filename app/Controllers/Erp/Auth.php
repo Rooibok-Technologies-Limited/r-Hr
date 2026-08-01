@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
  /**
  * NOTICE OF LICENSE
  *
@@ -122,16 +126,19 @@ class Auth extends BaseController
 							$id = $iuser['user_id']; // user id
 							// update last login record
 							$UsersModel->update($id, $last_data);
+							service('audit')->record('auth.login', ['entity_type'=>'user','entity_id'=>$id,'summary'=>'Signed in']);
 							$Return['csrf_hash'] = csrf_hash();
 							$this->output($Return);
 							} // end no-2FA else
 						} else {
+							service('audit')->record('auth.login_failed', ['actor_type'=>'anonymous','summary'=>'Failed login for '.esc($username)]);
 							$Return['error'] = lang('Login.xin_error_invalid_credentials');
 							/*Return*/
 							$Return['csrf_hash'] = csrf_hash();
 							$this->output($Return);
 						}
 					} else {
+						service('audit')->record('auth.login_failed', ['actor_type'=>'anonymous','summary'=>'Failed login for '.esc($username)]);
 						$Return['error'] = lang('Login.xin_error_invalid_credentials');
 						/*Return*/
 						$Return['csrf_hash'] = csrf_hash();
@@ -267,6 +274,7 @@ class Auth extends BaseController
 			$session->remove('pending_2fa_attempts');
 			$session->remove('pending_2fa_lockout');
 
+			service('audit')->record('auth.login', ['entity_type'=>'user','entity_id'=>$user['user_id'],'summary'=>'Signed in (2FA)']);
 			$Return['result'] = lang('Login.xin_success_logged_in');
 			$this->output($Return);
 		} else {

@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
  /**
  * NOTICE OF LICENSE
  *
@@ -32,6 +36,8 @@ class Logout extends BaseController
 			'last_logout_date' => date('d-m-Y H:i:s')
 		); 
 		$UsersModel->update($usession['sup_user_id'], $last_data);
+		// Record before the session (and actor context) is torn down.
+		service('audit')->record('auth.logout', ['entity_type'=>'user','entity_id'=>$usession['sup_user_id'],'summary'=>'Signed out']);
 		// Removing session data
 		$session->destroy();
 		$Return['result'] = 'Successfully Logout.';

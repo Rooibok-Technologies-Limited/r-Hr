@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -298,9 +302,10 @@ class Users extends BaseController {
 				'created_at' => date('d-m-Y h:i:s')
 			];
 			$UsersModel = new UsersModel();
-			$result = $UsersModel->insert($data);	
-			$Return['csrf_hash'] = csrf_hash();	
+			$result = $UsersModel->insert($data);
+			$Return['csrf_hash'] = csrf_hash();
 			if ($result == TRUE) {
+				service('audit')->record('user.created', ['entity_type'=>'user','entity_id'=>$result,'summary'=>'Created user '.esc(($data['first_name']??'').' '.($data['last_name']??''))]);
 				$Return['result'] = lang('Users.xin_success_user_added');
 				if($xin_system['enable_email_notification'] == 1){
 					// Send mail start
@@ -711,6 +716,7 @@ class Users extends BaseController {
 			$UsersModel = new UsersModel();
 			$result = $UsersModel->where('user_id', $id)->delete($id);
 			if ($result == TRUE) {
+				service('audit')->record('user.deleted', ['entity_type'=>'user','entity_id'=>$id,'summary'=>'Deleted user #'.$id]);
 				$Return['result'] = lang('Users.xin_success_delete_user');
 			} else {
 				$Return['error'] = lang('Membership.xin_error_msg');
@@ -731,6 +737,7 @@ class Users extends BaseController {
 			$SuperroleModel = new SuperroleModel();
 			$result = $SuperroleModel->where('role_id', $id)->delete($id);
 			if ($result == TRUE) {
+				service('audit')->record('role.deleted', ['entity_type'=>'role','entity_id'=>$id,'summary'=>'Deleted role #'.$id]);
 				$Return['result'] = lang('Users.xin_role_success_deleted');
 			} else {
 				$Return['error'] = lang('Membership.xin_error_msg');
