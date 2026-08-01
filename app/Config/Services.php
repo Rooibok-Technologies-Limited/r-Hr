@@ -36,6 +36,18 @@ class Services extends BaseService
 	}
 
 	/**
+	 * Append-only, tamper-evident audit / compliance trail.
+	 */
+	public static function audit($getShared = true)
+	{
+		if ($getShared) {
+			return static::getSharedInstance('audit');
+		}
+
+		return new \App\Libraries\Audit();
+	}
+
+	/**
 	 * Outbound SMS gateway, selected from the `sms_gateway` system setting.
 	 *
 	 * Returns a NullSmsProvider (no-op) when SMS is inactive (`sms_active` off)

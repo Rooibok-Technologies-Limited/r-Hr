@@ -87,3 +87,15 @@ Source fallback `app/Config/App.php` `$baseURL` → `http://localhost:12000`.
   architecture in `docs/adrs/ADR-001-payroll-disbursement.md`.
 - **Recommended first sprint:** F1 audit log → F2 disbursement (sandbox) → F3
   Uganda statutory.
+
+## Build progress (roadmap)
+- **F1 Audit log — DONE (2026-08-01).** `ci_audit_log` (hash-chained, append-only),
+  `service('audit')->record()` (fail-safe), tamper-evident `verifyChain()`,
+  super-admin viewer `Erp/AuditLog` (`erp/audit-log` — filters, CSV export,
+  integrity check) + sidebar link. Instrumented company.created + subscription
+  .updated. Verified: record + chain + tamper-detection + controller. Next
+  (phase 2): instrument auth login/logout, user/role changes, and every F2
+  disbursement transition. Prod hardening: grant app role INSERT+SELECT only on
+  ci_audit_log.
+- **F2 disbursement — target both MTN MoMo + Airtel Money** (driver abstraction
+  from the start), per user decision.

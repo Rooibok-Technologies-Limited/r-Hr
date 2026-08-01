@@ -364,6 +364,10 @@ class Companies extends BaseController {
 					'body'  => esc($company_name).' has been added to the system.',
 					'link'  => site_url('erp/companies-list'),
 				]);
+				service('audit')->record('company.created', [
+					'entity_type' => 'company',
+					'summary'     => esc($company_name).' registered',
+				]);
 			} else {
 				$Return['error'] = lang('Main.xin_error_msg');
 			}
@@ -733,6 +737,11 @@ class Companies extends BaseController {
 					'title' => 'Subscription updated',
 					'body'  => 'A company subscription plan was changed.',
 					'link'  => site_url('erp/companies-list'),
+				]);
+				service('audit')->record('subscription.updated', [
+					'entity_type' => 'company',
+					'entity_id'   => $id,
+					'summary'     => 'Subscription plan changed',
 				]);
 			} else {
 				$Return['error'] = lang('Main.xin_error_msg');

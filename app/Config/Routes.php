@@ -478,6 +478,12 @@ $routes->match(['get','post'], 'erp/companies/update_company_info', 'Companies::
 $routes->match(['get','post'], 'erp/companies/read', 'Companies::read', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/companies/delete_company', 'Companies::delete_company', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 
+// Super Admin: Audit Log (read-only compliance trail) — ROADMAP F1
+$routes->get('erp/audit-log', 'AuditLog::index', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->get('erp/audit-log/data', 'AuditLog::data', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->get('erp/audit-log/export', 'AuditLog::export_csv', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->get('erp/audit-log/verify', 'AuditLog::verify', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+
 // Super Admin: Membership Plans
 $routes->get('erp/membership-list', 'Membership::index', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->get('erp/membership-detail/(:segment)', 'Membership::membership_details', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);

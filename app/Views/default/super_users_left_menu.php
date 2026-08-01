@@ -44,6 +44,9 @@ function sa_sub_active($path_url, $match) { return $path_url === $match ? 'activ
   <li class="pc-item <?= sa_active($p, 'user_roles'); ?>">
     <a href="<?= site_url('erp/users-role'); ?>" class="pc-link"><span class="pc-micon"><i data-feather="shield"></i></span><span class="pc-mtext">User Roles</span></a>
   </li>
+  <li class="pc-item <?= sa_active($p, 'audit-log'); ?>">
+    <a href="<?= site_url('erp/audit-log'); ?>" class="pc-link"><span class="pc-micon"><i data-feather="activity"></i></span><span class="pc-mtext">Audit Log</span></a>
+  </li>
 
   <!-- CONTENT -->
   <li class="pc-item pc-caption"><label>Content</label></li>
