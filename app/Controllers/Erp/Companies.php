@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -351,11 +355,15 @@ class Companies extends BaseController {
 					// Send mail end
 				}
 				$Return['result'] = lang('Company.xin_success_add_company');
-				// Notify all super admins
-				$supers = $UsersModel->where('user_type','super_user')->findAll();
-				foreach($supers as $su) {
-					create_notification($su['user_id'], 'New company registered', esc($company_name).' has been added to the system.', site_url('erp/companies-list'));
-				}
+				// Notify all super admins via the unified notifier (honours
+				// per-user prefs; fans out to email/SMS once templates exist).
+				$supers   = $UsersModel->where('user_type','super_user')->findAll();
+				$superIds = array_column($supers, 'user_id');
+				service('notifier')->send($superIds, 'company_registered', [
+					'title' => 'New company registered',
+					'body'  => esc($company_name).' has been added to the system.',
+					'link'  => site_url('erp/companies-list'),
+				]);
 			} else {
 				$Return['error'] = lang('Main.xin_error_msg');
 			}
@@ -718,11 +726,14 @@ class Companies extends BaseController {
 			if ($result == TRUE) {
 				
 				$Return['result'] = lang('Company.xin_success_update_company_subscription');
-				// Notify super admins
-				$supers = $UsersModel->where('user_type','super_user')->findAll();
-				foreach($supers as $su) {
-					create_notification($su['user_id'], 'Subscription updated', 'A company subscription plan was changed.', site_url('erp/companies-list'));
-				}
+				// Notify super admins via the unified notifier.
+				$supers   = $UsersModel->where('user_type','super_user')->findAll();
+				$superIds = array_column($supers, 'user_id');
+				service('notifier')->send($superIds, 'subscription_updated', [
+					'title' => 'Subscription updated',
+					'body'  => 'A company subscription plan was changed.',
+					'link'  => site_url('erp/companies-list'),
+				]);
 			} else {
 				$Return['error'] = lang('Main.xin_error_msg');
 			}
