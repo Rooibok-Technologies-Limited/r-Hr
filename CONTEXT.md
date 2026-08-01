@@ -79,4 +79,11 @@ Source fallback `app/Config/App.php` `$baseURL` → `http://localhost:12000`.
 ## Next steps
 - Run `php spark migrate` on each environment (adds prefs table + index).
 - Adopt service('notifier')->send() in new dispatch points (leave, payroll, tasks).
+  (Done: Erp/Companies registration + subscription events.)
 - Add a preferences UI (My Profile) writing ci_user_notification_prefs.
+- **Feature roadmap:** `docs/ROADMAP.md` — 14 planned features, dependency-ordered
+  (audit → disbursement → expenses/loans/FX; notifier→WhatsApp/expiry; API→PWA/
+  clock-in; people-ops; statutory PAYE/NSSF/LST; staff ID cards). Money-movement
+  architecture in `docs/adrs/ADR-001-payroll-disbursement.md`.
+- **Recommended first sprint:** F1 audit log → F2 disbursement (sandbox) → F3
+  Uganda statutory.
