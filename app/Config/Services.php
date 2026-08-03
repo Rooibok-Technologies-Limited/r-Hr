@@ -96,6 +96,18 @@ class Services extends BaseService
 	}
 
 	/**
+	 * Flutterwave collections (company wallet top-ups) — ROADMAP F2, ADR-002.
+	 */
+	public static function flutterwaveCollections($getShared = true)
+	{
+		if ($getShared) {
+			return static::getSharedInstance('flutterwaveCollections');
+		}
+
+		return new \App\Libraries\FlutterwaveCollections();
+	}
+
+	/**
 	 * Outbound SMS gateway, selected from the `sms_gateway` system setting.
 	 *
 	 * Returns a NullSmsProvider (no-op) when SMS is inactive (`sms_active` off)

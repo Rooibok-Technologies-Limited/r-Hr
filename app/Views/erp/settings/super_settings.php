@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 /*
 * Super Admin Settings — Payments, SMS, API, Tax
 */
@@ -31,6 +35,9 @@ $active_tab = in_array($tab, ['payments','mtn','airtel']) ? 'payments' : 'tax';
       </li>
       <li class="nav-item">
         <a class="nav-link <?= $tab === 'airtel' ? 'active' : '' ?>" data-toggle="tab" href="#tab-airtel">Airtel Money</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link <?= $tab === 'flutterwave' ? 'active' : '' ?>" data-toggle="tab" href="#tab-flutterwave">Flutterwave</a>
       </li>
       <li class="nav-item">
         <a class="nav-link <?= $tab === 'sms' ? 'active' : '' ?>" data-toggle="tab" href="#tab-sms">SMS</a>
@@ -191,6 +198,86 @@ $active_tab = in_array($tab, ['payments','mtn','airtel']) ? 'payments' : 'tax';
             </div>
           </div>
           <button type="submit" class="btn btn-primary">Save Airtel Settings</button>
+        </form>
+      </div>
+
+      <!-- ─── Flutterwave (aggregator / wallet float) ─ -->
+      <div class="tab-pane fade <?= $tab === 'flutterwave' ? 'show active' : '' ?>" id="tab-flutterwave">
+        <form id="form-flutterwave-settings" method="post">
+          <?= csrf_field() ?>
+          <input type="hidden" name="setting_id" value="1">
+          <div class="alert alert-light-primary" role="alert">
+            <i data-feather="info"></i> Flutterwave is the pooled aggregator holding the master float:
+            company wallet top-ups (collections) and employee payouts (transfers) both run through it (ADR-002).
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Public Key</label>
+                <input type="text" class="form-control" name="flutterwave_public_key" value="<?= esc($settings['flutterwave_public_key'] ?? '') ?>">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Secret Key</label>
+                <input type="password" class="form-control" name="flutterwave_secret_key" placeholder="<?= !empty($settings['flutterwave_secret_key']) ? '•••••• (leave blank to keep current)' : '' ?>">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Encryption Key</label>
+                <input type="password" class="form-control" name="flutterwave_encryption_key" placeholder="<?= !empty($settings['flutterwave_encryption_key']) ? '•••••• (leave blank to keep current)' : '' ?>">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Webhook secret (verif-hash)</label>
+                <input type="password" class="form-control" name="flutterwave_webhook_secret" placeholder="<?= !empty($settings['flutterwave_webhook_secret']) ? '•••••• (leave blank to keep current)' : '' ?>">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Base URL</label>
+                <input type="text" class="form-control" name="flutterwave_base_url" value="<?= esc($settings['flutterwave_base_url'] ?? 'https://api.flutterwave.com/v3') ?>">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Environment</label>
+                <select class="form-control" name="flutterwave_environment">
+                  <option value="sandbox" <?= ($settings['flutterwave_environment'] ?? '') === 'sandbox' ? 'selected' : '' ?>>Sandbox</option>
+                  <option value="production" <?= ($settings['flutterwave_environment'] ?? '') === 'production' ? 'selected' : '' ?>>Production</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Enable Flutterwave</label>
+                <select class="form-control" name="flutterwave_active">
+                  <option value="0" <?= ($settings['flutterwave_active'] ?? 0) == 0 ? 'selected' : '' ?>>Disabled</option>
+                  <option value="1" <?= ($settings['flutterwave_active'] ?? 0) == 1 ? 'selected' : '' ?>>Enabled</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Payout aggregator</label>
+                <select class="form-control" name="disbursement_aggregator">
+                  <option value="" <?= ($settings['disbursement_aggregator'] ?? '') === '' ? 'selected' : '' ?>>Direct per-type (MTN / Airtel)</option>
+                  <option value="flutterwave" <?= ($settings['disbursement_aggregator'] ?? '') === 'flutterwave' ? 'selected' : '' ?>>Flutterwave (pooled float)</option>
+                </select>
+                <small class="text-muted">Pooled routes every payout through Flutterwave's master float.</small>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label>Webhook URL</label>
+                <input type="text" class="form-control" value="<?= site_url('api/v1/webhooks/flutterwave') ?>" readonly>
+                <small class="text-muted">Set this in your Flutterwave dashboard, and set the verif-hash to the webhook secret above.</small>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Save Flutterwave Settings</button>
         </form>
       </div>
 

@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 //Process String
 
 // Create a notification for a user
@@ -40,6 +44,7 @@ if( !function_exists('system_setting') ){
 		static $sensitive = [
 			'stripe_secret_key','stripe_webhook_secret','mtn_api_key','mtn_subscription_key',
 			'airtel_client_secret','sms_api_key','jwt_secret',
+			'flutterwave_secret_key','flutterwave_encryption_key','flutterwave_webhook_secret',
 		];
 
 		$cache = \Config\Services::cache();

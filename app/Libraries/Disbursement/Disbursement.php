@@ -30,6 +30,17 @@ class Disbursement
             return $this->cache[$type];
         }
 
+        // Pooled-aggregator mode (ADR-002): when Flutterwave is selected and
+        // configured, EVERY payout type flows through it (it fans out to the
+        // right rail). Falls through to per-type direct drivers otherwise.
+        helper('main');
+        if ((system_setting('disbursement_aggregator') ?: '') === 'flutterwave') {
+            $agg = new FlutterwaveDisbursement();
+            if ($agg->isConfigured()) {
+                return $this->cache[$type] = $agg;
+            }
+        }
+
         $driver = null;
         switch ($type) {
             case 'momo':

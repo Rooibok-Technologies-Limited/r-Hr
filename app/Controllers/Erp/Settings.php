@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -1750,24 +1754,37 @@ class Settings extends BaseController {
 			'stripe_secret_key','stripe_publishable_key','stripe_webhook_secret','stripe_mode','stripe_active',
 			'mtn_subscription_key','mtn_api_user','mtn_api_key','mtn_environment','mtn_active',
 			'airtel_client_id','airtel_client_secret','airtel_environment','airtel_active',
+			'flutterwave_public_key','flutterwave_secret_key','flutterwave_encryption_key',
+			'flutterwave_webhook_secret','flutterwave_base_url','flutterwave_environment',
+			'flutterwave_active','disbursement_aggregator',
 			'sms_provider','sms_username','sms_api_key','sms_sender_id','sms_active',
 			'jwt_secret','jwt_ttl_hours','api_active','api_rate_limit',
 			'default_geofence_radius','billing_reminder_active','billing_reminder_days',
 			'nssf_employee_rate','nssf_employer_rate','nssf_enabled',
 		];
 
+		// Sensitive keys are encrypted at rest; a BLANK submission means "keep the
+		// stored value" (secrets are never re-rendered), which also prevents a
+		// second save from double-encrypting the already-encrypted blob.
+		$sensitive = ['stripe_secret_key','stripe_webhook_secret','mtn_api_key','mtn_subscription_key',
+			'airtel_client_secret','sms_api_key','jwt_secret',
+			'flutterwave_secret_key','flutterwave_encryption_key','flutterwave_webhook_secret'];
+
 		$data = [];
 		foreach ($fields as $field) {
 			$val = $this->request->getPost($field);
-			if ($val !== null) {
-				$data[$field] = strip_tags(trim($val));
+			if ($val === null) {
+				continue;
 			}
+			$val = strip_tags(trim($val));
+			if (in_array($field, $sensitive, true) && $val === '') {
+				continue; // blank secret ⇒ leave the current one untouched
+			}
+			$data[$field] = $val;
 		}
 
 		if (!empty($data)) {
 			// Encrypt sensitive keys before saving
-			$sensitive = ['stripe_secret_key','stripe_webhook_secret','mtn_api_key','mtn_subscription_key',
-				'airtel_client_secret','sms_api_key','jwt_secret'];
 			$encrypter = \Config\Services::encrypter();
 			foreach ($sensitive as $key) {
 				if (!empty($data[$key])) {

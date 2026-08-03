@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\UsersModel;
 
@@ -34,6 +38,15 @@ function sa_sub_active($path_url, $match) { return $path_url === $match ? 'activ
   </li>
   <li class="pc-item <?= sa_active($p, 'invoice_payments'); ?>">
     <a href="<?= site_url('erp/billing-invoices'); ?>" class="pc-link"><span class="pc-micon"><i data-feather="credit-card"></i></span><span class="pc-mtext">Payment History</span></a>
+  </li>
+
+  <!-- PAYOUTS & WALLETS -->
+  <li class="pc-item pc-caption"><label>Payouts</label></li>
+  <li class="pc-item <?= sa_active($p, 'wallets'); ?>">
+    <a href="<?= site_url('erp/wallets'); ?>" class="pc-link"><span class="pc-micon"><i data-feather="credit-card"></i></span><span class="pc-mtext">Company Wallets</span></a>
+  </li>
+  <li class="pc-item <?= sa_active($p, 'disbursements'); ?>">
+    <a href="<?= site_url('erp/disbursements'); ?>" class="pc-link"><span class="pc-micon"><i data-feather="send"></i></span><span class="pc-mtext">Disbursements</span></a>
   </li>
 
   <!-- USERS & ACCESS -->

@@ -234,6 +234,104 @@ class Webhooks extends ApiBaseController
     }
 
     /**
+     * POST /api/v1/webhooks/flutterwave — the aggregator's unified webhook
+     * (ROADMAP F2, ADR-002). Handles two event families:
+     *   - charge.completed   → a company top-up succeeded ⇒ credit its wallet.
+     *   - transfer.completed → an employee payout reached a terminal state ⇒
+     *                          settle/fail the disbursement line.
+     *
+     * Flutterwave authenticates by a static `verif-hash` header equal to our
+     * configured secret. Charge amounts are NEVER trusted from the body — the
+     * transaction is re-verified server-side before crediting. [SECURITY]
+     */
+    public function flutterwave()
+    {
+        helper('main');
+        $raw  = $this->request->getBody() ?: '';
+        $body = json_decode($raw, true) ?: [];
+
+        $secret = system_setting('flutterwave_webhook_secret');
+        if (! empty($secret)) {
+            $sig = $this->request->getHeaderLine('verif-hash');
+            if (! hash_equals((string) $secret, (string) $sig)) {
+                log_message('warning', '[Webhook:flutterwave] verif-hash mismatch');
+                return $this->response->setStatusCode(401)->setJSON(['error' => 'invalid signature']);
+            }
+        } elseif (ENVIRONMENT === 'production') {
+            // Fail closed: never process money events on unauthenticated input in
+            // production. Sandbox/dev may run without a secret for testing. [SECURITY: H4]
+            log_message('error', '[Webhook:flutterwave] refused — no webhook secret configured in production');
+            return $this->response->setStatusCode(400)->setJSON(['error' => 'webhook secret not configured']);
+        }
+
+        $event = (string) ($body['event'] ?? '');
+        $data  = $body['data'] ?? [];
+
+        if (strpos($event, 'charge') === 0) {
+            $this->handleFlutterwaveCharge($data);
+        } elseif (strpos($event, 'transfer') === 0) {
+            $ref = (string) ($data['reference'] ?? '');
+            if ($ref !== '') {
+                // Do NOT trust the body's status for a money transition. Re-poll
+                // the provider for the authoritative status. [SECURITY: H4]
+                $status = $this->reverifyTransfer($ref);
+                if (in_array($status, ['successful', 'failed'], true)) {
+                    service('disbursementEngine')->handleCallback($ref, $status, (string) ($data['id'] ?? ''), $raw);
+                }
+            }
+        } else {
+            log_message('info', '[Webhook:flutterwave] unhandled event {e}', ['e' => $event]);
+        }
+
+        return $this->response->setStatusCode(200)->setJSON(['received' => true]);
+    }
+
+    /**
+     * Re-poll the provider for a transfer's authoritative status, keyed on our
+     * reference. Returns 'successful'|'failed'|'unknown'. Looks the line up to
+     * pick the right rail/driver.
+     */
+    private function reverifyTransfer(string $reference): string
+    {
+        $line = $this->db->table('ci_disbursements')->select('type')->where('reference', $reference)->get()->getRowArray();
+        if (! $line) {
+            return 'unknown';
+        }
+        $res = service('disbursement')->for($line['type'])->status($reference);
+        return $res['status'] ?? 'unknown';
+    }
+
+    /**
+     * A top-up charge fired. Re-verify server-side (authoritative amount +
+     * company), then credit the wallet idempotently on the transaction ref.
+     */
+    private function handleFlutterwaveCharge(array $data): void
+    {
+        if (strtolower((string) ($data['status'] ?? '')) !== 'successful') {
+            return; // only successful charges credit
+        }
+        $txnId = $data['id'] ?? null;
+        if (! $txnId) {
+            return;
+        }
+
+        $v = service('flutterwaveCollections')->verify($txnId);
+        if (! ($v['ok'] ?? false) || ($v['status'] ?? '') !== 'successful') {
+            log_message('warning', '[Webhook:flutterwave] charge {id} failed re-verification', ['id' => $txnId]);
+            return;
+        }
+        if (($v['company_id'] ?? 0) <= 0 || ($v['amount'] ?? 0) <= 0) {
+            log_message('warning', '[Webhook:flutterwave] charge {id} missing company/amount', ['id' => $txnId]);
+            return;
+        }
+
+        service('wallet')->credit((int) $v['company_id'], (float) $v['amount'], 'topup', [
+            'reference'   => $v['tx_ref'],   // idempotent: a replayed webhook credits once
+            'description' => 'Flutterwave top-up ' . $v['tx_ref'],
+        ]);
+    }
+
+    /**
      * Shared disbursement-callback handler: store raw, (optionally) verify the
      * signature, look up by our reference, apply the terminal state once, and
      * always 200 for known/duplicate deliveries so the provider stops retrying.
@@ -256,6 +354,11 @@ class Webhooks extends ApiBaseController
                 log_message('warning', '[Webhook:{s}] signature mismatch', ['s' => $source]);
                 return $this->response->setStatusCode(401)->setJSON(['error' => 'invalid signature']);
             }
+        } elseif (ENVIRONMENT === 'production') {
+            // Fail closed in production: a callback settles/releases real money, so
+            // never act on unauthenticated input. Sandbox may run without a secret. [SECURITY: H4]
+            log_message('error', '[Webhook:{s}] refused — no callback secret configured in production', ['s' => $source]);
+            return $this->response->setStatusCode(400)->setJSON(['error' => 'callback secret not configured']);
         }
 
         [$reference, $status, $providerTxnId] = $extract($body);

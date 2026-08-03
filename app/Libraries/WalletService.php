@@ -107,6 +107,12 @@ class WalletService
             return ['ok' => true];
         }
         return $this->tx($companyId, function (array $w) use ($amount, $opts) {
+            // Idempotent on reference: a concurrent webhook + reconcile poll for
+            // the same line must not release the hold twice. [SECURITY: H2]
+            $ref = $opts['reference'] ?? null;
+            if ($ref !== null && $this->refExists('release', $ref)) {
+                return ['ok' => true, 'reason' => 'already released'];
+            }
             $take     = min($amount, (float) $w['reserved']);
             $balance  = (float) $w['balance'] + $take;
             $reserved = (float) $w['reserved'] - $take;
@@ -128,6 +134,12 @@ class WalletService
             return ['ok' => true];
         }
         return $this->tx($companyId, function (array $w) use ($principal, $fee, $opts) {
+            // Idempotent on reference: a concurrent webhook + reconcile poll for
+            // the same line must not settle the hold twice. [SECURITY: H2]
+            $ref = $opts['reference'] ?? null;
+            if ($ref !== null && $this->refExists('payout', $ref)) {
+                return ['ok' => true, 'reason' => 'already settled'];
+            }
             $reserved = max(0.0, (float) $w['reserved'] - ($principal + $fee));
             $balance  = (float) $w['balance'];
             $this->setPools($w['wallet_id'], $balance, $reserved);
@@ -154,15 +166,27 @@ class WalletService
         if ($w) {
             return $w;
         }
-        $this->db->table(self::W_TABLE)->insert([
-            'company_id' => $companyId,
-            'currency'   => $currency,
-            'balance'    => 0,
-            'reserved'   => 0,
-            'status'     => 'active',
-            'created_at' => date('Y-m-d H:i:s'),
-        ]);
+        // ON CONFLICT DO NOTHING guards the first-touch race: two concurrent
+        // callers can both miss the row; the unique idx_wallet_company then makes
+        // the loser a no-op instead of an unhandled unique-violation.
+        $this->db->query(
+            'INSERT INTO ' . self::W_TABLE . ' (company_id, currency, balance, reserved, status, created_at)
+             VALUES (?, ?, 0, 0, ?, ?) ON CONFLICT (company_id) DO NOTHING',
+            [$companyId, $currency, 'active', date('Y-m-d H:i:s')]
+        );
         return $this->db->table(self::W_TABLE)->where('company_id', $companyId)->get()->getRowArray();
+    }
+
+    /**
+     * True when a reserve for $reference is still open — reserved but not yet
+     * settled (payout) or released. Lets the engine settle/release exactly the
+     * lines that hold funds, independent of the disbursement row's status.
+     */
+    public function hasOpenReserve(string $reference): bool
+    {
+        return $this->refExists('reserve', $reference)
+            && ! $this->refExists('payout', $reference)
+            && ! $this->refExists('release', $reference);
     }
 
     /** Ledger for a company (newest first), for the wallet statement UI. */
@@ -176,16 +200,33 @@ class WalletService
 
     // ------------------------------------------------------------------
 
-    /** Run $fn inside a transaction holding this wallet's advisory lock. */
+    /**
+     * Run $fn inside a transaction holding this wallet's advisory lock. If the
+     * transaction rolls back (a failed insert/update — e.g. the (type,reference)
+     * unique index, a deadlock), the caller is told ok:false rather than the
+     * callback's optimistic result, so the engine never moves money against a
+     * reserve that did not actually persist. [SECURITY: rollback safety]
+     */
     private function tx(int $companyId, callable $fn): array
     {
-        $this->db->transStart();
-        $w = $this->getOrCreate($companyId);
-        $this->db->query('SELECT pg_advisory_xact_lock(?, ?)', [self::LOCK_NS, (int) $w['wallet_id']]);
-        // Re-read under lock for a consistent view.
-        $w   = $this->db->table(self::W_TABLE)->where('wallet_id', $w['wallet_id'])->get()->getRowArray();
-        $res = $fn($w);
-        $this->db->transComplete();
+        $this->db->transBegin();
+        try {
+            $w = $this->getOrCreate($companyId);
+            $this->db->query('SELECT pg_advisory_xact_lock(?, ?)', [self::LOCK_NS, (int) $w['wallet_id']]);
+            // Re-read under lock for a consistent view.
+            $w   = $this->db->table(self::W_TABLE)->where('wallet_id', $w['wallet_id'])->get()->getRowArray();
+            $res = $fn($w);
+        } catch (\Throwable $e) {
+            $this->db->transRollback();
+            log_message('error', '[Wallet] tx rolled back: {m}', ['m' => $e->getMessage()]);
+            return ['ok' => false, 'applied' => false, 'reason' => 'transaction error'];
+        }
+
+        if ($this->db->transStatus() === false) {
+            $this->db->transRollback();
+            return ['ok' => false, 'applied' => false, 'reason' => 'transaction failed'];
+        }
+        $this->db->transCommit();
         return $res;
     }
 

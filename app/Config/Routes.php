@@ -483,6 +483,8 @@ $routes->match(['get','post'], 'erp/companies/read', 'Companies::read', ['namesp
 $routes->match(['get','post'], 'erp/companies/delete_company', 'Companies::delete_company', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 
 // Disbursements — maker-checker batch payouts — ROADMAP F2 phase 2
+$routes->get('erp/disbursements', 'Disbursements::index', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->get('erp/disbursements/lines', 'Disbursements::lines', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->get('erp/disbursements/list', 'Disbursements::list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->post('erp/disbursements/build', 'Disbursements::build', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->post('erp/disbursements/build-payroll', 'Disbursements::build_payroll', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
@@ -491,9 +493,14 @@ $routes->post('erp/disbursements/process', 'Disbursements::process', ['namespace
 $routes->post('erp/disbursements/reconcile', 'Disbursements::reconcile', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 
 // Company wallets — funding & oversight over the aggregator float — ROADMAP F2, ADR-002
+$routes->get('erp/wallet', 'Wallet::index', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->get('erp/wallet/balance', 'Wallet::balance', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->get('erp/wallet/statement', 'Wallet::statement', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->post('erp/wallet/topup', 'Wallet::topup', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/wallet/fund', 'Wallet::fund', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->get('erp/wallet/companies', 'Wallet::companies', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->get('erp/wallet/float', 'Wallet::float', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->get('erp/wallets', 'Wallet::oversight', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 
 // Payout methods — capture + verify employee payout destinations — ROADMAP F2
 $routes->get('erp/payout-methods', 'PayoutMethods::list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
@@ -1143,6 +1150,7 @@ $routes->group('api/v1', ['namespace' => 'App\Controllers\Api\V1', 'filter' => '
 	$routes->post('webhooks/stripe', 'Webhooks::stripe');
 	$routes->post('webhooks/mtn', 'Webhooks::mtn');
 	$routes->post('webhooks/airtel', 'Webhooks::airtel');
+	$routes->post('webhooks/flutterwave', 'Webhooks::flutterwave');
 	$routes->post('webhooks/zkteco', 'Webhooks::zkteco');
 
 	$routes->group('', ['filter' => 'jwt'], function ($routes) {

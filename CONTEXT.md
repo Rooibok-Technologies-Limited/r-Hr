@@ -2,7 +2,16 @@
 Last updated: 2026-08-03
 
 ## Current task
-F2 disbursement — **wallet & funding model (ADR-002)** — VERIFIED (2026-08-03).
+F2 disbursement — **wallet phases 3–4 + full security audit** — VERIFIED (2026-08-03).
+Flutterwave aggregator driver (payouts + collections top-up + master-float
+balance, degrades to Null until creds), unified `charge/transfer` webhook
+(verif-hash, server-side re-verify, fail-closed in production), wallet UI
+(company self-service + super-admin oversight + float reconcile), disbursement
+batch dashboard (build→approve→process→reconcile + line drill-in), Flutterwave
+settings tab. Two audit agents (security + correctness) ran; ALL critical/high
+findings fixed and re-tested green (see decisions). Prior wallet core below.
+
+### F2 wallet & funding model (ADR-002) — DONE 2026-08-03.
 Aggregator-backed pooled wallet with a per-company virtual ledger:
 `service('wallet')` (credit/reserve/release/settle/feeFor, advisory-locked,
 idempotent credit + reserve), `ci_company_wallets` + `ci_wallet_transactions`,
@@ -36,6 +45,33 @@ Source fallback `app/Config/App.php` `$baseURL` → `http://localhost:12000`.
   — service-name refs on container ports, not host-published
 
 ## Recent decisions
+- 2026-08-03: **F2 security audit (two agents) — all critical/high fixed.**
+  Findings and fixes (each re-tested):
+  - C1 (CRITICAL, float theft): a company admin could mint unbacked balance via
+    `wallet/topup`. Fix: manual top-up is super-admin only; companies fund solely
+    via `wallet/fund` → hosted checkout → verified `charge.completed` webhook.
+  - H1 (IDOR/tenancy): disbursement endpoints weren't company-scoped. Fix:
+    `companyScope()`/`ownsBatch()` pin non-super admins to their own batches;
+    list/lines filtered; build/build-payroll pin company_id; maker-checker now
+    same-company (approver≠preparer within one company).
+  - H2 (double-settle race): concurrent webhook+reconcile could settle twice.
+    Fix: `settle()`/`release()` idempotent on reference (refExists under the
+    per-wallet advisory lock).
+  - Rollback safety: `WalletService::tx()` now honours `transStatus()` — a
+    rolled-back reserve returns ok:false (was reporting success → overspend).
+  - Reserve leak: unconfigured gateway now FAILS the line before reserving
+    (Null driver used to leave it pending forever); `applyTerminal` settles on
+    an OPEN reserve (`hasOpenReserve`), not the literal 'pending' status, closing
+    the created→pending webhook race.
+  - Webhooks fail-closed in production (no secret ⇒ 400) + transfer status is
+    re-verified server-side, never trusted from the body.
+  - XSS: all view innerHTML interpolations HTML-escaped; `source` allowlisted,
+    `period` validated `^\d{4}-\d{2}$`.
+  - Backstops: CHECK(balance>=0, reserved>=0); getOrCreate ON CONFLICT DO NOTHING;
+    all-failed batch → status 'failed'; bank payout without bank_code fails clean.
+  - Deferred (noted): per-endpoint rate-limiting (auth fixes close the vector;
+    CI4 4.1.3 single-filter limitation) and integer-minor-unit money (NUMERIC(16,2)
+    is adequate at UGX scale).
 - 2026-08-03: **Funding model = aggregator-backed pooled wallet, per-company
   virtual ledger (ADR-002, Model C).** The real float sits in a licensed
   aggregator under one master Rooibok merchant account; each company gets a
