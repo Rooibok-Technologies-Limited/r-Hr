@@ -15,8 +15,19 @@ and a separated backend/API — aligned with the shared-Traefik deployment
 (one host per concern, wildcard TLS).
 
 ## Decision
-**Host (subdomain) based tenancy**, resolved by a `TenantResolver` filter on a
-single CI4 app + single Postgres (shared schema, `company_id` partition).
+**Hybrid tenancy — host-primary with path fallback** (owner decision 2026-08-03),
+resolved by a `TenantResolver` filter on a single CI4 app + single Postgres
+(shared schema, `company_id` partition). Resolution order:
+1. **Host** — `{slug}.PLATFORM_HOST` or a verified `custom_domain` (preferred;
+   gives white-label URL + isolated cookie).
+2. **Path fallback** — a leading `/{slug}/…` segment on the platform host
+   (`localhost/acme-corp/…`), for local dev without subdomain setup.
+
+Both resolve to the same `company_id` and controllers. Because the path form
+shares the platform cookie, **Phase-2 enforcement pins every request to the
+resolved company_id and rejects cross-tenant** — security does not rely on the
+URL form. Generated links/emails use ONE **canonical** form (env-driven:
+subdomain in prod, path in dev); legacy `/erp/*` redirects to canonical.
 
 | Host (dev → prod) | Serves | Auth |
 |---|---|---|
