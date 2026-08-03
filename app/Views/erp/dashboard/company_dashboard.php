@@ -42,6 +42,12 @@ $total_tickets = $TicketsModel->where('company_id',$company_id)->countAllResults
 $open = $TicketsModel->where('company_id',$company_id)->where('ticket_status', '1')->countAllResults();
 $closed = $TicketsModel->where('company_id',$company_id)->where('ticket_status', '2')->countAllResults();
 
+// Rooibok HR KPIs (Phase 2) — resilient: any missing table just yields 0.
+$rk_db = \Config\Database::connect();
+try { $rk_wallet = service('wallet')->balance((int) $company_id); } catch (\Throwable $e) { $rk_wallet = ['available' => 0, 'currency' => ($xin_system['default_currency'] ?? 'UGX')]; }
+try { $rk_present_today = $rk_db->table('ci_timesheet')->where('company_id', $company_id)->where('attendance_date', date('Y-m-d'))->countAllResults(); } catch (\Throwable $e) { $rk_present_today = 0; }
+try { $rk_pending_leaves = $rk_db->table('ci_leave_applications')->where('company_id', $company_id)->where('status', 'pending')->countAllResults(); } catch (\Throwable $e) { $rk_pending_leaves = 0; }
+
 // membership
 $company_membership = $CompanymembershipModel->where('company_id', $_uid_cd)->first();
 $subs_plan = !empty($company_membership) ? $MembershipModel->where('membership_id', $company_membership['membership_id'])->first() : null;
@@ -54,6 +60,34 @@ if($_diff_days < 8){
 	$alert_bg = 'alert-warning';
 }	
 ?>
+
+<!-- Rooibok HR KPI row (Phase 2) -->
+<div class="row rk-kpi-row">
+  <div class="col-xl-3 col-md-6">
+    <div class="card rk-kpi rk-kpi-brand"><div class="card-body">
+      <div class="rk-kpi-top"><span class="rk-kpi-label">Employees</span><i data-feather="users"></i></div>
+      <div class="rk-kpi-value"><?= number_format((int) $total_staff); ?></div>
+    </div></div>
+  </div>
+  <div class="col-xl-3 col-md-6">
+    <div class="card rk-kpi rk-kpi-success"><div class="card-body">
+      <div class="rk-kpi-top"><span class="rk-kpi-label">Wallet balance</span><i data-feather="credit-card"></i></div>
+      <div class="rk-kpi-value"><?= number_to_currency((float) ($rk_wallet['available'] ?? 0), $rk_wallet['currency'] ?? ($xin_system['default_currency'] ?? 'UGX'), null, 0); ?></div>
+    </div></div>
+  </div>
+  <div class="col-xl-3 col-md-6">
+    <div class="card rk-kpi rk-kpi-info"><div class="card-body">
+      <div class="rk-kpi-top"><span class="rk-kpi-label">Present today</span><i data-feather="user-check"></i></div>
+      <div class="rk-kpi-value"><?= number_format((int) $rk_present_today); ?></div>
+    </div></div>
+  </div>
+  <div class="col-xl-3 col-md-6">
+    <div class="card rk-kpi rk-kpi-warning"><div class="card-body">
+      <div class="rk-kpi-top"><span class="rk-kpi-label">Pending leave</span><i data-feather="clock"></i></div>
+      <div class="rk-kpi-value"><?= number_format((int) $rk_pending_leaves); ?></div>
+    </div></div>
+  </div>
+</div>
 
 <div class="row">
   <div class="col-xl-6 col-md-12">

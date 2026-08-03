@@ -136,6 +136,18 @@ label { font-weight: 600; color: var(--rk-fg); margin-bottom: var(--rk-1); }
 .sa-stat-value, .prod-p-card h3 { font-weight: 700; letter-spacing: -.02em; }
 .prod-p-card, .stat-card { border-radius: var(--rk-radius); }
 
+/* Rooibok KPI tiles */
+.rk-kpi { position: relative; overflow: hidden; }
+.rk-kpi::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--rk-brand); }
+.rk-kpi-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--rk-2); }
+.rk-kpi-label { font-size: .78rem; font-weight: 600; color: var(--rk-fg-muted); text-transform: uppercase; letter-spacing: .04em; }
+.rk-kpi-top i { width: 18px; height: 18px; }
+.rk-kpi-value { font-size: 1.9rem; font-weight: 700; letter-spacing: -.02em; color: var(--rk-fg); line-height: 1.1; }
+.rk-kpi-brand::before   { background: var(--rk-brand); }   .rk-kpi-brand   .rk-kpi-top i { color: var(--rk-brand); }
+.rk-kpi-success::before { background: var(--rk-success); } .rk-kpi-success .rk-kpi-top i { color: var(--rk-success); }
+.rk-kpi-info::before    { background: var(--rk-info); }    .rk-kpi-info    .rk-kpi-top i { color: var(--rk-info); }
+.rk-kpi-warning::before { background: var(--rk-warning); } .rk-kpi-warning .rk-kpi-top i { color: var(--rk-warning); }
+
 /* ---- Unified DataTables ---------------------------------------------------
    Sticky header, styled controls, real empty/loading states, safe overflow. */
 .dataTables_wrapper { position: relative; }

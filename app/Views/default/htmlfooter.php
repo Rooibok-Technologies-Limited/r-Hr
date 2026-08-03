@@ -25,6 +25,7 @@ $user_info = $UsersModel->where('user_id', $session['sup_user_id'])->first();
 
 <!-- Required Js -->
     <script src="<?= base_url();?>/public/assets/js/vendor-all.min.js"></script>
+    <script src="<?= asset_v('public/assets/js/rk-charts.js'); ?>"></script>
     <script src="<?= base_url();?>/public/assets/plugins/jquery-ui/jquery-ui.min.js"></script>
     <script src="<?= base_url();?>/public/assets/js/plugins/bootstrap.min.js"></script>
     <script src="<?= base_url();?>/public/assets/js/plugins/feather.min.js"></script>
