@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -584,14 +588,20 @@ class Employees extends BaseController {
      } 
 	// |||add record|||
 	public function add_employee() {
-		
+
 		$validation =  \Config\Services::validation();
 		$session = \Config\Services::session();
 		$request = \Config\Services::request();
 		$usession = $session->get('sup_username');
-		if(!$session->has('sup_username')){ 
+		if(!$session->has('sup_username')){
 			return redirect()->to(site_url('erp/login'));
-		}	
+		}
+		// Direct GET (no save payload) — e.g. a typed URL/bookmark — lands here.
+		// Send them to the staff list (where the Add Employee form lives) instead
+		// of returning a raw JSON error.
+		if ($this->request->getPost('type') !== 'add_record') {
+			return redirect()->to(site_url('erp/staff-list'));
+		}
 		if ($this->request->getPost('type') === 'add_record') {
 			$Return = array('result'=>'', 'error'=>'', 'csrf_hash'=>'');
 			$Return['csrf_hash'] = csrf_hash();
