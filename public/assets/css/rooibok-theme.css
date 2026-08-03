@@ -131,16 +131,105 @@ label { font-weight: 600; color: var(--rk-fg); margin-bottom: var(--rk-1); }
   * { transition: none !important; animation: none !important; }
 }
 
-/* ---- Dark mode (opt-in via data-theme="dark" on <html>) -------------------
-   Scoped to the surfaces this layer owns, so legacy light-only components are
-   never half-painted. A fuller pass is Phase 2. */
+/* ---- Stat tiles / KPI cards ---------------------------------------------- */
+.card .card-body > h2, .card .card-body > .h2,
+.sa-stat-value, .prod-p-card h3 { font-weight: 700; letter-spacing: -.02em; }
+.prod-p-card, .stat-card { border-radius: var(--rk-radius); }
+
+/* ---- Unified DataTables ---------------------------------------------------
+   Sticky header, styled controls, real empty/loading states, safe overflow. */
+.dataTables_wrapper { position: relative; }
+.dataTables_wrapper .table-responsive,
+.dataTables_scrollBody { overflow-x: auto; }
+table.dataTable thead th { position: sticky; top: 0; z-index: 2; background: var(--rk-surface); }
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+  border: 1px solid var(--rk-border);
+  border-radius: var(--rk-radius-sm);
+  padding: .35rem .6rem;
+}
+.dataTables_wrapper .dataTables_filter input:focus,
+.dataTables_wrapper .dataTables_length select:focus {
+  border-color: var(--rk-brand); box-shadow: 0 0 0 3px var(--rk-brand-050); outline: none;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background: var(--rk-brand) !important; border-color: var(--rk-brand) !important;
+  color: #fff !important; border-radius: var(--rk-radius-sm);
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  border-radius: var(--rk-radius-sm); transition: background var(--rk-ease);
+}
+.dataTables_info { color: var(--rk-fg-muted); }
+
+/* ---- Forms: selects, checks, input groups, validation -------------------- */
+.custom-select { border: 1px solid var(--rk-border); border-radius: var(--rk-radius-sm); }
+.select2-container--default .select2-selection--single {
+  border: 1px solid var(--rk-border) !important; border-radius: var(--rk-radius-sm) !important;
+  height: calc(1.5em + .9rem + 2px) !important;
+}
+.select2-container--default.select2-container--focus .select2-selection--single {
+  border-color: var(--rk-brand) !important; box-shadow: 0 0 0 3px var(--rk-brand-050);
+}
+.input-group-text { background: var(--rk-bg); border: 1px solid var(--rk-border); color: var(--rk-fg-muted); }
+.custom-control-input:checked ~ .custom-control-label::before {
+  background: var(--rk-brand); border-color: var(--rk-brand);
+}
+.is-invalid, .form-control.is-invalid { border-color: var(--rk-danger); }
+.invalid-feedback { color: var(--rk-danger); }
+
+/* ---- Dark mode (opt-in via data-theme="dark" on <html>) ------------------ */
 :root[data-theme="dark"] {
   --rk-fg:       #e6e9f0;
-  --rk-fg-muted: #97a0ad;
-  --rk-bg:       #12151c;
+  --rk-fg-muted: #98a2b3;
+  --rk-bg:       #0f131a;
   --rk-surface:  #1a1f29;
   --rk-border:   #2a303c;
 }
-:root[data-theme="dark"] body { background: var(--rk-bg); }
-:root[data-theme="dark"] .card { background: var(--rk-surface); }
-:root[data-theme="dark"] .form-control { background: #141922; }
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] .pcoded-content,
+:root[data-theme="dark"] .pc-container { background: var(--rk-bg); color: var(--rk-fg); }
+
+/* shells */
+:root[data-theme="dark"] .pc-sidebar,
+:root[data-theme="dark"] .pc-header,
+:root[data-theme="dark"] .navbar { background: var(--rk-surface) !important; border-color: var(--rk-border) !important; }
+:root[data-theme="dark"] .pc-sidebar .pc-navbar .pc-link,
+:root[data-theme="dark"] .pc-header .pc-head-link,
+:root[data-theme="dark"] .pc-header .pc-head-link i { color: #c4ccd8 !important; }
+:root[data-theme="dark"] .pc-sidebar .pc-navbar .pc-item.active > .pc-link { color: var(--rk-brand) !important; background: var(--rk-brand-050); }
+:root[data-theme="dark"] .pc-sidebar .pc-caption { color: var(--rk-fg-muted) !important; }
+
+/* surfaces */
+:root[data-theme="dark"] .card,
+:root[data-theme="dark"] .dropdown-menu,
+:root[data-theme="dark"] .modal-content,
+:root[data-theme="dark"] .list-group-item,
+:root[data-theme="dark"] .popover { background: var(--rk-surface); color: var(--rk-fg); border-color: var(--rk-border); }
+:root[data-theme="dark"] .card .card-header { border-color: var(--rk-border); }
+:root[data-theme="dark"] .dropdown-item { color: var(--rk-fg); }
+:root[data-theme="dark"] .dropdown-item:hover { background: var(--rk-brand-050); }
+
+/* text + headings */
+:root[data-theme="dark"] h1,:root[data-theme="dark"] h2,:root[data-theme="dark"] h3,
+:root[data-theme="dark"] h4,:root[data-theme="dark"] h5,:root[data-theme="dark"] h6,
+:root[data-theme="dark"] .text-dark,
+:root[data-theme="dark"] label { color: var(--rk-fg) !important; }
+
+/* tables */
+:root[data-theme="dark"] .table { color: var(--rk-fg); }
+:root[data-theme="dark"] .table td,:root[data-theme="dark"] .table th { border-color: var(--rk-border); }
+:root[data-theme="dark"] table.dataTable thead th { background: var(--rk-surface); }
+:root[data-theme="dark"] .table-hover tbody tr:hover { background: rgba(109,95,251,.14); }
+
+/* inputs */
+:root[data-theme="dark"] .form-control,
+:root[data-theme="dark"] .custom-select,
+:root[data-theme="dark"] .dataTables_filter input,
+:root[data-theme="dark"] .gs-search-input,
+:root[data-theme="dark"] .select2-container--default .select2-selection--single {
+  background: #141922 !important; border-color: var(--rk-border) !important; color: var(--rk-fg) !important;
+}
+:root[data-theme="dark"] .form-control::placeholder { color: #667085; }
+:root[data-theme="dark"] .input-group-text { background: #141922; border-color: var(--rk-border); }
+:root[data-theme="dark"] .breadcrumb { background: transparent; }
+:root[data-theme="dark"] .border, :root[data-theme="dark"] hr { border-color: var(--rk-border) !important; }

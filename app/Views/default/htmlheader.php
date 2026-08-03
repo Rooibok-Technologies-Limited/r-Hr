@@ -26,6 +26,8 @@ $xin_com_system = erp_company_settings();
 <html lang="en">
 <head>
     <title><?= $title?></title>
+    <!-- Theme init (before CSS paints, to avoid a flash of the wrong theme) -->
+    <script>(function(){try{var t=localStorage.getItem('rk-theme');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
     <!-- HTML5 Shim and Respond.js IE11 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 11]>

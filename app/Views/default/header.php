@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -218,6 +222,12 @@ $setup_modules = !empty($xin_com_system['setup_modules']) ? unserialize($xin_com
                     </a>
                 </li>
                 <?php }?>
+                <li class="pc-h-item">
+                    <a class="pc-head-link mr-0" href="#" id="rk-theme-toggle" role="button" aria-label="Toggle dark mode" data-toggle="tooltip" data-placement="top" title="Toggle theme">
+                        <i data-feather="moon" class="rk-icon-moon"></i>
+                        <i data-feather="sun" class="rk-icon-sun" style="display:none;"></i>
+                    </a>
+                </li>
                 <li class="dropdown pc-h-item">
                     <a class="pc-head-link dropdown-toggle arrow-none mr-0" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                         <img src="<?= !empty($user) ? staff_profile_photo($user['user_id']) : '';?>" alt="" class="user-avtar">
@@ -381,5 +391,27 @@ $setup_modules = !empty($xin_com_system['setup_modules']) ? unserialize($xin_com
   // Load on page load + poll every 30s
   loadNotifications();
   setInterval(loadNotifications, 30000);
+})();
+</script>
+<script>
+// Dark-mode toggle — data-theme is set early in <head>; here we flip + persist.
+(function(){
+  function sync(){
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var moon = document.querySelector('.rk-icon-moon'), sun = document.querySelector('.rk-icon-sun');
+    if (moon) moon.style.display = dark ? 'none' : '';
+    if (sun)  sun.style.display  = dark ? '' : 'none';
+  }
+  var btn = document.getElementById('rk-theme-toggle');
+  if (btn) {
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('rk-theme', next); } catch(_) {}
+      sync();
+    });
+  }
+  sync();
 })();
 </script>
