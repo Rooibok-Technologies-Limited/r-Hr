@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -238,7 +242,7 @@ $user_info = $UsersModel->where('user_id', $session['sup_user_id'])->first();
 		});
 	});
 	</script>
-	<script type="text/javascript" src="<?= base_url().'/public/module_scripts/'.$path_url.'.js'; ?>"></script>
+	<script type="text/javascript" src="<?= asset_v('public/module_scripts/'.$path_url.'.js'); ?>"></script>
     <?php if($router->controllerName() == '\App\Controllers\Erp\Dashboard') { ?>
     	<?php if($user_info['user_type'] == 'staff'){ ?>
 			<?php if($xin_system['is_ssl_available'] == 1){ ?>
@@ -255,7 +259,7 @@ $user_info = $UsersModel->where('user_id', $session['sup_user_id'])->first();
     <?php } ?>
     
     <?php if($router->methodName() =='leave_status' || $router->methodName() =='invoice_dashboard' || $router->methodName() =='tickets_page' || $router->methodName() == 'recruitment_dashboard' || $router->methodName() == 'tasks_summary' || $router->methodName() == 'projects_dashboard' || $router->controllerName() == '\App\Controllers\Erp\Dashboard' || $router->controllerName() == '\App\Controllers\Erp\Leave' || $router->methodName() == 'project_invoices' || $router->methodName() == 'jobs') { ?>
-    <script type="text/javascript" src="<?= base_url().'/public/module_scripts/dashboard/leave_status.js'; ?>"></script>
+    <script type="text/javascript" src="<?= asset_v('public/module_scripts/dashboard/leave_status.js'); ?>"></script>
     <?php } ?>
     <script>
 		$(".editor").kendoEditor({

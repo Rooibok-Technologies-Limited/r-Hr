@@ -79,6 +79,19 @@ if( !function_exists('system_setting') ){
 	}
 }
 
+if( !function_exists('asset_v') ){
+	/**
+	 * Cache-busted asset URL. Appends ?v=<file-mtime> so browsers refetch an
+	 * asset the moment it changes on disk (no more stale CSS/JS after a deploy).
+	 * $path is the public URL path, e.g. 'public/assets/css/style.css'.
+	 */
+	function asset_v(string $path): string {
+		$rel  = preg_replace('#^/?public/#', '', ltrim($path, '/'));
+		$v    = @filemtime(FCPATH . $rel) ?: 1;
+		return base_url($path) . '?v=' . $v;
+	}
+}
+
 // Clear all caches related to a company (call on settings save)
 if( !function_exists('clear_company_cache') ){
 	function clear_company_cache(int $companyId): void {

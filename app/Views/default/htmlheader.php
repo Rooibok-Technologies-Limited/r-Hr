@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -45,11 +49,11 @@ $xin_com_system = erp_company_settings();
     <link rel="stylesheet" href="<?= base_url();?>/public/assets/fonts/fontawesome.css">
 
     <!-- vendor css -->
-    <link rel="stylesheet" href="<?= base_url();?>/public/assets/css/style.css">
-    <link rel="stylesheet" href="<?= base_url();?>/public/assets/css/customizer.css">
-    <link rel="stylesheet" href="<?= base_url();?>/public/assets/css/sa-dashboard.css">
+    <link rel="stylesheet" href="<?= asset_v('public/assets/css/style.css'); ?>">
+    <link rel="stylesheet" href="<?= asset_v('public/assets/css/customizer.css'); ?>">
+    <link rel="stylesheet" href="<?= asset_v('public/assets/css/sa-dashboard.css'); ?>">
     
-    <link rel="stylesheet" href="<?= base_url();?>/public/assets/css/layout-modern.css">
+    <link rel="stylesheet" href="<?= asset_v('public/assets/css/layout-modern.css'); ?>">
     <?php
     // Apply saved theme colors as CSS variables
     $_theme_com = erp_company_settings();
