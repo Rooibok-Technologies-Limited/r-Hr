@@ -1,8 +1,9 @@
-<?php echo view('frontend/components/htmlhead'); ?>
+<?php
 /**
  * @author Bodo Desderio <rooiboktechltd@gmail.com>
  * @copyright 2026 Rooibok Technologies. All rights reserved.
  */
+echo view('frontend/components/htmlhead'); ?>
    <body>
       <!-- pre loader area start -->
       <div id="loading">
