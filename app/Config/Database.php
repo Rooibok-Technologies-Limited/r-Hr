@@ -1,4 +1,8 @@
 <?php namespace Config;
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 
 /**
  * Database Configuration
@@ -126,10 +130,13 @@ class Database extends \CodeIgniter\Database\Config
 			$this->default['password'] = $pass;
 		}
 
-		// Archive DB credentials
-		if ($archHost = getenv('ARCHIVE_DB_HOST')) {
-			$this->archive['hostname'] = $archHost;
-		}
+		// Archive DB credentials. When no dedicated archive host is configured
+		// (single-database deployments), fall back to the MAIN database so the
+		// archive connection is always valid — otherwise every archive query
+		// (and the super-admin dashboard) fails to connect. Set ARCHIVE_DB_HOST /
+		// ARCHIVE_DB_NAME to point at a separate archive database in production.
+		$this->archive['hostname'] = getenv('ARCHIVE_DB_HOST') ?: $this->default['hostname'];
+		$this->archive['database'] = getenv('ARCHIVE_DB_NAME') ?: $this->default['database'];
 		if ($user = getenv('DB_USER')) {
 			$this->archive['username'] = $user;
 		}
