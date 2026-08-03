@@ -1,0 +1,146 @@
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ *
+ * Rooibok design-system layer (Phase 1). Loaded AFTER the base admin theme so it
+ * refines rather than rewrites: design tokens + accessible, modern polish on the
+ * shared shells (cards, buttons, tables, forms, badges, focus states). Every
+ * value is a token; legacy components keep working, they just look better.
+ */
+
+:root {
+  /* Brand — falls back to the company theme var (--primary) when set upstream */
+  --rk-brand:        var(--primary, #6d5ffb);
+  --rk-brand-600:    #5a4ff0;
+  --rk-brand-050:    rgba(109, 95, 251, .09);
+
+  /* Semantic */
+  --rk-success: #17c666;
+  --rk-warning: #f5a623;
+  --rk-danger:  #ef4d56;
+  --rk-info:    #3ec9d6;
+
+  /* Neutrals */
+  --rk-fg:        #1f2733;
+  --rk-fg-muted:  #6b7683;
+  --rk-bg:        #f4f5f9;
+  --rk-surface:   #ffffff;
+  --rk-border:    #e6e9f0;
+
+  /* Spacing — 4px base */
+  --rk-1: 4px;  --rk-2: 8px;  --rk-3: 12px; --rk-4: 16px;
+  --rk-5: 24px; --rk-6: 32px; --rk-7: 48px;
+
+  /* Radius, shadow, motion */
+  --rk-radius:    10px;
+  --rk-radius-sm: 7px;
+  --rk-shadow:    0 1px 2px rgba(16,24,40,.04), 0 4px 16px rgba(16,24,40,.06);
+  --rk-shadow-sm: 0 1px 2px rgba(16,24,40,.06);
+  --rk-ease:      160ms cubic-bezier(.4,0,.2,1);
+}
+
+/* ---- Typography & base ---------------------------------------------------- */
+body {
+  color: var(--rk-fg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+h1,h2,h3,h4,h5,h6 { color: var(--rk-fg); letter-spacing: -.01em; }
+.text-muted { color: var(--rk-fg-muted) !important; }
+
+/* ---- Cards ---------------------------------------------------------------- */
+.card {
+  border: 1px solid var(--rk-border);
+  border-radius: var(--rk-radius);
+  box-shadow: var(--rk-shadow);
+  transition: box-shadow var(--rk-ease), transform var(--rk-ease);
+}
+.card:hover { box-shadow: 0 2px 6px rgba(16,24,40,.06), 0 12px 28px rgba(16,24,40,.08); }
+.card .card-header {
+  border-bottom: 1px solid var(--rk-border);
+  background: transparent;
+  padding: var(--rk-4) var(--rk-5);
+}
+.card .card-body { padding: var(--rk-5); }
+
+/* ---- Buttons -------------------------------------------------------------- */
+.btn {
+  border-radius: var(--rk-radius-sm);
+  font-weight: 600;
+  padding: .5rem 1rem;
+  transition: background var(--rk-ease), box-shadow var(--rk-ease), transform var(--rk-ease);
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary {
+  background: var(--rk-brand); border-color: var(--rk-brand);
+}
+.btn-primary:hover, .btn-primary:focus {
+  background: var(--rk-brand-600); border-color: var(--rk-brand-600);
+  box-shadow: 0 4px 12px var(--rk-brand-050);
+}
+
+/* ---- Accessible focus ring (was mostly missing) --------------------------- */
+a:focus-visible,
+.btn:focus-visible,
+.form-control:focus-visible,
+.page-link:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--rk-brand);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* ---- Forms ---------------------------------------------------------------- */
+.form-control {
+  border: 1px solid var(--rk-border);
+  border-radius: var(--rk-radius-sm);
+  color: var(--rk-fg);
+  transition: border-color var(--rk-ease), box-shadow var(--rk-ease);
+}
+.form-control:focus {
+  border-color: var(--rk-brand);
+  box-shadow: 0 0 0 3px var(--rk-brand-050);
+}
+label { font-weight: 600; color: var(--rk-fg); margin-bottom: var(--rk-1); }
+
+/* ---- Tables --------------------------------------------------------------- */
+.table thead th {
+  border-top: 0;
+  border-bottom: 1px solid var(--rk-border);
+  color: var(--rk-fg-muted);
+  font-size: .78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.table td, .table th { border-top: 1px solid var(--rk-border); vertical-align: middle; }
+.table-hover tbody tr { transition: background var(--rk-ease); }
+.table-hover tbody tr:hover { background: var(--rk-brand-050); }
+
+/* ---- Badges --------------------------------------------------------------- */
+.badge { border-radius: 999px; font-weight: 600; padding: .35em .7em; }
+.badge-light-success { background: rgba(23,198,102,.12); color: var(--rk-success); }
+.badge-light-warning { background: rgba(245,166,35,.14);  color: #b9770f; }
+.badge-light-danger  { background: rgba(239,77,86,.12);   color: var(--rk-danger); }
+
+/* ---- Empty & loading states (consistency across DataTables) --------------- */
+.dataTables_empty { color: var(--rk-fg-muted); padding: var(--rk-6) !important; }
+
+/* ---- Reduced motion ------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+/* ---- Dark mode (opt-in via data-theme="dark" on <html>) -------------------
+   Scoped to the surfaces this layer owns, so legacy light-only components are
+   never half-painted. A fuller pass is Phase 2. */
+:root[data-theme="dark"] {
+  --rk-fg:       #e6e9f0;
+  --rk-fg-muted: #97a0ad;
+  --rk-bg:       #12151c;
+  --rk-surface:  #1a1f29;
+  --rk-border:   #2a303c;
+}
+:root[data-theme="dark"] body { background: var(--rk-bg); }
+:root[data-theme="dark"] .card { background: var(--rk-surface); }
+:root[data-theme="dark"] .form-control { background: #141922; }

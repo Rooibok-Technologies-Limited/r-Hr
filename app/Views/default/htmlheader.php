@@ -119,4 +119,6 @@ $xin_com_system = erp_company_settings();
     <link rel="stylesheet" href="<?= base_url();?>/public/assets/css/plugins/lightbox.min.css">
     <?php } ?>
     <link rel="stylesheet" href="<?= site_url('public/assets/css/print.css') ?>" media="print">
+    <!-- Rooibok design-system layer (loaded last so it refines the base theme) -->
+    <link rel="stylesheet" href="<?= asset_v('public/assets/css/rooibok-theme.css'); ?>">
 </head>
