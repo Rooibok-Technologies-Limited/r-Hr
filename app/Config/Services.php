@@ -84,6 +84,18 @@ class Services extends BaseService
 	}
 
 	/**
+	 * Per-company virtual wallet over the aggregator float (ROADMAP F2, ADR-002).
+	 */
+	public static function wallet($getShared = true)
+	{
+		if ($getShared) {
+			return static::getSharedInstance('wallet');
+		}
+
+		return new \App\Libraries\WalletService();
+	}
+
+	/**
 	 * Outbound SMS gateway, selected from the `sms_gateway` system setting.
 	 *
 	 * Returns a NullSmsProvider (no-op) when SMS is inactive (`sms_active` off)

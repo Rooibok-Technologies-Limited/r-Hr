@@ -1,4 +1,8 @@
 <?php namespace Config;
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 
 // Create a new instance of our RouteCollection class.
 $routes = Services::routes();
@@ -485,6 +489,11 @@ $routes->post('erp/disbursements/build-payroll', 'Disbursements::build_payroll',
 $routes->post('erp/disbursements/approve', 'Disbursements::approve', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->post('erp/disbursements/process', 'Disbursements::process', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->post('erp/disbursements/reconcile', 'Disbursements::reconcile', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+
+// Company wallets — funding & oversight over the aggregator float — ROADMAP F2, ADR-002
+$routes->get('erp/wallet/balance', 'Wallet::balance', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->get('erp/wallet/statement', 'Wallet::statement', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/wallet/topup', 'Wallet::topup', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 
 // Payout methods — capture + verify employee payout destinations — ROADMAP F2
 $routes->get('erp/payout-methods', 'PayoutMethods::list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);

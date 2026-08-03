@@ -1,15 +1,18 @@
 # Project Context
-Last updated: 2026-08-01
+Last updated: 2026-08-03
 
 ## Current task
-Notification engine (Phase I) — unified in-app + email + SMS dispatch — VERIFIED
-GREEN end-to-end (2026-08-01). `Notifier` service, Africa's Talking SMS driver,
-`sms` queue tube, per-user prefs table, dedup of notification models. Migration
-applied; notifier in-app insert + `{token}` render confirmed; QueueWorker boots
-and watches the `sms` tube; smsProvider degrades to NullSmsProvider (no creds).
-See docs/NOTIFICATIONS.md. The whole app now boots and serves on PHP 8.2 (was
-blocked): `/`, `/erp/login`, `/api/v1/health` all return HTTP 200.
-(Prior tasks: dev port normalization into lane 12000; PHP 8.2 green-up — complete.)
+F2 disbursement — **wallet & funding model (ADR-002)** — VERIFIED (2026-08-03).
+Aggregator-backed pooled wallet with a per-company virtual ledger:
+`service('wallet')` (credit/reserve/release/settle/feeFor, advisory-locked,
+idempotent credit + reserve), `ci_company_wallets` + `ci_wallet_transactions`,
+engine reserves principal+fee before each transfer and settles/releases on the
+terminal outcome, and an oversight surface `Erp/Wallet` (balance/statement/topup,
+company-scoped; super-admin read-only over any company). Fee model configurable
+via `disbursement_fee_flat` + `disbursement_fee_percent`. Migrations 000005/000006
+applied; credit/reserve/settle/release + fee math + idempotent-reserve all
+smoke-verified green. Next (keyed): Flutterwave driver + self-serve top-up webhook.
+(Prior: notification engine VERIFIED GREEN 2026-08-01; PHP 8.2 green-up complete.)
 
 ## Stack
 - CodeIgniter 4 (PHP) HR/ERP system — `spark`, `system/`, `app/`
@@ -33,6 +36,14 @@ Source fallback `app/Config/App.php` `$baseURL` → `http://localhost:12000`.
   — service-name refs on container ports, not host-published
 
 ## Recent decisions
+- 2026-08-03: **Funding model = aggregator-backed pooled wallet, per-company
+  virtual ledger (ADR-002, Model C).** The real float sits in a licensed
+  aggregator under one master Rooibok merchant account; each company gets a
+  virtual balance in-app. Avoids Rooibok needing a BoU PSP/e-money licence
+  (NPS Act 2020). Rejected per-company BYO creds (friction) and Rooibok-owned
+  pooled bank account (licence). Payouts reserve principal+fee → settle/release
+  on outcome; fees are the money-movement revenue line. See
+  `docs/adrs/ADR-002-wallet-and-funding.md`.
 - 2026-08-01: PHP 8.2 green-up (CI4 4.1.3 predates 8.2). Fixes, all committed to
   source so they survive a rebuild:
   1. `FILTER_SANITIZE_STRING` → `FILTER_SANITIZE_FULL_SPECIAL_CHARS` in 4 bundled
@@ -120,7 +131,28 @@ Source fallback `app/Config/App.php` `$baseURL` → `http://localhost:12000`.
   latent `->insert($row, true)` bug (2nd arg is escape, not return-id) in
   addMethod + buildBatch — now `insertID()`. Verified end-to-end incl. duplicate
   webhook = no-op.
-  Phase 3 next: MoMo/Airtel **sandbox** creds in Settings → real transfer()/
-  status() round-trip; payroll-period → batch builder (read ci_payslips net);
-  batch dashboard UI + caps; payments-skill KYC/go-live checklist.
-  Also: add a payout-methods panel to the employee profile (F2 phase-1 UI).
+- **F2 disbursement — phase 3 DONE (2026-08-01).** Payroll-period batch builder
+  `buildFromPayroll()` (reads `ci_payslips` net, dedups already-paid/in-flight for
+  the period), `build-payroll` endpoint, and safety caps (per-txn/per-run/per-day
+  from settings, refused before any money moves). Columns added to
+  `ci_erp_settings` (migration 000004): provider base URLs, callback secrets, caps.
+- **F2 disbursement — wallet & funding DONE (2026-08-03, ADR-002).**
+  `WalletService` (`service('wallet')`): credit (idempotent on reference), reserve
+  (idempotent on reference), release, settle, feeFor, balance, transactions —
+  each mutation advisory-locked per wallet (`pg_advisory_xact_lock`) so concurrent
+  batches can't overspend. Tables `ci_company_wallets` (balance/reserved) +
+  append-only `ci_wallet_transactions` (signed, running balance_after, unique
+  `(type,reference)`) — migration 000005; fee knobs — migration 000006. Engine
+  integration: `process()` reserves amount+fee before each transfer (insufficient
+  funds ⇒ line fails, no provider call), releases on immediate rejection;
+  `applyTerminal()` settles on success / releases on failure, gated to lines that
+  actually held a reserve (status=pending). Oversight controller `Erp/Wallet`
+  (erp/wallet/balance|statement|topup) — company admin scoped to own wallet,
+  super-admin read-only over any company + can record a top-up. All audited (F1).
+  Fixed a `$companyId` undefined-in-closure crash in credit()'s audit call.
+  Verified: credit/reserve/settle/release + fee math + idempotent replay green.
+  Next (keyed): Flutterwave driver (collections top-up + payouts + balance) behind
+  the existing `DisbursementProviderInterface`; self-serve top-up webhook + wallet UI.
+  Also still open: MoMo/Airtel **sandbox** creds → real transfer()/status()
+  round-trip; batch dashboard UI; payments-skill KYC/go-live checklist; add a
+  payout-methods panel to the employee profile (F2 phase-1 UI).

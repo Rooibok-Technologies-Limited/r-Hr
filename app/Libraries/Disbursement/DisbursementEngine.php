@@ -72,9 +72,11 @@ class DisbursementEngine
             }
             $lines[] = [
                 'employee_id' => $eid,
+                'company_id'  => $opts['company_id'] ?? ($method['company_id'] ?? null),
                 'method_id'   => (int) $method['method_id'],
                 'type'        => $method['type'],
                 'amount'      => $amount,
+                'fee'         => service('wallet')->feeFor($amount),
                 'currency'    => $currency,
                 'reference'   => $this->uuid(),
                 'provider'    => $method['provider'],
@@ -249,6 +251,22 @@ class DisbursementEngine
                 continue;
             }
 
+            // Reserve principal + fee against the company wallet BEFORE the
+            // transfer. Insufficient funds ⇒ the line fails without a provider
+            // call, so the float can never be overdrawn.
+            $companyId = (int) ($line['company_id'] ?? $batch['company_id']);
+            $fee       = (float) ($line['fee'] ?? 0);
+            $reserve   = service('wallet')->reserve($companyId, (float) $line['amount'] + $fee, [
+                'reference'       => $line['reference'],
+                'disbursement_id' => (int) $line['disbursement_id'],
+                'description'     => 'Payout hold',
+            ]);
+            if (! ($reserve['ok'] ?? false)) {
+                $this->markTerminal($line['reference'], 'failed', null, null, $reserve['reason'] ?? 'insufficient funds');
+                $failed++;
+                continue;
+            }
+
             $result = service('disbursement')->for($line['type'])->transfer([
                 'reference' => $line['reference'],   // idempotency key, already persisted
                 'account'   => $payable['account'],
@@ -268,6 +286,12 @@ class DisbursementEngine
                 $this->db->table(self::D_TABLE)->where('reference', $line['reference'])->update(['status' => 'pending']);
                 $dispatched++;
             } else {
+                // Transfer rejected after we reserved — return the hold.
+                service('wallet')->release($companyId, (float) $line['amount'] + $fee, [
+                    'reference'       => $line['reference'],
+                    'disbursement_id' => (int) $line['disbursement_id'],
+                    'description'     => 'Payout rejected — hold released',
+                ]);
                 $this->markTerminal($line['reference'], 'failed', $result['provider_txn_id'] ?? null, $result['raw'] ?? null, $result['reason'] ?? 'transfer rejected');
                 $failed++;
             }
@@ -302,6 +326,21 @@ class DisbursementEngine
         if (in_array($line['status'], ['successful', 'failed'], true)) {
             log_message('info', '[Disbursement] terminal no-op for {r} (already {s})', ['r' => $reference, 's' => $line['status']]);
             return ['ok' => true, 'applied' => false, 'reason' => 'already terminal'];
+        }
+
+        // Settle the wallet hold once, only if this line actually held a reserve
+        // (i.e. it was dispatched to 'pending'). created→terminal holds nothing.
+        if ($line['status'] === 'pending') {
+            $companyId = (int) ($line['company_id'] ?? 0);
+            $amount    = (float) $line['amount'];
+            $fee       = (float) ($line['fee'] ?? 0);
+            $wallet    = service('wallet');
+            $opts      = ['reference' => $reference, 'disbursement_id' => (int) $line['disbursement_id']];
+            if ($status === 'successful') {
+                $wallet->settle($companyId, $amount, $fee, $opts + ['description' => 'Payout settled']);
+            } else {
+                $wallet->release($companyId, $amount + $fee, $opts + ['description' => 'Payout failed — hold released']);
+            }
         }
 
         $this->markTerminal($reference, $status, $providerTxnId, $raw, $status === 'failed' ? 'reported failed' : null);
