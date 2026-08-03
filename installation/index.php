@@ -16,7 +16,7 @@ $minPHPVersion = '7.2';
 <head>
       <meta charset="utf-8">
       <meta http-equiv="x-ua-compatible" content="ie=edge">
-      <title>HRSALE - Installation</title>
+      <title>Rooibok HR - Installation</title>
       <meta name="description" content="">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <!-- Place favicon.ico in the root directory -->
@@ -84,7 +84,7 @@ $minPHPVersion = '7.2';
                <div class="row">
                   <div class="col-xxl-8 offset-xxl-2 col-xl-8 offset-xl-2">
                      <div class="page__title-wrapper text-center">
-                        <img class="man-1" src="assets/img/hrsale_logo.png" alt="">
+                        <img class="man-1" src="assets/img/rooibok_logo.png" alt="">
                      </div>
                   </div>
                </div>
@@ -124,7 +124,7 @@ $minPHPVersion = '7.2';
                   <div class="row">
                      <div class="col-xxl-12 wow fadeInUp" data-wow-delay=".5s">
                         <div class="footer__copyright-wrapper footer__copyright-wrapper-2 text-center">
-                           <p>Copyright © <?= date('Y');?> All Rights Reserved - HRSALE</p>
+                           <p>Copyright © <?= date('Y');?> All Rights Reserved - Rooibok HR</p>
                         </div>
                      </div>
                   </div>
