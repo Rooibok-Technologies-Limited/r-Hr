@@ -39,7 +39,7 @@ $setup_modules = !empty($xin_com_system['setup_modules']) ? unserialize($xin_com
        <?php if(!empty($user)){ ?>
         <div class="m-header d-flex align-items-center">
             <a href="<?= site_url('erp/desk');?>" class="b-brand">
-                <img src="<?= base_url();?>/public/uploads/logo/<?= $ci_erp_settings['logo'] ?? '';?>" alt="" class="logo logo-lg" height="40" width="138">
+                <?= brand_logo_html(); ?>
             </a>
         </div>
         <?php } ?>

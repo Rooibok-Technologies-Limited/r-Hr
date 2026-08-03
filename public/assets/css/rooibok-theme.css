@@ -136,6 +136,11 @@ label { font-weight: 600; color: var(--rk-fg); margin-bottom: var(--rk-1); }
 .sa-stat-value, .prod-p-card h3 { font-weight: 700; letter-spacing: -.02em; }
 .prod-p-card, .stat-card { border-radius: var(--rk-radius); }
 
+/* White-label brand wordmark (shown when a tenant has no uploaded logo).
+   The topbar brand area is dark, so the wordmark is light. */
+.b-brand .rk-brand-wordmark { font-size: 1.2rem; font-weight: 700; color: #fff; letter-spacing: -.02em; white-space: nowrap; }
+.b-brand .logo { max-height: 40px; width: auto; }
+
 /* Rooibok KPI tiles */
 .rk-kpi { position: relative; overflow: hidden; }
 .rk-kpi::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--rk-brand); }

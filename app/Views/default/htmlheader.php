@@ -43,7 +43,8 @@ $xin_com_system = erp_company_settings();
     <meta name="author" content="erp" />
 
     <!-- Favicon icon -->
-    <link rel="icon" href="<?= base_url();?>/public/uploads/logo/favicon/<?= $xin_system['favicon'] ?? '';?>" type="image/png">
+    <?php $__fav = !empty($xin_system['company_favicon']) ? 'company/'.$xin_system['company_favicon'] : (!empty($xin_system['favicon']) ? $xin_system['favicon'] : 'rooibok-favicon.svg'); ?>
+    <link rel="icon" href="<?= base_url('public/uploads/logo/favicon/'.$__fav) ?>">
 
     <!-- font css -->
     <link rel="stylesheet" href="<?= base_url();?>/public/assets/fonts/font-awsome-pro/css/pro.min.css">

@@ -92,6 +92,42 @@ if( !function_exists('asset_v') ){
 	}
 }
 
+if( !function_exists('brand_logo_html') ){
+	/**
+	 * White-label brand logo (SaaS). The super-admin area shows the Rooibok HR
+	 * platform logo; a tenant (company / staff) sees their OWN uploaded logo, or
+	 * their company name as a wordmark when none is set — never the platform brand.
+	 */
+	function brand_logo_html(): string {
+		$session = \Config\Services::session();
+		$u   = $session->get('sup_username');
+		$uid = (!empty($u) && is_array($u)) ? ($u['sup_user_id'] ?? 0) : 0;
+		$user = $uid ? (new \App\Models\UsersModel())->where('user_id', $uid)->first() : null;
+		$type = $user['user_type'] ?? '';
+
+		// Platform brand — super admin (or logged-out) sees Rooibok HR.
+		if ($type === 'super_user' || empty($user)) {
+			$sys  = (new \App\Models\SystemModel())->where('setting_id', 1)->first();
+			$logo = ! empty($sys['logo']) ? $sys['logo'] : 'rooibok-logo.svg';
+			return '<img src="' . esc(base_url('public/uploads/logo/' . $logo), 'attr') . '" alt="Rooibok HR" class="logo logo-lg" height="38">';
+		}
+
+		// Tenant — the company's own branding.
+		$cs   = erp_company_settings();
+		$name = $user['company_name'] ?? '';
+		if ($name === '' && ! empty($user['company_id'])) {
+			$co = (new \App\Models\UsersModel())->select('company_name')->where('user_id', $user['company_id'])->first();
+			$name = $co['company_name'] ?? '';
+		}
+		if ($name === '') { $name = 'Company'; }
+
+		if (! empty($cs['company_logo'])) {
+			return '<img src="' . esc(base_url('public/uploads/logo/company/' . $cs['company_logo']), 'attr') . '" alt="' . esc($name, 'attr') . '" class="logo logo-lg" height="38">';
+		}
+		return '<span class="rk-brand-wordmark">' . esc($name) . '</span>';
+	}
+}
+
 // Clear all caches related to a company (call on settings save)
 if( !function_exists('clear_company_cache') ){
 	function clear_company_cache(int $companyId): void {

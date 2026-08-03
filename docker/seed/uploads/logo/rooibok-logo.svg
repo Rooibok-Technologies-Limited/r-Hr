@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="188" height="44" viewBox="0 0 188 44" fill="none" role="img" aria-label="Rooibok HR">
+  <defs>
+    <linearGradient id="rk-g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7a6cff"/>
+      <stop offset="1" stop-color="#5a4ff0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="4" width="36" height="36" rx="10" fill="url(#rk-g)"/>
+  <path d="M12 31V13h7.4c3.2 0 5.4 1.9 5.4 4.9 0 2.2-1.2 3.8-3.1 4.5l3.6 8.6h-3.8l-3.2-8h-2.6v8H12zm3.7-10.9h3.3c1.5 0 2.4-.8 2.4-2.1s-.9-2.1-2.4-2.1h-3.3v4.2z" fill="#fff"/>
+  <text x="46" y="28" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2733" letter-spacing="-.3">Rooibok</text>
+  <text x="139" y="28" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="600" fill="#7a6cff" letter-spacing="-.3">HR</text>
+</svg>
