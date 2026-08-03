@@ -33,8 +33,14 @@ aggregator-backed company wallet that funds payouts via **PesaPal** or
 
 ```bash
 docker compose up -d            # app, nginx, postgres, redis, beanstalkd
-docker exec -w /var/www/html rooibok_app php spark migrate
+docker exec -w /var/www/html rooibok_app php spark migrate       # schema
+docker exec -u 0 -w /var/www/html rooibok_app php spark app:init # seed default assets + archive schema (idempotent)
 ```
+
+`app:init` closes two first-boot gaps: it seeds the empty `uploads_data` volume
+with default assets (logos, favicon, avatar) from `docker/seed/uploads`, and
+creates the `arc_*` archive tables from `docker/postgres/archive_schema.sql`.
+Run it after `up`; it is safe to re-run.
 
 - App: **http://localhost:12000** (host port lane **12000**; container port 80)
 - pgAdmin (dev profile): http://localhost:12020
