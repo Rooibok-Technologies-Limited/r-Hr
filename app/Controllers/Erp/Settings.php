@@ -155,6 +155,22 @@ class Settings extends BaseController {
 			'theme_success' => $theme_success,
 			'theme_sidebar' => $theme_sidebar,
 		];
+
+		// White-label branding uploads (per-company logo + favicon). Validated by
+		// extension + size, stored under a random name in uploads/logo/company. [SECURITY]
+		$allowed = ['png','jpg','jpeg','gif','svg','webp'];
+		$brandDir = FCPATH . 'uploads/logo/company/';
+		foreach (['company_logo' => 2, 'company_favicon' => 1] as $field => $maxMb) {
+			$file = $this->request->getFile($field);
+			if ($file && $file->isValid() && ! $file->hasMoved()
+				&& in_array(strtolower((string) $file->getExtension()), $allowed, true)
+				&& $file->getSize() <= $maxMb * 1024 * 1024) {
+				if (! is_dir($brandDir)) { @mkdir($brandDir, 0775, true); }
+				$newName = $file->getRandomName();
+				try { $file->move($brandDir, $newName); $com_data[$field] = $newName; } catch (\Throwable $e) {}
+			}
+		}
+
 		$CompanysettingsModel->where('company_id', $company_id)->set($com_data)->update();
 
 		// Clear cache so changes take effect immediately

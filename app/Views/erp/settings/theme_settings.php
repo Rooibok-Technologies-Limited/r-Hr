@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 $xin_system = $xin_system ?? [];
 $xin_com = $xin_com ?? [];
 $current_header = $xin_com['header_background'] ?? '';
@@ -31,7 +35,7 @@ if (is_dir($auth_dir)) {
 }
 ?>
 
-<?= form_open('erp/settings/save_theme', ['id' => 'theme-form', 'autocomplete' => 'off']); ?>
+<?= form_open_multipart('erp/settings/save_theme', ['id' => 'theme-form', 'autocomplete' => 'off']); ?>
 
 <!-- Color Palette -->
 <div class="card">
@@ -181,6 +185,24 @@ if (is_dir($auth_dir)) {
   </div>
 </div>
 
+<div class="card"><div class="card-body">
+  <h6 class="mb-1">Company branding <span class="badge badge-light-primary">white-label</span></h6>
+  <p class="text-muted small mb-3">Your logo and favicon appear across your team's workspace. Leave the logo blank to show your company name.</p>
+  <div class="row">
+    <div class="col-md-6 form-group">
+      <label>Company logo <small class="text-muted">— PNG/SVG, max 2&nbsp;MB</small></label>
+      <input type="file" name="company_logo" accept=".png,.jpg,.jpeg,.svg,.gif,.webp" class="form-control-file">
+      <?php if(!empty($xin_com['company_logo'])): ?>
+        <div class="mt-2"><img src="<?= base_url('public/uploads/logo/company/'.$xin_com['company_logo']) ?>" alt="Current logo" style="max-height:34px"></div>
+      <?php endif; ?>
+    </div>
+    <div class="col-md-6 form-group">
+      <label>Favicon <small class="text-muted">— square, max 1&nbsp;MB</small></label>
+      <input type="file" name="company_favicon" accept=".png,.jpg,.jpeg,.svg,.ico,.webp" class="form-control-file">
+    </div>
+  </div>
+</div></div>
+
 <div class="text-right mb-4">
   <button type="submit" class="btn btn-primary"><i class="feather icon-save mr-1"></i>Save Theme Settings</button>
 </div>
@@ -264,7 +286,7 @@ $(document).ready(function(){
   $('#theme-form').submit(function(e){
     e.preventDefault();
     $.ajax({
-      url:$(this).attr('action'), type:'POST', data:$(this).serialize(), dataType:'json',
+      url:$(this).attr('action'), type:'POST', data:new FormData(this), processData:false, contentType:false, dataType:'json',
       success:function(d){
         if(d.error&&d.error!==''){toastr.error(d.error);}
         else{toastr.success(d.result||'Theme saved');}
