@@ -76,6 +76,11 @@ class Webhooks extends ApiBaseController
      */
     private function handlePaymentSucceeded(object $invoice): void
     {
+        // Idempotency: Stripe retries the same event; extend + record once per invoice.
+        if (! empty($invoice->id) && (new InvoicepaymentsModel())->where('invoice_id', $invoice->id)->first()) {
+            log_message('info', 'Stripe webhook: duplicate payment for invoice ' . $invoice->id . ' — skipped');
+            return;
+        }
         $stripeCustomerId = $invoice->customer ?? null;
         if (empty($stripeCustomerId)) {
             log_message('error', 'Stripe webhook: invoice.payment_succeeded missing customer ID');
@@ -320,14 +325,60 @@ class Webhooks extends ApiBaseController
             log_message('warning', '[Webhook:flutterwave] charge {id} failed re-verification', ['id' => $txnId]);
             return;
         }
-        if (($v['company_id'] ?? 0) <= 0 || ($v['amount'] ?? 0) <= 0) {
-            log_message('warning', '[Webhook:flutterwave] charge {id} missing company/amount', ['id' => $txnId]);
-            return;
+        $this->creditVerifiedTopup($v, 'Flutterwave');
+    }
+
+    /**
+     * POST/GET /api/v1/webhooks/pesapal — the PesaPal IPN (ROADMAP F2, ADR-002).
+     *
+     * PesaPal's IPN deliberately carries NO payment status; it delivers only
+     * OrderTrackingId + OrderMerchantReference (via GET or POST). We fetch the
+     * authoritative status server-side with GetTransactionStatus and credit the
+     * wallet only on a verified COMPLETED charge — the amount/company come from
+     * that server response, never the IPN body, so the notification is
+     * unforgeable. Idempotent on merchant_reference. [SECURITY]
+     */
+    public function pesapal()
+    {
+        helper('main');
+        $tracking    = (string) ($this->request->getVar('OrderTrackingId') ?? '');
+        $merchantRef = (string) ($this->request->getVar('OrderMerchantReference') ?? '');
+        $notifType   = $this->request->getVar('OrderNotificationType');
+
+        if ($tracking !== '') {
+            $v = service('pesapalCollections')->verify($tracking);
+            if (($v['ok'] ?? false) && ($v['status'] ?? '') === 'successful') {
+                $this->creditVerifiedTopup($v, 'Pesapal');
+            } elseif (! ($v['ok'] ?? false)) {
+                log_message('warning', '[Webhook:pesapal] verify failed for {t}: {r}', ['t' => $tracking, 'r' => $v['reason'] ?? '']);
+            }
+        } else {
+            log_message('warning', '[Webhook:pesapal] IPN missing OrderTrackingId');
         }
 
+        // PesaPal expects the IPN response to echo the delivered params as JSON.
+        return $this->response->setStatusCode(200)->setJSON([
+            'orderNotificationType' => $notifType,
+            'orderTrackingId'       => $tracking,
+            'orderMerchantReference'=> $merchantRef,
+            'status'                => 200,
+        ]);
+    }
+
+    /**
+     * Credit a company wallet from an already server-verified top-up charge
+     * (Flutterwave or PesaPal). Idempotent on the transaction ref: a replayed
+     * webhook/IPN credits exactly once. [SECURITY]
+     */
+    private function creditVerifiedTopup(array $v, string $label): void
+    {
+        if (($v['company_id'] ?? 0) <= 0 || ($v['amount'] ?? 0) <= 0) {
+            log_message('warning', '[Webhook:{l}] verified charge missing company/amount (ref {r})', ['l' => $label, 'r' => $v['tx_ref'] ?? '']);
+            return;
+        }
         service('wallet')->credit((int) $v['company_id'], (float) $v['amount'], 'topup', [
             'reference'   => $v['tx_ref'],   // idempotent: a replayed webhook credits once
-            'description' => 'Flutterwave top-up ' . $v['tx_ref'],
+            'description' => $label . ' top-up ' . $v['tx_ref'],
         ]);
     }
 
@@ -383,6 +434,22 @@ class Webhooks extends ApiBaseController
      */
     public function zkteco()
     {
+        helper('main');
+        // Device authentication: attendance rows are payroll-adjacent, so the
+        // endpoint must not be open. Require a shared device secret when one is
+        // configured; fail closed in production if it is missing. [SECURITY]
+        $secret = system_setting('zkteco_device_secret');
+        if (! empty($secret)) {
+            $sig = $this->request->getHeaderLine('X-Device-Secret') ?: $this->request->getHeaderLine('X-Device-Token');
+            if (! hash_equals((string) $secret, (string) $sig)) {
+                log_message('warning', '[Webhook:zkteco] device secret mismatch');
+                return $this->response->setStatusCode(401)->setJSON(['error' => 'invalid device secret']);
+            }
+        } elseif (ENVIRONMENT === 'production') {
+            log_message('error', '[Webhook:zkteco] refused — no device secret configured in production');
+            return $this->response->setStatusCode(400)->setJSON(['error' => 'device secret not configured']);
+        }
+
         $contentType = $this->request->getHeaderLine('Content-Type');
         $body = $this->request->getBody();
 

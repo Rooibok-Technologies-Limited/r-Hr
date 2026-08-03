@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use CodeIgniter\I18n\Time;
 
 use App\Models\RolesModel;
@@ -26,7 +30,9 @@ $CompanymembershipModel = new CompanymembershipModel();
 $session = \Config\Services::session();
 $usession = $session->get('sup_username');
 $request = \Config\Services::request();
-$xin_system = erp_company_settings();
+// Fall back to system settings when a company has no company-settings row
+// (e.g. the demo company) — otherwise the currency lookups below fatal on null.
+$xin_system = erp_company_settings() ?: $SystemModel->where('setting_id', 1)->first();
 $_uid_cd = (!empty($usession) && is_array($usession)) ? ($usession['sup_user_id'] ?? 0) : 0;
 $user_info = $_uid_cd ? $UsersModel->where('user_id', $_uid_cd)->first() : null;
 $company_id = user_company_info();

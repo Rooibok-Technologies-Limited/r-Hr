@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 namespace App\Models;
 
 use CodeIgniter\Model;
@@ -10,7 +14,7 @@ class UsersModel extends Model {
     protected $primaryKey = 'user_id';
     
 	// get all fields of user roles table
-    protected $allowedFields = ['user_id','user_role_id','user_type','company_id','first_name','last_name','email','username','password','company_name','trading_name','registration_no','government_tax','company_type_id','profile_photo','contact_number','gender','address_1','address_2','city','state','zipcode','country','last_login_date','last_logout_date','last_login_ip','is_logged_in','is_active','created_at','totp_secret','totp_enabled','is_demo'];
+    protected $allowedFields = ['user_id','user_role_id','user_type','company_id','first_name','last_name','email','username','password','company_name','trading_name','registration_no','government_tax','company_type_id','profile_photo','contact_number','gender','address_1','address_2','city','state','zipcode','country','last_login_date','last_logout_date','last_login_ip','is_logged_in','is_active','created_at','totp_secret','totp_enabled','is_demo','reset_token_hash','reset_token_expires'];
 	
 	protected $validationRules = [];
 	protected $validationMessages = [];

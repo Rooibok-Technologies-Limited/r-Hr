@@ -83,8 +83,10 @@ class Auth extends BaseController
 					'username' => $username,
 					'password' => $password
 				);
+				// Per-identity throttle (IP + username) so one attacker can't lock
+				// out the whole platform on a single shared 'auth' bucket. [SECURITY]
 				$throttler = \Config\Services::throttler();
-				$is_allow = $throttler->check('auth',5,MINUTE);
+				$is_allow = $throttler->check('login_'.md5($this->request->getIPAddress().'|'.$username),5,MINUTE);
 				$iuser = $UsersModel->where('username', $username)->where('is_active',1)->first();
 				if($is_allow) {
 					if($iuser){
@@ -313,22 +315,38 @@ class Auth extends BaseController
 		$UsersModel = new UsersModel();
 		$SystemModel = new SystemModel();
 		$EmailtemplatesModel = new EmailtemplatesModel();
-		$email = udecode($_GET['v']);
+		// Link carries email + one-time token: udecode('email|token'). [SECURITY]
+		$raw   = udecode($this->request->getGet('v') ?? '');
+		$parts = explode('|', (string) $raw, 2);
+		$email = $parts[0] ?? '';
+		$token = $parts[1] ?? '';
 		$data['title'] = lang('Verified');
+		$data['reset_ok'] = false;
 
-		$check_user = $UsersModel->where('email', $email)->countAllResults();
-		if($check_user > 0) {
-			$iuser = $UsersModel->where('email', $email, 'is_active',1)->first();
+		$iuser = ($email !== '' && $token !== '')
+			? $UsersModel->where('email', $email)->where('is_active', 1)->first()
+			: null;
+
+		// Validate the token: present, unexpired, and matching the stored hash.
+		$valid = $iuser
+			&& ! empty($iuser['reset_token_hash'])
+			&& ! empty($iuser['reset_token_expires'])
+			&& strtotime($iuser['reset_token_expires']) >= time()
+			&& password_verify($token, $iuser['reset_token_hash']);
+
+		if($valid) {
 			$username = $iuser['username'];
-			$options = array('cost' => 12);
-			$password = 'Hu2k4JHik42ol4hH32';
-			$password_hash = password_hash($password, PASSWORD_BCRYPT, $options);
+			// Random, unpredictable password (never a shared constant).
+			$password = bin2hex(random_bytes(9)); // 18 hex chars
+			$password_hash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
 
 			$xin_system = $SystemModel->where('setting_id', 1)->first();
-			$data = [
-				'password' => $password_hash,
-			];
-			$UsersModel->update($iuser['user_id'], $data);
+			// Set new password AND consume the token (one-time use).
+			$UsersModel->update($iuser['user_id'], [
+				'password'            => $password_hash,
+				'reset_token_hash'    => null,
+				'reset_token_expires' => null,
+			]);
 			// Send mail start
 			$template = $EmailtemplatesModel->where('template_id', 2)->first();
 			$subject = $template['subject'];
@@ -336,6 +354,7 @@ class Auth extends BaseController
 			$body = str_replace(array("{site_name}","{password}","{username}"),array($xin_system['company_name'],$password,$username),$body);
 			timehrm_mail_data($xin_system['email'],$xin_system['company_name'],$email,$subject,$body);
 			// Send mail end
+			$data['reset_ok'] = true;
 		}
 
 
@@ -383,14 +402,21 @@ class Auth extends BaseController
 					$Return['result'] = lang('Main.xin_error_msg__available');
 					$iuser = $UsersModel->where('email', $email, 'is_active',1)->first();
 					$username = $iuser['username'];
-					$password = $iuser['password'];
+
+					// Single-use, expiring reset token: store only its hash; carry
+					// the plaintext token in the link alongside the email. [SECURITY]
+					$reset_token = bin2hex(random_bytes(16));
+					$UsersModel->update($iuser['user_id'], [
+						'reset_token_hash'    => password_hash($reset_token, PASSWORD_DEFAULT),
+						'reset_token_expires' => date('Y-m-d H:i:s', time() + 1800), // 30 min
+					]);
 
 					$xin_system = $SystemModel->where('setting_id', 1)->first();
 					$template = $EmailtemplatesModel->where('template_id', 1)->first();
 
 					$subject = $template['subject'];
 					$body = html_entity_decode($template['message']);
-					$body = str_replace(array("{site_name}","{site_url}","{user_id}"),array($xin_system['company_name'],site_url(),uencode($email)),$body);
+					$body = str_replace(array("{site_name}","{site_url}","{user_id}"),array($xin_system['company_name'],site_url(),uencode($email.'|'.$reset_token)),$body);
 					timehrm_mail_data($xin_system['email'],$xin_system['company_name'],$email,$subject,$body);
 					$this->output($Return);
 					exit;
@@ -447,8 +473,9 @@ class Auth extends BaseController
 					}
 				}
 			} else {
+				// Per-identity throttle (IP + session user) — not a shared bucket. [SECURITY]
 				$throttler = \Config\Services::throttler();
-				$is_allow = $throttler->check('auth',5,MINUTE);
+				$is_allow = $throttler->check('reauth_'.md5($this->request->getIPAddress().'|'.($usession['sup_user_id'] ?? '')),5,MINUTE);
 				$iuser = $UsersModel->where('user_id', $usession['sup_user_id'], 'is_active',1)->first();
 				$password = strip_tags(trim($this->request->getPost('password')));
 				$username = $iuser['username'];

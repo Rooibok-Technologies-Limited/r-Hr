@@ -95,7 +95,7 @@ class FlutterwaveDisbursement implements DisbursementProviderInterface
         }
 
         try {
-            $res  = $this->client()->post('/transfers', ['json' => $body, 'http_errors' => false]);
+            $res  = $this->client()->post($this->baseUrl . '/transfers', ['headers' => $this->authHeaders(), 'json' => $body, 'http_errors' => false]);
             $json = json_decode((string) $res->getBody(), true) ?: [];
             $data = $json['data'] ?? [];
             $ok   = ($json['status'] ?? '') === 'success' && isset($data['id']);
@@ -119,7 +119,7 @@ class FlutterwaveDisbursement implements DisbursementProviderInterface
         }
         try {
             // Transfers are queried by our client reference.
-            $res  = $this->client()->get('/transfers?reference=' . rawurlencode($reference), ['http_errors' => false]);
+            $res  = $this->client()->get($this->baseUrl . '/transfers?reference=' . rawurlencode($reference), ['headers' => $this->authHeaders(), 'http_errors' => false]);
             $json = json_decode((string) $res->getBody(), true) ?: [];
             $row  = $json['data'][0] ?? null;
             if (! $row) {
@@ -139,7 +139,7 @@ class FlutterwaveDisbursement implements DisbursementProviderInterface
             return ['ok' => false, 'available' => null, 'currency' => $currency, 'reason' => 'not configured'];
         }
         try {
-            $res  = $this->client()->get('/balances/' . rawurlencode($currency), ['http_errors' => false]);
+            $res  = $this->client()->get($this->baseUrl . '/balances/' . rawurlencode($currency), ['headers' => $this->authHeaders(), 'http_errors' => false]);
             $json = json_decode((string) $res->getBody(), true) ?: [];
             $data = $json['data'] ?? [];
             return [
@@ -166,16 +166,19 @@ class FlutterwaveDisbursement implements DisbursementProviderInterface
         ][strtoupper($s)] ?? 'pending';
     }
 
+    // Headers travel per-request: CI4 CurlRequest drops config-level defaults
+    // on these calls, so the bearer must be in each request's options. [gotcha]
     private function client()
     {
-        return \Config\Services::curlrequest([
-            'baseURI' => $this->baseUrl,
-            'timeout' => 25,
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->secretKey,
-                'Content-Type'  => 'application/json',
-            ],
-        ]);
+        return \Config\Services::curlrequest(['timeout' => 25]);
+    }
+
+    private function authHeaders(): array
+    {
+        return [
+            'Authorization' => 'Bearer ' . $this->secretKey,
+            'Content-Type'  => 'application/json',
+        ];
     }
 
     /** Bank numbers pass through; mobile numbers to 256XXXXXXXXX. */

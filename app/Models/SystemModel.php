@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 namespace App\Models;
 
 use CodeIgniter\Model;
@@ -25,6 +29,13 @@ class SystemModel extends Model {
 		'mtn_subscription_key','mtn_api_user','mtn_api_key','mtn_environment','mtn_active',
 		// Airtel Money
 		'airtel_client_id','airtel_client_secret','airtel_environment','airtel_active',
+		// Flutterwave (aggregator / wallet float)
+		'flutterwave_public_key','flutterwave_secret_key','flutterwave_encryption_key',
+		'flutterwave_webhook_secret','flutterwave_base_url','flutterwave_environment',
+		'flutterwave_active','disbursement_aggregator',
+		// PesaPal (wallet top-up collections) + funding-provider selector
+		'pesapal_consumer_key','pesapal_consumer_secret','pesapal_base_url',
+		'pesapal_environment','pesapal_active','pesapal_ipn_id','collections_provider',
 		// SMS
 		'sms_provider','sms_username','sms_api_key','sms_sender_id','sms_active',
 		// JWT / API

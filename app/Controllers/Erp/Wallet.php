@@ -65,7 +65,7 @@ class Wallet extends BaseController
             'path_url'      => 'wallet',
             'breadcrumbs'   => 'Wallet',
             'is_super'      => $a[1] === 'super_user',
-            'online_fund'   => service('flutterwaveCollections')->isConfigured(),
+            'online_fund'   => service('collections')->isConfigured(),
         ];
         $data['subview'] = view('erp/wallet/wallet', $data);
         return view('erp/layout/layout_main', $data);
@@ -156,7 +156,7 @@ class Wallet extends BaseController
         if ($amount <= 0) {
             return $this->response->setJSON(['ok' => false, 'reason' => 'amount must be positive', 'csrf_hash' => csrf_hash()]);
         }
-        $col = service('flutterwaveCollections');
+        $col = service('collections');
         if (! $col->isConfigured()) {
             return $this->response->setJSON(['ok' => false, 'reason' => 'online funding not configured — use manual top-up', 'csrf_hash' => csrf_hash()]);
         }

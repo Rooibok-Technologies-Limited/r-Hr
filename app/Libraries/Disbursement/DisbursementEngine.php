@@ -70,6 +70,13 @@ class DisbursementEngine
                 $skipped[] = ['employee_id' => $eid, 'reason' => 'no verified payout method'];
                 continue;
             }
+            // Tenant confinement: a batch funds ONE company's wallet, so every
+            // employee's method must belong to that company. Prevents paying (or
+            // enumerating) another tenant's employees from this company's float. [SECURITY]
+            if (! empty($opts['company_id']) && (int) ($method['company_id'] ?? 0) !== (int) $opts['company_id']) {
+                $skipped[] = ['employee_id' => $eid, 'reason' => 'employee not in this company'];
+                continue;
+            }
             $lines[] = [
                 'employee_id' => $eid,
                 'company_id'  => $opts['company_id'] ?? ($method['company_id'] ?? null),
@@ -220,6 +227,15 @@ class DisbursementEngine
             return ['ok' => false, 'reason' => 'batch must be approved before processing'];
         }
 
+        // Serialize concurrent process() runs on the SAME batch so a payout line
+        // can never be dispatched twice by two overlapping runs (double-pay guard,
+        // in addition to the provider idempotency key). [SECURITY]
+        $lock = $this->db->query('SELECT pg_try_advisory_lock(4201, ?) AS ok', [$batchId])->getRow();
+        if (! $lock || ! $lock->ok) {
+            return ['ok' => false, 'reason' => 'batch is already being processed'];
+        }
+
+        try {
         // Safety caps (0 = unlimited) — refuse BEFORE any money moves.
         $caps = $this->caps();
         if ($caps['per_run'] > 0 && (float) $batch['total_amount'] > $caps['per_run']) {
@@ -327,7 +343,10 @@ class DisbursementEngine
         ]);
         $this->refreshBatchStatus($batchId);
 
-        return ['ok' => true, 'dispatched' => $dispatched, 'failed' => $failed];
+            return ['ok' => true, 'dispatched' => $dispatched, 'failed' => $failed];
+        } finally {
+            $this->db->query('SELECT pg_advisory_unlock(4201, ?)', [$batchId]);
+        }
     }
 
     /**

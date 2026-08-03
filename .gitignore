@@ -133,3 +133,6 @@ nb-configuration.xml
 /phpunit*.xml
 /.phpunit.*.cache
 
+
+# Playwright MCP screenshots (local walkthrough artifacts)
+.playwright-mcp/

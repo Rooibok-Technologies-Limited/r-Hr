@@ -1,8 +1,24 @@
+<!--
+  @author Bodo Desderio <rooiboktechltd@gmail.com>
+  @copyright 2026 Rooibok Technologies. All rights reserved.
+-->
 # Project Context
 Last updated: 2026-08-03
 
 ## Current task
-F2 disbursement — **wallet phases 3–4 + full security audit** — VERIFIED (2026-08-03).
+F2 — **PesaPal aggregator + live browser walkthrough + docs consolidation** —
+DONE (2026-08-03). Added PesaPal (API 3.0) as a collections-only funding gateway
+alongside Flutterwave: `App\Libraries\Collections\*` (interface + `PesapalCollections`
++ `Collections` resolver keyed on `collections_provider`), `service('collections')`,
+migration `2026-08-03-000001_AddPesapalSettings`, `Webhooks::pesapal()` (server-side
+`GetTransactionStatus`, idempotent credit), `spark pesapal:setup` (IPN registration),
+PesaPal settings tab. Live-verified against PesaPal **production** (auth, RegisterIPN,
+SubmitOrderRequest all 200; order created, unpaid-webhook correctly did NOT credit).
+Consolidated PLAN/UPGRADE/ROADMAP/NOTIFICATIONS into a single `README.md` (ADRs kept).
+Ran a full security audit (0 critical, 3 high, 4 medium, 4 low — see Known issues).
+Prior F2 wallet/audit state below.
+
+### Prior: wallet phases 3–4 + security audit — VERIFIED (2026-08-03).
 Flutterwave aggregator driver (payouts + collections top-up + master-float
 balance, degrades to Null until creds), unified `charge/transfer` webhook
 (verif-hash, server-side re-verify, fail-closed in production), wallet UI
@@ -45,6 +61,23 @@ Source fallback `app/Config/App.php` `$baseURL` → `http://localhost:12000`.
   — service-name refs on container ports, not host-published
 
 ## Recent decisions
+- 2026-08-03: **PesaPal added as collections/top-up gateway (ADR-002).** PesaPal
+  is collections-only (hosted checkout in; no payouts), so it powers wallet
+  top-ups; payouts stay on Flutterwave/direct MTN-Airtel. `collections_provider`
+  setting selects the funding gateway. Two real CI4 gotchas found + fixed in ALL
+  aggregator drivers (PesaPal + both Flutterwave): (1) `curlrequest` merges a
+  leading-`/` path against `baseURI` and DROPS the `/v3` segment → 404 — fixed by
+  passing absolute URLs; (2) config-level `headers` are dropped on these calls →
+  `Authorization` never sent → 401 — fixed by passing headers per-request.
+  Also fixed `SystemModel::$allowedFields` (Flutterwave + PesaPal columns were
+  missing → CI4 silently stripped them on settings save).
+- 2026-08-03: **Company dashboard / company-view crash fixed.** `erp_company_settings()`
+  returned null for a company with no `ci_company_settings` row (e.g. the demo
+  company id 8), and every company view dereferenced it → 500. Fixed the helper to
+  fall back to the seeded default (company_id=2) + a guard in `company_dashboard.php`.
+  Surfaced via a live Playwright walkthrough of the demo tenant (`GET /demo`).
+- 2026-08-03: **Security audit (post-PesaPal): 0 critical, 3 high, 4 med, 4 low.**
+  F2 money engine rated well-built; open items are AROUND it — see Known issues.
 - 2026-08-03: **F2 security audit (two agents) — all critical/high fixed.**
   Findings and fixes (each re-tested):
   - C1 (CRITICAL, float theft): a company admin could mint unbacked balance via
@@ -112,6 +145,28 @@ Source fallback `app/Config/App.php` `$baseURL` → `http://localhost:12000`.
   container-internal service refs untouched.
 
 ## Known issues
+- **Audit findings (2026-08-03, post-PesaPal) — ALL FIXED this session:**
+  - [HIGH] `PayoutMethods` cross-tenant IDOR → FIXED: `targetEmployee()`/`canActOnMethod()`
+    confine staff to self, company admins to their own company (super exempt); service
+    exposes `ownerOf()`/`companyForEmployee()`. All 5 endpoints gated.
+  - [HIGH] `Auth::verified_password` hardcoded-constant reset → FIXED: single-use, 30-min,
+    hashed reset token (migration `…000002_AddPasswordResetToken`), token carried in the
+    link as `email|token`, random password on success, token consumed. Login throttle now
+    keyed per IP+identity (was global `'auth'`).
+  - [HIGH] `Finance` (4 sites) + `Profile` avatar uploads → FIXED: `ext_in` allowlist +
+    `getRandomName()` (no client filename/extension reaches disk).
+  - [MED] `buildBatch` now rejects employees not in the funding company; `process()` takes
+    a per-batch `pg_try_advisory_lock` (double-dispatch guard); ZKTeco webhook requires a
+    device secret (fail-closed in prod).
+  - [LOW] Stripe webhook idempotent on invoice id; `secret_key()` throws instead of using a
+    public default; MoMo/Airtel token-failure logs redacted to http status.
+  - Follow-up (not blocking): ZKTeco device→company binding for a scoped user lookup;
+    nginx rule to deny PHP execution under `public/uploads/` (defense-in-depth atop ext_in).
+- **PesaPal is wired to LIVE production keys** (`collections_provider=pesapal`,
+  `pesapal_active=1`, `pesapal_environment=production`, keys encrypted in
+  `ci_erp_settings`). Live top-up verification is PENDING a real payment (user opted
+  out of spending real money). Order creation is free; the webhook→credit path is
+  proven except the final COMPLETED→credit leg.
 - SMS creds (sms_username/sms_api_key/sms_sender_id/sms_active/sms_gateway) must
   be set in Super Admin → Settings → SMS before SMS actually sends; until then
   smsProvider degrades to NullSmsProvider (no-op).

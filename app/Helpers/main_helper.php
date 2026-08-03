@@ -45,6 +45,7 @@ if( !function_exists('system_setting') ){
 			'stripe_secret_key','stripe_webhook_secret','mtn_api_key','mtn_subscription_key',
 			'airtel_client_secret','sms_api_key','jwt_secret',
 			'flutterwave_secret_key','flutterwave_encryption_key','flutterwave_webhook_secret',
+			'pesapal_consumer_key','pesapal_consumer_secret',
 		];
 
 		$cache = \Config\Services::cache();
@@ -623,7 +624,13 @@ if( !function_exists('all_timezones') ){
 	}
 	if( !function_exists('secret_key') ){
 		function secret_key($string='') {
-			$data = getenv('ENCRYPTION_KEY') ?: 'CHANGE_THIS_DEFAULT_KEY_IN_ENV';
+			$data = getenv('ENCRYPTION_KEY') ?: '';
+			// Fail loudly rather than silently using a public, source-visible key —
+			// this key protects reset-link tokens and encrypted payout destinations. [SECURITY]
+			if ($data === '') {
+				log_message('critical', 'ENCRYPTION_KEY is not set — refusing to use a default key.');
+				throw new \RuntimeException('ENCRYPTION_KEY is not configured.');
+			}
 			$data = str_replace(['+','/','='],['-','_',''],$data);
 			return $data;
 		}

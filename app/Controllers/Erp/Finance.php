@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -716,7 +720,7 @@ class Finance extends BaseController {
 					]
 				],
 				'attachment' => [
-					'rules'  => 'uploaded[attachment]|mime_in[attachment,image/jpg,image/jpeg,image/gif,image/png]|max_size[attachment,3072]',
+					'rules'  => 'uploaded[attachment]|mime_in[attachment,image/jpg,image/jpeg,image/gif,image/png]|ext_in[attachment,jpg,jpeg,gif,png]|max_size[attachment,3072]',
 					'errors' => [
 						'uploaded' => lang('Main.xin_error_field_text'),
 						'mime_in' => 'wrong size'
@@ -742,8 +746,8 @@ class Finance extends BaseController {
 			} else {
 				// upload file
 				$attachment = $this->request->getFile('attachment');
-				$file_name = $attachment->getName();
-				$attachment->move('public/uploads/transactions/');
+				$file_name = $attachment->getRandomName();
+				$attachment->move('public/uploads/transactions/', $file_name);
 				
 				$account_id = strip_tags(trim($this->request->getPost('account_id')));
 				$amount = strip_tags(trim($this->request->getPost('amount')));
@@ -848,7 +852,7 @@ class Finance extends BaseController {
 					]
 				],
 				'attachment' => [
-					'rules'  => 'uploaded[attachment]|mime_in[attachment,image/jpg,image/jpeg,image/gif,image/png]|max_size[attachment,3072]',
+					'rules'  => 'uploaded[attachment]|mime_in[attachment,image/jpg,image/jpeg,image/gif,image/png]|ext_in[attachment,jpg,jpeg,gif,png]|max_size[attachment,3072]',
 					'errors' => [
 						'uploaded' => lang('Main.xin_error_field_text'),
 						'mime_in' => 'wrong size'
@@ -874,8 +878,8 @@ class Finance extends BaseController {
 			} else {
 				// upload file
 				$attachment = $this->request->getFile('attachment');
-				$file_name = $attachment->getName();
-				$attachment->move('public/uploads/transactions/');
+				$file_name = $attachment->getRandomName();
+				$attachment->move('public/uploads/transactions/', $file_name);
 				
 				$account_id = strip_tags(trim($this->request->getPost('account_id')));
 				$amount = strip_tags(trim($this->request->getPost('amount')));
@@ -999,7 +1003,7 @@ class Finance extends BaseController {
 				// upload file
 				 $validated = $this->validate([
 					'attachment' => [
-						'rules'  => 'uploaded[attachment]|mime_in[attachment,image/jpg,image/jpeg,image/gif,image/png]|max_size[attachment,3072]',
+						'rules'  => 'uploaded[attachment]|mime_in[attachment,image/jpg,image/jpeg,image/gif,image/png]|ext_in[attachment,jpg,jpeg,gif,png]|max_size[attachment,3072]',
 						'errors' => [
 							'uploaded' => lang('Main.xin_error_field_text'),
 							'mime_in' => 'wrong size'
@@ -1008,8 +1012,8 @@ class Finance extends BaseController {
 				]);
 				if ($validated) {
 					$attachment = $this->request->getFile('attachment');
-					$file_name = $attachment->getName();
-					$attachment->move('public/uploads/transactions/');
+					$file_name = $attachment->getRandomName();
+					$attachment->move('public/uploads/transactions/', $file_name);
 				}
 				
 				$account_id = strip_tags(trim($this->request->getPost('account_id')));
@@ -1135,7 +1139,7 @@ class Finance extends BaseController {
 				// upload file
 				 $validated = $this->validate([
 					'attachment' => [
-						'rules'  => 'uploaded[attachment]|mime_in[attachment,image/jpg,image/jpeg,image/gif,image/png]|max_size[attachment,3072]',
+						'rules'  => 'uploaded[attachment]|mime_in[attachment,image/jpg,image/jpeg,image/gif,image/png]|ext_in[attachment,jpg,jpeg,gif,png]|max_size[attachment,3072]',
 						'errors' => [
 							'uploaded' => lang('Main.xin_error_field_text'),
 							'mime_in' => 'wrong size'
@@ -1144,8 +1148,8 @@ class Finance extends BaseController {
 				]);
 				if ($validated) {
 					$attachment = $this->request->getFile('attachment');
-					$file_name = $attachment->getName();
-					$attachment->move('public/uploads/transactions/');
+					$file_name = $attachment->getRandomName();
+					$attachment->move('public/uploads/transactions/', $file_name);
 				}
 				
 				$account_id = strip_tags(trim($this->request->getPost('account_id')));

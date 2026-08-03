@@ -1757,6 +1757,8 @@ class Settings extends BaseController {
 			'flutterwave_public_key','flutterwave_secret_key','flutterwave_encryption_key',
 			'flutterwave_webhook_secret','flutterwave_base_url','flutterwave_environment',
 			'flutterwave_active','disbursement_aggregator',
+			'pesapal_consumer_key','pesapal_consumer_secret','pesapal_base_url',
+			'pesapal_environment','pesapal_active','collections_provider',
 			'sms_provider','sms_username','sms_api_key','sms_sender_id','sms_active',
 			'jwt_secret','jwt_ttl_hours','api_active','api_rate_limit',
 			'default_geofence_radius','billing_reminder_active','billing_reminder_days',
@@ -1768,7 +1770,8 @@ class Settings extends BaseController {
 		// second save from double-encrypting the already-encrypted blob.
 		$sensitive = ['stripe_secret_key','stripe_webhook_secret','mtn_api_key','mtn_subscription_key',
 			'airtel_client_secret','sms_api_key','jwt_secret',
-			'flutterwave_secret_key','flutterwave_encryption_key','flutterwave_webhook_secret'];
+			'flutterwave_secret_key','flutterwave_encryption_key','flutterwave_webhook_secret',
+			'pesapal_consumer_key','pesapal_consumer_secret'];
 
 		$data = [];
 		foreach ($fields as $field) {

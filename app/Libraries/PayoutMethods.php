@@ -251,6 +251,31 @@ class PayoutMethods
         ];
     }
 
+    /**
+     * Owner context for an authorization check: the method's employee_id +
+     * company_id, or null if the method doesn't exist. Callers use this to
+     * confine an actor to their own tenant/employee before acting. [SECURITY]
+     *
+     * @return array{employee_id:int, company_id:?int}|null
+     */
+    public function ownerOf(int $methodId): ?array
+    {
+        $m = $this->find($methodId);
+        if (! $m) {
+            return null;
+        }
+        return [
+            'employee_id' => (int) $m['employee_id'],
+            'company_id'  => isset($m['company_id']) ? (int) $m['company_id'] : null,
+        ];
+    }
+
+    /** Public: the company a given employee belongs to (tenant scoping). */
+    public function companyForEmployee(int $employeeId): ?int
+    {
+        return $this->companyOf($employeeId);
+    }
+
     // ------------------------------------------------------------------
 
     private function find(int $methodId): ?array

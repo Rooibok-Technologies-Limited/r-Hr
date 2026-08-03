@@ -35,16 +35,50 @@ class PayoutMethods extends BaseController
         return [true, (int) $u['user_id'], (string) $u['user_type']];
     }
 
-    /** Resolve which employee this request may act on. */
-    private function targetEmployee(int $currentId, string $type): ?int
+    /**
+     * Resolve which employee this request targets, or null if the actor is not
+     * allowed to act on the requested employee. Staff are pinned to themselves;
+     * a company admin may target only employees in their own company; a super
+     * admin may target anyone. [SECURITY: tenant scoping]
+     */
+    private function targetEmployee(array $a): ?int
     {
+        [, $currentId, $type] = $a;
         $requested = (int) ($this->request->getPost('employee_id') ?: $this->request->getGet('employee_id'));
-        // Staff can only manage themselves.
-        if ($type === 'staff' || $requested === 0) {
+
+        if ($type === 'staff' || $requested === 0 || $requested === $currentId) {
             return $currentId;
         }
-        // company / super_user may manage a named employee.
-        return $requested;
+        if ($type === 'super_user') {
+            return $requested;
+        }
+        // company admin: the requested employee must belong to this company.
+        if ($type === 'company'
+            && service('payoutMethods')->companyForEmployee($requested) === $currentId) {
+            return $requested;
+        }
+        return null;
+    }
+
+    /**
+     * True if the actor may act on this method: super admin → any; staff → only
+     * their own method; company admin → only methods in their company. [SECURITY]
+     */
+    private function canActOnMethod(array $a, int $methodId): bool
+    {
+        [, $currentId, $type] = $a;
+        if ($type === 'super_user') {
+            return true;
+        }
+        $owner = service('payoutMethods')->ownerOf($methodId);
+        if ($owner === null) {
+            return false;
+        }
+        if ($type === 'staff') {
+            return $owner['employee_id'] === $currentId;
+        }
+        // company admin
+        return $owner['company_id'] === $currentId;
     }
 
     private function deny()
@@ -57,7 +91,10 @@ class PayoutMethods extends BaseController
         if (! ($a = $this->actor())) {
             return $this->deny();
         }
-        $employeeId = $this->targetEmployee($a[1], $a[2]);
+        $employeeId = $this->targetEmployee($a);
+        if ($employeeId === null) {
+            return $this->deny();
+        }
         return $this->response->setJSON(['ok' => true, 'methods' => service('payoutMethods')->listFor($employeeId)]);
     }
 
@@ -66,7 +103,10 @@ class PayoutMethods extends BaseController
         if (! ($a = $this->actor())) {
             return $this->deny();
         }
-        $employeeId = $this->targetEmployee($a[1], $a[2]);
+        $employeeId = $this->targetEmployee($a);
+        if ($employeeId === null) {
+            return $this->deny();
+        }
         $res = service('payoutMethods')->addMethod(
             $employeeId,
             (string) $this->request->getPost('type'),
@@ -86,6 +126,9 @@ class PayoutMethods extends BaseController
             return $this->deny();
         }
         $methodId = (int) $this->request->getPost('method_id');
+        if (! $this->canActOnMethod($a, $methodId)) {
+            return $this->deny();
+        }
         $res      = service('payoutMethods')->startVerification($methodId);
 
         if (($res['ok'] ?? false) && ($res['channel'] ?? '') === 'sms') {
@@ -110,8 +153,12 @@ class PayoutMethods extends BaseController
         if (! ($a = $this->actor())) {
             return $this->deny();
         }
+        $methodId = (int) $this->request->getPost('method_id');
+        if (! $this->canActOnMethod($a, $methodId)) {
+            return $this->deny();
+        }
         $res = service('payoutMethods')->confirmVerification(
-            (int) $this->request->getPost('method_id'),
+            $methodId,
             (string) $this->request->getPost('code')
         );
         return $this->response->setJSON($res + ['csrf_hash' => csrf_hash()]);
@@ -122,7 +169,11 @@ class PayoutMethods extends BaseController
         if (! ($a = $this->actor())) {
             return $this->deny();
         }
-        $res = service('payoutMethods')->setPrimary((int) $this->request->getPost('method_id'));
+        $methodId = (int) $this->request->getPost('method_id');
+        if (! $this->canActOnMethod($a, $methodId)) {
+            return $this->deny();
+        }
+        $res = service('payoutMethods')->setPrimary($methodId);
         return $this->response->setJSON($res + ['csrf_hash' => csrf_hash()]);
     }
 }

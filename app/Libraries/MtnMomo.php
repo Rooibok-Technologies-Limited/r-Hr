@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 
 namespace App\Libraries;
 
@@ -50,7 +54,7 @@ class MtnMomo
             return $response['body']['access_token'];
         }
 
-        log_message('error', '[MtnMomo] Failed to obtain token: ' . json_encode($response));
+        log_message('error', '[MtnMomo] Failed to obtain token (http {s})', ['s' => $response['status'] ?? 'unknown']);
         return '';
     }
 

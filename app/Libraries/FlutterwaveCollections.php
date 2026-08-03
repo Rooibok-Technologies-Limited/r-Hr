@@ -6,6 +6,8 @@
 
 namespace App\Libraries;
 
+use App\Libraries\Collections\CollectionsProviderInterface;
+
 /**
  * FlutterwaveCollections — the company-funding (top-up) side of the aggregator
  * (ADR-002). A company funds its virtual wallet by paying Flutterwave via a
@@ -19,7 +21,7 @@ namespace App\Libraries;
  *
  * @see https://developer.flutterwave.com/reference/create-a-payment
  */
-class FlutterwaveCollections
+class FlutterwaveCollections implements CollectionsProviderInterface
 {
     private string $secretKey;
     private string $baseUrl;
@@ -29,6 +31,11 @@ class FlutterwaveCollections
         helper('main');
         $this->secretKey = system_setting('flutterwave_secret_key') ?: '';
         $this->baseUrl   = rtrim(system_setting('flutterwave_base_url') ?: 'https://api.flutterwave.com/v3', '/');
+    }
+
+    public function name(): string
+    {
+        return 'flutterwave';
     }
 
     public function isConfigured(): bool
@@ -67,7 +74,7 @@ class FlutterwaveCollections
         ];
 
         try {
-            $res  = $this->client()->post('/payments', ['json' => $body, 'http_errors' => false]);
+            $res  = $this->client()->post($this->baseUrl . '/payments', ['headers' => $this->authHeaders(), 'json' => $body, 'http_errors' => false]);
             $json = json_decode((string) $res->getBody(), true) ?: [];
             if (($json['status'] ?? '') === 'success' && ! empty($json['data']['link'])) {
                 return ['ok' => true, 'link' => $json['data']['link'], 'tx_ref' => $txRef];
@@ -92,7 +99,7 @@ class FlutterwaveCollections
             return ['ok' => false, 'reason' => 'not configured'];
         }
         try {
-            $res  = $this->client()->get('/transactions/' . rawurlencode((string) $transactionId) . '/verify', ['http_errors' => false]);
+            $res  = $this->client()->get($this->baseUrl . '/transactions/' . rawurlencode((string) $transactionId) . '/verify', ['headers' => $this->authHeaders(), 'http_errors' => false]);
             $json = json_decode((string) $res->getBody(), true) ?: [];
             $data = $json['data'] ?? [];
             if (($json['status'] ?? '') !== 'success' || ! $data) {
@@ -112,15 +119,18 @@ class FlutterwaveCollections
         }
     }
 
+    // Headers travel per-request: CI4 CurlRequest drops config-level defaults
+    // on these calls, so the bearer must be in each request's options. [gotcha]
     private function client()
     {
-        return \Config\Services::curlrequest([
-            'baseURI' => $this->baseUrl,
-            'timeout' => 25,
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->secretKey,
-                'Content-Type'  => 'application/json',
-            ],
-        ]);
+        return \Config\Services::curlrequest(['timeout' => 25]);
+    }
+
+    private function authHeaders(): array
+    {
+        return [
+            'Authorization' => 'Bearer ' . $this->secretKey,
+            'Content-Type'  => 'application/json',
+        ];
     }
 }

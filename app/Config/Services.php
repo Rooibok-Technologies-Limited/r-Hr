@@ -108,6 +108,33 @@ class Services extends BaseService
 	}
 
 	/**
+	 * PesaPal collections driver (wallet top-ups) — ROADMAP F2, ADR-002.
+	 * Provider-specific: used by the pesapal webhook + `spark pesapal:setup`.
+	 */
+	public static function pesapalCollections($getShared = true)
+	{
+		if ($getShared) {
+			return static::getSharedInstance('pesapalCollections');
+		}
+
+		return new \App\Libraries\Collections\PesapalCollections();
+	}
+
+	/**
+	 * Resolved wallet-funding provider (collections). Picks Flutterwave or
+	 * PesaPal per the `collections_provider` setting, degrading to an
+	 * unconfigured driver so callers branch on isConfigured(). ROADMAP F2.
+	 */
+	public static function collections($getShared = true)
+	{
+		if ($getShared) {
+			return static::getSharedInstance('collections');
+		}
+
+		return (new \App\Libraries\Collections\Collections())->provider();
+	}
+
+	/**
 	 * Outbound SMS gateway, selected from the `sms_gateway` system setting.
 	 *
 	 * Returns a NullSmsProvider (no-op) when SMS is inactive (`sms_active` off)

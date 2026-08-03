@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use CodeIgniter\I18n\Time;
 //TimeHRM - Helper
 if( !function_exists('dashboard_profile_completeness') ){
@@ -459,6 +463,12 @@ if( !function_exists('erp_company_settings') ){
 		}
 
 		$company_settings = $CompanysettingsModel->where('company_id', $company_id)->first();
+		// Company has no settings row yet (e.g. the demo company or a freshly
+		// created one) — fall back to the seeded default so company-scoped views
+		// don't fatal on null settings (currency, setup_modules, etc.).
+		if (empty($company_settings) && $company_id != 2) {
+			$company_settings = $CompanysettingsModel->where('company_id', 2)->first();
+		}
 		$cache->save($cacheKey, $company_settings, 3600);
 		return $company_settings;
 	}

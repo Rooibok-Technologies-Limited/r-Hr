@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -195,6 +199,7 @@ class Profile extends BaseController {
 				'file' => [
 					'uploaded[file]',
 					'mime_in[file,image/jpg,image/jpeg,image/gif,image/png]',
+					'ext_in[file,jpg,jpeg,gif,png]',
 					'max_size[file,4096]',
 				],
 			]);
@@ -202,8 +207,9 @@ class Profile extends BaseController {
 				$Return['error'] = lang('Main.xin_error_profile_picture_field');
 			} else {
 				$avatar = $this->request->getFile('file');
-				$file_name = $avatar->getName();
-				$avatar->move('public/uploads/users/');
+				// Random server-side name (never trust the client filename/extension). [SECURITY]
+				$file_name = $avatar->getRandomName();
+				$avatar->move('public/uploads/users/', $file_name);
 				$image->withFile(filesrc($file_name))
 				->fit(100, 100, 'center')
 				->save('public/uploads/users/thumb/'.$file_name);

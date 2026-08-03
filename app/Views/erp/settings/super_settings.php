@@ -40,6 +40,9 @@ $active_tab = in_array($tab, ['payments','mtn','airtel']) ? 'payments' : 'tax';
         <a class="nav-link <?= $tab === 'flutterwave' ? 'active' : '' ?>" data-toggle="tab" href="#tab-flutterwave">Flutterwave</a>
       </li>
       <li class="nav-item">
+        <a class="nav-link <?= $tab === 'pesapal' ? 'active' : '' ?>" data-toggle="tab" href="#tab-pesapal">PesaPal</a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link <?= $tab === 'sms' ? 'active' : '' ?>" data-toggle="tab" href="#tab-sms">SMS</a>
       </li>
       <li class="nav-item">
@@ -278,6 +281,84 @@ $active_tab = in_array($tab, ['payments','mtn','airtel']) ? 'payments' : 'tax';
             </div>
           </div>
           <button type="submit" class="btn btn-primary">Save Flutterwave Settings</button>
+        </form>
+      </div>
+
+      <!-- ─── PesaPal (wallet top-up collections) ──── -->
+      <div class="tab-pane fade <?= $tab === 'pesapal' ? 'show active' : '' ?>" id="tab-pesapal">
+        <form id="form-pesapal-settings" method="post">
+          <?= csrf_field() ?>
+          <input type="hidden" name="setting_id" value="1">
+          <div class="alert alert-light-primary" role="alert">
+            <i data-feather="info"></i> PesaPal funds company wallet <strong>top-ups</strong> via hosted
+            checkout (card / MTN / Airtel). It does not do payouts — employee disbursements stay on the
+            direct MTN / Airtel rails. After saving keys, run <code>php spark pesapal:setup</code> once to
+            register the IPN.
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Consumer Key</label>
+                <input type="password" class="form-control" name="pesapal_consumer_key" placeholder="<?= !empty($settings['pesapal_consumer_key']) ? '•••••• (leave blank to keep current)' : '' ?>">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Consumer Secret</label>
+                <input type="password" class="form-control" name="pesapal_consumer_secret" placeholder="<?= !empty($settings['pesapal_consumer_secret']) ? '•••••• (leave blank to keep current)' : '' ?>">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Base URL <small class="text-muted">(blank = auto by environment)</small></label>
+                <input type="text" class="form-control" name="pesapal_base_url" value="<?= esc($settings['pesapal_base_url'] ?? '') ?>" placeholder="https://cybqa.pesapal.com/pesapalv3">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Environment</label>
+                <select class="form-control" name="pesapal_environment">
+                  <option value="sandbox" <?= ($settings['pesapal_environment'] ?? 'sandbox') === 'sandbox' ? 'selected' : '' ?>>Sandbox</option>
+                  <option value="production" <?= ($settings['pesapal_environment'] ?? '') === 'production' ? 'selected' : '' ?>>Production</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Enable PesaPal</label>
+                <select class="form-control" name="pesapal_active">
+                  <option value="0" <?= ($settings['pesapal_active'] ?? 0) == 0 ? 'selected' : '' ?>>Disabled</option>
+                  <option value="1" <?= ($settings['pesapal_active'] ?? 0) == 1 ? 'selected' : '' ?>>Enabled</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Wallet funding provider</label>
+                <select class="form-control" name="collections_provider">
+                  <option value="" <?= ($settings['collections_provider'] ?? '') === '' ? 'selected' : '' ?>>Auto (first configured)</option>
+                  <option value="flutterwave" <?= ($settings['collections_provider'] ?? '') === 'flutterwave' ? 'selected' : '' ?>>Flutterwave</option>
+                  <option value="pesapal" <?= ($settings['collections_provider'] ?? '') === 'pesapal' ? 'selected' : '' ?>>PesaPal</option>
+                </select>
+                <small class="text-muted">Which gateway company wallet top-ups use.</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Registered IPN id</label>
+                <input type="text" class="form-control" value="<?= esc($settings['pesapal_ipn_id'] ?? '') ?>" readonly placeholder="run: php spark pesapal:setup">
+                <small class="text-muted">Set automatically by <code>pesapal:setup</code>.</small>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label>IPN / Webhook URL</label>
+                <input type="text" class="form-control" value="<?= site_url('api/v1/webhooks/pesapal') ?>" readonly>
+                <small class="text-muted">Registered with PesaPal by the setup command.</small>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Save PesaPal Settings</button>
         </form>
       </div>
 

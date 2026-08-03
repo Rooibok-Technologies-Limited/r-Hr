@@ -1151,6 +1151,9 @@ $routes->group('api/v1', ['namespace' => 'App\Controllers\Api\V1', 'filter' => '
 	$routes->post('webhooks/mtn', 'Webhooks::mtn');
 	$routes->post('webhooks/airtel', 'Webhooks::airtel');
 	$routes->post('webhooks/flutterwave', 'Webhooks::flutterwave');
+	// PesaPal IPN — registered as POST but PesaPal may call GET; accept both.
+	$routes->post('webhooks/pesapal', 'Webhooks::pesapal');
+	$routes->get('webhooks/pesapal', 'Webhooks::pesapal');
 	$routes->post('webhooks/zkteco', 'Webhooks::zkteco');
 
 	$routes->group('', ['filter' => 'jwt'], function ($routes) {
