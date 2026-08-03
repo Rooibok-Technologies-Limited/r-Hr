@@ -1,5 +1,16 @@
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 'use strict';
 $(document).ready(function() {
+    // Guard: this dashboard script targets the super-admin dashboard widgets
+    // (activity feed + Apex charts). On dashboards that don't render them (e.g.
+    // the company dashboard) bail early to avoid PerfectScrollbar/ApexCharts
+    // "element not found" console noise.
+    if (!document.querySelector('.feed-scroll') && !document.querySelector('.pro-scroll')) {
+        return;
+    }
     setTimeout(function() {
         floatchart()
     }, 700);

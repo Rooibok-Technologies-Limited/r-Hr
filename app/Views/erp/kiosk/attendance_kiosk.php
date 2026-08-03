@@ -1,3 +1,7 @@
+<?php /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */ ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -158,7 +162,7 @@
 <body>
     <div class="kiosk-wrapper">
         <div class="kiosk-header">
-            <img src="<?= base_url('uploads/logo.png') ?>" alt="Company Logo" class="logo"
+            <img src="<?= base_url('public/uploads/logo/frontend/rooibok-logo-main.png') ?>" alt="Company Logo" class="logo"
                  onerror="this.style.display='none'">
             <h1>Attendance Kiosk</h1>
         </div>

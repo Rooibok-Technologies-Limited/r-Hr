@@ -1,3 +1,7 @@
+<?php /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */ ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -200,7 +204,7 @@
 <body>
     <div class="kiosk-container">
         <div class="kiosk-brand">
-            <img src="<?= base_url('uploads/logo.png') ?>" alt="Logo"
+            <img src="<?= base_url('public/uploads/logo/frontend/rooibok-logo-main.png') ?>" alt="Logo"
                  onerror="this.style.display='none'">
             <h1>Visitor Check-In</h1>
             <p>Welcome! Please fill in your details below.</p>
