@@ -61,6 +61,18 @@ Source fallback `app/Config/App.php` `$baseURL` → `http://localhost:12000`.
   — service-name refs on container ports, not host-published
 
 ## Recent decisions
+- 2026-08-03: **Full-site Playwright test + fixes (landing + company + superadmin).**
+  Landing was fully broken (jQuery/waypoints 404 → all JS dead) — vendored them;
+  fixed favicon, logo/avatar paths, kiosk logo, decorative placeholders. Swept
+  ~20 company sidebar pages + all superadmin pages (via superadmin login). Bugs
+  fixed: company-view null crash ([[project-hrsale-rooibok]]), leave_status.js
+  chart noise (guarded), expenses DataTable/delete calling dead routes (JS→real
+  routes; auto-routing is off), super-admin dashboard + Archive Portal 500 (archive
+  DB pointed at non-existent `postgres_archive` → fall back to main DB + loaded
+  `docker/postgres/archive_schema.sql`), forgot-password title raw lang key.
+  Deployment gaps noted: `uploads_data` volume + archive schema need first-boot
+  seeding. UI/UX upgrade plan in `docs/UX-UPGRADE-PLAN.md`. superadmin/`superadmin`
+  password reset to a test value this session (temp `user:setpass` command removed).
 - 2026-08-03: **PesaPal added as collections/top-up gateway (ADR-002).** PesaPal
   is collections-only (hosted checkout in; no payouts), so it powers wallet
   top-ups; payouts stay on Flutterwave/direct MTN-Airtel. `collections_provider`

@@ -303,7 +303,7 @@ class Auth extends BaseController
 		$session = \Config\Services::session();
 		$usession = $session->get('sup_username');
 		$session->remove('sup_username');
-		$data['title'] = lang('xin_lock_user');
+		$data['title'] = 'Forgot Password';
 		$Return['result'] = 'Locked User.';
 		return view('erp/auth/forgot_password', $data);
 	}
