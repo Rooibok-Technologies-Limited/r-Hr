@@ -119,6 +119,29 @@ Requested for a later, dedicated pass (audit + implement, comprehensively):
 6. **Audit & check all of the above** with the live-browser method used in the
    2026-08-03 test (every path green before sign-off).
 
+7. **Registration → plan selection + payment (self-enrollment billing).** Add a
+   **plan-selection step** to the sign-up flow. Self-enrolling companies must
+   **pay** (Stripe / PesaPal / MoMo) to activate a paid plan; a **free trial** is
+   the only no-pay path and is **time-enforced** (expiry gates access, with
+   reminders → the notifier). Wire subscription state to feature access.
+
+8. **Super-admin company lifecycle management.** Super-admin can manage each
+   company's subscription: change/upgrade plan, **extend**, toggle **auto-renew**,
+   suspend/reactivate, grant trial, comp/discount, refund, view billing history —
+   all audited (F1). (Some controls exist partially; make them complete + green.)
+
+9. **Fix ALL non-functional features/links + full-file audit.** Whole-project
+   audit of **every file/route/link** so everything is sound, green, and upgraded.
+   Known-broken (from 2026-08-03 screenshots) — same route/JS drift class as
+   `docs/route-js-audit.md`:
+   - `erp/set-roles` → **500 (Whoops)** — fix.
+   - `erp/employee-exit` → DataTables Ajax error (JS → wrong endpoint) — fix.
+   - `erp/office-shifts` → DataTables Ajax error — fix.
+   - `erp/employees/add_employee` direct GET → JSON error — **fixed** (redirects).
+   Method: go module-by-module, cross-ref every `module_scripts/*.js` URL to a
+   real route (auto-routing is OFF), load every page live, assert no 500 / no
+   console error / no DataTables Ajax alert, and confirm each action works.
+
 ## Suggested order
 Phase 0 (stabilize) → Phase 1 (design system) → Phase 2 (dashboards) → then
 Phase 3 core-HR and Phase 5 features in parallel tracks, with Phase 4 PWA once
