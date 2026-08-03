@@ -92,6 +92,33 @@ Pulled from `README.md` roadmap, prioritized by leverage:
 - Mobile-first: the workforce is on phones — kiosk, self-service, approvals.
 - Accessibility: keyboard-navigable, labelled, AA contrast, reduced-motion.
 
+## Backlog — added 2026-08-03 (execute later)
+
+Requested for a later, dedicated pass (audit + implement, comprehensively):
+
+1. **Zero hardcoding / everything admin-editable.** Audit the whole project for
+   hardcoded values that should be configurable, and expose them in the relevant
+   admin portal (super-admin for platform, company admin for tenant). Nothing a
+   user might reasonably want to change should require a code edit — app name,
+   currency, tax rates, caps, email/SMS templates, feature toggles, module
+   enable/disable, provider keys, branding, etc. Drive from settings tables.
+2. **Registration flow — comprehensive.** Company self-signup end-to-end
+   (company + first admin + plan) works cleanly; onboarding wizard; email
+   verification; sensible defaults seeded per new tenant (settings row, roles,
+   modules).
+3. **Team members + roles.** A company admin can invite/create team members
+   (staff), assign roles/permissions, and those members can log in with the
+   right scoped access. Verify the whole role/permission surface end-to-end.
+4. **Universal email acceptance.** Sign-up and sign-in must accept ALL valid
+   email addresses — work domains, gmail, yahoo, outlook, custom — no
+   allowlist/denylist, RFC-compliant validation only. Audit every email
+   validation rule (registration, profile, payout, invite) for over-restriction.
+5. **Sign-in flow.** Verify login for every user type (super-admin, company,
+   staff), 2FA path, lockout/throttle, password reset (now token-based),
+   remember-me, and post-login routing.
+6. **Audit & check all of the above** with the live-browser method used in the
+   2026-08-03 test (every path green before sign-off).
+
 ## Suggested order
 Phase 0 (stabilize) → Phase 1 (design system) → Phase 2 (dashboards) → then
 Phase 3 core-HR and Phase 5 features in parallel tracks, with Phase 4 PWA once
