@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 
 namespace Config;
 
@@ -33,6 +37,7 @@ class Filters extends BaseConfig
 		'jwt'         => JwtAuth::class,
 		'throttle'    => Throttle::class,
 		'demo'        => DemoMode::class,
+		'tenant'      => \App\Filters\TenantResolver::class,
 	];
 
 	/**
@@ -43,6 +48,7 @@ class Filters extends BaseConfig
 	 */
 	public $globals = [
 		'before' => [
+			'tenant',
 			'honeypot',
 			'csrf' => ['except' => ['api/*']],
 		],

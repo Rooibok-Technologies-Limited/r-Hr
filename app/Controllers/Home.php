@@ -125,6 +125,12 @@ class Home extends BaseController {
 		$username = $base; $n = 1;
 		while ($UsersModel->where('username', $username)->countAllResults() > 0) { $username = $base . $n; $n++; }
 
+		// Unique tenant slug from the company name (ADR-003 subdomain identity).
+		$reserved = ['admin', 'api', 'www', 'app', 'mail', 'ftp'];
+		$sbase = trim(preg_replace('/[^a-z0-9]+/', '-', strtolower($company)), '-') ?: 'company';
+		$slug = $sbase; $m = 1;
+		while (in_array($slug, $reserved, true) || $UsersModel->where('company_slug', $slug)->countAllResults() > 0) { $slug = $sbase . '-' . $m; $m++; }
+
 		$UsersModel->insert([
 			'company_id'       => 0,
 			'company_name'     => $company,
@@ -134,6 +140,7 @@ class Home extends BaseController {
 			'contact_number'   => $contact,
 			'email'            => $email,
 			'username'         => $username,
+			'company_slug'     => $slug,
 			'password'         => password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]),
 			'user_role_id'     => 0,
 			'profile_photo'    => 'default.png',

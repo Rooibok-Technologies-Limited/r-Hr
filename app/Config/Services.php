@@ -121,6 +121,19 @@ class Services extends BaseService
 	}
 
 	/**
+	 * Tenant context (host-based multi-tenancy, ADR-003). Populated per request
+	 * by the TenantResolver filter; read via service('tenant').
+	 */
+	public static function tenant($getShared = true)
+	{
+		if ($getShared) {
+			return static::getSharedInstance('tenant');
+		}
+
+		return new \App\Libraries\Tenant();
+	}
+
+	/**
 	 * Resolved wallet-funding provider (collections). Picks Flutterwave or
 	 * PesaPal per the `collections_provider` setting, degrading to an
 	 * unconfigured driver so callers branch on isConfigured(). ROADMAP F2.
