@@ -1,4 +1,8 @@
 <?php echo view('frontend/components/htmlhead'); ?>
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
    <body>
       <!-- pre loader area start -->
       <div id="loading">
@@ -53,8 +57,10 @@
                         
                         <div class="sign__form">
                            <?php $attributes = array('name' => 'setup_trial', 'id' => 'setup-trial', 'autocomplete' => 'off', 'class' => 'form');?>
-						   <?php $hidden = array('support_timehrm' => true);?>
-                           <?= form_open('keyhrm/setup_trial', $attributes, $hidden);?>
+                           <?= form_open('register-company', $attributes);?>
+                           <?php if(session('reg_error')): ?>
+                              <div class="alert alert-danger"><?= esc(session('reg_error')); ?></div>
+                           <?php endif; ?>
                               <div class="sign__input-wrapper mb-25">
                                  <h5><?= lang('Main.xin_employee_first_name');?> *</h5>
                                  <div class="sign__input">

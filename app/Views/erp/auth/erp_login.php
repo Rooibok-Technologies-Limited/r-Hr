@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\CompanysettingsModel;
 $SystemModel = new SystemModel();
@@ -46,6 +50,9 @@ $username = $session->get('sup_username');
 </head>
 
 <body>
+<?php if(session('reg_success')): ?>
+<div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#17c666;color:#fff;text-align:center;padding:12px 16px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.15);"><?= esc(session('reg_success')); ?></div>
+<?php endif; ?>
 <!-- [ auth-signin ] start -->
 <?php
 if($xin_com_system['login_page']==1){

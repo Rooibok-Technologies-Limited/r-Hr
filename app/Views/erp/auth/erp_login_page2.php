@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\CompanysettingsModel;
 $SystemModel = new SystemModel();
@@ -24,7 +28,7 @@ $username = $session->get('sup_username');
     <div class="auth-side-form">
       <div class=" auth-content">
         <div class="text-center">
-        	<img src="<?= base_url();?>/public/uploads/logo/other/<?= $xin_system['other_logo'];?>" alt="" class="img-fluid my-4" height="40" width="138">
+        	<img src="<?= base_url();?>/public/uploads/logo/rooibok-logo.svg" alt="" class="img-fluid my-4" height="40" width="138">
           <h4 class="mb-3 f-w-600">
             <?= lang('Login.xin_welcome_to');?>
             <span class="text-primary">

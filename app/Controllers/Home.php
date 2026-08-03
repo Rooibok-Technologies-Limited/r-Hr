@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -84,6 +88,105 @@ class Home extends BaseController {
 		$data['title'] = 'Register | ' . $xin_system['application_name'];
 		$data['xin_system'] = $xin_system;
 		return view('frontend/register', $data);
+	}
+
+	/**
+	 * Company self-registration (the sign-up form). Creates the company + first
+	 * admin, a trial subscription, and per-tenant settings defaults, then sends
+	 * them to sign in. Accepts ALL valid emails (valid_email = RFC, no allowlist).
+	 */
+	public function register_company()
+	{
+		helper(['form', 'main']);
+		$UsersModel = new \App\Models\UsersModel();
+
+		$rules = [
+			'first_name'     => 'required',
+			'last_name'      => 'required',
+			'company_name'   => 'required',
+			'email'          => 'required|valid_email|is_unique[ci_erp_users.email]',
+			'contact_number' => 'required',
+			'password'       => 'required|min_length[6]',
+		];
+		if (! $this->validate($rules)) {
+			return redirect()->back()->withInput()->with('reg_error', implode(' ', $this->validator->getErrors()));
+		}
+
+		$req      = $this->request;
+		$first    = strip_tags(trim($req->getPost('first_name')));
+		$last     = strip_tags(trim($req->getPost('last_name')));
+		$company  = strip_tags(trim($req->getPost('company_name')));
+		$email    = strip_tags(trim($req->getPost('email')));
+		$contact  = strip_tags(trim($req->getPost('contact_number')));
+		$password = (string) $req->getPost('password');
+
+		// Unique username from the email local-part.
+		$base = preg_replace('/[^a-z0-9._]/', '', strtolower(explode('@', $email)[0])) ?: 'company';
+		$username = $base; $n = 1;
+		while ($UsersModel->where('username', $username)->countAllResults() > 0) { $username = $base . $n; $n++; }
+
+		$UsersModel->insert([
+			'company_id'       => 0,
+			'company_name'     => $company,
+			'first_name'       => $first,
+			'last_name'        => $last,
+			'user_type'        => 'company',
+			'contact_number'   => $contact,
+			'email'            => $email,
+			'username'         => $username,
+			'password'         => password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]),
+			'user_role_id'     => 0,
+			'profile_photo'    => 'default.png',
+			'gender'           => 1,
+			'is_active'        => 1,
+			'is_logged_in'     => '0',
+			'last_login_date'  => '0',
+			'last_logout_date' => '0',
+			'last_login_ip'    => '0',
+			'created_at'       => date('d-m-Y h:i:s'),
+		]);
+		$companyId = $UsersModel->insertID();
+		if (! $companyId) {
+			return redirect()->back()->withInput()->with('reg_error', 'Could not create your account. Please try again.');
+		}
+
+		// Trial subscription — cheapest available plan.
+		$plan = (new \App\Models\MembershipModel())->orderBy('price', 'ASC')->first();
+		if ($plan) {
+			(new \App\Models\CompanymembershipModel())->insert([
+				'company_id'        => $companyId,
+				'membership_id'     => $plan['membership_id'],
+				'subscription_type' => $plan['plan_duration'] ?? 1,
+				'update_at'         => date('d-m-Y h:i:s'),
+				'created_at'        => date('d-m-Y h:i:s'),
+			]);
+		}
+
+		// Per-tenant settings defaults (Uganda-sensible).
+		(new \App\Models\CompanysettingsModel())->insert([
+			'company_id'              => $companyId,
+			'setup_modules'           => serialize(['recruitment' => '1', 'travel' => '1', 'award' => '1', 'events' => '1', 'fmanager' => '1']),
+			'login_page'              => '2',
+			'default_currency'        => 'UGX',
+			'default_currency_symbol' => 'UGX',
+			'notification_position'   => 'toast-top-center',
+			'notification_close_btn'  => 'true',
+			'notification_bar'        => 'true',
+			'date_format_xi'          => 'Y-m-d',
+			'default_language'        => 'en',
+			'system_timezone'         => 'Africa/Kampala',
+			'theme_primary'           => '#7267EF',
+			'updated_at'              => date('d-m-Y h:i:s'),
+		]);
+
+		try {
+			service('audit')->record('company.self_registered', [
+				'entity_type' => 'company', 'entity_id' => $companyId,
+				'summary'     => 'Self-registration: ' . $company,
+			]);
+		} catch (\Throwable $e) {}
+
+		return redirect()->to(site_url('erp/login'))->with('reg_success', 'Your account is ready — sign in with ' . esc($username) . '.');
 	}
 
 	/**

@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 $SystemModel = new SystemModel();
 $xin_system = $SystemModel->where('setting_id', 1)->first();
@@ -13,7 +17,7 @@ $username = $session->get('sup_username');
 			<div class="row align-items-center text-center">
 				<div class="col-md-12">
 					<div class="card-body">
-						<img src="<?= base_url();?>/public/uploads/logo/other/<?= $xin_system['other_logo'];?>" height="40" width="138" alt="" class="img-fluid mb-4">
+						<img src="<?= base_url();?>/public/uploads/logo/rooibok-logo.svg" height="40" width="138" alt="" class="img-fluid mb-4">
                           <p class="text-muted">
                             <?= lang('Login.xin_welcome_back_please_login');?>
                           </p>

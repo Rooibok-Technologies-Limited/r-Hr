@@ -43,6 +43,7 @@ $routes->get('features', 'Home::features');
 $routes->get('pricing', 'Home::pricing');
 $routes->get('contact', 'Home::contact');
 $routes->get('register', 'Home::register');
+$routes->post('register-company', 'Home::register_company');
 $routes->get('privacy', 'Home::privacy');
 $routes->get('cookies', 'Home::cookies');
 $routes->get('terms', 'Home::terms');
