@@ -1,11 +1,15 @@
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * Rooibok HR System — Expenses
  */
 $(document).ready(function() {
     var xin_table = $('#xin_table').dataTable({
         "bDestroy": true,
         "ajax": {
-            url: main_url + "expenses/expenses_list",
+            url: main_url + "expenses/list",
             type: 'GET'
         },
         "language": {
@@ -113,5 +117,5 @@ $(document).ready(function() {
 });
 $( document ).on( "click", ".delete", function() {
     $('input[name=_token]').val($(this).data('record-id'));
-    $('#delete_record').attr('action', main_url + '/expenses/delete_expense');
+    $('#delete_record').attr('action', main_url + 'expenses/delete');
 });
