@@ -136,3 +136,6 @@ nb-configuration.xml
 
 # Playwright MCP screenshots (local walkthrough artifacts)
 .playwright-mcp/
+
+# stray root screenshots from Playwright walkthroughs
+/*.png
