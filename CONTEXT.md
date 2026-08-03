@@ -61,6 +61,21 @@ Source fallback `app/Config/App.php` `$baseURL` → `http://localhost:12000`.
   — service-name refs on container ports, not host-published
 
 ## Recent decisions
+- 2026-08-03: **Backlog exec (partial) — auth flows + white-label + Phase 1/2 UI.**
+  Registration was BROKEN (form posted to non-existent `keyhrm/setup_trial`, 404);
+  built `Home::register_company` (route `register-company`) — creates company +
+  first admin + trial plan + per-tenant settings defaults (UGX/Kampala), success
+  banner, provides all NOT-NULL cols. Verified live end-to-end with gmail AND
+  yahoo (universal email — `valid_email`/RFC, no allowlist), then signed in.
+  Login page now shows Rooibok logo (was hrsale signin logo). White-label:
+  `brand_logo_html()` (super→Rooibok, tenant→own logo/name) + company logo/favicon
+  upload on Theme Settings ([[hr-white-label-branding]]). Phase 1 (design tokens,
+  dark mode, tables/forms) + Phase 2 (HR KPI dashboard row, rkChart wrapper) done.
+  Cache-busting via `asset_v()`. app:init seeds uploads+archive. STILL PENDING
+  (next session): backlog #25 team-member CREATE flow full test (infra present,
+  pages green, add_employee is a POST modal endpoint), #26 zero-hardcoding audit,
+  Phase 3 (core-HR UX depth). Test companies created: Lira Digital (id10), + Acme
+  Corp rename. superadmin/`superadmin` pw = Admin1234 (dev).
 - 2026-08-03: **Full-site Playwright test + fixes (landing + company + superadmin).**
   Landing was fully broken (jQuery/waypoints 404 → all JS dead) — vendored them;
   fixed favicon, logo/avatar paths, kiosk logo, decorative placeholders. Swept
