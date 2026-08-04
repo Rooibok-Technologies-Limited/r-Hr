@@ -3,10 +3,25 @@
   @copyright 2026 Rooibok Technologies. All rights reserved.
 -->
 # Project Context
-Last updated: 2026-08-03
+Last updated: 2026-08-04
 
 ## Current task
-F2 — **PesaPal aggregator + live browser walkthrough + docs consolidation** —
+ADR-003 **Phase 2 — tenant enforcement + clean erp-less URLs** — DONE (2026-08-04).
+Resolution moved from a filter to the `pre_system` event (`App\Libraries\TenantBootstrap`)
+because CI4 4.1.3 routes before before-filters run — a filter can't rewrite the routed
+path. Adds: **path fallback** (`HOST/{slug}/…` on the platform host), **clean erp-less
+tenant URLs** (transparently prepends `erp/`; root→`erp/desk`; legacy `/erp/*` still
+serves; canonical 301 opt-in via `TENANT_CANONICAL_REDIRECT`), per-host `baseURL` +
+**cookie domain**, and `tenant_url()` link helper. Enforcement via new global filter
+**`TenantGuard`**: pins every request to its resolved `company_id` (effective company =
+`user_type==='company' ? user_id : company_id`), cross-tenant → audited
+(`tenant.cross_access_denied`) + on-host login; `super_user`→`admin.`; non-super off
+`admin.`→landing. Verified live across all host/path forms (own=200, cross host+path
+blocked, audit rows written, super→admin, admin→landing). Env knobs: `PLATFORM_HOST`,
+`TENANT_URL_MODE`, `TENANT_CANONICAL_REDIRECT`. **Next = Phase 3 (Traefik wildcard cert
++ routers + admin Basic-Auth + custom-domain verify).**
+
+### Prior: F2 — PesaPal aggregator + live browser walkthrough + docs consolidation —
 DONE (2026-08-03). Added PesaPal (API 3.0) as a collections-only funding gateway
 alongside Flutterwave: `App\Libraries\Collections\*` (interface + `PesapalCollections`
 + `Collections` resolver keyed on `collections_provider`), `service('collections')`,

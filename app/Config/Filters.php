@@ -37,7 +37,7 @@ class Filters extends BaseConfig
 		'jwt'         => JwtAuth::class,
 		'throttle'    => Throttle::class,
 		'demo'        => DemoMode::class,
-		'tenant'      => \App\Filters\TenantResolver::class,
+		'tenantguard' => \App\Filters\TenantGuard::class,
 	];
 
 	/**
@@ -48,7 +48,7 @@ class Filters extends BaseConfig
 	 */
 	public $globals = [
 		'before' => [
-			'tenant',
+			'tenantguard',
 			'honeypot',
 			'csrf' => ['except' => ['api/*']],
 		],

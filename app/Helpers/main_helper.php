@@ -92,6 +92,42 @@ if( !function_exists('asset_v') ){
 	}
 }
 
+if( !function_exists('tenant_url') ){
+	/**
+	 * Canonical tenant URL in the clean, erp-less form (ADR-003 Phase 2).
+	 * $path is an app path WITHOUT the erp/ prefix, e.g. 'staff-list' or ''.
+	 *
+	 * Link form is env-driven via TENANT_URL_MODE:
+	 *   'subdomain' (prod default) → {slug}.PLATFORM_HOST/{path}
+	 *   'path'      (dev)          → PLATFORM_HOST/{slug}/{path}
+	 * Off a tenant context, or with no slug, it degrades to site_url().
+	 */
+	function tenant_url(string $path = '', ?string $slug = null): string {
+		$tenant = service('tenant');
+		$slug   = $slug ?? ($tenant->isTenant() ? $tenant->slug() : null);
+		$path   = ltrim($path, '/');
+
+		if (empty($slug)) {
+			return site_url($path);
+		}
+
+		$mode     = getenv('TENANT_URL_MODE') ?: 'subdomain';
+		$platform = getenv('PLATFORM_HOST') ?: 'localhost';
+
+		if ($mode === 'path') {
+			// Preserve the current host (incl. port) for local dev.
+			$base = rtrim(site_url(), '/');
+			return $base . '/' . $slug . ($path !== '' ? '/' . $path : '');
+		}
+
+		// Subdomain form — reuse the request scheme + port from baseURL.
+		$parts  = parse_url(rtrim((string) config('App')->baseURL, '/'));
+		$scheme = $parts['scheme'] ?? 'https';
+		$port   = isset($parts['port']) ? ':' . $parts['port'] : '';
+		return $scheme . '://' . $slug . '.' . $platform . $port . '/' . $path;
+	}
+}
+
 if( !function_exists('brand_logo_html') ){
 	/**
 	 * White-label brand logo (SaaS). The super-admin area shows the Rooibok HR

@@ -21,6 +21,8 @@ class Tenant
     private ?string $slug     = null;
     private ?int $companyId   = null;
     private ?string $companyName = null;
+    /** How the tenant was resolved: 'host' (subdomain/custom domain) | 'path' | 'none'. */
+    private string $source    = 'none';
 
     public function set(string $context, string $host, ?string $slug = null, ?int $companyId = null, ?string $companyName = null): void
     {
@@ -31,11 +33,14 @@ class Tenant
         $this->companyName = $companyName;
     }
 
+    public function setSource(string $source): void { $this->source = $source; }
+
     public function context(): string { return $this->context; }
     public function host(): string { return $this->host; }
     public function slug(): ?string { return $this->slug; }
     public function companyId(): ?int { return $this->companyId; }
     public function companyName(): ?string { return $this->companyName; }
+    public function source(): string { return $this->source; }
 
     public function isLanding(): bool { return $this->context === 'landing'; }
     public function isAdmin(): bool { return $this->context === 'admin'; }

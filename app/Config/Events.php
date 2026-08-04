@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 
 namespace Config;
 
@@ -51,4 +55,13 @@ Events::on('pre_system', function () {
 		Events::on('DBQuery', 'CodeIgniter\Debug\Toolbar\Collectors\Database::collect');
 		Services::toolbar()->respond();
 	}
+});
+
+/*
+ * ADR-003 Phase 2 — resolve the tenant context and rewrite the clean, erp-less
+ * URL to its erp/* controller BEFORE routing. Must run at pre_system: the router
+ * resolves the path before before-filters execute, so a filter is too late.
+ */
+Events::on('pre_system', function () {
+	\App\Libraries\TenantBootstrap::boot();
 });

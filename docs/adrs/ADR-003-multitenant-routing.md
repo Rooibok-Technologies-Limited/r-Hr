@@ -56,13 +56,39 @@ subdomain in prod, path in dev); legacy `/erp/*` redirects to canonical.
   engineering at this scale and fights the pooled-wallet aggregator model. The
   resolver keeps a future move possible without committing now.
 
-## TenantResolver (how it works — minimal rewrite)
-A filter reads the `Host` header and sets request context:
-`admin.*` → super-admin · root/`www` → landing · `api.*` → API · else → look up
-company by **subdomain slug** or **`custom_domain`** in `ci_erp_company_settings`,
-set active `company_id`, 404 on unknown, and **enforce** the logged-in user
-belongs to that company. Reuses all existing `company_id` scoping — this is a
-routing/filter change, not a data migration.
+## TenantResolver (how it works)
+`App\Libraries\TenantBootstrap::boot()` reads the `Host` header and sets request
+context into `service('tenant')`: `admin.*` → super-admin · root/`www` → landing ·
+`api.*` → API · else → look up company by **subdomain slug** or verified
+**`custom_domain`** in `ci_erp_users`, set active `company_id`. It also resolves
+the **path fallback** (`HOST/{slug}/…`) on the platform host. Reuses all existing
+`company_id` scoping — a routing change, not a data migration.
+
+**Runs at the `pre_system` event, not as a filter.** CI4 4.1.3 resolves the route
+BEFORE before-filters execute (`tryToRouteIt` precedes `filters->run('before')`),
+so a filter cannot rewrite the routed path. `pre_system` fires after the request
+object exists and before routing — the only correct hook for URL rewriting.
+
+### Clean, erp-less tenant URLs (owner decision 2026-08-04)
+Tenant URLs hide the `erp/` route prefix: `{slug}.host/staff-list` (not
+`…/erp/staff-list`). The bootstrap **transparently prepends `erp/`** to the routed
+path for tenant contexts, so the existing `erp/*` controllers are reached
+unchanged; root maps to `erp/desk`. Generated links drop the prefix via
+`tenant_url()`. Legacy `/erp/*` still serves (non-breaking); a canonical 301 to
+the clean form is opt-in (`TENANT_CANONICAL_REDIRECT`). Chosen over a global
+de-prefix (rewriting every route + `site_url()` + JS endpoint) to avoid the
+audited route/JS drift and its regression risk.
+
+### Enforcement — TenantGuard (global filter)
+Runs after routing, acts only on tenant/admin contexts. A user's **effective
+company_id** is their own `user_id` when `user_type='company'` (owners carry
+`company_id=0` and ARE the company), else their `company_id`. Rules:
+- tenant context + effective company ≠ resolved company → cross-tenant: audited
+  (`tenant.cross_access_denied`) + redirect to on-host login (session kept);
+- `super_user` on a tenant host → redirect to `admin.` host;
+- `admin.` host + non-super → redirect to landing.
+Must be global (not a `erp/*` URI-pattern filter): pattern matching uses the
+ORIGINAL path, which the bootstrap has already rewritten to `erp/*`.
 
 ## Data model
 - `ci_erp_users` (or company settings): `company_slug` (unique), `custom_domain`
@@ -70,14 +96,19 @@ routing/filter change, not a data migration.
 - One PostgreSQL, shared schema, `company_id` partition — unchanged.
 
 ## Phased rollout (each non-breaking)
-1. `company_slug` + `custom_domain` columns (backfill slugs); `TenantResolver`
-   filter (host optional → falls back to today's `/erp` behavior).
-2. `admin.` → SuperAuth; tenant hosts gated to their `company_id`; slug auto-gen
-   wired into registration (`Home::register_company`).
-3. Per-host `base_url` + **cookie domain** (key gotcha) + email/asset link hosts.
-4. Traefik: wildcard cert, `admin`/`api`/tenant routers, custom-domain router +
-   verification, Basic-Auth middleware on `admin`.
-5. (Later) split `api.` into a dedicated backend service.
+1. ✅ **DONE** (42600c8) — `company_slug` + `custom_domain` columns (backfill
+   slugs); host-based context resolution; slug auto-gen in registration.
+2. ✅ **DONE** (Phase 2, 2026-08-04) — resolution moved to `pre_system`
+   (`TenantBootstrap`); **path fallback** (`HOST/{slug}/…`); **clean erp-less
+   tenant URLs**; per-host `base_url` + **cookie domain**; `tenant_url()` helper;
+   **TenantGuard** pins every request to its company (cross-tenant blocked +
+   audited), `super_user`→`admin.`, non-super off `admin.`. Verified live across
+   all host/path forms. (Folds in the old Phase-3 base_url/cookie work.)
+3. **NEXT** — Traefik: wildcard cert, `admin`/`api`/tenant routers, custom-domain
+   router + verification, Basic-Auth middleware on `admin`; wire `TENANT_URL_MODE`
+   + `PLATFORM_HOST` per environment; enable `TENANT_CANONICAL_REDIRECT` once the
+   subdomain hosts are live.
+4. (Later) split `api.` into a dedicated backend service.
 
 ## Gotchas
 - **Cookie domain per host** (never a shared `.localhost`) — else isolation leaks.
