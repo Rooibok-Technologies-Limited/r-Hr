@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\RolesModel;
 use App\Models\UsersModel;
 use App\Models\ShiftModel;
@@ -60,10 +64,10 @@ $religion = $ConstantsModel->where('type','religion')->orderBy('constants_id', '
 $selected_shift = $ShiftModel->where('office_shift_id', $employee_detail['office_shift_id'])->first();
 $xin_system = erp_company_settings();
 // department head
-$idepartment = $DepartmentModel->where('department_id',$employee_detail['department_id'])->first();
-$dep_user = $UsersModel->where('user_id', $idepartment['department_head'])->first();
+$idepartment = !empty($employee_detail['department_id']) ? $DepartmentModel->where('department_id',$employee_detail['department_id'])->first() : null;
+$dep_user = !empty($idepartment['department_head']) ? $UsersModel->where('user_id', $idepartment['department_head'])->first() : null;
 // user designation
-$idesignations = $DesignationModel->where('designation_id',$employee_detail['designation_id'])->first();
+$idesignations = !empty($employee_detail['designation_id']) ? $DesignationModel->where('designation_id',$employee_detail['designation_id'])->first() : null;
 $get_animate='';
 //contract custom fields
 $count_module_attributes = $Moduleattributes->where('company_id',$company_id)->where('module_id',5)->orderBy('custom_field_id', 'ASC')->countAllResults();
@@ -95,7 +99,7 @@ $cmodule_attributes = $Moduleattributes->where('company_id',$company_id)->where(
               <?= $result['first_name'].' '.$result['last_name']; ?>
             </h6>
             <p class="mb-0 text-muted">
-              <?= $idesignations['designation_name'];?>
+              <?= $idesignations['designation_name'] ?? '—';?>
             </p>
           </div>
         </div>
@@ -109,7 +113,7 @@ $cmodule_attributes = $Moduleattributes->where('company_id',$company_id)->where(
         <li class="list-group-item"> <span class="f-w-500"><i class="feather icon-user m-r-10"></i>
           <?= lang('Employees.xin_manager');?>
           <i class="fas fa-question-circle" data-toggle="tooltip" title="Department Head"></i></span> <a href="#" class="float-right text-body">
-          <?= $dep_user['first_name'].' '.$dep_user['last_name']; ?>
+          <?= !empty($dep_user) ? $dep_user['first_name'].' '.$dep_user['last_name'] : '—'; ?>
           </a> </li>
         <li class="list-group-item border-bottom-0"> <span class="f-w-500"><i class="feather icon-mail m-r-10"></i>
           <?= lang('Main.xin_email');?>

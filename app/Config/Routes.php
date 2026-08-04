@@ -598,6 +598,13 @@ $routes->match(['get','post'], 'erp/employees/commissions_list', 'Employees::com
 $routes->match(['get','post'], 'erp/employees/statutory_list', 'Employees::statutory_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/employees/other_payments_list', 'Employees::other_payments_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/employees/user_documents_list', 'Employees::user_documents_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+// employee-360 detail tabs pass the employee id as a URI segment; the base routes above
+// don't match the id-suffixed URL, so add the (:num) variants the tab JS actually calls.
+$routes->match(['get','post'], 'erp/employees/allowances_list/(:num)', 'Employees::allowances_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/employees/commissions_list/(:num)', 'Employees::commissions_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/employees/statutory_list/(:num)', 'Employees::statutory_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/employees/other_payments_list/(:num)', 'Employees::other_payments_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/employees/user_documents_list/(:num)', 'Employees::user_documents_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/employees/add_allowance', 'Employees::add_allowance', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/employees/update_allowance', 'Employees::update_allowance', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/employees/add_commissions', 'Employees::add_commissions', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);

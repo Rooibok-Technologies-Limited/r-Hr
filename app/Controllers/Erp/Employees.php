@@ -213,7 +213,7 @@ class Employees extends BaseController {
 				}
 
 			$role = $RolesModel->where('role_id', $r['user_role_id'])->first();
-			if($role['role_name']){
+			if(!empty($role['role_name'])){
 				$role_name = $role['role_name'];
 			} else {
 				$role_name = '--';
@@ -233,9 +233,9 @@ class Employees extends BaseController {
 			$name = $r['first_name'].' '.$r['last_name'];
 			//designation
 			$employee_detail = $StaffdetailsModel->where('user_id', $r['user_id'])->first();
-			if($employee_detail['designation_id']){
+			if(!empty($employee_detail['designation_id'])){
 				$idesignations = $DesignationModel->where('designation_id',$employee_detail['designation_id'])->first();
-				$designation_name = $idesignations['designation_name'];
+				$designation_name = $idesignations['designation_name'] ?? '--';
 			} else {
 				$designation_name = '--';
 			}
@@ -260,7 +260,7 @@ class Employees extends BaseController {
 				$designation_name,
 				$r['contact_number'],
 				$gender,
-				$country_info['country_name'],
+				$country_info['country_name'] ?? '--',
 				$role_name,
 				$status
 			);
