@@ -301,7 +301,7 @@ $routes->get('erp/payment-details/(:segment)', 'Paymenthistory::billing_details'
 // subscription invoices (Phase 4.5)
 $routes->get('erp/subscription-invoices', 'Membership::invoice_history', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/subscription-invoice-download/(:num)', 'Membership::download_invoice/$1', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
-$routes->get('erp/all-subscription-invoices', 'Membership::all_invoices', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/all-subscription-invoices', 'Membership::all_invoices', ['namespace' => 'App\Controllers\Erp','filter' => 'superauth']);
 // contact support
 $routes->get('erp/contact-support', 'Contact::index', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 // payroll
@@ -490,19 +490,19 @@ $routes->get('erp/archive/export', 'Erp\ArchiveExport::export', ['filter' => 'ch
 /***************************************************************************************************************/
 
 // Super Admin: Companies
-$routes->get('erp/companies-list', 'Companies::index', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->get('erp/company-detail/(:segment)', 'Companies::company_details', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/companies/companies_list', 'Companies::companies_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/companies/add_company', 'Companies::add_company', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/companies/update_company', 'Companies::update_company', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/companies/update_basic_info', 'Companies::update_basic_info', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/companies/update_plan', 'Companies::update_plan', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->post('erp/companies/subscription-action', 'Companies::subscription_action', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/companies/billing-history', 'Companies::billing_history', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/companies/update_company_photo', 'Companies::update_company_photo', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/companies/update_company_info', 'Companies::update_company_info', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/companies/read', 'Companies::read', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/companies/delete_company', 'Companies::delete_company', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->get('erp/companies-list', 'Companies::index', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->get('erp/company-detail/(:segment)', 'Companies::company_details', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/companies/companies_list', 'Companies::companies_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/companies/add_company', 'Companies::add_company', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/companies/update_company', 'Companies::update_company', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/companies/update_basic_info', 'Companies::update_basic_info', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/companies/update_plan', 'Companies::update_plan', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->post('erp/companies/subscription-action', 'Companies::subscription_action', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/companies/billing-history', 'Companies::billing_history', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/companies/update_company_photo', 'Companies::update_company_photo', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/companies/update_company_info', 'Companies::update_company_info', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/companies/read', 'Companies::read', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/companies/delete_company', 'Companies::delete_company', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
 
 // Disbursements — maker-checker batch payouts — ROADMAP F2 phase 2
 $routes->get('erp/disbursements', 'Disbursements::index', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
@@ -540,41 +540,41 @@ $routes->get('erp/audit-log/export', 'AuditLog::export_csv', ['namespace' => 'Ap
 $routes->get('erp/audit-log/verify', 'AuditLog::verify', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 
 // Super Admin: Membership Plans
-$routes->get('erp/membership-list', 'Membership::index', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->get('erp/membership-detail/(:segment)', 'Membership::membership_details', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/membership/membership_list', 'Membership::membership_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/membership/add_membership', 'Membership::add_membership', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/membership/update_membership', 'Membership::update_membership', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/membership/read', 'Membership::read', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/membership/membership_type_chart', 'Membership::membership_type_chart', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/membership/membership_by_country_chart', 'Membership::membership_by_country_chart', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/membership/delete_membership', 'Membership::delete_membership', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->get('erp/membership-list', 'Membership::index', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->get('erp/membership-detail/(:segment)', 'Membership::membership_details', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/membership/membership_list', 'Membership::membership_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/membership/add_membership', 'Membership::add_membership', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/membership/update_membership', 'Membership::update_membership', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/membership/read', 'Membership::read', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/membership/membership_type_chart', 'Membership::membership_type_chart', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/membership/membership_by_country_chart', 'Membership::membership_by_country_chart', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/membership/delete_membership', 'Membership::delete_membership', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
 $routes->match(['get','post'], 'erp/membership/invoice_history_list', 'Membership::invoice_history_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/membership/all_invoices_list', 'Membership::all_invoices_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/membership/all_invoices_list', 'Membership::all_invoices_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
 
 // Super Admin: Super Users
-$routes->get('erp/super-users', 'Users::index', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->get('erp/user-detail/(:segment)', 'Users::user_details', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/users/users_list', 'Users::users_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/users/add_user', 'Users::add_user', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/users/update_user', 'Users::update_user', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/users/add_role', 'Users::add_role', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/users/update_profile_photo', 'Users::update_profile_photo', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/users/update_role', 'Users::update_role', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/users/roles_list', 'Users::roles_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/users/read', 'Users::read', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/users/read_role', 'Users::read_role', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/users/delete_user', 'Users::delete_user', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/users/delete_role', 'Users::delete_role', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->get('erp/super-users', 'Users::index', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->get('erp/user-detail/(:segment)', 'Users::user_details', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/users/users_list', 'Users::users_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/users/add_user', 'Users::add_user', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/users/update_user', 'Users::update_user', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/users/add_role', 'Users::add_role', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/users/update_profile_photo', 'Users::update_profile_photo', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/users/update_role', 'Users::update_role', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/users/roles_list', 'Users::roles_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/users/read', 'Users::read', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/users/read_role', 'Users::read_role', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/users/delete_user', 'Users::delete_user', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/users/delete_role', 'Users::delete_role', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
 
 // Super Admin: User Roles
-$routes->get('erp/users-role', 'Users::role', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->get('erp/users-role', 'Users::role', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
 
 // Super Admin: Billing Invoices
-$routes->get('erp/billing-invoices', 'Membershipinvoices::index', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->get('erp/billing-detail/(:segment)', 'Membershipinvoices::billing_details', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/membershipinvoices/billing_list', 'Membershipinvoices::billing_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/membershipinvoices/membership_invoice_amount_chart', 'Membershipinvoices::membership_invoice_amount_chart', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->get('erp/billing-invoices', 'Membershipinvoices::index', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->get('erp/billing-detail/(:segment)', 'Membershipinvoices::billing_details', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/membershipinvoices/billing_list', 'Membershipinvoices::billing_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/membershipinvoices/membership_invoice_amount_chart', 'Membershipinvoices::membership_invoice_amount_chart', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
 
 /***************************************************************************************************************/
 // AJAX/POST ENDPOINTS — Employees
