@@ -1,3 +1,7 @@
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 $(document).ready(function() {
    var xin_table = $('#xin_table').dataTable({
         "bDestroy": true,
@@ -63,7 +67,7 @@ $(document).ready(function() {
 		var field_id = button.data('field_id');
 		var modal = $(this);
 	$.ajax({
-		url : main_url+"announcements/read_annoucement",
+		url : main_url+"announcements/read_announcement",
 		type: "GET",
 		data: 'jd=1&is_ajax=1&mode=modal&data=view_announcement&field_id='+field_id,
 		success: function (response) {

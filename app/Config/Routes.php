@@ -153,6 +153,8 @@ $routes->get('erp/set-roles', 'Roles::index', ['namespace' => 'App\Controllers\E
 $routes->match(['get', 'post'], 'erp/roles/add_role', 'Roles::add_role', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
 $routes->match(['get', 'post'], 'erp/roles/update_role', 'Roles::update_role', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
 $routes->match(['get', 'post'], 'erp/roles/delete_role', 'Roles::delete_role', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
+$routes->match(['get', 'post'], 'erp/roles/staff_roles_list', 'Roles::staff_roles_list', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
+$routes->match(['get', 'post'], 'erp/roles/read_role', 'Roles::read_role', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
 //2: Assets
 $routes->get('erp/assets-list', 'Assets::index', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
 $routes->get('erp/asset-view/(:segment)', 'Assets::asset_view', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
@@ -1055,6 +1057,9 @@ $routes->match(['get','post'], 'erp/leaving/update_leaving', 'Leaving::update_le
 $routes->match(['get','post'], 'erp/leaving/leaving_list', 'Leaving::leaving_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/leaving/read_leaving', 'Leaving::read_leaving', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/leaving/delete_leaving', 'Leaving::delete_leaving', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/leaving/employee_off_list', 'Leaving::employee_off_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/leaving/read_employee_exit', 'Leaving::read_employee_exit', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/leaving/delete_employee_exit', 'Leaving::delete_employee_exit', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 // Documents
 $routes->match(['get','post'], 'erp/documents/add_document', 'Documents::add_document', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/documents/update_document', 'Documents::update_document', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
@@ -1090,7 +1095,7 @@ $routes->match(['get','post'], 'erp/holidays/delete_holiday', 'Holidays::delete_
 // Office Shifts
 $routes->match(['get','post'], 'erp/officeshifts/add_shift', 'Officeshifts::add_shift', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/officeshifts/update_shift', 'Officeshifts::update_shift', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/officeshifts/shifts_list', 'Officeshifts::shifts_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/officeshifts/office_shifts_list', 'Officeshifts::office_shifts_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/officeshifts/read_shift', 'Officeshifts::read_shift', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/officeshifts/delete_shift', 'Officeshifts::delete_shift', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 // Visitors
@@ -1186,6 +1191,41 @@ $routes->group('api/v1', ['namespace' => 'App\Controllers\Api\V1', 'filter' => '
 		$routes->get('subscription/status', 'Subscription::status');
 	});
 });
+
+// --- Route/JS drift fixes: DataTables & modal ajax endpoints whose controller
+// --- methods existed but were never wired (auto-routing off). Added 32 routes.
+$routes->match(['get','post'], 'erp/agenda/advance_salary_list/(:num)', 'Agenda::advance_salary_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/agenda/awards_list/(:num)', 'Agenda::awards_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/agenda/expense_list/(:num)', 'Agenda::expense_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/agenda/leave_list/(:num)', 'Agenda::leave_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/agenda/loan_list/(:num)', 'Agenda::loan_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/agenda/overtime_request_list/(:num)', 'Agenda::overtime_request_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/agenda/payslip_history_list/(:num)', 'Agenda::payslip_history_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/agenda/projects_list/(:num)', 'Agenda::projects_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/agenda/tasks_list/(:num)', 'Agenda::tasks_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/agenda/travel_list/(:num)', 'Agenda::travel_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/complaints/read_complaints', 'Complaints::read_complaints', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/conference/read_meeting_record', 'Conference::read_meeting_record', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/crm/customers_list', 'Crm::customers_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/crm/leads_list', 'Crm::leads_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/customfields/read_customfield', 'Customfields::read_customfield', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/documents/read_official_document', 'Documents::read_official_document', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/documents/system_documents_list/did/(:num)', 'Documents::system_documents_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/events/read_event_record', 'Events::read_event_record', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/languages/languages_list', 'Languages::languages_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/mailbox/update_important_mail_record', 'Mailbox::update_important_mail_record', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/mailbox/update_starmail_record', 'Mailbox::update_starmail_record', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/orderquotes/read_quote_data', 'Orderquotes::read_quote_data', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/orders/read_invoice_data', 'Orders::read_invoice_data', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/paymenthistory/payment_history_list', 'Paymenthistory::payment_history_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/purchases/delete_invoice_items', 'Purchases::delete_invoice_items', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/purchases/get_purchase_items', 'Purchases::get_purchase_items', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/purchases/read_purchase_data', 'Purchases::read_purchase_data', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/settings/read_sms_tempalte', 'Settings::read_sms_tempalte', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/settings/read_tempalte', 'Settings::read_tempalte', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/todo/update_item', 'Todo::update_item', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/trainers/trainer_list', 'Trainers::trainer_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/transfers/is_department/(:num)', 'Transfers::is_department', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 
 /**
  * --------------------------------------------------------------------
