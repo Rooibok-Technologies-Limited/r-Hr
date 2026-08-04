@@ -345,8 +345,8 @@ class Timesheet extends BaseController {
 			// get user info
 			//$iuser_info = $UsersModel->where('user_id', $r['user_id'])->first();
 			$user_detail = $StaffdetailsModel->where('user_id', $r['user_id'])->first();
-			// shift info
-			$office_shift = $ShiftModel->where('office_shift_id',$user_detail['office_shift_id'])->first();
+			// shift info — a staff with no details row has no shift; don't 500 the whole list.
+			$office_shift = !empty($user_detail['office_shift_id']) ? $ShiftModel->where('office_shift_id',$user_detail['office_shift_id'])->first() : null;
 			if($office_shift){
 				
 			if($day == 'Monday') {
