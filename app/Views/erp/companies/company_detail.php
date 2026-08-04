@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\ConstantsModel;
 use App\Models\CountryModel;
 use App\Models\MembershipModel;
@@ -314,6 +318,77 @@ if($result['is_active'] == 1){
           </div>
         </div>
         <?= form_close(); ?>
+
+        <!-- Subscription lifecycle (super-admin) -->
+        <?php $lc_active = (int) ($company_membership['is_active'] ?? 1); $lc_renew = (int) ($company_membership['auto_renew'] ?? 0); ?>
+        <div class="card-body pt-0" id="sub-lifecycle" data-company="<?= esc($segment_id, 'attr'); ?>">
+          <hr class="mb-3">
+          <h6 class="mb-2"><i class="feather icon-refresh-cw m-r-5"></i> Subscription lifecycle</h6>
+          <div class="d-flex flex-wrap align-items-center mb-3" style="gap:8px">
+            <span id="lc-status" class="badge badge-light-<?= $lc_active ? 'success' : 'danger'; ?>"><?= $lc_active ? 'Active' : 'Suspended'; ?></span>
+            <span class="badge badge-light-secondary">Expires: <span id="lc-expiry"><?= esc($company_membership['expiry_date'] ?? '—'); ?></span></span>
+            <span id="lc-renew" class="badge badge-light-<?= $lc_renew ? 'info' : 'secondary'; ?>">Auto-renew: <?= $lc_renew ? 'On' : 'Off'; ?></span>
+          </div>
+          <div class="d-flex flex-wrap" style="gap:8px">
+            <button type="button" class="btn btn-sm btn-outline-danger lc-act" data-act="suspend"<?= $lc_active ? '' : ' style="display:none"'; ?> id="lc-suspend"><i class="feather icon-slash"></i> Suspend</button>
+            <button type="button" class="btn btn-sm btn-outline-success lc-act" data-act="reactivate"<?= $lc_active ? ' style="display:none"' : ''; ?> id="lc-reactivate"><i class="feather icon-check"></i> Reactivate</button>
+            <button type="button" class="btn btn-sm btn-outline-primary lc-act" data-act="extend" data-days="30"><i class="feather icon-plus"></i> Extend 30 days</button>
+            <button type="button" class="btn btn-sm btn-outline-info lc-act" data-act="grant_trial" data-days="14"><i class="feather icon-gift"></i> Grant 14-day trial</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary lc-act" data-act="toggle_renew"><i class="feather icon-repeat"></i> Toggle auto-renew</button>
+          </div>
+          <div class="mt-3">
+            <h6 class="text-muted mb-2">Billing history</h6>
+            <div class="table-responsive"><table class="table table-sm mb-0">
+              <tbody id="lc-history"><tr><td class="text-muted small">Loading…</td></tr></tbody>
+            </table></div>
+          </div>
+        </div>
+        <script>
+        (function () {
+          var wrap = document.getElementById('sub-lifecycle');
+          if (!wrap) return;
+          var base = '<?= site_url('erp/companies'); ?>';
+          var company = wrap.getAttribute('data-company');
+          var csrf = (document.querySelector('input[name="csrf_token"]') || {}).value || '';
+          function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+          function post(url, payload){
+            var fd = new FormData(); fd.append('csrf_token', csrf);
+            Object.keys(payload).forEach(function(k){ fd.append(k, payload[k]); });
+            return fetch(url,{method:'POST',body:fd,headers:{'X-CSRF-TOKEN':csrf,'X-Requested-With':'XMLHttpRequest'},credentials:'same-origin'})
+              .then(function(r){return r.json();}).then(function(j){ if(j.csrf_hash){csrf=j.csrf_hash; var el=document.querySelector('input[name="csrf_token"]'); if(el) el.value=j.csrf_hash;} return j; });
+          }
+          function loadHistory(){
+            fetch(base+'/billing-history?company='+encodeURIComponent(company),{headers:{'X-Requested-With':'XMLHttpRequest'},credentials:'same-origin'})
+              .then(function(r){return r.json();}).then(function(j){
+                var tb=document.getElementById('lc-history'); var ev=(j&&j.events)||[];
+                tb.innerHTML = ev.length ? ev.map(function(e){ return '<tr><td class="small">'+esc(e.action.replace('subscription.',''))+'</td><td class="small">'+esc(e.summary)+'</td><td class="small text-muted text-right">'+esc(e.created_at)+'</td></tr>'; }).join('')
+                  : '<tr><td class="text-muted small">No subscription events yet.</td></tr>';
+              }).catch(function(){});
+          }
+          function applyState(st){
+            if(!st) return;
+            var active = Number(st.is_active)===1;
+            var sb=document.getElementById('lc-status'); sb.textContent=active?'Active':'Suspended'; sb.className='badge badge-light-'+(active?'success':'danger');
+            document.getElementById('lc-suspend').style.display=active?'':'none';
+            document.getElementById('lc-reactivate').style.display=active?'none':'';
+            if(st.expiry_date) document.getElementById('lc-expiry').textContent=st.expiry_date;
+            var rb=document.getElementById('lc-renew'); var ren=Number(st.auto_renew)===1; rb.textContent='Auto-renew: '+(ren?'On':'Off'); rb.className='badge badge-light-'+(ren?'info':'secondary');
+          }
+          wrap.querySelectorAll('.lc-act').forEach(function(btn){
+            btn.addEventListener('click', function(){
+              var act=btn.getAttribute('data-act'), days=btn.getAttribute('data-days');
+              if(act==='suspend' && !confirm('Suspend this company? Its users will be disconnected on their next request.')) return;
+              var p={company:company, action:act}; if(days) p.days=days;
+              post(base+'/subscription-action', p).then(function(j){
+                if(!j.ok){ if(window.toastr) toastr.error(j.error||'Failed'); return; }
+                if(window.toastr) toastr.success(j.message||'Done');
+                applyState(j.state); loadHistory();
+              });
+            });
+          });
+          loadHistory();
+        })();
+        </script>
       </div>
       <div class="tab-pane fade" id="user-profile-logo">
         <?php $attributes = array('name' => 'add_company', 'id' => 'ci_logo', 'autocomplete' => 'off');?>

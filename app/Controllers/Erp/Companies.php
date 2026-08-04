@@ -887,6 +887,104 @@ class Companies extends BaseController {
 			return redirect()->to(site_url('erp/login'));
 		}
 	}
+
+	/**
+	 * Super-admin subscription lifecycle actions (ADR-003 operator side): suspend,
+	 * reactivate, extend, grant a trial, toggle auto-renew. Acts on the company's
+	 * ci_company_membership row; every action is audited. Suspending sets
+	 * is_active=0, which CheckLogin uses to auto-disconnect the tenant on next
+	 * request. Super-admin only.
+	 */
+	public function subscription_action()
+	{
+		$guard = $this->superOnly();
+		if ($guard !== true) { return $guard; }
+
+		$companyId = (int) udecode(strip_tags(trim((string) $this->request->getPost('company'))));
+		$action    = strip_tags(trim((string) $this->request->getPost('action')));
+		if ($companyId <= 0) {
+			return $this->response->setJSON(['ok' => false, 'error' => 'Invalid company', 'csrf_hash' => csrf_hash()]);
+		}
+
+		$CM = new CompanymembershipModel();
+		$m  = $CM->where('company_id', $companyId)->first();
+		if (! $m) {
+			return $this->response->setJSON(['ok' => false, 'error' => 'No subscription record for this company', 'csrf_hash' => csrf_hash()]);
+		}
+
+		$now    = date('Y-m-d');
+		$update = ['update_at' => date('d-m-Y h:i:s')];
+		switch ($action) {
+			case 'suspend':
+				$update['is_active'] = 0; $summary = 'Subscription suspended'; break;
+			case 'reactivate':
+				$update['is_active'] = 1; $summary = 'Subscription reactivated'; break;
+			case 'extend':
+				$days = (int) $this->request->getPost('days'); $days = $days > 0 ? $days : 30;
+				$base = (! empty($m['expiry_date']) && strtotime($m['expiry_date']) > time()) ? $m['expiry_date'] : $now;
+				$update['expiry_date'] = date('Y-m-d', strtotime("$base +$days days"));
+				$update['is_active']   = 1;
+				$summary = "Extended by {$days} days (to {$update['expiry_date']})"; break;
+			case 'grant_trial':
+				$days = (int) $this->request->getPost('days'); $days = $days > 0 ? $days : 14;
+				$update['expiry_date'] = date('Y-m-d', strtotime("$now +$days days"));
+				$update['is_active']   = 1;
+				$summary = "Granted {$days}-day trial (to {$update['expiry_date']})"; break;
+			case 'toggle_renew':
+				$new = ((int) ($m['auto_renew'] ?? 0) === 1) ? 0 : 1;
+				$update['auto_renew'] = $new;
+				$summary = 'Auto-renew ' . ($new ? 'enabled' : 'disabled'); break;
+			default:
+				return $this->response->setJSON(['ok' => false, 'error' => 'Unknown action', 'csrf_hash' => csrf_hash()]);
+		}
+
+		$CM->update($m['company_membership_id'], $update);
+		try {
+			service('audit')->record('subscription.' . $action, [
+				'entity_type' => 'company', 'entity_id' => $companyId,
+				'company_id'  => $companyId, 'summary' => $summary,
+			]);
+		} catch (\Throwable $e) {}
+
+		return $this->response->setJSON([
+			'ok' => true, 'message' => $summary,
+			'state' => [
+				'is_active'   => (int) ($update['is_active'] ?? $m['is_active']),
+				'auto_renew'  => (int) ($update['auto_renew'] ?? $m['auto_renew'] ?? 0),
+				'expiry_date' => $update['expiry_date'] ?? $m['expiry_date'],
+			],
+			'csrf_hash' => csrf_hash(),
+		]);
+	}
+
+	/** Super-admin: subscription audit trail for one company (billing history). */
+	public function billing_history()
+	{
+		$guard = $this->superOnly();
+		if ($guard !== true) { return $guard; }
+
+		$companyId = (int) udecode(strip_tags(trim((string) ($this->request->getGet('company') ?: $this->request->getPost('company')))));
+		$rows = \Config\Database::connect()->table('ci_audit_log')
+			->select('action, summary, created_at')
+			->where('company_id', $companyId)
+			->like('action', 'subscription.', 'after')
+			->orderBy('created_at', 'DESC')->limit(40)->get()->getResultArray();
+		return $this->response->setJSON(['ok' => true, 'events' => $rows]);
+	}
+
+	/** @return true|\CodeIgniter\HTTP\ResponseInterface true if super admin, else a 403 JSON. */
+	private function superOnly()
+	{
+		$session  = \Config\Services::session();
+		$usession = $session->get('sup_username');
+		$me = (is_array($usession) && ! empty($usession['sup_user_id']))
+			? (new UsersModel())->where('user_id', $usession['sup_user_id'])->first() : null;
+		if (empty($me) || ($me['user_type'] ?? '') !== 'super_user') {
+			return $this->response->setStatusCode(403)->setJSON(['ok' => false, 'error' => 'Super admin only']);
+		}
+		return true;
+	}
+
 	 // delete record
 	public function delete_company() {
 		

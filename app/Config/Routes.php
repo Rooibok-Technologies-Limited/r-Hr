@@ -489,6 +489,8 @@ $routes->match(['get','post'], 'erp/companies/add_company', 'Companies::add_comp
 $routes->match(['get','post'], 'erp/companies/update_company', 'Companies::update_company', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/companies/update_basic_info', 'Companies::update_basic_info', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/companies/update_plan', 'Companies::update_plan', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/companies/subscription-action', 'Companies::subscription_action', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/companies/billing-history', 'Companies::billing_history', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/companies/update_company_photo', 'Companies::update_company_photo', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/companies/update_company_info', 'Companies::update_company_info', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/companies/read', 'Companies::read', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
