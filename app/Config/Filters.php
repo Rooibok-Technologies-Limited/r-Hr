@@ -34,6 +34,7 @@ class Filters extends BaseConfig
 		'noauth' => Noauth::class,
 		'superauth' => SuperAuth::class,
 		'companyauth' => CompanyAuth::class,
+		'companyarea' => \App\Filters\CompanyArea::class,
 		'jwt'         => JwtAuth::class,
 		'throttle'    => Throttle::class,
 		'demo'        => DemoMode::class,

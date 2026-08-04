@@ -149,23 +149,23 @@ $routes->match(['get','post'], 'erp/settings/update_currency', 'Settings::update
 
 /////Company|Staff Modules
 //1: Staff Roles
-$routes->get('erp/set-roles', 'Roles::index', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin,companyauth']);
-$routes->match(['get', 'post'], 'erp/roles/add_role', 'Roles::add_role', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin,companyauth']);
-$routes->match(['get', 'post'], 'erp/roles/update_role', 'Roles::update_role', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin,companyauth']);
-$routes->match(['get', 'post'], 'erp/roles/delete_role', 'Roles::delete_role', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin,companyauth']);
+$routes->get('erp/set-roles', 'Roles::index', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
+$routes->match(['get', 'post'], 'erp/roles/add_role', 'Roles::add_role', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
+$routes->match(['get', 'post'], 'erp/roles/update_role', 'Roles::update_role', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
+$routes->match(['get', 'post'], 'erp/roles/delete_role', 'Roles::delete_role', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
 //2: Assets
-$routes->get('erp/assets-list', 'Assets::index', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin,companyauth']);
-$routes->get('erp/asset-view/(:segment)', 'Assets::asset_view', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin,companyauth']);
-$routes->match(['get', 'post'], 'erp/assets/assets_list', 'Assets::assets_list', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin,companyauth']);
-$routes->match(['get', 'post'], 'erp/assets/read_asset', 'Assets::read_asset', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin,companyauth']);
-$routes->match(['get', 'post'], 'erp/assets/add_asset', 'Assets::add_asset', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin,companyauth']);
-$routes->match(['get', 'post'], 'erp/assets/update_asset', 'Assets::update_asset', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin,companyauth']);
-$routes->match(['get', 'post'], 'erp/assets/delete_asset', 'Assets::delete_asset', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin,companyauth']);
+$routes->get('erp/assets-list', 'Assets::index', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
+$routes->get('erp/asset-view/(:segment)', 'Assets::asset_view', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
+$routes->match(['get', 'post'], 'erp/assets/assets_list', 'Assets::assets_list', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
+$routes->match(['get', 'post'], 'erp/assets/read_asset', 'Assets::read_asset', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
+$routes->match(['get', 'post'], 'erp/assets/add_asset', 'Assets::add_asset', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
+$routes->match(['get', 'post'], 'erp/assets/update_asset', 'Assets::update_asset', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
+$routes->match(['get', 'post'], 'erp/assets/delete_asset', 'Assets::delete_asset', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
 
 
 // module types
-$routes->get('erp/assets-category', 'Types::asset_category', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin,companyauth']);
-$routes->get('erp/assets-brand', 'Types::asset_brand', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin,companyauth']);
+$routes->get('erp/assets-category', 'Types::asset_category', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
+$routes->get('erp/assets-brand', 'Types::asset_brand', ['namespace' => 'App\Controllers\Erp','filter' => 'companyarea']);
 $routes->get('erp/leave-type', 'Types::leave_type', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/award-type', 'Types::award_type', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/arrangement-type', 'Types::arrangement_type', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
