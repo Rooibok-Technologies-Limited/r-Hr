@@ -397,10 +397,10 @@ class Auth extends BaseController
 				}
 			} else {
 				$email = strip_tags(trim($this->request->getPost('email')));
-				$check_user = $UsersModel->where('email', $email, 'is_active',1)->countAllResults();
+				$check_user = $UsersModel->where('email', $email)->where('is_active', 1)->countAllResults();
 				if($check_user > 0){
 					$Return['result'] = lang('Main.xin_error_msg__available');
-					$iuser = $UsersModel->where('email', $email, 'is_active',1)->first();
+					$iuser = $UsersModel->where('email', $email)->where('is_active', 1)->first();
 					$username = $iuser['username'];
 
 					// Single-use, expiring reset token: store only its hash; carry
@@ -476,7 +476,7 @@ class Auth extends BaseController
 				// Per-identity throttle (IP + session user) — not a shared bucket. [SECURITY]
 				$throttler = \Config\Services::throttler();
 				$is_allow = $throttler->check('reauth_'.md5($this->request->getIPAddress().'|'.($usession['sup_user_id'] ?? '')),5,MINUTE);
-				$iuser = $UsersModel->where('user_id', $usession['sup_user_id'], 'is_active',1)->first();
+				$iuser = $UsersModel->where('user_id', $usession['sup_user_id'])->where('is_active', 1)->first();
 				$password = strip_tags(trim($this->request->getPost('password')));
 				$username = $iuser['username'];
 				$user_info = $UsersModel->where('username', $username)->where('is_active',1)->first();

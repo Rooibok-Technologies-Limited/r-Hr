@@ -5,6 +5,16 @@
  */
 //Process String
 
+// Validate a user-supplied CSS colour as a hex value so tenant theme settings
+// cannot inject CSS/HTML into <style> blocks. Returns the value when it is a
+// valid #RGB / #RRGGBB / #RRGGBBAA, otherwise the supplied default.
+if(!function_exists('hex_color')) {
+	function hex_color($value, string $default = '#000000'): string {
+		$value = trim((string) $value);
+		return preg_match('/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/', $value) ? $value : $default;
+	}
+}
+
 // Create a notification for a user
 if(!function_exists('create_notification')) {
 	function create_notification(int $user_id, string $title, string $body = '', string $link = '', int $company_id = 0): void {

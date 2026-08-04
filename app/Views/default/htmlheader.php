@@ -60,9 +60,9 @@ $xin_com_system = erp_company_settings();
     <?php
     // Apply saved theme colors as CSS variables
     $_theme_com = erp_company_settings();
-    $_tp = $_theme_com['theme_primary'] ?? '#7267EF';
-    $_ts = $_theme_com['theme_secondary'] ?? '#6c757d';
-    $_ta = $_theme_com['theme_success'] ?? '#17C666';
+    $_tp = hex_color($_theme_com['theme_primary'] ?? null, '#7267EF');
+    $_ts = hex_color($_theme_com['theme_secondary'] ?? null, '#6c757d');
+    $_ta = hex_color($_theme_com['theme_success'] ?? null, '#17C666');
     if ($_tp !== '#7267EF' || $_ts !== '#6c757d' || $_ta !== '#17C666'):
     ?>
     <style>

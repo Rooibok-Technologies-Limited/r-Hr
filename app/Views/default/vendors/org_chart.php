@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\RolesModel;
 use App\Models\UsersModel;
 use App\Models\SystemModel;
@@ -38,16 +42,16 @@ $get_animate = '';
    $(function() {
 
     var datascource = {
-      'profile': '<?= base_url();?>/public/uploads/users/thumb/<?= $user_chart['profile_photo'];?>',
-	  'name': '<?= $user_chart['first_name'].' '.$user_chart['last_name'];?>',
-      'title': '<?= $user_chart['company_name'];?>',
+      'profile': '<?= base_url();?>/public/uploads/users/thumb/<?= esc($user_chart['profile_photo'], 'js');?>',
+	  'name': '<?= esc($user_chart['first_name'].' '.$user_chart['last_name'], 'js');?>',
+      'title': '<?= esc($user_chart['company_name'], 'js');?>',
       'children': [
 	  <?php foreach($main_department as $idepartment){?>
 	  <?php $idep_head = $UsersModel->where('user_id', $idepartment['department_head'])->first(); ?>
         {
-			'profile': '<?= base_url();?>/public/uploads/users/thumb/<?= $idep_head['profile_photo'];?>',
-			'name': '<?= $idep_head['first_name'].' '.$idep_head['last_name'];?>',
-			'title': '<?= $idepartment['department_name'];?>',
+			'profile': '<?= base_url();?>/public/uploads/users/thumb/<?= esc($idep_head['profile_photo'], 'js');?>',
+			'name': '<?= esc($idep_head['first_name'].' '.$idep_head['last_name'], 'js');?>',
+			'title': '<?= esc($idepartment['department_name'], 'js');?>',
 		<?php $subdesign = $DesignationModel->where('department_id', $idepartment['department_id'])->first(); ?>
     	<?php $idesignation = $StaffdetailsModel->where('designation_id', $subdesign['designation_id'])->findAll(); ?>
 		'children': [
@@ -57,9 +61,9 @@ $get_animate = '';
 			<?php if($iuser_count > 0){?>
 			<?php $iuser = $UsersModel->where('user_id', $sdesign['user_id'])->first(); ?>
             {
-				'profile': '<?= base_url();?>/public/uploads/users/thumb/<?= $iuser['profile_photo'];?>',
-				'name': '<?= $iuser['first_name'].' '.$iuser['last_name'];?>',
-				'title': '<?= $edesignation['designation_name'];?>' },
+				'profile': '<?= base_url();?>/public/uploads/users/thumb/<?= esc($iuser['profile_photo'], 'js');?>',
+				'name': '<?= esc($iuser['first_name'].' '.$iuser['last_name'], 'js');?>',
+				'title': '<?= esc($edesignation['designation_name'], 'js');?>' },
 			<?php } ?>
 			<?php }?>
           ]
@@ -77,7 +81,7 @@ $get_animate = '';
       'pan': true,
 	  'visibleLevel': 3,
 	  'exportButton': true,
-	  'exportFilename': '<?= $user_chart['company_name'];?>_<?=lang('Dashboard.xin_org_chart_title');?>',
+	  'exportFilename': '<?= esc($user_chart['company_name'], 'js');?>_<?=lang('Dashboard.xin_org_chart_title');?>',
       'zoom': true,
 	  'zoominLimit': 7,
 	  'direction': 't2b',
