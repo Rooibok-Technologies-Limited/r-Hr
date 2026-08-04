@@ -126,18 +126,20 @@ class AttendanceLive extends BaseController
             ->where('is_active', 1)
             ->countAllResults();
 
-        // Currently clocked in (still in building)
+        // Currently clocked in (still in building). clock_in_out is a VARCHAR
+        // column storing '0'/'1' — compare as strings, else Postgres errors with
+        // "operator does not exist: character varying = integer".
         $clockedIn = $db->table('ci_timesheet')
             ->where('company_id', $companyId)
             ->where('attendance_date', $today)
-            ->where('clock_in_out', 0)
+            ->where('clock_in_out', '0')
             ->countAllResults();
 
         // Clocked out today
         $clockedOut = $db->table('ci_timesheet')
             ->where('company_id', $companyId)
             ->where('attendance_date', $today)
-            ->where('clock_in_out', 1)
+            ->where('clock_in_out', '1')
             ->countAllResults();
 
         // Recent clock events (last 10)
@@ -152,13 +154,16 @@ class AttendanceLive extends BaseController
         $recent = $recentQuery ? $recentQuery->getResultArray() : [];
 
         // Currently in building
+        // department_id lives on ci_erp_users_details (per employee), not on
+        // ci_erp_users — join through it to reach the department name.
         $inBuildingQuery = $db->table('ci_timesheet t')
             ->select('t.*, u.first_name, u.last_name, u.profile_photo, d.department_name')
             ->join('ci_erp_users u', 'u.user_id = t.employee_id')
-            ->join('ci_departments d', 'd.department_id = u.department_id', 'left')
+            ->join('ci_erp_users_details ud', 'ud.user_id = u.user_id', 'left')
+            ->join('ci_departments d', 'd.department_id = ud.department_id', 'left')
             ->where('t.company_id', $companyId)
             ->where('t.attendance_date', $today)
-            ->where('t.clock_in_out', 0)
+            ->where('t.clock_in_out', '0')
             ->orderBy('t.clock_in', 'DESC')
             ->get();
         $inBuilding = $inBuildingQuery ? $inBuildingQuery->getResultArray() : [];
