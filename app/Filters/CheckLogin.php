@@ -1,4 +1,8 @@
 <?php namespace App\Filters;
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -33,15 +37,39 @@ class CheckLogin implements FilterInterface
 			return redirect()->to(site_url('erp/login'));
 		}
 
-		// Check company membership is_active (auto-disconnect on expiry).
-		// Skip for super_user accounts — they are not tied to a company subscription.
-		if (! empty($user_info['company_id']) && $user_info['user_type'] !== 'super_user') {
-			$CompanymembershipModel = new CompanymembershipModel();
-			$membership = $CompanymembershipModel->where('company_id', $user_info['company_id'])->first();
-			if ($membership && $membership['is_active'] != 1) {
-				$session->setFlashdata('err_not_logged_in', 'Your company subscription has expired. Please contact your administrator to renew.');
-				$session->destroy();
-				return redirect()->to(site_url('erp/login'));
+		// Subscription enforcement (ADR: registration billing). A company's
+		// subscription is keyed on the OWNER's user_id: an owner (user_type=company)
+		// carries company_id=0 and IS the company, so the effective company id is
+		// their own user_id; staff carry the owner's id in company_id.
+		if ($user_info['user_type'] !== 'super_user') {
+			$effCompany = ($user_info['user_type'] === 'company')
+				? (int) $user_info['user_id']
+				: (int) $user_info['company_id'];
+
+			if ($effCompany > 0) {
+				$membership = (new CompanymembershipModel())->where('company_id', $effCompany)->first();
+				$today = date('Y-m-d');
+				$expired = $membership && (
+					(int) $membership['is_active'] !== 1
+					|| (! empty($membership['expiry_date']) && $membership['expiry_date'] < $today)
+				);
+
+				if ($expired) {
+					// Do NOT destroy the session — the owner must be able to renew.
+					// Confine expired tenants to the renewal wall; exempt the wall
+					// itself, its actions, the locked page and logout (no loop).
+					$path   = ltrim((string) $request->getPath(), '/');
+					$exempt = ['erp/renew', 'erp/subscription-locked', 'erp/system-logout', 'erp/logout'];
+					$isExempt = false;
+					foreach ($exempt as $ex) {
+						if ($path === $ex || strpos($path, $ex . '/') === 0) { $isExempt = true; break; }
+					}
+					if (! $isExempt) {
+						return ($user_info['user_type'] === 'company')
+							? redirect()->to(site_url('erp/renew'))            // owner: self-serve renewal wall
+							: redirect()->to(site_url('erp/subscription-locked')); // staff: contact-admin page
+					}
+				}
 			}
 		}
     }

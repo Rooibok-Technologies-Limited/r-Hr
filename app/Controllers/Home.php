@@ -158,12 +158,18 @@ class Home extends BaseController {
 		}
 
 		// Trial subscription — cheapest available plan.
-		$plan = (new \App\Models\MembershipModel())->orderBy('price', 'ASC')->first();
+		$MembershipModel = new \App\Models\MembershipModel();
+			$chosen = (int) $req->getPost('membership_id');
+			$plan   = $chosen > 0 ? $MembershipModel->where('membership_id', $chosen)->first() : null;
+			if (! $plan) { $plan = $MembershipModel->orderBy('price', 'ASC')->first(); }
 		if ($plan) {
 			(new \App\Models\CompanymembershipModel())->insert([
 				'company_id'        => $companyId,
 				'membership_id'     => $plan['membership_id'],
 				'subscription_type' => $plan['plan_duration'] ?? 1,
+				'expiry_date'       => date('Y-m-d', strtotime('+' . ((int)(system_setting('trial_days') ?: 14)) . ' days')),
+				'is_active'         => 1,
+				'auto_renew'        => 0,
 				'update_at'         => date('d-m-Y h:i:s'),
 				'created_at'        => date('d-m-Y h:i:s'),
 			]);

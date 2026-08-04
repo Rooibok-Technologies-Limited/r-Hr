@@ -104,7 +104,26 @@ echo view('frontend/components/htmlhead'); ?>
                                     <i class="fal fa-lock"></i>
                                  </div>
                               </div>
-                              
+
+                              <?php $__plans = (new \App\Models\MembershipModel())->orderBy('price', 'ASC')->findAll(); ?>
+                              <?php if (! empty($__plans)): ?>
+                              <div class="sign__input-wrapper mb-25">
+                                 <h5>Choose a plan <span style="font-weight:400;font-size:13px;color:#888">(free trial to start)</span></h5>
+                                 <div class="sign__input">
+                                    <select name="membership_id" style="width:100%;height:52px;padding:0 20px;border:2px solid #eef0f6;border-radius:6px;background:#fff;">
+                                       <?php foreach ($__plans as $__p): ?>
+                                       <option value="<?= (int) $__p['membership_id']; ?>">
+                                          <?= esc($__p['membership_type']); ?> —
+                                          <?= $__p['price'] > 0 ? number_to_currency($__p['price'], erp_company_settings()['default_currency'] ?? 'UGX', null, 0) : 'Free'; ?>
+                                          <?= ((int) ($__p['plan_duration'] ?? 1) === 2) ? '/ year' : '/ month'; ?>
+                                       </option>
+                                       <?php endforeach; ?>
+                                    </select>
+                                    <i class="fal fa-award"></i>
+                                 </div>
+                              </div>
+                              <?php endif; ?>
+
                               <button class="w-btn w-btn-11 w-100"> <span></span> <?= lang('Frontend.xin_sign_up');?></button>
                               <div class="sign__new text-center mt-20">
                                  <p><?= lang('Frontend.xin_we_guarantee_100_privacy');?></p>

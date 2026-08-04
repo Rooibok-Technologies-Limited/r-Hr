@@ -288,6 +288,10 @@ $routes->get('erp/my-subscription', 'Subscription::index', ['namespace' => 'App\
 $routes->get('erp/subscription-expired', 'Subscription::subscription_expired', ['namespace' => 'App\Controllers\Erp']);
 $routes->get('erp/upgrade-subscription/(:segment)', 'Subscription::upgrade_subscription', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/subscription-list', 'Subscription::more_subscriptions', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+// Renewal wall (registration billing): expired owner self-serves here; staff see the locked page.
+$routes->get('erp/renew', 'Subscription::renew', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->post('erp/renew/submit', 'Subscription::renew_submit', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/subscription-locked', 'Subscription::subscription_locked', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 // payment history
 $routes->get('erp/my-payment-history', 'Paymenthistory::index', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/payment-details/(:segment)', 'Paymenthistory::billing_details', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
