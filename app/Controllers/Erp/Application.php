@@ -31,6 +31,8 @@ use App\Models\DepartmentModel;
 use App\Models\DesignationModel;
 use App\Models\MainModel;
 use App\Models\StaffdetailsModel;
+use App\Models\ConstantsModel;
+use App\Models\LeaveModel;
 
 class Application extends BaseController {
 
@@ -143,10 +145,10 @@ class Application extends BaseController {
 		$skipDup = (int) $this->request->getPost('skip_duplicates') === 1;
 		$file    = $this->request->getFile('import_file');
 
-		$supported = ['departments', 'designations', 'employees', 'attendance'];
+		$supported = ['departments', 'designations', 'employees', 'attendance', 'leaves'];
 		if (! in_array($type, $supported, true)) {
 			return redirect()->to(site_url('erp/system-import'))
-				->with('import_error', 'Import for that dataset is not available yet. Supported: Departments, Designations, Employees, Attendance.');
+				->with('import_error', 'Import for that dataset is not available yet.');
 		}
 		if (! $file || ! $file->isValid() || strtolower((string) $file->getExtension()) !== 'csv') {
 			return redirect()->to(site_url('erp/system-import'))->with('import_error', 'Please upload a valid .csv file.');
@@ -262,7 +264,7 @@ class Application extends BaseController {
 				]);
 				$imported++;
 			}
-		} else { // attendance
+		} elseif ($type === 'attendance') {
 			$UsersModel = new UsersModel();
 			$db = \Config\Database::connect();
 			foreach ($rows as $i => $row) {
@@ -286,6 +288,33 @@ class Application extends BaseController {
 					'attendance_status' => '1',
 				]);
 				$imported++;
+			}
+		} else { // leaves
+			$UsersModel     = new UsersModel();
+			$ConstantsModel = new ConstantsModel();
+			$LeaveModel     = new LeaveModel();
+			foreach ($rows as $i => $row) {
+				$rn    = $i + 2;
+				$email = strip_tags(trim((string) ($row['employee_email'] ?? '')));
+				$ltype = strip_tags(trim((string) ($row['leave_type'] ?? '')));
+				$from  = strip_tags(trim((string) ($row['start_date'] ?? '')));
+				$to    = strip_tags(trim((string) ($row['end_date'] ?? '')));
+				$reason = strip_tags(trim((string) ($row['reason'] ?? '')));
+				if ($email === '' || $ltype === '' || $from === '' || $to === '') {
+					$errors[] = "Row $rn: employee_email, leave_type, start_date and end_date are required"; continue;
+				}
+				$emp = $UsersModel->where('company_id', $companyId)->where('email', $email)->where('user_type', 'staff')->first();
+				if (! $emp) { $errors[] = "Row $rn: employee '$email' not found in your company"; continue; }
+				$lt = $ConstantsModel->where('company_id', $companyId)->where('type', 'leave_type')
+					->where('category_name', $ltype)->first();
+				if (! $lt) { $errors[] = "Row $rn: leave type '$ltype' not found (create it first)"; continue; }
+				$ok = $LeaveModel->insert([
+					'company_id' => $companyId, 'employee_id' => (int) $emp['user_id'],
+					'leave_type_id' => (int) $lt['constants_id'], 'from_date' => $from, 'to_date' => $to,
+					'reason' => $reason !== '' ? $reason : '-', 'remarks' => '', 'status' => 1, 'is_half_day' => 0,
+					'leave_attachment' => '', 'created_at' => date('d-m-Y h:i:s'),
+				]);
+				if ($ok) { $imported++; } else { $errors[] = "Row $rn: could not save leave"; }
 			}
 		}
 
