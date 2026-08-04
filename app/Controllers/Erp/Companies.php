@@ -158,10 +158,10 @@ class Companies extends BaseController {
 					'first_name' => 'required',
 					'last_name' => 'required',
 					'contact_number' => 'required',
-					'email' => 'required|valid_email|is_unique[ci_app_users.email]',
+					'email' => 'required|valid_email|is_unique[ci_erp_users.email]',
 					'membership_type' => 'required',
 					'country' => 'required',
-					'username' => 'required|min_length[6]|is_unique[ci_app_users.username]',
+					'username' => 'required|min_length[6]|is_unique[ci_erp_users.username]',
 					'password' => 'required|min_length[6]',
 					//'logo' => 'required'
 				],
@@ -731,6 +731,7 @@ class Companies extends BaseController {
 				
 				$Return['result'] = lang('Company.xin_success_update_company_subscription');
 				// Notify super admins via the unified notifier.
+				$UsersModel = new UsersModel();
 				$supers   = $UsersModel->where('user_type','super_user')->findAll();
 				$superIds = array_column($supers, 'user_id');
 				service('notifier')->send($superIds, 'subscription_updated', [

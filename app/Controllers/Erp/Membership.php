@@ -446,7 +446,7 @@ class Membership extends BaseController {
 		// Super admin (user_type = 'super') can download any invoice; companies can only download their own
 		$UsersModel = new UsersModel();
 		$user = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
-		if ($user['user_type'] !== 'super' && (int)$invoice['company_id'] !== (int)$usession['sup_user_id']) {
+		if ($user['user_type'] !== 'super_user' && (int)$invoice['company_id'] !== (int)$usession['sup_user_id']) {
 			$session->setFlashdata('unauthorized_module', 'You do not have permission to download this invoice.');
 			return redirect()->to(site_url('erp/desk'));
 		}
