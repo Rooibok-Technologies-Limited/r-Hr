@@ -246,7 +246,7 @@ class Application extends BaseController {
 				$uid = $UsersModel->insert([
 					'first_name' => $first, 'last_name' => $last, 'email' => $email, 'user_type' => 'staff',
 					'username' => $username, 'password' => password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]),
-					'contact_number' => '', 'country' => 0, 'user_role_id' => 0, 'address_1' => '', 'address_2' => '', 'city' => '',
+					'contact_number' => strip_tags(trim((string) ($row['contact_number'] ?? ($row['phone'] ?? '')))), 'country' => 0, 'user_role_id' => 0, 'address_1' => '', 'address_2' => '', 'city' => '',
 					'profile_photo' => 'default.png', 'state' => '', 'zipcode' => '', 'gender' => 1,
 					'company_name' => $companyName, 'trading_name' => '', 'registration_no' => '', 'government_tax' => '',
 					'company_type_id' => 0, 'last_login_date' => '0', 'last_logout_date' => '0', 'last_login_ip' => '0',
@@ -332,6 +332,64 @@ class Application extends BaseController {
 			->with('import_success', "Imported {$imported}, skipped {$skipped}" . (count($errors) ? ', ' . count($errors) . ' error(s)' : '') . '.')
 			->with('import_errors', array_slice($errors, 0, 20));
 	}
+
+	/**
+	 * GET erp/import-template/{type} — download a ready-to-fill CSV template for a
+	 * dataset. Header row matches exactly what import_process() reads, plus one
+	 * example row users can overwrite. Columns follow the common HRIS import layout.
+	 */
+	public function import_template($type = '')
+	{
+		$session = \Config\Services::session();
+		if (! $session->has('sup_username')) { return redirect()->to(site_url('erp/login')); }
+		$type = preg_replace('/[^a-z_]/', '', strtolower((string) $type));
+
+		$templates = [
+			'employees' => [
+				['first_name', 'last_name', 'email', 'contact_number', 'department', 'designation', 'joining_date'],
+				['Jane', 'Doe', 'jane.doe@example.com', '256700000000', 'Human Resources', 'HR Officer', '01-01-2026'],
+				['John', 'Okello', 'john.okello@example.com', '256770000000', 'Finance', 'Accountant', '15-01-2026'],
+			],
+			'departments' => [
+				['department_name'],
+				['Human Resources'],
+				['Finance'],
+			],
+			'designations' => [
+				['designation_name', 'department'],
+				['HR Officer', 'Human Resources'],
+				['Accountant', 'Finance'],
+			],
+			'attendance' => [
+				['employee_email', 'date', 'clock_in', 'clock_out'],
+				['jane.doe@example.com', '2026-01-15', '08:00:00', '17:00:00'],
+			],
+			'leaves' => [
+				['employee_email', 'leave_type', 'start_date', 'end_date', 'reason'],
+				['jane.doe@example.com', 'Annual Leave', '2026-02-01', '2026-02-05', 'Family holiday'],
+			],
+			'contacts' => [
+				['first_name', 'last_name', 'email', 'contact_number'],
+				['Jane', 'Doe', 'jane.doe@example.com', '256700000000'],
+				['John', 'Okello', 'john.okello@example.com', '256770000000'],
+			],
+		];
+		if (! isset($templates[$type])) {
+			return redirect()->to(site_url('erp/system-import'))->with('import_error', 'Unknown template.');
+		}
+
+		$fh = fopen('php://temp', 'r+');
+		foreach ($templates[$type] as $line) { fputcsv($fh, $line); }
+		rewind($fh);
+		$csv = stream_get_contents($fh);
+		fclose($fh);
+
+		return $this->response
+			->setHeader('Content-Type', 'text/csv; charset=UTF-8')
+			->setHeader('Content-Disposition', 'attachment; filename="' . $type . '_import_template.csv"')
+			->setBody($csv);
+	}
+
 	public function company_settings()
 	{		
 		$RolesModel = new RolesModel();

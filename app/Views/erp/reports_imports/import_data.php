@@ -89,6 +89,17 @@ $session = \Config\Services::session();
         </div>
 
         <div class="form-group">
+          <label class="small text-muted d-block mb-1">Not sure of the format? Download a ready-to-fill template, keep the header row, replace the example rows:</label>
+          <div class="d-flex flex-wrap" style="gap:.4rem">
+            <?php foreach ($datasets as $key => $ds): if(!in_array($key, $supported_import, true)) continue; ?>
+            <a href="<?= site_url('erp/import-template/'.$key); ?>" class="btn btn-sm btn-outline-secondary">
+              <i data-feather="download" style="width:14px;height:14px" class="mr-1"></i><?= esc($ds['label']); ?>
+            </a>
+            <?php endforeach; ?>
+          </div>
+        </div>
+
+        <div class="form-group">
           <label for="import_file">CSV File <span class="text-danger">*</span></label>
           <div class="custom-file">
             <input type="file" class="custom-file-input" name="import_file" id="import_file" accept=".csv" <?= $backend_ready ? '' : 'disabled'; ?>>
