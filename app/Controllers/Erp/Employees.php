@@ -2355,7 +2355,7 @@ class Employees extends BaseController {
 			$country_id = strip_tags(trim($this->request->getPost('country')));
 			
 			// staff details
-			$cat_ids = implode(',',strip_tags(trim($this->request->getPost('leave_categories'))));
+			$cat_ids = implode(',', array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('leave_categories')));
 			$employee_id = strip_tags(trim($this->request->getPost('employee_id')));
 			$office_shift_id = strip_tags(trim($this->request->getPost('office_shift_id')));
 			$department_id = strip_tags(trim($this->request->getPost('department_id')));

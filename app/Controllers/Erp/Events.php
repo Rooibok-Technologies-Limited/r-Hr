@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -226,7 +230,7 @@ class Events extends BaseController {
 					$staff_id = $usession['sup_user_id'];
 					$company_id = $user_info['company_id'];
 				} else {
-					$assigned_ids = implode(',',strip_tags(trim($this->request->getPost('employee_id'))));
+					$assigned_ids = implode(',', array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('employee_id')));
 					$staff_id = $assigned_ids;
 					$company_id = $usession['sup_user_id'];
 				}

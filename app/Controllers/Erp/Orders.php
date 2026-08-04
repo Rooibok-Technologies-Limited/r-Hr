@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -392,14 +396,14 @@ class Orders extends BaseController {
 				$invoice_date = strip_tags(trim($this->request->getPost('invoice_date')));
 				$invoice_due_date = strip_tags(trim($this->request->getPost('invoice_due_date')));
 				$j=0;
-				foreach(strip_tags(trim($this->request->getPost('item_name'))) as $items){
-					$item_name = strip_tags(trim($this->request->getPost('item_name')));
+				foreach(array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('item_name')) as $items){
+					$item_name = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('item_name'));
 					$iname = $item_name[$j];
 					// item qty
-					$qty = strip_tags(trim($this->request->getPost('qty_hrs')));
+					$qty = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('qty_hrs'));
 					$qtyhrs = $qty[$j];
 					// item price
-					$unit_price = strip_tags(trim($this->request->getPost('unit_price')));
+					$unit_price = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('unit_price'));
 					$price = $unit_price[$j];
 					
 					if($iname==='') {
@@ -461,20 +465,20 @@ class Orders extends BaseController {
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$key=0;
-					foreach(strip_tags(trim($this->request->getPost('item_name'))) as $items){
+					foreach(array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('item_name')) as $items){
 		
 						/* get items info */
 						// item name
-						$item_name = strip_tags(trim($this->request->getPost('item_name')));
+						$item_name = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('item_name'));
 						$iname = $item_name[$key]; 
 						// item qty
-						$qty = strip_tags(trim($this->request->getPost('qty_hrs')));
+						$qty = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('qty_hrs'));
 						$qtyhrs = $qty[$key]; 
 						// item price
-						$unit_price = strip_tags(trim($this->request->getPost('unit_price')));
+						$unit_price = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('unit_price'));
 						$price = $unit_price[$key]; 
 						// item sub_total
-						$sub_total_item = strip_tags(trim($this->request->getPost('sub_total_item')));
+						$sub_total_item = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('sub_total_item'));
 						$item_sub_total = $sub_total_item[$key];
 						// add values  
 						$data2 = array(
@@ -558,14 +562,14 @@ class Orders extends BaseController {
 				$invoice_date = strip_tags(trim($this->request->getPost('invoice_date')));
 				$invoice_due_date = strip_tags(trim($this->request->getPost('invoice_due_date')));
 				$j=0;
-				foreach(strip_tags(trim($this->request->getPost('eitem_name'))) as $eitem_id=>$key_val){
-					$item_name = strip_tags(trim($this->request->getPost('eitem_name')));
+				foreach(array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('eitem_name')) as $eitem_id=>$key_val){
+					$item_name = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('eitem_name'));
 					$iname = $item_name[$eitem_id];
 					// item qty
-					$qty = strip_tags(trim($this->request->getPost('eqty_hrs')));
+					$qty = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('eqty_hrs'));
 					$qtyhrs = $qty[$eitem_id];
 					// item price
-					$unit_price = strip_tags(trim($this->request->getPost('eunit_price')));
+					$unit_price = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('eunit_price'));
 					$price = $unit_price[$eitem_id];
 					
 					if($iname==='') {
@@ -576,16 +580,16 @@ class Orders extends BaseController {
 						$Return['error'] = $j. " ".lang('Success.xin_price_field_error');
 					}
 					// item name
-					$item_name = strip_tags(trim($this->request->getPost('eitem_name')));
+					$item_name = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('eitem_name'));
 					$iname = $item_name[$eitem_id]; 
 					// item qty
-					$qty = strip_tags(trim($this->request->getPost('eqty_hrs')));
+					$qty = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('eqty_hrs'));
 					$qtyhrs = $qty[$eitem_id]; 
 					// item price
-					$unit_price = strip_tags(trim($this->request->getPost('eunit_price')));
+					$unit_price = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('eunit_price'));
 					$price = $unit_price[$eitem_id]; 
 					// item sub_total
-					$sub_total_item = strip_tags(trim($this->request->getPost('esub_total_item')));
+					$sub_total_item = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('esub_total_item'));
 					$item_sub_total = $sub_total_item[$eitem_id];
 					
 					// add values  
@@ -606,13 +610,13 @@ class Orders extends BaseController {
 				if($this->request->getPost('item_name')) {
 					$k=0;
 					foreach($this->request->getPost('item_name') as $items){
-						$item_name = strip_tags(trim($this->request->getPost('item_name')));
+						$item_name = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('item_name'));
 						$iname = $item_name[$k];
 						// item qty
-						$qty = strip_tags(trim($this->request->getPost('qty_hrs')));
+						$qty = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('qty_hrs'));
 						$qtyhrs = $qty[$k];
 						// item price
-						$unit_price = strip_tags(trim($this->request->getPost('unit_price')));
+						$unit_price = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('unit_price'));
 						$price = $unit_price[$k];
 						
 						if($iname==='') {
@@ -675,20 +679,20 @@ class Orders extends BaseController {
 				if ($result == TRUE) {
 					if($this->request->getPost('item_name')) {
 					$ik=0;
-					foreach(strip_tags(trim($this->request->getPost('item_name'))) as $items){
+					foreach(array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('item_name')) as $items){
 		
 						/* get items info */
 						// item name
-						$item_name = strip_tags(trim($this->request->getPost('item_name')));
+						$item_name = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('item_name'));
 						$iname = $item_name[$ik]; 
 						// item qty
-						$qty = strip_tags(trim($this->request->getPost('qty_hrs')));
+						$qty = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('qty_hrs'));
 						$qtyhrs = $qty[$ik]; 
 						// item price
-						$unit_price = strip_tags(trim($this->request->getPost('unit_price')));
+						$unit_price = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('unit_price'));
 						$price = $unit_price[$ik]; 
 						// item sub_total
-						$sub_total_item = strip_tags(trim($this->request->getPost('sub_total_item')));
+						$sub_total_item = array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('sub_total_item'));
 						$item_sub_total = $sub_total_item[$ik];
 						// add values  
 						$data3 = array(

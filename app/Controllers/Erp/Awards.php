@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -378,7 +382,7 @@ class Awards extends BaseController {
 				$month_year = strip_tags(trim($this->request->getPost('month_year')));
 				$description = strip_tags(trim($this->request->getPost('description')));
 				$award_information = strip_tags(trim($this->request->getPost('award_information')));
-				$associated_goals = implode(',',strip_tags(trim($this->request->getPost('associated_goals'))));
+				$associated_goals = implode(',', array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('associated_goals')));
 				$id = udecode(strip_tags(trim($this->request->getPost('token'))));
 				$UsersModel = new UsersModel();
 				$Moduleattributes = new Moduleattributes();

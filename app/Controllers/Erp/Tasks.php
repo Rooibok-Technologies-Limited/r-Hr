@@ -782,7 +782,7 @@ class Tasks extends BaseController {
 						$isubject = $itemplate['subject'];
 						$ibody = html_entity_decode($itemplate['message']);
 						$fbody = str_replace(array("{site_name}","{task_name}","{task_due_date}"),array($company_info['company_name'],$task_name,$end_date),$ibody);
-						foreach(strip_tags(trim($this->request->getPost('assigned_to'))) as $_staff_id){
+						foreach(array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('assigned_to')) as $_staff_id){
 							$staff_info = $UsersModel->where('user_id', $_staff_id)->first();
 							timehrm_mail_data($company_info['email'],$company_info['company_name'],$staff_info['email'],$isubject,$fbody);
 						}
@@ -791,7 +791,7 @@ class Tasks extends BaseController {
 					if($xin_system['enable_sms_notification'] == 1){
 						$stemplate = $SmstemplatesModel->where('template_id', 2)->first();
 						$sbody = html_entity_decode($stemplate['message']);
-						foreach(strip_tags(trim($this->request->getPost('assigned_to'))) as $_staff_id){
+						foreach(array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('assigned_to')) as $_staff_id){
 							$staff_info = $UsersModel->where('user_id', $_staff_id)->first();
 							$fbody = str_replace(array("{firstname}","{task_name}"),array($staff_info['first_name'],$task_name),$sbody);
 							timehrm_sms_data($staff_info['contact_number'],$fbody);

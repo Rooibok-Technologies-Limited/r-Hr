@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -118,7 +122,7 @@ class Complaints extends BaseController {
 					$sup_user_id = $usession['sup_user_id'];
 					$company_id = $usession['sup_user_id'];
 				}
-				$complaint_against = implode(',',strip_tags(trim($this->request->getPost('complaint_against'))));
+				$complaint_against = implode(',', array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('complaint_against')));
 				$staff_ids = $complaint_against;
 				$data = [
 					'company_id'  => $company_id,

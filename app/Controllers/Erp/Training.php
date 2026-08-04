@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 namespace App\Controllers\Erp;
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\RequestInterface;
@@ -299,7 +303,7 @@ class Training extends BaseController {
 					$count_module_attributes = $Moduleattributes->where('company_id',$company_id)->where('module_id',4)->orderBy('custom_field_id', 'ASC')->countAllResults();
 					$module_attributes = $Moduleattributes->where('company_id',$company_id)->where('module_id',4)->orderBy('custom_field_id', 'ASC')->findAll();
 				} else {
-					$employee_ids = implode(',',strip_tags(trim($this->request->getPost('employee_id'))));
+					$employee_ids = implode(',', array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('employee_id')));
 					$staff_id = $employee_ids;
 					$company_id = $usession['sup_user_id'];
 					$count_module_attributes = $Moduleattributes->where('company_id',$company_id)->where('module_id',4)->orderBy('custom_field_id', 'ASC')->countAllResults();
@@ -426,7 +430,7 @@ class Training extends BaseController {
 				$description = strip_tags(trim($this->request->getPost('description')));
 				$start_date = strip_tags(trim($this->request->getPost('start_date')));
 				$end_date = strip_tags(trim($this->request->getPost('end_date')));
-				$associated_goals = implode(',',strip_tags(trim($this->request->getPost('associated_goals'))));
+				$associated_goals = implode(',', array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('associated_goals')));
 				$id = udecode(strip_tags(trim($this->request->getPost('token'))));
 				$UsersModel = new UsersModel();
 				$MainModel = new MainModel();
@@ -440,7 +444,7 @@ class Training extends BaseController {
 					$count_module_attributes = $Moduleattributes->where('company_id',$company_id)->where('module_id',4)->orderBy('custom_field_id', 'ASC')->countAllResults();
 					$module_attributes = $Moduleattributes->where('company_id',$company_id)->where('module_id',4)->orderBy('custom_field_id', 'ASC')->findAll();
 				} else {
-					$employee_ids = implode(',',strip_tags(trim($this->request->getPost('employee_id'))));
+					$employee_ids = implode(',', array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('employee_id')));
 					$staff_id = $employee_ids;
 					$company_id = $usession['sup_user_id'];
 					$count_module_attributes = $Moduleattributes->where('company_id',$company_id)->where('module_id',4)->orderBy('custom_field_id', 'ASC')->countAllResults();

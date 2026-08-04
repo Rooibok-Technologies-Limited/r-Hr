@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -420,7 +424,7 @@ class Talent extends BaseController {
 				$indicator_id = $KpiModel->insertID();
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
-					foreach(strip_tags(trim($this->request->getPost('technical_competencies_value'))) as $key=>$tech_value){
+					foreach(array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('technical_competencies_value')) as $key=>$tech_value){
 						$data_ind = array(
 						'company_id' => $company_id,
 						'indicator_id' => $indicator_id,
@@ -430,7 +434,7 @@ class Talent extends BaseController {
 						);
 						$KpioptionsModel->insert($data_ind);
 					}
-					foreach(strip_tags(trim($this->request->getPost('organizational_competencies_value'))) as $ikey=>$org_value){
+					foreach(array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('organizational_competencies_value')) as $ikey=>$org_value){
 						$data_org = array(
 						'company_id' => $company_id,
 						'indicator_id' => $indicator_id,
@@ -503,7 +507,7 @@ class Talent extends BaseController {
 				$result = $KpiModel->update($id,$data);
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
-					foreach(strip_tags(trim($this->request->getPost('technical_competencies_value'))) as $key=>$tech_value){
+					foreach(array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('technical_competencies_value')) as $key=>$tech_value){
 						foreach($tech_value as $option_id => $star_data)
 						{
 							$data_ind = array(
@@ -513,7 +517,7 @@ class Talent extends BaseController {
 							$KpioptionsModel->update($key,$data_ind);
 						}
 					}
-					foreach(strip_tags(trim($this->request->getPost('organizational_competencies_value'))) as $ikey=>$org_value){
+					foreach(array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('organizational_competencies_value')) as $ikey=>$org_value){
 						foreach($org_value as $org_option_id => $star_data_org)
 						{
 							$data_org = array(
@@ -606,7 +610,7 @@ class Talent extends BaseController {
 				$appraisal_id = $KpaModel->insertID();
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
-					foreach(strip_tags(trim($this->request->getPost('technical_competencies_value'))) as $key=>$tech_value){
+					foreach(array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('technical_competencies_value')) as $key=>$tech_value){
 						$data_ind = array(
 						'company_id' => $company_id,
 						'appraisal_id' => $appraisal_id,
@@ -616,7 +620,7 @@ class Talent extends BaseController {
 						);
 						$KpaoptionsModel->insert($data_ind);
 					}
-					foreach(strip_tags(trim($this->request->getPost('organizational_competencies_value'))) as $ikey=>$org_value){
+					foreach(array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('organizational_competencies_value')) as $ikey=>$org_value){
 						$data_org = array(
 						'company_id' => $company_id,
 						'appraisal_id' => $appraisal_id,
@@ -702,7 +706,7 @@ class Talent extends BaseController {
 				
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
-					foreach(strip_tags(trim($this->request->getPost('technical_competencies_value'))) as $key=>$tech_value){
+					foreach(array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('technical_competencies_value')) as $key=>$tech_value){
 						foreach($tech_value as $option_id => $star_data)
 						{
 							$data_ind = array(
@@ -712,7 +716,7 @@ class Talent extends BaseController {
 							$KpaoptionsModel->update($key,$data_ind);
 						}
 					}
-					foreach(strip_tags(trim($this->request->getPost('organizational_competencies_value'))) as $ikey=>$org_value){
+					foreach(array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('organizational_competencies_value')) as $ikey=>$org_value){
 						foreach($org_value as $org_option_id => $star_data_org)
 						{
 							$data_org = array(

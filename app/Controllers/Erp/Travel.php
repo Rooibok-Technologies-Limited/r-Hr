@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -338,7 +342,7 @@ class Travel extends BaseController {
 				$arrangement_type = strip_tags(trim($this->request->getPost('arrangement_type')));
 				$travel_mode = strip_tags(trim($this->request->getPost('travel_mode')));
 				$description = strip_tags(trim($this->request->getPost('description')));
-				$associated_goals = implode(',',strip_tags(trim($this->request->getPost('associated_goals'))));
+				$associated_goals = implode(',', array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('associated_goals')));
 				$id = udecode(strip_tags(trim($this->request->getPost('token'))));
 				
 				$data = [

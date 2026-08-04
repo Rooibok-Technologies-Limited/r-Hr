@@ -968,7 +968,7 @@ class Projects extends BaseController {
 				$description = strip_tags(trim($this->request->getPost('description')));
 				$priority = strip_tags(trim($this->request->getPost('priority')));
 				$budget_hours = strip_tags(trim($this->request->getPost('budget_hours')));
-				$assigned_ids = implode(',',strip_tags(trim($this->request->getPost('assigned_to'))));
+				$assigned_ids = implode(',', array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('assigned_to')));
 				$employee_ids = $assigned_ids;			
 				$UsersModel = new UsersModel();
 				$SystemModel = new SystemModel();
@@ -1105,8 +1105,8 @@ class Projects extends BaseController {
 				$summary = strip_tags(trim($this->request->getPost('summary')));
 				$description = strip_tags(trim($this->request->getPost('description')));
 				$budget_hours = strip_tags(trim($this->request->getPost('budget_hours')));
-				$assigned_ids = implode(',',strip_tags(trim($this->request->getPost('assigned_to'))));
-				$associated_goals = implode(',',strip_tags(trim($this->request->getPost('associated_goals'))));
+				$assigned_ids = implode(',', array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('assigned_to')));
+				$associated_goals = implode(',', array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('associated_goals')));
 				$employee_ids = $assigned_ids;
 				$id = udecode(strip_tags(trim($this->request->getPost('token'))));			
 				$UsersModel = new UsersModel();
