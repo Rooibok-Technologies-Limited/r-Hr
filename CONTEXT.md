@@ -6,7 +6,20 @@
 Last updated: 2026-08-04
 
 ## Current task
-ADR-003 **Phase 2 — tenant enforcement + clean erp-less URLs** — DONE (2026-08-04).
+**Public-launch deployment-readiness push (2026-08-04, in progress).** Ran a 6-agent
+audit of the whole system (crash, super-admin, security, staff/client, company-admin,
+UX). Fixed + pushed: super-admin **privilege escalation** (42 routes → `superauth`),
+**forgeable id tokens** (HMAC), super-admin Add-Company/Update-Plan/invoice bugs,
+Tasks save crash, staff my-profile / create-ticket / double-logout / attendance-list
+500s, CSV import templates, employee-360 + staff-list null crashes, 35 orphaned ajax
+routes, team-member flow, feature-gating by plan tier. **▶ RESUME = Class A save 500s
+(6 modules: Invoices/Purchases/Orders/Estimates/Quotes/Talent — line-item array bug).**
+Then: tenant-scoping (~25 controllers), XSS + Auth is_active + rate-limits, branded
+404/500 pages, fill legal pages, then the live Playwright suite. **PENDING USER: the
+employee-ID auto-gen format image.** Full detail: `.claude`-memory
+`hr-audit-findings-2026-08-04` + `hr-deploy-readiness-2026-08`.
+
+### Prior: ADR-003 **Phase 2 — tenant enforcement + clean erp-less URLs** — DONE (2026-08-04).
 Resolution moved from a filter to the `pre_system` event (`App\Libraries\TenantBootstrap`)
 because CI4 4.1.3 routes before before-filters run — a filter can't rewrite the routed
 path. Adds: **path fallback** (`HOST/{slug}/…` on the platform host), **clean erp-less
