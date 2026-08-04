@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\MembershipModel;
 $MembershipModel = new MembershipModel();
 $plan_count = $MembershipModel->countAllResults();
@@ -81,6 +85,22 @@ $plan_count = $MembershipModel->countAllResults();
             <div class="form-group">
               <label><?= lang('Main.xin_description'); ?></label>
               <textarea class="form-control" name="description" rows="2" placeholder="Brief description of this plan"></textarea>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group">
+              <label>Included features <span class="text-muted">(modules this plan unlocks)</span></label>
+              <div class="row">
+                <?php foreach (plan_gateable_features() as $__k => $__lbl): ?>
+                <div class="col-md-4 mb-1">
+                  <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="afeat_<?= esc($__k, 'attr'); ?>" name="features[]" value="<?= esc($__k, 'attr'); ?>">
+                    <label class="custom-control-label" for="afeat_<?= esc($__k, 'attr'); ?>"><?= esc($__lbl); ?></label>
+                  </div>
+                </div>
+                <?php endforeach; ?>
+              </div>
+              <small class="text-muted">Unchecked = core-only. Core HR (employees, attendance, leave, expenses) is always included.</small>
             </div>
           </div>
         </div>

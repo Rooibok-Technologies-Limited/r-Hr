@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -172,17 +176,20 @@ class Membership extends BaseController {
 		$description = strip_tags(trim($this->request->getPost('description')));	
 		//$ar_role_resources = serialize($role_resources);
 		$subscription_id = generate_subscription_id();
+		$__feats = $this->request->getPost('features');
+		$__feats = json_encode(is_array($__feats) ? array_values(array_intersect($__feats, array_keys(plan_gateable_features()))) : []);
 		$data = [
             'subscription_id' => $subscription_id,
 			'membership_type' => $membership_type,
 			'price' => $price,
 			'plan_duration'  => $plan_duration,
 			'total_employees'  => $total_employees,
+			'features'  => $__feats,
 			'description'  => $description,
 			'created_at' => date('d-m-Y h:i:s'),
         ];
 		$MembershipModel = new MembershipModel();
-        $result = $MembershipModel->insert($data);	
+        $result = $MembershipModel->insert($data);
 		$Return['csrf_hash'] = csrf_hash();	
 		if ($result == TRUE) {
 			$Return['result'] = lang('Membership.xin_membership_added_success');
@@ -249,6 +256,7 @@ class Membership extends BaseController {
 				'price' => $price,
 				'plan_duration'  => $plan_duration,
 				'total_employees'  => $total_employees,
+				'features'  => json_encode(is_array($this->request->getPost('features')) ? array_values(array_intersect($this->request->getPost('features'), array_keys(plan_gateable_features()))) : []),
 				'description'  => $description
 			];
 			$MembershipModel = new MembershipModel();

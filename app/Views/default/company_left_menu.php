@@ -96,6 +96,7 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
     <?= lang('Dashboard.xin_hr_finance');?>
     </span> </a> </li>
   <!-- Payroll -->
+  <?php if(plan_allows('payroll')): ?>
   <li class="pc-item"> <a href="<?= site_url('erp/payroll-list');?>" class="pc-link"> <span class="pc-micon"><i data-feather="speaker"></i></span><span class="pc-mtext">
     <?= lang('Dashboard.left_payroll');?>
     </span> </a> </li>
@@ -104,7 +105,8 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
   <li class="pc-item"> <a href="<?= site_url('erp/wallet');?>" class="pc-link"> <span class="pc-micon"><i data-feather="credit-card"></i></span><span class="pc-mtext">Wallet</span> </a> </li>
   <li class="pc-item"> <a href="<?= site_url('erp/disbursements');?>" class="pc-link"> <span class="pc-micon"><i data-feather="send"></i></span><span class="pc-mtext">Disbursements</span> </a> </li>
   <li class="pc-item"> <a href="<?= site_url('erp/payout-methods');?>" class="pc-link"> <span class="pc-micon"><i data-feather="shield"></i></span><span class="pc-mtext">Payout methods</span> </a> </li>
-    <?php if(isset($setup_modules['inventory'])): if($setup_modules['inventory']==1):?>
+  <?php endif; ?>
+    <?php if(isset($setup_modules['inventory']) && plan_allows('inventory')): if($setup_modules['inventory']==1):?>
     <li class="pc-item pc-hasmenu">
         <a href="#!" class="pc-link"><span class="pc-micon"><i data-feather="menu"></i></span><span class="pc-mtext"><?= lang('Inventory.xin_inventory_control');?></span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
         <ul class="pc-submenu">
@@ -145,14 +147,15 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
         </ul>
     </li>
     <?php endif; endif;?>
-    <!-- Tasks -->
+    <!-- Tasks & Projects -->
+    <?php if(plan_allows('projects')): ?>
   <li class="pc-item"> <a href="<?= site_url('erp/tasks-grid');?>" class="pc-link"><span class="pc-micon"><i data-feather="edit"></i></span><span class="pc-mtext">
     <?= lang('Dashboard.left_tasks');?>
     </span> </a> </li>
-  <!-- Projects -->
   <li class="pc-item"> <a href="<?= site_url('erp/projects-grid');?>" class="pc-link"><span class="pc-micon"><i data-feather="layers"></i></span><span class="pc-mtext">
     <?= lang('Dashboard.left_projects');?>
     </span> </a> </li>
+    <?php endif; ?>
   <!-- Clients -->
   <li class="pc-item"><a href="<?= site_url('erp/clients-list');?>" class="pc-link "><span class="pc-micon"><i data-feather="user-check"></i></span><span class="pc-mtext">
     <?= lang('Projects.xin_manage_clients');?>
@@ -162,7 +165,7 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
     <?= lang('Dashboard.xin_leads');?>
     </span></a></li>  
   <!-- Performance -->
-  <?php if(isset($setup_modules['performance'])): if($setup_modules['performance']==1):?>
+  <?php if(isset($setup_modules['performance']) && plan_allows('performance')): if($setup_modules['performance']==1):?>
   <li class="<?php if(!empty($arr_mod['talent_open']))echo $arr_mod['talent_open'];?> pc-item"> <a href="#" class="pc-link sidenav-toggle"> <span class="pc-micon"><i data-feather="aperture"></i></span>
     <?= lang('Dashboard.left_talent_management');?>
     </span><span class="pc-arrow"><i data-feather="chevron-right"></i></span> </a>
@@ -188,7 +191,7 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
     </ul>
   </li>
   <?php endif; endif;?>
-  <?php if(isset($setup_modules['recruitment'])): if($setup_modules['recruitment']==1):?>
+  <?php if(isset($setup_modules['recruitment']) && plan_allows('recruitment')): if($setup_modules['recruitment']==1):?>
   <!-- Recruitment -->
   <li class="pc-item"> <a href="<?= site_url('erp/jobs-list');?>" class="pc-link"> <span class="pc-micon"><i data-feather="gitlab"></i></span><span class="pc-mtext">
     <?= lang('Recruitment.xin_recruitment_ats');?>
@@ -210,7 +213,7 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
   <li class="pc-item"> <a href="<?= site_url('erp/leave-list');?>" class="pc-link"> <span class="pc-micon"><i data-feather="plus-square"></i></span><span class="pc-mtext">
     <?= lang('Leave.left_leave_request');?>
     </span> </a> </li>
-    <?php if(isset($setup_modules['training'])): if($setup_modules['training']==1):?>
+    <?php if(isset($setup_modules['training']) && plan_allows('training')): if($setup_modules['training']==1):?>
   <!-- Training Session -->
   <li class="pc-item"> <a href="<?= site_url('erp/training-sessions');?>" class="pc-link"> <span class="pc-micon"><i data-feather="target"></i></span><span class="pc-mtext">
     <?= lang('Dashboard.left_training');?>

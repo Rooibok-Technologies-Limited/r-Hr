@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\UsersModel;
 use App\Models\MembershipModel;
 use App\Models\SuperroleModel;
@@ -115,6 +119,23 @@ $result = $MembershipModel->where('membership_id', $membership_id)->first();
             </div>
           </div>
         </div>
+        </div>
+        <?php $__ef = json_decode($result['features'] ?? '[]', true); $__ef = is_array($__ef) ? $__ef : []; ?>
+        <div class="card-body pt-0">
+          <div class="form-group mb-0">
+            <label>Included features <span class="text-muted">(modules this plan unlocks)</span></label>
+            <div class="row">
+              <?php foreach (plan_gateable_features() as $__k => $__lbl): ?>
+              <div class="col-md-4 mb-1">
+                <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" id="efeat_<?= esc($__k, 'attr'); ?>" name="features[]" value="<?= esc($__k, 'attr'); ?>" <?= in_array($__k, $__ef, true) ? 'checked' : ''; ?>>
+                  <label class="custom-control-label" for="efeat_<?= esc($__k, 'attr'); ?>"><?= esc($__lbl); ?></label>
+                </div>
+              </div>
+              <?php endforeach; ?>
+            </div>
+            <small class="text-muted">Unchecked = core-only. Core HR is always included.</small>
+          </div>
         </div>
         <div class="card-footer text-right">
           <button type="submit" class="btn btn-primary">

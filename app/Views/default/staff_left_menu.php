@@ -42,20 +42,23 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
     <?= lang('Dashboard.left_attendance');?>
     </span></a></li>
   <?php } ?>  
-  <?php if(in_array('project1',staff_role_resource())) {?> 
+  <?php if(plan_allows('projects')): ?>
+  <?php if(in_array('project1',staff_role_resource())) {?>
   <!-- Projects -->
   <li class="pc-item"><a href="<?= site_url('erp/projects-list');?>" class="pc-link "><span class="pc-micon"><i data-feather="layers"></i></span><span class="pc-mtext">
     <?= lang('Dashboard.left_projects');?>
     </span></a></li>
-  <?php } ?>  
+  <?php } ?>
   <!-- Tasks -->
-  <?php if(in_array('task1',staff_role_resource())) {?> 
+  <?php if(in_array('task1',staff_role_resource())) {?>
   <li class="pc-item"><a href="<?= site_url('erp/tasks-list');?>" class="pc-link "><span class="pc-micon"><i data-feather="edit"></i></span><span class="pc-mtext">
     <?= lang('Dashboard.left_tasks');?>
     </span></a></li>
   <?php } ?>
+  <?php endif; ?>
   <!-- Payroll -->
-  <?php if(in_array('pay_history',staff_role_resource())) {?> 
+  <?php if(plan_allows('payroll')): ?>
+  <?php if(in_array('pay_history',staff_role_resource())) {?>
   <li class="pc-item"><a href="<?= site_url('erp/payslip-history');?>" class="pc-link "><span class="pc-micon"><i data-feather="speaker"></i></span><span class="pc-mtext">
     <?= lang('Dashboard.left_payroll');?>
     </span></a></li>
@@ -64,6 +67,7 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
   <li class="pc-item"><a href="<?= site_url('erp/payroll-run');?>" class="pc-link "><span class="pc-micon"><i data-feather="dollar-sign"></i></span><span class="pc-mtext">Payroll run</span></a></li>
   <?php } ?>
   <li class="pc-item"><a href="<?= site_url('erp/payout-methods');?>" class="pc-link "><span class="pc-micon"><i data-feather="shield"></i></span><span class="pc-mtext">Payout methods</span></a></li>
+  <?php endif; ?>
   <?php if(in_array('leave1',staff_role_resource()) || in_array('expense1',staff_role_resource()) || in_array('overtime_req1',staff_role_resource()) || in_array('travel1',staff_role_resource())) {?>
   <!-- Requests -->
   <li class="pc-item <?php if(!empty($arr_mod['core_request_active']))echo $arr_mod['core_request_active'];?>"> <a href="#" class="pc-link sidenav-toggle"> <span class="pc-micon"><i data-feather="list"></i></span>
@@ -111,7 +115,7 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
     <?= lang('Dashboard.dashboard_helpdesk');?>
     </span></a></li>
   <?php } ?>
-  <?php if(isset($setup_modules['training'])): if($setup_modules['training']==1):?>
+  <?php if(isset($setup_modules['training']) && plan_allows('training')): if($setup_modules['training']==1):?>
   <?php if(in_array('training1',staff_role_resource()) || in_array('trainer1',staff_role_resource()) || in_array('training_skill1',staff_role_resource()) || in_array('training_calendar',staff_role_resource())) {?> 
   <!-- Training Session -->
   <li class="pc-item"> <a href="<?= site_url('erp/training-sessions');?>" class="pc-link"> <span class="pc-micon"><i data-feather="target"></i></span><span class="pc-mtext">
@@ -132,7 +136,7 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
     <?= lang('Dashboard.dashboard_employees');?>
     </span></a></li>
   <?php } ?>
-  <?php if(isset($setup_modules['recruitment'])): if($setup_modules['recruitment']==1):?>
+  <?php if(isset($setup_modules['recruitment']) && plan_allows('recruitment')): if($setup_modules['recruitment']==1):?>
   <?php if(in_array('ats2',staff_role_resource()) || in_array('candidate',staff_role_resource()) || in_array('interview',staff_role_resource()) || in_array('promotion',staff_role_resource())) {?>
   <!-- Recruitment -->
   <li class="pc-item"> <a href="<?= site_url('erp/jobs-list');?>" class="pc-link"> <span class="pc-micon"><i data-feather="gitlab"></i></span><span class="pc-mtext">
@@ -180,7 +184,7 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
     <?= lang('Dashboard.xin_hr_finance');?>
     </span> </a> </li>
   <?php } ?>  
-  <?php if(isset($setup_modules['performance'])): if($setup_modules['performance']==1):?>
+  <?php if(isset($setup_modules['performance']) && plan_allows('performance')): if($setup_modules['performance']==1):?>
   <?php if(in_array('indicator1',staff_role_resource()) || in_array('appraisal1',staff_role_resource()) || in_array('competency1',staff_role_resource()) || in_array('tracking1',staff_role_resource()) || in_array('track_type1',staff_role_resource()) || in_array('track_calendar',staff_role_resource())) {?>  
   <!-- Performance -->
   <li class="<?php if(!empty($arr_mod['talent_open']))echo $arr_mod['talent_open'];?> pc-item"> <a href="#" class="pc-link sidenav-toggle"> <span class="pc-micon"><i data-feather="aperture"></i></span>
@@ -221,7 +225,7 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
   </li>
   <?php } ?>
   <?php endif; endif;?>
-  <?php if(isset($setup_modules['inventory'])): if($setup_modules['inventory']==1):?>
+  <?php if(isset($setup_modules['inventory']) && plan_allows('inventory')): if($setup_modules['inventory']==1):?>
   <?php if(in_array('warehouse1',staff_role_resource()) || in_array('product1',staff_role_resource()) || in_array('out_of_stock',staff_role_resource()) || in_array('expired_product',staff_role_resource()) || in_array('product_category1',staff_role_resource()) || in_array('supplier1',staff_role_resource()) || in_array('purchases1',staff_role_resource()) || in_array('purchases2',staff_role_resource()) || in_array('sales_order1',staff_role_resource()) || in_array('sales_order2',staff_role_resource()) || in_array('quote_order1',staff_role_resource()) || in_array('quote_order2',staff_role_resource()) || in_array('paid_orders',staff_role_resource()) || in_array('unpaid_orders',staff_role_resource()) || in_array('packed_orders',staff_role_resource()) || in_array('delivered_orders',staff_role_resource()) || in_array('tax_type1',staff_role_resource()) || in_array('cancelled_orders',staff_role_resource())) {?>
     <li class="pc-item pc-hasmenu">
         <a href="#!" class="pc-link"><span class="pc-micon"><i data-feather="menu"></i></span><span class="pc-mtext"><?= lang('Inventory.xin_inventory_control');?></span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
