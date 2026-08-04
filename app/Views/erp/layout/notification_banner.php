@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * Subscription expiry warning banner.
  *
  * Include this in the main layout. It checks the current company's
@@ -37,16 +41,18 @@ if (! empty($username['sup_user_id'])):
             $daysRemaining = (int) ((strtotime($membership['expiry_date']) - strtotime($today)) / 86400);
 
             if ($daysRemaining <= 7):
+                // Platform name is settings-driven (configurable), never hardcoded.
+                $appName = esc(system_setting('application_name') ?: 'Rooibok HR');
                 // Determine banner style
                 if ($daysRemaining <= 0) {
                     $alertClass = 'alert-danger';
-                    $message    = 'Your Rooibok HR subscription has <strong>expired</strong>. Please renew immediately to restore full access.';
+                    $message    = "Your {$appName} subscription has <strong>expired</strong>. Please renew immediately to restore full access.";
                 } elseif ($daysRemaining <= 2) {
                     $alertClass = 'alert-danger';
-                    $message    = "Your Rooibok HR subscription expires in <strong>{$daysRemaining} day" . ($daysRemaining > 1 ? 's' : '') . "</strong>. Renew now to avoid service interruption.";
+                    $message    = "Your {$appName} subscription expires in <strong>{$daysRemaining} day" . ($daysRemaining > 1 ? 's' : '') . "</strong>. Renew now to avoid service interruption.";
                 } else {
                     $alertClass = 'alert-warning';
-                    $message    = "Your Rooibok HR subscription expires in <strong>{$daysRemaining} days</strong>. Renew to ensure uninterrupted access.";
+                    $message    = "Your {$appName} subscription expires in <strong>{$daysRemaining} days</strong>. Renew to ensure uninterrupted access.";
                 }
 ?>
 <div class="alert <?= $alertClass; ?> alert-dismissible fade show m-b-15" role="alert" id="billing-banner">

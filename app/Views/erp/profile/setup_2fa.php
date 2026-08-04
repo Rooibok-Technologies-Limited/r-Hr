@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * 2FA Setup View - Included within the profile page
  * Shows QR code, secret key, verification input, and backup codes
  */
@@ -196,7 +200,7 @@ $(document).ready(function(){
 	// Copy backup codes
 	$('#btn-copy-codes').click(function(){
 		if(window._backupCodes){
-			var text = 'Rooibok HR - 2FA Backup Codes\n' + '='.repeat(30) + '\n\n';
+			var text = '<?= esc(system_setting('application_name') ?: 'Rooibok HR', 'js'); ?> - 2FA Backup Codes\n' + '='.repeat(30) + '\n\n';
 			window._backupCodes.forEach(function(code, i){
 				text += (i+1) + '. ' + code + '\n';
 			});
@@ -210,7 +214,7 @@ $(document).ready(function(){
 	// Download backup codes
 	$('#btn-download-codes').click(function(){
 		if(window._backupCodes){
-			var text = 'Rooibok HR - 2FA Backup Codes\n' + '='.repeat(30) + '\n\n';
+			var text = '<?= esc(system_setting('application_name') ?: 'Rooibok HR', 'js'); ?> - 2FA Backup Codes\n' + '='.repeat(30) + '\n\n';
 			window._backupCodes.forEach(function(code, i){
 				text += (i+1) + '. ' + code + '\n';
 			});
