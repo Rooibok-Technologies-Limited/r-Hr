@@ -98,6 +98,14 @@ $staff     = $staff_list ?? [];
       <button class="btn btn-success" id="pm-confirm"><i data-feather="check"></i> Confirm</button>
       <button class="btn btn-link" id="pm-verify-cancel">Cancel</button>
     </div>
+    <div id="pm-verify-manual" class="d-none">
+      <div class="form-group">
+        <label class="form-label">Verification evidence <span class="text-muted">(e.g. penny-drop ref, bank letter)</span></label>
+        <input type="text" class="form-control" id="pm-evidence" placeholder="describe how you confirmed this account">
+      </div>
+      <button class="btn btn-success" id="pm-manual-confirm"><i data-feather="check"></i> Mark verified</button>
+      <button class="btn btn-link" id="pm-manual-cancel">Cancel</button>
+    </div>
   </div>
 </div>
 
@@ -199,12 +207,19 @@ $staff     = $staff_list ?? [];
     card.classList.remove('d-none');
     document.getElementById('pm-verify-masked').textContent = masked||'';
     document.getElementById('pm-verify-sms').classList.add('d-none');
+    document.getElementById('pm-verify-manual').classList.add('d-none');
     document.getElementById('pm-verify-msg').innerHTML='<span class="text-muted">Requesting verification…</span>';
     card.scrollIntoView({behavior:'smooth'});
     post(base+'/verify-start',{method_id:id}).then(function(j){
       if(!j.ok){ document.getElementById('pm-verify-msg').innerHTML='<span class="text-danger">'+esc(j.reason||'Failed')+'</span>'; return; }
       if(j.channel==='manual'){
-        document.getElementById('pm-verify-msg').innerHTML='<span class="text-info">Bank destination flagged for manual verification by an admin.</span>';
+        if(selfOnly){
+          document.getElementById('pm-verify-msg').innerHTML='<span class="text-info">Bank destination flagged for manual verification by an admin.</span>';
+        } else {
+          document.getElementById('pm-verify-msg').innerHTML='<span class="text-info">Bank destination — confirm against evidence, then mark it verified.</span>';
+          document.getElementById('pm-evidence').value='';
+          document.getElementById('pm-verify-manual').classList.remove('d-none');
+        }
         return;
       }
       var msg='<span class="text-success">Code sent';
@@ -227,6 +242,15 @@ $staff     = $staff_list ?? [];
     });
   });
   document.getElementById('pm-verify-cancel').addEventListener('click', function(){
+    document.getElementById('pm-verify-card').classList.add('d-none');
+  });
+  document.getElementById('pm-manual-confirm').addEventListener('click', function(){
+    post(base+'/verify-manual',{method_id:verifyingId, evidence:document.getElementById('pm-evidence').value.trim()}).then(function(j){
+      if(!j.ok){ toast('error', j.reason||'Failed'); return; }
+      toast('success','Bank destination verified'); document.getElementById('pm-verify-card').classList.add('d-none'); loadMethods();
+    });
+  });
+  document.getElementById('pm-manual-cancel').addEventListener('click', function(){
     document.getElementById('pm-verify-card').classList.add('d-none');
   });
 

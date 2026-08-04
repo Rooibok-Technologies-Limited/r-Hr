@@ -517,6 +517,7 @@ $routes->get('erp/payout-methods/list', 'PayoutMethods::list', ['namespace' => '
 $routes->post('erp/payout-methods/add', 'PayoutMethods::add', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->post('erp/payout-methods/verify-start', 'PayoutMethods::verify_start', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->post('erp/payout-methods/verify-confirm', 'PayoutMethods::verify_confirm', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/payout-methods/verify-manual', 'PayoutMethods::verify_manual', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->post('erp/payout-methods/set-primary', 'PayoutMethods::set_primary', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 
 // Super Admin: Audit Log (read-only compliance trail) — ROADMAP F1

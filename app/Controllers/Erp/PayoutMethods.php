@@ -208,6 +208,28 @@ class PayoutMethods extends BaseController
         return $this->response->setJSON($res + ['csrf_hash' => csrf_hash()]);
     }
 
+    /**
+     * Manually verify a bank method — admin only (a staff member must never
+     * self-verify their own bank destination; that would defeat the control).
+     */
+    public function verify_manual()
+    {
+        if (! ($a = $this->actor())) {
+            return $this->deny();
+        }
+        [, $currentId, $type] = $a;
+        if ($type !== 'company' && $type !== 'super_user') {
+            return $this->deny();
+        }
+        $methodId = (int) $this->request->getPost('method_id');
+        if (! $this->canActOnMethod($a, $methodId)) {
+            return $this->deny();
+        }
+        $evidence = strip_tags(trim((string) $this->request->getPost('evidence')));
+        $res = service('payoutMethods')->manualVerify($methodId, $currentId, $evidence);
+        return $this->response->setJSON($res + ['csrf_hash' => csrf_hash()]);
+    }
+
     public function set_primary()
     {
         if (! ($a = $this->actor())) {

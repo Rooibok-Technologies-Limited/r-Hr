@@ -175,6 +175,45 @@ class PayoutMethods
         return ['ok' => true];
     }
 
+    /**
+     * Manually verify a BANK method (ADR-001 maker-checker: no penny-drop, so an
+     * admin confirms the destination against evidence). Bank-only — mobile money
+     * must go through the SMS-code path. Idempotent; records the approver +
+     * evidence in the audit trail.
+     *
+     * @return array{ok: bool, reason?: string}
+     */
+    public function manualVerify(int $methodId, int $approverId, string $evidence = ''): array
+    {
+        $m = $this->find($methodId);
+        if (! $m) {
+            return ['ok' => false, 'reason' => 'not found'];
+        }
+        if ($m['type'] !== 'bank') {
+            return ['ok' => false, 'reason' => 'manual verification is for bank methods only'];
+        }
+        if (! empty($m['verified_at'])) {
+            return ['ok' => true]; // already verified — idempotent
+        }
+
+        $this->db->table(self::TABLE)->where('method_id', $methodId)->update([
+            'verified_at'      => date('Y-m-d H:i:s'),
+            'verification_ref' => 'manual:' . $this->uuid(),
+            'otp_hash'         => null,
+            'otp_expires'      => null,
+            'updated_at'       => date('Y-m-d H:i:s'),
+        ]);
+
+        service('audit')->record('payout_method.verified_manual', [
+            'entity_type' => 'payout_method',
+            'entity_id'   => $methodId,
+            'summary'     => "Bank payout ending {$m['account_last4']} manually verified by user #{$approverId}"
+                . ($evidence !== '' ? ' — evidence: ' . $evidence : ''),
+        ]);
+
+        return ['ok' => true];
+    }
+
     /** Make a verified method the employee's primary (one primary per employee). */
     public function setPrimary(int $methodId): array
     {
