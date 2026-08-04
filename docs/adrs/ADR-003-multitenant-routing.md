@@ -104,11 +104,19 @@ ORIGINAL path, which the bootstrap has already rewritten to `erp/*`.
    **TenantGuard** pins every request to its company (cross-tenant blocked +
    audited), `super_user`→`admin.`, non-super off `admin.`. Verified live across
    all host/path forms. (Folds in the old Phase-3 base_url/cookie work.)
-3. **NEXT** — Traefik: wildcard cert, `admin`/`api`/tenant routers, custom-domain
-   router + verification, Basic-Auth middleware on `admin`; wire `TENANT_URL_MODE`
-   + `PLATFORM_HOST` per environment; enable `TENANT_CANONICAL_REDIRECT` once the
-   subdomain hosts are live.
-4. (Later) split `api.` into a dedicated backend service.
+3. **CONFIG AUTHORED (2026-08-04), not yet deployed** — Traefik prod overlay for
+   the shared edge. Prod apex is **`rooibok.tech`** (VPS `195.110.59.36`); the
+   `rooibok.co.ug` used elsewhere in this ADR is an illustrative placeholder.
+   `docker-compose.prod.yml` routes the single nginx backend for landing (apex +
+   `www`), `admin.` (Traefik Basic-Auth + app SuperAuth), `api.`, and every
+   `*.rooibok.tech` tenant (HostRegexp, low priority). TLS = **one DNS-01 wildcard
+   cert** (`rooibok.tech` + `*.rooibok.tech`, resolver `le-dns`, **Hostinger**
+   provider — HTTP-01 can't issue wildcards); custom domains use per-domain
+   HTTP-01 (`le`). Full procedure (shared-Traefik resolver, the single `*` A
+   record, prod env, deploy, verify, rollback) in `docs/DEPLOY-phase3.md`. Deploy
+   is a deliberate, owner-run step (touches live DNS + shared infra).
+4. (Later) split `api.` into a dedicated backend service; automate custom-domain
+   verification → Traefik file-provider router.
 
 ## Gotchas
 - **Cookie domain per host** (never a shared `.localhost`) — else isolation leaks.

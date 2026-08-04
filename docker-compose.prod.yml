@@ -1,0 +1,137 @@
+# @author Bodo Desderio <rooiboktechltd@gmail.com>
+# @copyright 2026 Rooibok Technologies. All rights reserved.
+#
+# ADR-003 Phase 3 — production overlay for the shared-Traefik VPS (195.110.59.36).
+# Apply with:  docker compose -f compose.yml -f docker-compose.prod.yml up -d
+#
+# Model: ONE CI4 monolith behind ONE shared Traefik edge. The `nginx` service is
+# the single backend for EVERY host — landing, admin., api., every tenant
+# subdomain {slug}.rooibok.tech, and verified custom domains. Traefik terminates
+# TLS and routes by Host to nginx:80 over the external `web` network. No project
+# host ports are published in prod (Traefik owns :80/:443).
+#
+# TLS: a single DNS-01 wildcard cert (resolver `le-dns`, Hostinger provider)
+# covers `rooibok.tech` + `*.rooibok.tech`. Custom domains get per-domain HTTP-01
+# certs (resolver `le`). BOTH resolvers must exist in the shared Traefik static
+# config — see DEPLOY-phase3.md.
+
+services:
+
+  # ── nginx: the single web backend, routed by Traefik ──────────────────────
+  nginx:
+    restart: always
+    mem_limit: 128m
+    ports: !reset []          # Traefik owns :80/:443 — never publish in prod
+    networks:
+      - rooibok_net           # reach app:9000 (fastcgi) + db/redis
+      - web                   # reachable by the shared Traefik edge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web"
+      - "traefik.http.services.rooibok.loadbalancer.server.port=80"
+
+      # ── Shared HTTP→HTTPS redirect middleware (defined once) ──
+      - "traefik.http.middlewares.rooibok-redirect-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.rooibok-redirect-https.redirectscheme.permanent=true"
+      # ── Admin Basic-Auth gate (hash from .env; see runbook) ──
+      - "traefik.http.middlewares.rooibok-admin-auth.basicauth.users=${ADMIN_BASICAUTH_USERS}"
+
+      # ── Landing: apex + www. Declares the DNS-01 wildcard cert (apex + *.) ──
+      - "traefik.http.routers.rooibok-landing.rule=Host(`rooibok.tech`) || Host(`www.rooibok.tech`)"
+      - "traefik.http.routers.rooibok-landing.entrypoints=websecure"
+      - "traefik.http.routers.rooibok-landing.priority=100"
+      - "traefik.http.routers.rooibok-landing.tls=true"
+      - "traefik.http.routers.rooibok-landing.tls.certresolver=le-dns"
+      - "traefik.http.routers.rooibok-landing.tls.domains[0].main=rooibok.tech"
+      - "traefik.http.routers.rooibok-landing.tls.domains[0].sans=*.rooibok.tech"
+      - "traefik.http.routers.rooibok-landing.service=rooibok"
+      - "traefik.http.routers.rooibok-landing-http.rule=Host(`rooibok.tech`) || Host(`www.rooibok.tech`)"
+      - "traefik.http.routers.rooibok-landing-http.entrypoints=web"
+      - "traefik.http.routers.rooibok-landing-http.priority=100"
+      - "traefik.http.routers.rooibok-landing-http.middlewares=rooibok-redirect-https"
+
+      # ── Super-admin: admin.rooibok.tech (Basic-Auth + app SuperAuth) ──
+      - "traefik.http.routers.rooibok-admin.rule=Host(`admin.rooibok.tech`)"
+      - "traefik.http.routers.rooibok-admin.entrypoints=websecure"
+      - "traefik.http.routers.rooibok-admin.priority=100"
+      - "traefik.http.routers.rooibok-admin.tls=true"
+      - "traefik.http.routers.rooibok-admin.tls.certresolver=le-dns"
+      - "traefik.http.routers.rooibok-admin.middlewares=rooibok-admin-auth"
+      - "traefik.http.routers.rooibok-admin.service=rooibok"
+      - "traefik.http.routers.rooibok-admin-http.rule=Host(`admin.rooibok.tech`)"
+      - "traefik.http.routers.rooibok-admin-http.entrypoints=web"
+      - "traefik.http.routers.rooibok-admin-http.priority=100"
+      - "traefik.http.routers.rooibok-admin-http.middlewares=rooibok-redirect-https"
+
+      # ── API: api.rooibok.tech (app JwtAuth) ──
+      - "traefik.http.routers.rooibok-api.rule=Host(`api.rooibok.tech`)"
+      - "traefik.http.routers.rooibok-api.entrypoints=websecure"
+      - "traefik.http.routers.rooibok-api.priority=100"
+      - "traefik.http.routers.rooibok-api.tls=true"
+      - "traefik.http.routers.rooibok-api.tls.certresolver=le-dns"
+      - "traefik.http.routers.rooibok-api.service=rooibok"
+      - "traefik.http.routers.rooibok-api-http.rule=Host(`api.rooibok.tech`)"
+      - "traefik.http.routers.rooibok-api-http.entrypoints=web"
+      - "traefik.http.routers.rooibok-api-http.priority=100"
+      - "traefik.http.routers.rooibok-api-http.middlewares=rooibok-redirect-https"
+
+      # ── Tenants: every other {slug}.rooibok.tech (wildcard cert, low priority
+      #    so admin/api/www match their specific routers first) ──
+      - "traefik.http.routers.rooibok-tenants.rule=HostRegexp(`{sub:[a-z0-9-]+}.rooibok.tech`)"
+      - "traefik.http.routers.rooibok-tenants.entrypoints=websecure"
+      - "traefik.http.routers.rooibok-tenants.priority=10"
+      - "traefik.http.routers.rooibok-tenants.tls=true"
+      - "traefik.http.routers.rooibok-tenants.tls.certresolver=le-dns"
+      - "traefik.http.routers.rooibok-tenants.service=rooibok"
+      - "traefik.http.routers.rooibok-tenants-http.rule=HostRegexp(`{sub:[a-z0-9-]+}.rooibok.tech`)"
+      - "traefik.http.routers.rooibok-tenants-http.entrypoints=web"
+      - "traefik.http.routers.rooibok-tenants-http.priority=10"
+      - "traefik.http.routers.rooibok-tenants-http.middlewares=rooibok-redirect-https"
+
+      # ── Custom domains (per-verified-domain, HTTP-01). Copy per domain, or move
+      #    to a dynamic file provider once the verification flow lands. Template:
+      # - "traefik.http.routers.cd-acme.rule=Host(`hr.acme.com`)"
+      # - "traefik.http.routers.cd-acme.entrypoints=websecure"
+      # - "traefik.http.routers.cd-acme.priority=100"
+      # - "traefik.http.routers.cd-acme.tls=true"
+      # - "traefik.http.routers.cd-acme.tls.certresolver=le"
+      # - "traefik.http.routers.cd-acme.service=rooibok"
+      # - "traefik.http.routers.cd-acme-http.rule=Host(`hr.acme.com`)"
+      # - "traefik.http.routers.cd-acme-http.entrypoints=web"
+      # - "traefik.http.routers.cd-acme-http.middlewares=rooibok-redirect-https"
+
+  # ── Backend services: caps + always-restart; stay internal (no web, no labels) ─
+  app:
+    restart: always
+    mem_limit: 512m
+
+  postgres:
+    restart: always
+    mem_limit: 512m
+
+  postgres_archive:
+    restart: always
+    mem_limit: 256m
+
+  redis:
+    restart: always
+    mem_limit: 128m
+
+  beanstalkd:
+    restart: always
+    mem_limit: 64m
+
+  # Dev-only conveniences — never start in prod (prod mail = Brevo SMTP). The
+  # `dev` profile means `docker compose ... up -d` skips them unless --profile dev.
+  pgadmin:
+    profiles: ["dev"]
+    ports: !reset []
+
+  mailhog:
+    profiles: ["dev"]
+    ports: !reset []
+
+# The shared Traefik edge network (created once on the VPS, owned by Traefik).
+networks:
+  web:
+    external: true
