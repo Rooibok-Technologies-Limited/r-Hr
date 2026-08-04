@@ -37,7 +37,9 @@ $datasets = [
     ],
 ];
 
-$backend_ready = false; // flip to true once erp/application/import (POST) processing lands.
+$backend_ready = true; // POST processor: Erp\Application::import_process
+$supported_import = ['departments', 'designations']; // live datasets
+$session = \Config\Services::session();
 ?>
 
 <div class="row animated fadeInRight">
@@ -46,15 +48,22 @@ $backend_ready = false; // flip to true once erp/application/import (POST) proce
     <span class="text-muted small">Bulk-load core HR records from a CSV file.</span>
   </div>
 
-  <?php if (!$backend_ready): ?>
+  <?php if ($session->getFlashdata('import_success')): ?>
   <div class="col-12">
-    <div class="alert alert-warning d-flex align-items-center" role="alert">
+    <div class="alert alert-success" role="alert">
+      <i data-feather="check-circle" class="mr-2" style="width:18px;height:18px"></i>
+      <?= esc($session->getFlashdata('import_success')); ?>
+      <?php $__errs = $session->getFlashdata('import_errors'); if (!empty($__errs)): ?>
+      <ul class="mb-0 mt-2 small"><?php foreach ($__errs as $__e): ?><li><?= esc($__e); ?></li><?php endforeach; ?></ul>
+      <?php endif; ?>
+    </div>
+  </div>
+  <?php endif; ?>
+  <?php if ($session->getFlashdata('import_error')): ?>
+  <div class="col-12">
+    <div class="alert alert-danger" role="alert">
       <i data-feather="alert-triangle" class="mr-2" style="width:18px;height:18px"></i>
-      <div>
-        <strong>Import processing is being finalised.</strong>
-        You can prepare and validate your file below; uploads will be accepted once the
-        import engine is enabled for your account.
-      </div>
+      <?= esc($session->getFlashdata('import_error')); ?>
     </div>
   </div>
   <?php endif; ?>
@@ -73,8 +82,8 @@ $backend_ready = false; // flip to true once erp/application/import (POST) proce
           <label for="import_type">Data Type <span class="text-danger">*</span></label>
           <select class="form-control" name="import_type" id="import_type" <?= $backend_ready ? '' : 'disabled'; ?>>
             <option value="">— Select what to import —</option>
-            <?php foreach ($datasets as $key => $ds): ?>
-            <option value="<?= esc($key, 'attr'); ?>"><?= esc($ds['label']); ?></option>
+            <?php foreach ($datasets as $key => $ds): $ok = in_array($key, $supported_import, true); ?>
+            <option value="<?= esc($key, 'attr'); ?>"<?= $ok ? '' : ' disabled'; ?>><?= esc($ds['label']); ?><?= $ok ? '' : ' (coming soon)'; ?></option>
             <?php endforeach; ?>
           </select>
         </div>
@@ -99,9 +108,7 @@ $backend_ready = false; // flip to true once erp/application/import (POST) proce
           <i data-feather="upload" style="width:16px;height:16px" class="mr-1"></i>
           <?= lang('Main.xin_save') ?? 'Import'; ?>
         </button>
-        <?php if (!$backend_ready): ?>
-        <span class="text-muted small ml-2">Submission disabled until import is enabled.</span>
-        <?php endif; ?>
+        <span class="text-muted small ml-2">Departments &amp; Designations are live. First row must be the column header.</span>
 
         <?= form_close(); ?>
       </div>

@@ -371,6 +371,7 @@ $routes->get('erp/account-statement', 'Reports::account_statement', ['namespace'
 $routes->get('erp/purchases-report', 'Reports::purchases_report', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/sales-order-report', 'Reports::salesorder_report', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/system-import', 'Application::import', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->post('erp/application/import', 'Application::import_process', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/system-calendar', 'Application::erp_calendar', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/company-settings', 'Application::company_settings', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/company-constants', 'Application::company_constants', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
