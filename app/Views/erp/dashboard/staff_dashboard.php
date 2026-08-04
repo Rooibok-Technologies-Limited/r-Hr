@@ -177,7 +177,7 @@ if(!function_exists('sa_fmt_money')) { function sa_fmt_money($n) { if($n>=100000
     <?php if($this_month_pay && in_array('pay_history',staff_role_resource()) && plan_allows('payroll')): ?>
     <a href="<?= site_url('erp/payroll-list'); ?>" class="btn btn-outline-primary btn-sm">Download Payslip</a>
     <?php endif; ?>
-    <?php if(in_array('leave1',staff_role_resource())): ?>
+    <?php if(in_array('leave2',staff_role_resource())): ?>
     <a href="<?= site_url('erp/leave-list'); ?>" class="btn btn-outline-primary btn-sm">Apply for Leave</a>
     <?php endif; ?>
   </div>
@@ -185,7 +185,7 @@ if(!function_exists('sa_fmt_money')) { function sa_fmt_money($n) { if($n>=100000
 
 <!-- Quick Actions — Row 1 -->
 <div class="row mb-2">
-  <?php if(in_array('leave1',staff_role_resource())): ?><div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/leave-list'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-calendar"></i><div class="small mt-1">Apply Leave</div></div></div></a></div><?php endif; ?>
+  <?php if(in_array('leave2',staff_role_resource())): ?><div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/leave-list'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-calendar"></i><div class="small mt-1">Apply Leave</div></div></div></a></div><?php endif; ?>
   <?php if(in_array('expense1',staff_role_resource())): ?><div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/expenses'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-file-text"></i><div class="small mt-1">Submit Expense</div></div></div></a></div><?php endif; ?>
   <?php if(in_array('helpdesk1',staff_role_resource())): ?><div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/support-tickets'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-help-circle"></i><div class="small mt-1">Raise Ticket</div></div></div></a></div><?php endif; ?>
   <?php if(in_array('pay_history',staff_role_resource()) && plan_allows('payroll')): ?><div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/payroll-list'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-download"></i><div class="small mt-1">My Payslips</div></div></div></a></div><?php endif; ?>

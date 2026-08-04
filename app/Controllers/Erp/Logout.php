@@ -30,11 +30,16 @@ class Logout extends BaseController
 		$UsersModel = new UsersModel();
 		$session = \Config\Services::session();
 		$usession = $session->get('sup_username');
-		
+		// Already signed out (double-click / expired session) -> just go to login,
+		// never dereference a null session.
+		if (empty($usession) || empty($usession['sup_user_id'])) {
+			$session->destroy();
+			return redirect()->to(site_url('erp/login'));
+		}
 		$last_data = array(
 			'is_logged_in' => '0',
 			'last_logout_date' => date('d-m-Y H:i:s')
-		); 
+		);
 		$UsersModel->update($usession['sup_user_id'], $last_data);
 		// Record before the session (and actor context) is torn down.
 		service('audit')->record('auth.logout', ['entity_type'=>'user','entity_id'=>$usession['sup_user_id'],'summary'=>'Signed out']);

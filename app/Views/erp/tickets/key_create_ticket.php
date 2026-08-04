@@ -23,7 +23,7 @@ $request = \Config\Services::request();
 $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 $staff_details = $StaffdetailsModel->where('user_id', $user_info['user_id'])->first();
 if($user_info['user_type'] == 'staff'){
-	$main_department = $DepartmentModel->where('company_id', $user_info['company_id'])->where('department_id', $staff_details['department_id'])->findAll();
+	$main_department = $DepartmentModel->where('company_id', $user_info['company_id'])->where('department_id', $staff_details['department_id'] ?? 0)->findAll();
 	$count_module_attributes = $Moduleattributes->where('company_id',$user_info['company_id'])->where('module_id',3)->orderBy('custom_field_id', 'ASC')->countAllResults();
 	$module_attributes = $Moduleattributes->where('company_id',$user_info['company_id'])->where('module_id',3)->orderBy('custom_field_id', 'ASC')->findAll();
 } else {
