@@ -100,6 +100,13 @@ class Home extends BaseController {
 		helper(['form', 'main']);
 		$UsersModel = new \App\Models\UsersModel();
 
+		// Rate-limit self-registration per IP (5 / hour) to blunt automated
+		// signup abuse and tenant-table spam. [SECURITY]
+		$throttler = \Config\Services::throttler();
+		if(! $throttler->check('register_'.md5($this->request->getIPAddress()), 5, HOUR)){
+			return redirect()->back()->withInput()->with('reg_error', 'Too many registration attempts from your network. Please try again later.');
+		}
+
 		$rules = [
 			'first_name'     => 'required',
 			'last_name'      => 'required',

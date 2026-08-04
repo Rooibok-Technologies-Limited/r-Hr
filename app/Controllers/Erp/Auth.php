@@ -397,42 +397,39 @@ class Auth extends BaseController
 				}
 			} else {
 				$email = strip_tags(trim($this->request->getPost('email')));
-				$check_user = $UsersModel->where('email', $email)->where('is_active', 1)->countAllResults();
-				if($check_user > 0){
-					$Return['result'] = lang('Main.xin_error_msg__available');
+				// Throttle reset requests per IP+email (3 / 10 min) to blunt abuse and
+				// enumeration probing. When throttled we simply skip sending — the
+				// response below is identical either way. [SECURITY]
+				$throttler = \Config\Services::throttler();
+				$allow = $throttler->check('pwreset_'.md5($this->request->getIPAddress().'|'.strtolower($email)), 3, 10 * MINUTE);
+				if($allow){
 					$iuser = $UsersModel->where('email', $email)->where('is_active', 1)->first();
-					$username = $iuser['username'];
+					// Only act when a live account matches; never branch the response on it.
+					if(!empty($iuser)){
+						// Single-use, expiring reset token: store only its hash; carry
+						// the plaintext token in the link alongside the email. [SECURITY]
+						$reset_token = bin2hex(random_bytes(16));
+						$UsersModel->update($iuser['user_id'], [
+							'reset_token_hash'    => password_hash($reset_token, PASSWORD_DEFAULT),
+							'reset_token_expires' => date('Y-m-d H:i:s', time() + 1800), // 30 min
+						]);
 
-					// Single-use, expiring reset token: store only its hash; carry
-					// the plaintext token in the link alongside the email. [SECURITY]
-					$reset_token = bin2hex(random_bytes(16));
-					$UsersModel->update($iuser['user_id'], [
-						'reset_token_hash'    => password_hash($reset_token, PASSWORD_DEFAULT),
-						'reset_token_expires' => date('Y-m-d H:i:s', time() + 1800), // 30 min
-					]);
+						$xin_system = $SystemModel->where('setting_id', 1)->first();
+						$template = $EmailtemplatesModel->where('template_id', 1)->first();
 
-					$xin_system = $SystemModel->where('setting_id', 1)->first();
-					$template = $EmailtemplatesModel->where('template_id', 1)->first();
-
-					$subject = $template['subject'];
-					$body = html_entity_decode($template['message']);
-					$body = str_replace(array("{site_name}","{site_url}","{user_id}"),array($xin_system['company_name'],site_url(),uencode($email.'|'.$reset_token)),$body);
-					timehrm_mail_data($xin_system['email'],$xin_system['company_name'],$email,$subject,$body);
-					$this->output($Return);
-					exit;
-				} else {
-					$Return['error'] = lang('Main.xin_error_msg_not');
-					$this->output($Return);
-					exit;
+						$subject = $template['subject'];
+						$body = html_entity_decode($template['message']);
+						$body = str_replace(array("{site_name}","{site_url}","{user_id}"),array($xin_system['company_name'],site_url(),uencode($email.'|'.$reset_token)),$body);
+						timehrm_mail_data($xin_system['email'],$xin_system['company_name'],$email,$subject,$body);
+					}
 				}
-				/*$username = $iuser['username'];
-				$user_info = $UsersModel->where('username', $username)->where('is_active',1)->first();
-				$data = array(
-					'username' => $username,
-					'password' => $password
-				);*/
-				//$Return['error'] = lang('Main.xin_error_msg');
-
+				// Uniform response — never reveals whether the email is registered. [SECURITY]
+				$Return['result'] = lang('Main.xin_password_reset_generic');
+				if($Return['result'] === 'Main.xin_password_reset_generic'){
+					$Return['result'] = 'If an account matches that email, a password reset link has been sent.';
+				}
+				$this->output($Return);
+				exit;
 			}
 		} else {
 			$Return['error'] = lang('Main.xin_error_msg');
