@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\RolesModel;
 use App\Models\UsersModel;
 use App\Models\SystemModel;
@@ -23,9 +27,9 @@ if($user_info['user_type'] == 'staff'){
 	$leave_types = $ConstantsModel->where('company_id',$usession['sup_user_id'])->where('type','leave_type')->orderBy('constants_id', 'ASC')->findAll();
 }
 
-$result = $UsersModel->where('user_id', $field_id)->first();
-$employee_detail = $StaffdetailsModel->where('user_id', $result['user_id'])->first();
-$leave_categories = explode(',',$employee_detail['leave_categories']);
+$result = empty($field_id) ? null : $UsersModel->where('user_id', $field_id)->first();
+$employee_detail = !empty($result) ? $StaffdetailsModel->where('user_id', $result['user_id'])->first() : null;
+$leave_categories = !empty($employee_detail['leave_categories']) ? explode(',',$employee_detail['leave_categories']) : array();
 $emp_cat = array('all');
 ?>
 <div class="form-group" id="get_leave_types">

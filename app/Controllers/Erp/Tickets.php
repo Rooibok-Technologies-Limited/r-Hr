@@ -1002,8 +1002,8 @@ class Tickets extends BaseController {
 		if(!$session->has('sup_username')){ 
 			return redirect()->to(site_url('erp/login'));
 		}
-		$id = $request->uri->getSegment(4);
-		
+		$id = (int) $request->uri->getSegment(4);
+
 		$data = array(
 			'department_id' => $id
 			);

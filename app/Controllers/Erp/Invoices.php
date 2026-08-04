@@ -496,6 +496,7 @@ class Invoices extends BaseController {
 		$UsersModel = new UsersModel();
 		$ProjectsModel = new ProjectsModel();
 		$client_id = udecode(strip_tags(trim($this->request->getVar('client_id'))));
+		if(empty($client_id)){ echo json_encode(["data"=>[]]); return; }
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if($user_info['user_type'] == 'staff'){
 			$company_id = $user_info['company_id'];

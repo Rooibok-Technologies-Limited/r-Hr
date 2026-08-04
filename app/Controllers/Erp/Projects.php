@@ -557,6 +557,7 @@ class Projects extends BaseController {
 		$ProjecttimelogsModel = new ProjecttimelogsModel();
 		$segment_id = strip_tags(trim($this->request->getVar('project_val')));
 		$ifield_id = udecode($segment_id);
+		if(empty($ifield_id)){ echo json_encode(["data"=>[]]); return; }
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if($user_info['user_type'] == 'staff'){
 			$get_data = $ProjecttimelogsModel->where('company_id',$user_info['company_id'])->where('project_id',$ifield_id)->orderBy('timelogs_id', 'ASC')->findAll();
@@ -631,7 +632,7 @@ class Projects extends BaseController {
 		$TasksModel = new TasksModel();		
 		$segment_id = strip_tags(trim($this->request->getVar('project_val')));
 		$ifield_id = udecode($segment_id);
-		
+		if(empty($ifield_id)){ echo json_encode(["data"=>[]]); return; }
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if($user_info['user_type'] == 'staff'){
 			$get_data = $TasksModel->where('company_id',$user_info['company_id'])->where('project_id',$ifield_id)->orderBy('task_id', 'ASC')->findAll();
@@ -818,6 +819,7 @@ class Projects extends BaseController {
 		//$AssetsModel = new AssetsModel();
 		$ProjectsModel = new ProjectsModel();
 		$client_id = udecode(strip_tags(trim($this->request->getVar('client_id'))));
+		if(empty($client_id)){ echo json_encode(["data"=>[]]); return; }
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if($user_info['user_type'] == 'staff'){
 			$company_id = $user_info['company_id'];

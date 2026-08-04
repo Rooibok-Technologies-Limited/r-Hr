@@ -504,6 +504,7 @@ class Tasks extends BaseController {
 			$company_id = $usession['sup_user_id'];
 		}
 	//	$project_data = $ProjectsModel->where('company_id',$company_id)->where('client_id',$client_id)->first();
+		if(empty($client_id)){ echo json_encode(["data"=>[]]); return; }
 		$get_data = $MainModel->get_client_tasks($client_id);
 		//$get_data = $TasksModel->where('company_id',$company_id)->where('project_id',$project_data['project_id'])->orderBy('task_id', 'ASC')->findAll();
 		

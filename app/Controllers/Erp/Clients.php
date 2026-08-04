@@ -1,4 +1,6 @@
 <?php
+/** @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved. */
 /**
  * NOTICE OF LICENSE
  *
@@ -401,6 +403,7 @@ class Clients extends BaseController {
 		$CountryModel = new CountryModel();
 		
 		$lead_id = udecode(strip_tags(trim($this->request->getVar('xlead_id'))));
+		if(empty($lead_id)){ echo json_encode(["data"=>[]]); return; }
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if($user_info['user_type'] == 'staff'){
 			$followup = $LeadsfollowupModel->where('company_id',$user_info['company_id'])->where('lead_id',$lead_id)->orderBy('followup_id', 'ASC')->findAll();

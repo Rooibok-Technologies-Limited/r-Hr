@@ -1,4 +1,6 @@
 <?php
+/** @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved. */
 /**
  * Live Attendance Dashboard Controller (Phase 6.4)
  *
@@ -139,17 +141,18 @@ class AttendanceLive extends BaseController
             ->countAllResults();
 
         // Recent clock events (last 10)
-        $recent = $db->table('ci_timesheet t')
+        $recentQuery = $db->table('ci_timesheet t')
             ->select('t.*, u.first_name, u.last_name, u.profile_photo')
             ->join('ci_erp_users u', 'u.user_id = t.employee_id')
             ->where('t.company_id', $companyId)
             ->where('t.attendance_date', $today)
             ->orderBy('t.time_attendance_id', 'DESC')
             ->limit(10)
-            ->get()->getResultArray();
+            ->get();
+        $recent = $recentQuery ? $recentQuery->getResultArray() : [];
 
         // Currently in building
-        $inBuilding = $db->table('ci_timesheet t')
+        $inBuildingQuery = $db->table('ci_timesheet t')
             ->select('t.*, u.first_name, u.last_name, u.profile_photo, d.department_name')
             ->join('ci_erp_users u', 'u.user_id = t.employee_id')
             ->join('ci_departments d', 'd.department_id = u.department_id', 'left')
@@ -157,7 +160,8 @@ class AttendanceLive extends BaseController
             ->where('t.attendance_date', $today)
             ->where('t.clock_in_out', 0)
             ->orderBy('t.clock_in', 'DESC')
-            ->get()->getResultArray();
+            ->get();
+        $inBuilding = $inBuildingQuery ? $inBuildingQuery->getResultArray() : [];
 
         return [
             'total_staff'   => $totalStaff,

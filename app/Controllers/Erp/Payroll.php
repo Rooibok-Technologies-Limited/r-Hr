@@ -1,4 +1,6 @@
 <?php
+/** @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved. */
 /**
  * NOTICE OF LICENSE
  *
@@ -222,7 +224,8 @@ class Payroll extends BaseController {
 		$StaffdetailsModel = new StaffdetailsModel();
 		$AdvancesalaryModel = new AdvancesalaryModel();
 		$payment_date = strip_tags(trim($this->request->getVar('payment_date')));
-		$employee_id = strip_tags(trim($this->request->getVar('staff_id')));
+		$employee_id = (int) strip_tags(trim($this->request->getVar('staff_id')));
+		if(empty($payment_date)){ echo json_encode(["data"=>[]]); return; }
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if($user_info['user_type'] == 'staff'){
 			if($employee_id == 0){
