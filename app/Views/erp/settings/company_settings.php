@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 /*
 * System Settings - Settings View
 */
@@ -216,16 +220,16 @@ $company_types = $ConstantsModel->where('type','company_type')->orderBy('constan
                         <option value="">
                         <?= lang('Main.xin_select_one');?>
                         </option>
-                        <option value="dashboard_1" <?php if($xin_system['dashboard_option']=='dashboard_1'){?> selected <?php }?>>
+                        <option value="dashboard_1" <?php if(($xin_system['dashboard_option'] ?? '')=='dashboard_1'){?> selected <?php }?>>
                         <?= lang('Main.xin_ci_dashboard_option_1');?>
                         </option>
-                        <option value="dashboard_light_2" <?php if($xin_system['dashboard_option']=='dashboard_light_2'){?> selected <?php }?>>
+                        <option value="dashboard_light_2" <?php if(($xin_system['dashboard_option'] ?? '')=='dashboard_light_2'){?> selected <?php }?>>
                         <?= lang('Main.xin_ci_dashboard_2light');?>
                         </option>
-                        <option value="dashboard_dark_2" <?php if($xin_system['dashboard_option']=='dashboard_dark_2'){?> selected <?php }?>>
+                        <option value="dashboard_dark_2" <?php if(($xin_system['dashboard_option'] ?? '')=='dashboard_dark_2'){?> selected <?php }?>>
                         <?= lang('Main.xin_ci_dashboard_2dark');?>
                         </option>
-                        <option value="dashboard_3" <?php if($xin_system['dashboard_option']=='dashboard_3'){?> selected <?php }?>>
+                        <option value="dashboard_3" <?php if(($xin_system['dashboard_option'] ?? '')=='dashboard_3'){?> selected <?php }?>>
                         <?= lang('Main.xin_ci_dashboard_option_3');?>
                         </option>
                       </select>

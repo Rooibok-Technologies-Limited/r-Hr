@@ -2,6 +2,7 @@
   @author Bodo Desderio <rooiboktechltd@gmail.com>
   @copyright 2026 Rooibok Technologies. All rights reserved.
 -->
+
 # Rooibok HR
 
 A multi-tenant HR / payroll / ERP SaaS for Uganda, built on the HRSALE
@@ -17,15 +18,15 @@ aggregator-backed company wallet that funds payouts via **PesaPal** or
 
 ## Stack
 
-| Layer | Choice |
-|-------|--------|
-| Framework | CodeIgniter 4.1.3 · PHP 8.2 |
-| Database | PostgreSQL 16 (UUID references on money rows, soft deletes) |
-| Cache / sessions | Redis 7 |
-| Queue | beanstalkd (tubes: `payroll`, `emails`, `sms`, `payments`, `broadcasts`, `archive_vault`) via `App\Libraries\Queue` + `php spark queue:worker` |
-| Web | nginx → PHP-FPM |
-| Orchestration | Docker Compose (`compose.yml`); dev profile adds pgAdmin + MailHog |
-| Payments | PesaPal (API 3.0) + Flutterwave (collections + transfers); Stripe (SaaS subscription billing); MTN MoMo + Airtel Money (direct payout rails) |
+| Layer            | Choice                                                                                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework        | CodeIgniter 4.1.3 · PHP 8.2                                                                                                                                  |
+| Database         | PostgreSQL 16 (UUID references on money rows, soft deletes)                                                                                                   |
+| Cache / sessions | Redis 7                                                                                                                                                       |
+| Queue            | beanstalkd (tubes:`payroll`, `emails`, `sms`, `payments`, `broadcasts`, `archive_vault`) via `App\Libraries\Queue` + `php spark queue:worker` |
+| Web              | nginx → PHP-FPM                                                                                                                                              |
+| Orchestration    | Docker Compose (`compose.yml`); dev profile adds pgAdmin + MailHog                                                                                          |
+| Payments         | PesaPal (API 3.0) + Flutterwave (collections + transfers); Stripe (SaaS subscription billing); MTN MoMo + Airtel Money (direct payout rails)                  |
 
 ---
 
@@ -48,10 +49,10 @@ Run it after `up`; it is safe to re-run.
 
 ### Logins (seeded)
 
-| Role | Username | Notes |
-|------|----------|-------|
-| Super admin | `superadmin` (`admin@hrsale.com`) | full platform oversight |
-| Company | `demo` — Demo Corp | `GET /demo` auto-logs in as this tenant (no password) |
+| Role        | Username                        | Notes                                                   |
+| ----------- | ------------------------------- | ------------------------------------------------------- |
+| Super admin | `superadmin` (`admin@.com`) | full platform oversight                                 |
+| Company     | `demo` — Demo Corp           | `GET /demo` auto-logs in as this tenant (no password) |
 
 Schema comes from `docker/postgres/init.sql` on a fresh DB; **all subsequent
 schema changes go through CI4 migrations** (`app/Database/Migrations/`), never
@@ -62,12 +63,14 @@ init.sql.
 ## Architecture
 
 ### Multi-tenancy
+
 `company_id` scopes every tenant table and query. A company admin is pinned to
 their own `company_id` (their `user_id` **is** their `company_id` in this
 codebase); super admins may target any company explicitly. Filters:
 `CheckLogin`, `CompanyAuth`, `SuperAuth`, `JwtAuth`, `DemoMode`, `Throttle`.
 
 ### Funding model — aggregator-backed pooled wallet (ADR-002)
+
 Rooibok holds one **master merchant account** at a licensed aggregator; each
 company gets a **virtual wallet** (`ci_company_wallets` balance/reserved +
 append-only `ci_wallet_transactions`). This avoids Rooibok needing a Bank of
@@ -90,6 +93,7 @@ See `docs/adrs/ADR-001-payroll-disbursement.md` and
 `docs/adrs/ADR-002-wallet-and-funding.md` for the full rationale.
 
 ### Money golden rules (enforced across the codebase)
+
 - Amount, currency and payee are **server-authoritative**; a charge is always
   re-verified server-side and the wallet is credited from the *verify response*,
   never the webhook/IPN body.
@@ -113,6 +117,7 @@ Flutterwave, PesaPal, SMS). Secret keys are **encrypted at rest** (AES via
 `ENCRYPTION_KEY`) and decrypted on read by `system_setting()`.
 
 ### PesaPal (wallet top-ups)
+
 1. Settings → **PesaPal**: enter Consumer Key + Consumer Secret, set environment
    (sandbox `cybqa.pesapal.com/pesapalv3` / production `pay.pesapal.com/v3`),
    choose **Wallet funding provider = PesaPal**, save.
@@ -127,14 +132,14 @@ Flutterwave, PesaPal, SMS). Secret keys are **encrypted at rest** (AES via
 
 ### Webhooks / callbacks
 
-| Endpoint | Provider | Auth |
-|----------|----------|------|
-| `POST /api/v1/webhooks/stripe` | Stripe billing | `Stripe-Signature` |
-| `POST /api/v1/webhooks/mtn` | MoMo payout callback | HMAC (`mtn_callback_secret`) |
-| `POST /api/v1/webhooks/airtel` | Airtel payout callback | HMAC (`airtel_callback_secret`) |
-| `POST /api/v1/webhooks/flutterwave` | Collections + transfers | `verif-hash` |
-| `POST\|GET /api/v1/webhooks/pesapal` | PesaPal IPN | server-side status fetch |
-| `POST /api/v1/webhooks/zkteco` | Biometric attendance | *(device secret — see roadmap)* |
+| Endpoint                              | Provider                | Auth                               |
+| ------------------------------------- | ----------------------- | ---------------------------------- |
+| `POST /api/v1/webhooks/stripe`      | Stripe billing          | `Stripe-Signature`               |
+| `POST /api/v1/webhooks/mtn`         | MoMo payout callback    | HMAC (`mtn_callback_secret`)     |
+| `POST /api/v1/webhooks/airtel`      | Airtel payout callback  | HMAC (`airtel_callback_secret`)  |
+| `POST /api/v1/webhooks/flutterwave` | Collections + transfers | `verif-hash`                     |
+| `POST\|GET /api/v1/webhooks/pesapal` | PesaPal IPN             | server-side status fetch           |
+| `POST /api/v1/webhooks/zkteco`      | Biometric attendance    | *(device secret — see roadmap)* |
 
 Reconciliation backstop (webhooks are best-effort):
 `php spark disbursements:reconcile [batch_id]` (cron every ~10 min).
@@ -165,14 +170,14 @@ no-op `NullSmsProvider` when inactive or missing credentials).
 
 ## Build status
 
-| Feature | Status |
-|---------|--------|
-| **F1 — Audit log** | ✅ `ci_audit_log` hash-chained append-only, `service('audit')->record()`, tamper-evident `verifyChain()`, super-admin viewer + CSV export |
-| **F2 — Payout methods + verification** | ✅ encrypted destinations, provider name-lookup + OTP-to-MSISDN confirm |
-| **F2 — Disbursement engine** | ✅ batches, maker-checker, reserve→settle/release, reconciliation, safety caps (per-txn/run/day) |
-| **F2 — Wallet + funding (ADR-002)** | ✅ advisory-locked ledger, idempotent credit/reserve/settle/release, fee model, super-admin float reconcile |
-| **F2 — Aggregators** | ✅ Flutterwave (collections + transfers + balance) · PesaPal (collections/top-up) with hosted checkout + IPN |
-| Notification engine | ✅ in-app + email + SMS over beanstalkd |
+| Feature                                       | Status                                                                                                                                         |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **F1 — Audit log**                     | ✅`ci_audit_log` hash-chained append-only, `service('audit')->record()`, tamper-evident `verifyChain()`, super-admin viewer + CSV export |
+| **F2 — Payout methods + verification** | ✅ encrypted destinations, provider name-lookup + OTP-to-MSISDN confirm                                                                        |
+| **F2 — Disbursement engine**           | ✅ batches, maker-checker, reserve→settle/release, reconciliation, safety caps (per-txn/run/day)                                              |
+| **F2 — Wallet + funding (ADR-002)**    | ✅ advisory-locked ledger, idempotent credit/reserve/settle/release, fee model, super-admin float reconcile                                    |
+| **F2 — Aggregators**                   | ✅ Flutterwave (collections + transfers + balance) · PesaPal (collections/top-up) with hosted checkout + IPN                                  |
+| Notification engine                           | ✅ in-app + email + SMS over beanstalkd                                                                                                        |
 
 ### Roadmap (dependency-ordered)
 
