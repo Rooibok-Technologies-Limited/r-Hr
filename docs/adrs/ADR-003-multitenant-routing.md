@@ -105,12 +105,16 @@ ORIGINAL path, which the bootstrap has already rewritten to `erp/*`.
    audited), `super_user`→`admin.`, non-super off `admin.`. Verified live across
    all host/path forms. (Folds in the old Phase-3 base_url/cookie work.)
 3. **CONFIG AUTHORED (2026-08-04), not yet deployed** — Traefik prod overlay for
-   the shared edge. Prod apex is **`rooibok.tech`** (VPS `195.110.59.36`); the
-   `rooibok.co.ug` used elsewhere in this ADR is an illustrative placeholder.
-   `docker-compose.prod.yml` routes the single nginx backend for landing (apex +
-   `www`), `admin.` (Traefik Basic-Auth + app SuperAuth), `api.`, and every
-   `*.rooibok.tech` tenant (HostRegexp, low priority). TLS = **one DNS-01 wildcard
-   cert** (`rooibok.tech` + `*.rooibok.tech`, resolver `le-dns`, **Hostinger**
+   the shared edge (VPS `195.110.59.36`). **The Rooibok HR product domain is not
+   yet purchased and is env-driven** via `PLATFORM_HOST`; the overlay interpolates
+   `${PLATFORM_HOST}` into every Host rule (so the domain lives in one place). Do
+   NOT hardcode the parent brand's `rooibok.tech` — that is Rooibok Technologies'
+   domain, not the product's; `rooibok.co.ug`/`rooibok.tech` elsewhere here are
+   illustrative. `docker-compose.prod.yml` routes the single nginx backend for
+   landing (apex + `www`), `admin.` (Traefik Basic-Auth + app SuperAuth), `api.`,
+   and every `{slug}.${PLATFORM_HOST}` tenant (HostRegexp, low priority);
+   router/service ids use the `rhr-` prefix. TLS = **one DNS-01 wildcard cert**
+   (`${PLATFORM_HOST}` + `*.${PLATFORM_HOST}`, resolver `le-dns`, **Hostinger**
    provider — HTTP-01 can't issue wildcards); custom domains use per-domain
    HTTP-01 (`le`). Full procedure (shared-Traefik resolver, the single `*` A
    record, prod env, deploy, verify, rollback) in `docs/DEPLOY-phase3.md`. Deploy

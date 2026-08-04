@@ -2,13 +2,18 @@
   @author Bodo Desderio <rooiboktechltd@gmail.com>
   @copyright 2026 Rooibok Technologies. All rights reserved.
 -->
-# ADR-003 Phase 3 — Traefik production routing (runbook)
+# Rooibok HR (r-hr) — ADR-003 Phase 3 Traefik production routing (runbook)
 
-Puts the CI4 monolith behind the shared Traefik edge on the VPS, with one
-DNS-01 **wildcard** cert for tenant subdomains. **Nothing here is applied yet —
-this is the deploy procedure.** Prod domain is **`rooibok.tech`** (VPS
-`195.110.59.36`). `admin`/`api`/`www`/apex A-records already point at the VPS;
-only the wildcard is missing.
+Puts the CI4 monolith behind the shared Traefik edge on the VPS
+(`195.110.59.36`), with one DNS-01 **wildcard** cert for tenant subdomains.
+**Nothing here is applied yet — this is the deploy procedure.**
+
+The Rooibok HR product domain is **not yet purchased** — set it once in the prod
+`.env` as `PLATFORM_HOST`; the overlay interpolates `${PLATFORM_HOST}` into every
+Traefik Host rule, and the shell below uses `$DOMAIN` (export it =
+`$PLATFORM_HOST`). Do NOT use the parent brand's `rooibok.tech`. After the domain
+resolves to the VPS you need apex + `www` + `admin` + `api` + a **`*`** wildcard
+A-record.
 
 Order is fixed: **Traefik resolver → DNS → env/secrets → app TLS config → deploy →
 verify.** Do not skip the resolver step — the wildcard cert cannot issue without it.
@@ -20,7 +25,7 @@ verify.** Do not skip the resolver step — the wildcard cert cannot issue witho
 The shared Traefik (`/opt/infra/traefik`) must expose two ACME cert resolvers:
 
 - **`le`** — HTTP-01 (already used by other projects; serves custom domains here).
-- **`le-dns`** — **new**, DNS-01 via Hostinger, required for the `*.rooibok.tech`
+- **`le-dns`** — **new**, DNS-01 via Hostinger, required for the `*.${DOMAIN}`
   wildcard (Let's Encrypt never issues wildcards over HTTP-01).
 
 Add to Traefik's **static** config (`traefik.yml`) and restart Traefik:
@@ -46,7 +51,7 @@ Pass the Hostinger API token to the Traefik container (env or secret):
       - HOSTINGER_API_TOKEN=${HOSTINGER_API_TOKEN}   # DNS-edit scope
 ```
 
-> The token only needs DNS-record write on the `rooibok.tech` zone. Keep it in
+> The token only needs DNS-record write on the `${DOMAIN}` zone. Keep it in
 > the Traefik host's `.env`, never in this repo. If your Traefik/lego build
 > predates the Hostinger provider, either upgrade Traefik or fall back to
 > per-tenant HTTP-01 (drop the wildcard router; each tenant subdomain then needs
@@ -60,24 +65,30 @@ docker network inspect web >/dev/null 2>&1 || docker network create web
 
 ---
 
-## 1. DNS (Hostinger zone `rooibok.tech`)
+## 1. DNS (zone `${DOMAIN}`)
 
-Add ONE record. **Do not touch** the Brevo DKIM/DMARC/TXT records (email breaks).
+On a freshly-bought product domain, add all of these A-records → the VPS. If any
+mail (DKIM/DMARC/TXT) records exist, **do not touch** them.
 
 | name | type | value | ttl |
 |---|---|---|---|
+| `@` | A | `195.110.59.36` | 300 |
+| `www` | A | `195.110.59.36` | 300 |
+| `admin` | A | `195.110.59.36` | 300 |
+| `api` | A | `195.110.59.36` | 300 |
 | `*` | A | `195.110.59.36` | 300 |
 
-`@`, `www`, `admin`, `api` already point at the VPS — leave them. The wildcard
-makes every `{slug}.rooibok.tech` resolve; DNS-01 validates against this zone.
+The `*` wildcard makes every `{slug}.${DOMAIN}` tenant resolve; DNS-01 validates
+against this zone. (If the domain is on Hostinger DNS, the `le-dns` resolver in
+step 0 can complete the challenge automatically.)
 
 ---
 
-## 2. Secrets + prod env (VPS `/opt/rooibok/.env`)
+## 2. Secrets + prod env (VPS `/opt/rooibok-hr/.env`)
 
 ```dotenv
 # Tenancy (ADR-003)
-PLATFORM_HOST=rooibok.tech
+PLATFORM_HOST=${DOMAIN}
 TENANT_URL_MODE=subdomain
 TENANT_CANONICAL_REDIRECT=true          # 301 legacy /erp/* -> clean, now that hosts are live
 
@@ -114,7 +125,7 @@ treat every host as https.
 ## 4. Deploy
 
 ```bash
-cd /opt/rooibok
+cd /opt/rooibok-hr
 git fetch origin && git checkout -B main origin/main   # confirm branch+tracking
 git pull
 git log --oneline -1                                   # verify the new commit landed
@@ -134,12 +145,12 @@ and stay down. nginx publishes **no** host ports; Traefik routes it on `web`.
 ## 5. Verify (per host)
 
 ```bash
-for H in rooibok.tech www.rooibok.tech api.rooibok.tech acme-corp.rooibok.tech; do
+for H in ${DOMAIN} www.${DOMAIN} api.${DOMAIN} acme-corp.${DOMAIN}; do
   printf '%-28s ' "$H"; curl -sS -o /dev/null -w '%{http_code}\n' "https://$H/"
 done
 # admin is gated — expect 401 without creds, 200/302 with:
-curl -sS -o /dev/null -w '%{http_code}\n'            https://admin.rooibok.tech/   # 401
-curl -sS -o /dev/null -w '%{http_code}\n' -u bodo:PW https://admin.rooibok.tech/   # through
+curl -sS -o /dev/null -w '%{http_code}\n'            https://admin.${DOMAIN}/   # 401
+curl -sS -o /dev/null -w '%{http_code}\n' -u bodo:PW https://admin.${DOMAIN}/   # through
 ```
 
 - First HTTPS hit to a new host triggers ACME; the wildcard (DNS-01) may take
@@ -153,11 +164,11 @@ curl -sS -o /dev/null -w '%{http_code}\n' -u bodo:PW https://admin.rooibok.tech/
 
 ## 6. Custom domains (per verified tenant)
 
-Wildcard covers only `*.rooibok.tech`. A tenant's own domain (`hr.acme.com`)
+Wildcard covers only `*.${DOMAIN}`. A tenant's own domain (`hr.acme.com`)
 needs: (a) tenant sets `custom_domain` + a CNAME/A to the VPS, (b) you verify it,
 (c) a router pair using the **`le`** HTTP-01 resolver. Uncomment + copy the
 `cd-<slug>` template in `docker-compose.prod.yml`, or move custom-domain routers
-to a Traefik **file provider** (`/opt/infra/traefik/dynamic/rooibok-cd.yml`) so
+to a Traefik **file provider** (`/opt/infra/traefik/dynamic/rhr-cd.yml`) so
 new domains don't require a project redeploy. Automating (b)+(c) is a later task.
 
 ---
@@ -165,7 +176,7 @@ new domains don't require a project redeploy. Automating (b)+(c) is a later task
 ## Rollback
 
 ```bash
-cd /opt/rooibok
+cd /opt/rooibok-hr
 docker compose -f compose.yml -f docker-compose.prod.yml down
 git checkout <previous-good-sha>
 docker compose -f compose.yml -f docker-compose.prod.yml up -d --build
