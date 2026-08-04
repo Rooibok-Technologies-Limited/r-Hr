@@ -39,6 +39,7 @@ class Filters extends BaseConfig
 		'throttle'    => Throttle::class,
 		'demo'        => DemoMode::class,
 		'tenantguard' => \App\Filters\TenantGuard::class,
+		'planfeature' => \App\Filters\PlanFeature::class,
 	];
 
 	/**
@@ -79,5 +80,15 @@ class Filters extends BaseConfig
 	 *
 	 * @var array
 	 */
-	public $filters = [];
+	public $filters = [
+		// Feature-gating by plan tier — runs alongside each route's checklogin.
+		'planfeature' => ['before' => [
+			'erp/payroll*', 'erp/disbursements*', 'erp/payout-methods*', 'erp/advance-salary*', 'erp/loan-request*',
+			'erp/jobs*', 'erp/recruitment*',
+			'erp/performance*', 'erp/goals*', 'erp/goal-type*', 'erp/competencies*',
+			'erp/training*',
+			'erp/projects*', 'erp/tasks*',
+			'erp/product*', 'erp/warehouse*',
+		]],
+	];
 }

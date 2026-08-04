@@ -117,6 +117,66 @@ if( !function_exists('company_employee_limit') ){
 	}
 }
 
+if( !function_exists('plan_gateable_features') ){
+	/** Canonical map of features that can be gated by plan tier: key => label. */
+	function plan_gateable_features(): array {
+		return [
+			'payroll'     => 'Payroll & Disbursements',
+			'recruitment' => 'Recruitment',
+			'performance' => 'Performance',
+			'training'    => 'Training',
+			'projects'    => 'Projects & Tasks',
+			'inventory'   => 'Inventory',
+		];
+	}
+}
+
+if( !function_exists('company_plan_features') ){
+	/**
+	 * The feature keys a company's plan grants, or NULL = all (unlimited / unset
+	 * plan). Cached per request per company.
+	 */
+	function company_plan_features(int $companyId): ?array {
+		static $cache = [];
+		if (array_key_exists($companyId, $cache)) { return $cache[$companyId]; }
+		$db = \Config\Database::connect();
+		$cm = $db->table('ci_company_membership')->select('membership_id')->where('company_id', $companyId)->get()->getRowArray();
+		$feats = null; // null = all
+		if ($cm) {
+			$m = $db->table('ci_membership')->select('features')->where('membership_id', $cm['membership_id'])->get()->getRowArray();
+			if ($m && $m['features'] !== null && $m['features'] !== '') {
+				$decoded = json_decode($m['features'], true);
+				$feats = is_array($decoded) ? $decoded : null;
+			}
+		}
+		return $cache[$companyId] = $feats;
+	}
+}
+
+if( !function_exists('plan_allows') ){
+	/**
+	 * Does the current (or given) company's plan grant a gateable feature? Core
+	 * features (not in plan_gateable_features) are always allowed; an unset/NULL
+	 * plan feature-set means all allowed. Super users bypass. [enforcement]
+	 */
+	function plan_allows(string $feature, ?int $companyId = null): bool {
+		if (! array_key_exists($feature, plan_gateable_features())) { return true; } // core
+		if ($companyId === null) {
+			$u = \Config\Services::session()->get('sup_username');
+			$uid = (is_array($u) && ! empty($u['sup_user_id'])) ? (int) $u['sup_user_id'] : 0;
+			if ($uid === 0) { return true; }
+			$user = (new \App\Models\UsersModel())->where('user_id', $uid)->first();
+			if (! $user) { return true; }
+			if (($user['user_type'] ?? '') === 'super_user') { return true; }
+			$companyId = (($user['user_type'] ?? '') === 'company') ? (int) $user['user_id'] : (int) $user['company_id'];
+		}
+		if ($companyId <= 0) { return true; }
+		$feats = company_plan_features($companyId);
+		if ($feats === null) { return true; } // unlimited / unset
+		return in_array($feature, $feats, true);
+	}
+}
+
 if( !function_exists('tenant_url') ){
 	/**
 	 * Canonical tenant URL in the clean, erp-less form (ADR-003 Phase 2).

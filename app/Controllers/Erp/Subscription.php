@@ -195,6 +195,31 @@ class Subscription extends BaseController {
 		return view('erp/layout/expired_layout_main', $data);
 	}
 
+	/**
+	 * Upgrade page shown by the PlanFeature filter when a tenant hits a module its
+	 * plan tier does not include.
+	 */
+	public function feature_locked()
+	{
+		$session = \Config\Services::session();
+		if (! $session->has('sup_username')) { return redirect()->to(site_url('erp/login')); }
+		helper('main');
+		$usession = $session->get('sup_username');
+		$me       = (new UsersModel())->where('user_id', $usession['sup_user_id'])->first();
+		$feature  = strip_tags((string) $this->request->uri->getSegment(3));
+		$xin_system = (new SystemModel())->where('setting_id', 1)->first();
+
+		$data = [
+			'title'         => 'Upgrade required | ' . ($xin_system['application_name'] ?? ''),
+			'path_url'      => 'membership',
+			'breadcrumbs'   => 'Upgrade required',
+			'feature_label' => plan_gateable_features()[$feature] ?? 'This feature',
+			'is_owner'      => ($me['user_type'] ?? '') === 'company',
+		];
+		$data['subview'] = view('erp/membership/feature_locked', $data);
+		return view('erp/layout/layout_main', $data);
+	}
+
 	public function more_subscriptions()
 	{		
 		$session = \Config\Services::session();

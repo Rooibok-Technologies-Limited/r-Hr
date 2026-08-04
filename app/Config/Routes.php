@@ -292,6 +292,7 @@ $routes->get('erp/subscription-list', 'Subscription::more_subscriptions', ['name
 $routes->get('erp/renew', 'Subscription::renew', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->post('erp/renew/submit', 'Subscription::renew_submit', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/subscription-locked', 'Subscription::subscription_locked', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/feature-locked/(:segment)', 'Subscription::feature_locked', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 // payment history
 $routes->get('erp/my-payment-history', 'Paymenthistory::index', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/payment-details/(:segment)', 'Paymenthistory::billing_details', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
