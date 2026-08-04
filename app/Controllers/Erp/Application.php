@@ -143,10 +143,10 @@ class Application extends BaseController {
 		$skipDup = (int) $this->request->getPost('skip_duplicates') === 1;
 		$file    = $this->request->getFile('import_file');
 
-		$supported = ['departments', 'designations'];
+		$supported = ['departments', 'designations', 'employees', 'attendance'];
 		if (! in_array($type, $supported, true)) {
 			return redirect()->to(site_url('erp/system-import'))
-				->with('import_error', 'Import for that dataset is not available yet. Supported: Departments, Designations.');
+				->with('import_error', 'Import for that dataset is not available yet. Supported: Departments, Designations, Employees, Attendance.');
 		}
 		if (! $file || ! $file->isValid() || strtolower((string) $file->getExtension()) !== 'csv') {
 			return redirect()->to(site_url('erp/system-import'))->with('import_error', 'Please upload a valid .csv file.');
@@ -185,7 +185,7 @@ class Application extends BaseController {
 				]);
 				if ($ok) { $imported++; } else { $errors[] = 'Row ' . ($i + 2) . ': could not save "' . $name . '"'; }
 			}
-		} else { // designations
+		} elseif ($type === 'designations') {
 			$DepartmentModel  = new DepartmentModel();
 			$DesignationModel = new DesignationModel();
 			foreach ($rows as $i => $row) {
@@ -208,6 +208,84 @@ class Application extends BaseController {
 					'designation_name' => $name, 'description' => '', 'created_at' => $now,
 				]);
 				if ($ok) { $imported++; } else { $errors[] = 'Row ' . ($i + 2) . ': could not save "' . $name . '"'; }
+			}
+		} elseif ($type === 'employees') {
+			$DepartmentModel   = new DepartmentModel();
+			$DesignationModel  = new DesignationModel();
+			$UsersModel        = new UsersModel();
+			$StaffdetailsModel = new StaffdetailsModel();
+			$db      = \Config\Database::connect();
+			$shift   = $db->table('ci_office_shifts')->where('company_id', $companyId)
+				->orderBy('office_shift_id', 'ASC')->get()->getRowArray();
+			$defShift = $shift ? (int) $shift['office_shift_id'] : 0;
+			$company     = $UsersModel->where('user_id', $companyId)->first();
+			$companyName = $company['company_name'] ?? '';
+			foreach ($rows as $i => $row) {
+				$rn    = $i + 2;
+				$first = strip_tags(trim((string) ($row['first_name'] ?? '')));
+				$last  = strip_tags(trim((string) ($row['last_name'] ?? '')));
+				$email = strip_tags(trim((string) ($row['email'] ?? '')));
+				if ($first === '' || $last === '' || $email === '') { $errors[] = "Row $rn: first_name, last_name and email are required"; continue; }
+				if (! filter_var($email, FILTER_VALIDATE_EMAIL)) { $errors[] = "Row $rn: invalid email"; continue; }
+				if ($UsersModel->where('email', $email)->countAllResults() > 0) { $skipped++; continue; }
+				$deptName  = strip_tags(trim((string) ($row['department'] ?? '')));
+				$desigName = strip_tags(trim((string) ($row['designation'] ?? '')));
+				$dept = $deptName !== '' ? $DepartmentModel->where('company_id', $companyId)->where('department_name', $deptName)->first() : null;
+				if (! $dept) { $errors[] = "Row $rn: department '$deptName' not found"; continue; }
+				$desig = $desigName !== '' ? $DesignationModel->where('company_id', $companyId)->where('designation_name', $desigName)->first() : null;
+				if (! $desig) { $errors[] = "Row $rn: designation '$desigName' not found"; continue; }
+				$base = preg_replace('/[^a-z0-9._]/', '', strtolower(explode('@', $email)[0])) ?: 'staff';
+				$username = $base; $k = 1;
+				while ($UsersModel->where('username', $username)->countAllResults() > 0) { $username = $base . $k; $k++; }
+				$password = bin2hex(random_bytes(9)); // random — employee sets theirs via password reset
+				$uid = $UsersModel->insert([
+					'first_name' => $first, 'last_name' => $last, 'email' => $email, 'user_type' => 'staff',
+					'username' => $username, 'password' => password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]),
+					'contact_number' => '', 'country' => 0, 'user_role_id' => 0, 'address_1' => '', 'address_2' => '', 'city' => '',
+					'profile_photo' => 'default.png', 'state' => '', 'zipcode' => '', 'gender' => 1,
+					'company_name' => $companyName, 'trading_name' => '', 'registration_no' => '', 'government_tax' => '',
+					'company_type_id' => 0, 'last_login_date' => '0', 'last_logout_date' => '0', 'last_login_ip' => '0',
+					'is_logged_in' => '0', 'is_active' => 1, 'company_id' => $companyId, 'created_at' => date('d-m-Y h:i:s'),
+				]);
+				if (! $uid) { $errors[] = "Row $rn: could not create user"; continue; }
+				$join = strip_tags(trim((string) ($row['joining_date'] ?? ''))) ?: date('d-m-Y');
+				$StaffdetailsModel->insert([
+					'user_id' => (int) $uid, 'employee_id' => generate_random_employeeid(),
+					'department_id' => (int) $dept['department_id'], 'designation_id' => (int) $desig['designation_id'],
+					'office_shift_id' => $defShift, 'date_of_joining' => $join, 'date_of_leaving' => '', 'date_of_birth' => '',
+					'marital_status' => 0, 'religion_id' => 0, 'blood_group' => '', 'citizenship_id' => 0,
+					'basic_salary' => 0, 'hourly_rate' => 0, 'salay_type' => 1, 'leave_categories' => 0,
+					'role_description' => '', 'bio' => '', 'experience' => 0, 'fb_profile' => '', 'twitter_profile' => '',
+					'gplus_profile' => '', 'linkedin_profile' => '', 'account_title' => '', 'account_number' => '',
+					'bank_name' => '', 'iban' => '', 'swift_code' => '', 'bank_branch' => '', 'contact_full_name' => '',
+					'contact_phone_no' => '', 'contact_email' => '', 'contact_address' => '', 'created_at' => date('d-m-Y h:i:s'),
+				]);
+				$imported++;
+			}
+		} else { // attendance
+			$UsersModel = new UsersModel();
+			$db = \Config\Database::connect();
+			foreach ($rows as $i => $row) {
+				$rn    = $i + 2;
+				$email = strip_tags(trim((string) ($row['employee_email'] ?? '')));
+				$date  = strip_tags(trim((string) ($row['date'] ?? '')));
+				$in    = strip_tags(trim((string) ($row['clock_in'] ?? '')));
+				$out   = strip_tags(trim((string) ($row['clock_out'] ?? '')));
+				if ($email === '' || $date === '') { $errors[] = "Row $rn: employee_email and date are required"; continue; }
+				$emp = $UsersModel->where('company_id', $companyId)->where('email', $email)->where('user_type', 'staff')->first();
+				if (! $emp) { $errors[] = "Row $rn: employee '$email' not found in your company"; continue; }
+				$dup = $db->table('ci_timesheet')->where('company_id', $companyId)
+					->where('employee_id', (int) $emp['user_id'])->where('attendance_date', $date)->countAllResults();
+				if ($dup > 0) { $skipped++; continue; }
+				$db->table('ci_timesheet')->insert([
+					'company_id' => $companyId, 'employee_id' => (int) $emp['user_id'], 'attendance_date' => $date,
+					'clock_in' => $in !== '' ? $in : '00:00:00', 'clock_in_ip_address' => '0',
+					'clock_out' => $out, 'clock_out_ip_address' => '0', 'clock_in_out' => ($out !== '' ? '1' : '0'),
+					'clock_in_latitude' => '0', 'clock_in_longitude' => '0', 'clock_out_latitude' => '0', 'clock_out_longitude' => '0',
+					'time_late' => '0', 'early_leaving' => '0', 'overtime' => '0', 'total_work' => '0', 'total_rest' => '0',
+					'attendance_status' => '1',
+				]);
+				$imported++;
 			}
 		}
 

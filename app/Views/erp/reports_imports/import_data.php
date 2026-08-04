@@ -38,7 +38,7 @@ $datasets = [
 ];
 
 $backend_ready = true; // POST processor: Erp\Application::import_process
-$supported_import = ['departments', 'designations']; // live datasets
+$supported_import = ['departments', 'designations', 'employees', 'attendance']; // live datasets
 $session = \Config\Services::session();
 ?>
 
@@ -108,7 +108,7 @@ $session = \Config\Services::session();
           <i data-feather="upload" style="width:16px;height:16px" class="mr-1"></i>
           <?= lang('Main.xin_save') ?? 'Import'; ?>
         </button>
-        <span class="text-muted small ml-2">Departments &amp; Designations are live. First row must be the column header.</span>
+        <span class="text-muted small ml-2">Departments, Designations, Employees &amp; Attendance are live. First row must be the column header.</span>
 
         <?= form_close(); ?>
       </div>
