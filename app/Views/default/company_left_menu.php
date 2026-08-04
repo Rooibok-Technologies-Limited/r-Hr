@@ -103,6 +103,7 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
   <!-- Wallet & Disbursements (ROADMAP F2, ADR-002) -->
   <li class="pc-item"> <a href="<?= site_url('erp/wallet');?>" class="pc-link"> <span class="pc-micon"><i data-feather="credit-card"></i></span><span class="pc-mtext">Wallet</span> </a> </li>
   <li class="pc-item"> <a href="<?= site_url('erp/disbursements');?>" class="pc-link"> <span class="pc-micon"><i data-feather="send"></i></span><span class="pc-mtext">Disbursements</span> </a> </li>
+  <li class="pc-item"> <a href="<?= site_url('erp/payout-methods');?>" class="pc-link"> <span class="pc-micon"><i data-feather="shield"></i></span><span class="pc-mtext">Payout methods</span> </a> </li>
     <?php if(isset($setup_modules['inventory'])): if($setup_modules['inventory']==1):?>
     <li class="pc-item pc-hasmenu">
         <a href="#!" class="pc-link"><span class="pc-micon"><i data-feather="menu"></i></span><span class="pc-mtext"><?= lang('Inventory.xin_inventory_control');?></span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>

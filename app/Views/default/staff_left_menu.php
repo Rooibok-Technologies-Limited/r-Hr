@@ -63,6 +63,7 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
   <?php if(in_array('pay1',staff_role_resource())) {?>
   <li class="pc-item"><a href="<?= site_url('erp/payroll-run');?>" class="pc-link "><span class="pc-micon"><i data-feather="dollar-sign"></i></span><span class="pc-mtext">Payroll run</span></a></li>
   <?php } ?>
+  <li class="pc-item"><a href="<?= site_url('erp/payout-methods');?>" class="pc-link "><span class="pc-micon"><i data-feather="shield"></i></span><span class="pc-mtext">Payout methods</span></a></li>
   <?php if(in_array('leave1',staff_role_resource()) || in_array('expense1',staff_role_resource()) || in_array('overtime_req1',staff_role_resource()) || in_array('travel1',staff_role_resource())) {?>
   <!-- Requests -->
   <li class="pc-item <?php if(!empty($arr_mod['core_request_active']))echo $arr_mod['core_request_active'];?>"> <a href="#" class="pc-link sidenav-toggle"> <span class="pc-micon"><i data-feather="list"></i></span>

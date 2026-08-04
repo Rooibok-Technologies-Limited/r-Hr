@@ -86,6 +86,44 @@ class PayoutMethods extends BaseController
         return $this->response->setStatusCode(403)->setJSON(['ok' => false, 'reason' => 'unauthorized']);
     }
 
+    /** GET erp/payout-methods — the management page (add + verify + set primary). */
+    public function index()
+    {
+        $session = \Config\Services::session();
+        if (! $session->has('sup_username')) {
+            return redirect()->to(site_url('erp/login'));
+        }
+        helper('main');
+        $sup  = $session->get('sup_username');
+        $user = (new UsersModel())->where('user_id', $sup['sup_user_id'])->first();
+        if (empty($user) || ! in_array($user['user_type'], ['company', 'staff', 'super_user'], true)) {
+            return redirect()->to(site_url('erp/desk'));
+        }
+
+        // Company/super pick an employee; staff manage only their own methods.
+        $staffList = [];
+        $selfOnly  = ($user['user_type'] === 'staff');
+        if (! $selfOnly) {
+            $companyId = $user['user_type'] === 'company' ? (int) $user['user_id'] : null;
+            $q = (new UsersModel())->select('user_id, first_name, last_name')->where('user_type', 'staff');
+            if ($companyId !== null) {
+                $q->where('company_id', $companyId);
+            }
+            $staffList = $q->orderBy('first_name', 'ASC')->findAll();
+        }
+
+        $data = [
+            'title'       => 'Payout methods',
+            'path_url'    => 'payout-methods',
+            'breadcrumbs' => 'Payout methods',
+            'staff_list'  => $staffList,
+            'self_only'   => $selfOnly,
+            'self_id'     => (int) $user['user_id'],
+        ];
+        $data['subview'] = view('erp/payout_methods/manage', $data);
+        return view('erp/layout/layout_main', $data);
+    }
+
     public function list()
     {
         if (! ($a = $this->actor())) {
@@ -137,11 +175,17 @@ class PayoutMethods extends BaseController
                 $res['account'],
                 'Your ' . (system_setting('application_name') ?: 'HR') . ' payout verification code is ' . $res['code'] . '. It expires in 10 minutes.'
             );
-            unset($res['code'], $res['account']);
             $res['sms_sent'] = $sent;
             if (! $sent) {
                 // Sandbox / SMS not configured — code was issued but not delivered.
                 $res['note'] = 'SMS gateway inactive — configure SMS to deliver the code.';
+            }
+            // [SECURITY] Dev-only escape hatch so verification is testable without a
+            // real SMS gateway (the Null driver reports "sent"). Gated hard on
+            // ENVIRONMENT === 'development' (defaults to 'production' when unset →
+            // fails closed). NEVER fires in production.
+            if (ENVIRONMENT === 'development') {
+                $res['dev_code'] = $res['code'];
             }
         }
         unset($res['code'], $res['account']);
