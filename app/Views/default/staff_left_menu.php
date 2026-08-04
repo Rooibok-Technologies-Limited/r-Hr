@@ -340,7 +340,9 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
     </span> </a> </li>
   <?php } ?>
   <!-- Expenses -->
+  <?php if(in_array('expense1',staff_role_resource())): ?>
   <li class="pc-item"><a href="<?= site_url('erp/expenses/');?>" class="pc-link "><span class="pc-micon"><i data-feather="dollar-sign"></i></span><span class="pc-mtext">
     Expenses
     </span></a></li>
+  <?php endif; ?>
 </ul>

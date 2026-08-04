@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\UsersModel;
 use App\Models\SystemModel;
 use App\Models\ConstantsModel;
@@ -170,28 +174,30 @@ if(!function_exists('sa_fmt_money')) { function sa_fmt_money($n) { if($n>=100000
     <div class="sa-header-date"><?= esc($dept_info['designation_name'] ?? 'Staff'); ?> &middot; <?= esc($dept_info['department_name'] ?? ''); ?> &middot; <?= $shift_name; ?> <?= $shift_in ? date('H:i',strtotime($shift_in)).'–'.date('H:i',strtotime($shift_out)) : ''; ?></div>
   </div>
   <div class="sa-header-actions">
-    <?php if($this_month_pay): ?>
+    <?php if($this_month_pay && in_array('pay_history',staff_role_resource()) && plan_allows('payroll')): ?>
     <a href="<?= site_url('erp/payroll-list'); ?>" class="btn btn-outline-primary btn-sm">Download Payslip</a>
     <?php endif; ?>
+    <?php if(in_array('leave1',staff_role_resource())): ?>
     <a href="<?= site_url('erp/leave-list'); ?>" class="btn btn-outline-primary btn-sm">Apply for Leave</a>
+    <?php endif; ?>
   </div>
 </div>
 
 <!-- Quick Actions — Row 1 -->
 <div class="row mb-2">
-  <div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/leave-list'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-calendar"></i><div class="small mt-1">Apply Leave</div></div></div></a></div>
-  <div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/expenses'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-file-text"></i><div class="small mt-1">Submit Expense</div></div></div></a></div>
-  <div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/support-tickets'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-help-circle"></i><div class="small mt-1">Raise Ticket</div></div></div></a></div>
-  <div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/payroll-list'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-download"></i><div class="small mt-1">My Payslips</div></div></div></a></div>
-  <div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/advance-salary'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-dollar-sign"></i><div class="small mt-1">Advance Salary</div></div></div></a></div>
-  <div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/overtime-request'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-clock"></i><div class="small mt-1">Overtime</div></div></div></a></div>
+  <?php if(in_array('leave1',staff_role_resource())): ?><div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/leave-list'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-calendar"></i><div class="small mt-1">Apply Leave</div></div></div></a></div><?php endif; ?>
+  <?php if(in_array('expense1',staff_role_resource())): ?><div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/expenses'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-file-text"></i><div class="small mt-1">Submit Expense</div></div></div></a></div><?php endif; ?>
+  <?php if(in_array('helpdesk1',staff_role_resource())): ?><div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/support-tickets'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-help-circle"></i><div class="small mt-1">Raise Ticket</div></div></div></a></div><?php endif; ?>
+  <?php if(in_array('pay_history',staff_role_resource()) && plan_allows('payroll')): ?><div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/payroll-list'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-download"></i><div class="small mt-1">My Payslips</div></div></div></a></div><?php endif; ?>
+  <?php if(in_array('advance_salary1',staff_role_resource()) && plan_allows('payroll')): ?><div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/advance-salary'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-dollar-sign"></i><div class="small mt-1">Advance Salary</div></div></div></a></div><?php endif; ?>
+  <?php if(in_array('overtime_req1',staff_role_resource())): ?><div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/overtime-request'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-clock"></i><div class="small mt-1">Overtime</div></div></div></a></div><?php endif; ?>
 </div>
 <!-- Quick Actions — Row 2 -->
 <div class="row mb-3">
   <div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/my-profile'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-user"></i><div class="small mt-1">My Profile</div></div></div></a></div>
-  <div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/attendance-list'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-check-circle"></i><div class="small mt-1">Attendance</div></div></div></a></div>
-  <div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/tasks-grid'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-edit"></i><div class="small mt-1">Tasks</div></div></div></a></div>
-  <div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/projects-grid'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-layers"></i><div class="small mt-1">Projects</div></div></div></a></div>
+  <?php if(in_array('attendance',staff_role_resource())): ?><div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/attendance-list'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-check-circle"></i><div class="small mt-1">Attendance</div></div></div></a></div><?php endif; ?>
+  <?php if(in_array('task1',staff_role_resource()) && plan_allows('projects')): ?><div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/tasks-grid'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-edit"></i><div class="small mt-1">Tasks</div></div></div></a></div><?php endif; ?>
+  <?php if(in_array('project1',staff_role_resource()) && plan_allows('projects')): ?><div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/projects-grid'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-layers"></i><div class="small mt-1">Projects</div></div></div></a></div><?php endif; ?>
   <div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/news-list'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-bell"></i><div class="small mt-1">Announcements</div></div></div></a></div>
   <div class="col-lg-2 col-md-4 col-6 mb-2"><a href="<?= site_url('erp/holidays-list'); ?>" class="sa-kpi-link"><div class="card sa-kpi-card"><div class="card-body text-center py-3"><i class="feather icon-sun"></i><div class="small mt-1">Holidays</div></div></div></a></div>
 </div>
@@ -288,6 +294,7 @@ if(!function_exists('sa_fmt_money')) { function sa_fmt_money($n) { if($n>=100000
       </div></div>
     </a>
   </div>
+  <?php if(in_array('pay_history',staff_role_resource()) && plan_allows('payroll')): ?>
   <div class="col-xl-3 col-md-6">
     <a href="<?= site_url('erp/payroll-list'); ?>" class="sa-kpi-link">
       <div class="card sa-kpi-card"><div class="sa-kpi sa-kpi-warning">
@@ -298,6 +305,8 @@ if(!function_exists('sa_fmt_money')) { function sa_fmt_money($n) { if($n>=100000
       </div></div>
     </a>
   </div>
+  <?php endif; ?>
+  <?php if(in_array('expense1',staff_role_resource())): ?>
   <div class="col-xl-3 col-md-6">
     <a href="<?= site_url('erp/expenses'); ?>" class="sa-kpi-link">
       <div class="card sa-kpi-card"><div class="sa-kpi sa-kpi-info">
@@ -308,6 +317,8 @@ if(!function_exists('sa_fmt_money')) { function sa_fmt_money($n) { if($n>=100000
       </div></div>
     </a>
   </div>
+  <?php endif; ?>
+  <?php if(in_array('task1',staff_role_resource()) && plan_allows('projects')): ?>
   <div class="col-xl-3 col-md-6">
     <a href="<?= site_url('erp/tasks-grid'); ?>" class="sa-kpi-link">
       <div class="card sa-kpi-card"><div class="sa-kpi sa-kpi-primary">
@@ -322,10 +333,12 @@ if(!function_exists('sa_fmt_money')) { function sa_fmt_money($n) { if($n>=100000
       </div></div>
     </a>
   </div>
+  <?php endif; ?>
 </div>
 
 <!-- Payroll Chart + Leave Balance -->
 <div class="row">
+  <?php if(in_array('pay_history',staff_role_resource()) && plan_allows('payroll')): ?>
   <div class="col-xl-7 col-md-12">
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
@@ -354,6 +367,7 @@ if(!function_exists('sa_fmt_money')) { function sa_fmt_money($n) { if($n>=100000
       </div>
     </div>
   </div>
+  <?php endif; ?>
   <div class="col-xl-5 col-md-12">
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
@@ -391,6 +405,7 @@ if(!function_exists('sa_fmt_money')) { function sa_fmt_money($n) { if($n>=100000
 
 <!-- Tasks + Announcements + Expenses -->
 <div class="row">
+  <?php if(in_array('task1',staff_role_resource()) && plan_allows('projects')): ?>
   <div class="col-xl-4 col-md-12">
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
@@ -417,6 +432,7 @@ if(!function_exists('sa_fmt_money')) { function sa_fmt_money($n) { if($n>=100000
       </div>
     </div>
   </div>
+  <?php endif; ?>
   <div class="col-xl-4 col-md-12">
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
@@ -436,6 +452,7 @@ if(!function_exists('sa_fmt_money')) { function sa_fmt_money($n) { if($n>=100000
       </div>
     </div>
   </div>
+  <?php if(in_array('expense1',staff_role_resource())): ?>
   <div class="col-xl-4 col-md-12">
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
@@ -468,6 +485,7 @@ if(!function_exists('sa_fmt_money')) { function sa_fmt_money($n) { if($n>=100000
       </div>
     </div>
   </div>
+  <?php endif; ?>
 </div>
 
 <!-- Row: Team Calendar + Upcoming Holidays -->

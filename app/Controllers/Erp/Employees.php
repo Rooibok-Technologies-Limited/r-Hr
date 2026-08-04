@@ -740,9 +740,11 @@ class Employees extends BaseController {
 				$user_image = $this->request->getFile('file');
 				$file_name = $user_image->getName();
 				$user_image->move('public/uploads/users/');
+				$thumb_dir = 'public/uploads/users/thumb/';
+				if (!is_dir($thumb_dir)) { @mkdir($thumb_dir, 0775, true); }
 				$image->withFile(filesrc($file_name))
 				->fit(100, 100, 'center')
-				->save('public/uploads/users/thumb/'.$file_name);
+				->save($thumb_dir.$file_name);
 			}
 			if($Return['error']!=''){
 				$this->output($Return);

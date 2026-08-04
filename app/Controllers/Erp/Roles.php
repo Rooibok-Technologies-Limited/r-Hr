@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -88,7 +92,8 @@ class Roles extends BaseController {
 			} else {
 				$role_name = strip_tags(trim($this->request->getPost('role_name')));
 				$role_access = strip_tags(trim($this->request->getPost('role_access')));
-				$role_resources = implode(',',strip_tags(trim($this->request->getPost('role_resources'))));
+				$__rr = $this->request->getPost('role_resources');
+				$role_resources = is_array($__rr) ? implode(',', array_map(fn($v) => strip_tags(trim((string) $v)), $__rr)) : strip_tags(trim((string) $__rr));
 				$UsersModel = new UsersModel();
 				$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 				if($user_info['user_type'] == 'staff'){
@@ -161,7 +166,8 @@ class Roles extends BaseController {
 				$role_name = strip_tags(trim($this->request->getPost('role_name')));
 				$role_access = strip_tags(trim($this->request->getPost('role_access')));
 				$id = udecode(strip_tags(trim($this->request->getPost('token'))));
-				$role_resources = implode(',',strip_tags(trim($this->request->getPost('role_resources'))));
+				$__rr = $this->request->getPost('role_resources');
+				$role_resources = is_array($__rr) ? implode(',', array_map(fn($v) => strip_tags(trim((string) $v)), $__rr)) : strip_tags(trim((string) $__rr));
 				$data = [
 					'role_name' => $role_name,
 					'role_access'  => $role_access,
