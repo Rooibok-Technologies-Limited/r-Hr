@@ -1,3 +1,7 @@
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 <div id="smartwizard-2" class="border-bottom smartwizard-example sw-main sw-theme-default mt-2">
     <ul class="nav nav-tabs step-anchor">
         <li class="nav-item clickable">
@@ -305,38 +309,47 @@
         }
     }
 
-    function connectSSE() {
-        if (evtSource) {
-            evtSource.close();
-        }
+    // Live updates via short polling (NOT a held SSE connection): on php-fpm each
+    // open SSE stream pins a worker for its lifetime and a few viewers exhaust the
+    // small pool, taking the app down. Each poll below holds a worker for only
+    // milliseconds. See AttendanceLive::poll().
+    var pollUrl = '<?= $poll_url ?? site_url("erp/attendance-live/poll"); ?>';
+    var POLL_MS = 15000;
+    var pollTimer = null;
 
-        statusBar.innerHTML = '<i class="fas fa-sync-alt fa-spin mr-1"></i> Connecting...';
-        evtSource = new EventSource(streamUrl);
-
-        evtSource.onmessage = function(event) {
-            try {
-                var data = JSON.parse(event.data);
+    function pollOnce() {
+        fetch(pollUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' })
+            .then(function(r) { if (!r.ok) { throw new Error('HTTP ' + r.status); } return r.json(); })
+            .then(function(data) {
+                if (statusBar) { statusBar.innerHTML = '<i class="fas fa-circle text-success mr-1"></i> Live'; }
                 updateDashboard(data);
-            } catch (e) {
-                console.error('Failed to parse SSE data:', e);
-            }
-        };
+            })
+            .catch(function() {
+                if (statusBar) { statusBar.innerHTML = '<i class="fas fa-exclamation-triangle text-warning mr-1"></i> Reconnecting...'; }
+            });
+    }
 
-        evtSource.onerror = function() {
-            statusBar.innerHTML = '<i class="fas fa-exclamation-triangle text-warning mr-1"></i> Connection lost. Reconnecting...';
-            evtSource.close();
-            setTimeout(connectSSE, 5000);
-        };
+    function startPolling() {
+        if (pollTimer) { clearInterval(pollTimer); }
+        if (statusBar) { statusBar.innerHTML = '<i class="fas fa-sync-alt fa-spin mr-1"></i> Connecting...'; }
+        pollOnce();
+        pollTimer = setInterval(pollOnce, POLL_MS);
     }
 
     // siteUrl fallback
     var siteUrl = typeof site_url !== 'undefined' ? site_url : '<?= site_url(); ?>';
 
-    connectSSE();
+    startPolling();
+
+    // Pause polling when the tab is hidden (saves workers + bandwidth); resume on focus.
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) { if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } }
+        else if (!pollTimer) { startPolling(); }
+    });
 
     // Clean up on page unload
     window.addEventListener('beforeunload', function() {
-        if (evtSource) evtSource.close();
+        if (pollTimer) { clearInterval(pollTimer); }
     });
 })();
 </script>

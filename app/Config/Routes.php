@@ -342,6 +342,7 @@ $routes->get('erp/timesheet-calendar', 'Timesheet::timesheet_calendar', ['namesp
 // live attendance dashboard (Phase 6.4)
 $routes->get('erp/attendance-live', 'AttendanceLive::index', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->get('erp/attendance-live/stream', 'AttendanceLive::stream', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->get('erp/attendance-live/poll', 'AttendanceLive::poll', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 // overtime request
 $routes->get('erp/overtime-request', 'Timesheet::overtime_request', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 // custom fields

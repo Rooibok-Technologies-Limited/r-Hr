@@ -46,6 +46,7 @@ class AttendanceLive extends BaseController
             $data['title']         = 'Live Attendance';
             $data['app_name']      = $xin_system['application_name'] ?? 'Rooibok HR';
             $data['stream_url']    = site_url('erp/attendance-live/stream/');
+            $data['poll_url']      = site_url('erp/attendance-live/poll');
             return view('erp/timesheet/live_attendance_tv', $data);
         }
 
@@ -54,6 +55,7 @@ class AttendanceLive extends BaseController
         $data['path_url']    = 'timesheet';
         $data['breadcrumbs'] = 'Live Attendance';
         $data['stream_url']  = site_url('erp/attendance-live/stream/');
+        $data['poll_url']    = site_url('erp/attendance-live/poll');
 
         $data['subview'] = view('erp/timesheet/live_attendance', $data);
         return view('erp/layout/layout_main', $data);
@@ -82,6 +84,9 @@ class AttendanceLive extends BaseController
             ? $user_info['user_id']
             : $user_info['company_id'];
 
+        // Free the DB connection back to the pool for the whole request lifetime
+        // is not possible on php-fpm (SSE holds one worker per open connection), so
+        // we bound the connection tightly instead — see the loop below.
         // Set SSE headers
         header('Content-Type: text/event-stream');
         header('Cache-Control: no-cache');
@@ -91,27 +96,77 @@ class AttendanceLive extends BaseController
         $db    = \Config\Database::connect();
         $today = date('Y-m-d');
 
-        // Send data in a loop
-        $maxIterations = 120; // ~60 minutes at 30s intervals, then client reconnects
-        for ($i = 0; $i < $maxIterations; $i++) {
-            $summary = $this->getAttendanceSummary($db, (int) $companyId, $today);
+        // WORKER-EXHAUSTION GUARD: on php-fpm every open SSE connection pins one
+        // worker, so we must (a) end each connection quickly and let the browser's
+        // EventSource auto-reconnect, and (b) detect a dropped client fast so an
+        // abandoned tab doesn't hold a worker.
+        //   - total lifetime capped at LIFETIME_SECONDS (then the client reconnects)
+        //   - 1s ticks with a keep-alive comment so connection_aborted() updates and
+        //     a closed tab frees the worker within ~1s (was up to 30s)
+        //   - data pushed every POLL_SECONDS; other ticks send an SSE comment ping
+        ignore_user_abort(false);           // terminate when the client goes away
+        @set_time_limit(0);                  // wall-clock is bounded by the loop below
+        $LIFETIME_SECONDS = 55;              // < typical 60s proxy idle timeout
+        $POLL_SECONDS     = 15;              // data refresh cadence
+        $start            = time();
+        $lastPush         = 0;
 
-            echo "data: " . json_encode($summary) . "\n\n";
-
-            if (ob_get_level() > 0) {
-                ob_flush();
-            }
-            flush();
-
+        while ((time() - $start) < $LIFETIME_SECONDS) {
             if (connection_aborted()) {
                 break;
             }
-            sleep(30);
+            $now = time();
+            if ($lastPush === 0 || ($now - $lastPush) >= $POLL_SECONDS) {
+                $summary = $this->getAttendanceSummary($db, (int) $companyId, $today);
+                echo 'data: ' . json_encode($summary) . "\n\n";
+                $lastPush = $now;
+            } else {
+                echo ": keep-alive\n\n"; // comment ping — forces output so aborts show
+            }
+            if (ob_get_level() > 0) {
+                @ob_flush();
+            }
+            @flush();
+            if (connection_aborted()) {
+                break;
+            }
+            sleep(1);
         }
 
-        // Send a final retry hint so the browser reconnects
-        echo "retry: 5000\n\n";
+        // Ask the browser to reconnect promptly (EventSource handles this).
+        echo "retry: 3000\n\n";
+        @ob_flush();
+        @flush();
         exit;
+    }
+
+    /**
+     * Poll endpoint — returns the attendance summary ONCE as JSON and exits.
+     *
+     * This is the worker-safe alternative to stream(): on php-fpm every open SSE
+     * connection pins one of the (few) workers for its whole lifetime, so a handful
+     * of viewers can exhaust the pool and take the app down. The live-attendance UI
+     * polls this endpoint on an interval instead — each request holds a worker for
+     * only milliseconds. stream() is kept for compatibility but is no longer used
+     * by the UI.
+     */
+    public function poll()
+    {
+        $session  = \Config\Services::session();
+        $usession = $session->get('sup_username');
+        if (! $usession) {
+            return $this->response->setStatusCode(401)->setJSON(['error' => 'Unauthorized']);
+        }
+        $user_info = (new UsersModel())->where('user_id', $usession['sup_user_id'])->first();
+        if (! $user_info) {
+            return $this->response->setStatusCode(401)->setJSON(['error' => 'Unauthorized']);
+        }
+        $companyId = ($user_info['user_type'] === 'company')
+            ? $user_info['user_id']
+            : $user_info['company_id'];
+
+        $db = \Config\Database::connect();
+        return $this->response->setJSON($this->getAttendanceSummary($db, (int) $companyId, date('Y-m-d')));
     }
 
     /**

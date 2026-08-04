@@ -1,3 +1,7 @@
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -443,29 +447,30 @@
             }
         }
 
-        function connectSSE() {
-            if (evtSource) evtSource.close();
+        // Short polling instead of a held SSE connection — see AttendanceLive::poll()
+        // (php-fpm has few workers; an open SSE stream pins one per viewer).
+        var pollUrl = '<?= esc($poll_url ?? '', 'js'); ?>' || '<?= site_url("erp/attendance-live/poll"); ?>';
+        var tvPollTimer = null;
 
-            document.getElementById('tv-connection-status').innerHTML = '<i class="fas fa-sync-alt fa-spin" style="margin-right:4px;"></i> Connecting...';
-            evtSource = new EventSource(streamUrl);
-
-            evtSource.onmessage = function(event) {
-                try {
-                    var data = JSON.parse(event.data);
+        function tvPollOnce() {
+            fetch(pollUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' })
+                .then(function(r) { if (!r.ok) { throw new Error('HTTP ' + r.status); } return r.json(); })
+                .then(function(data) {
+                    document.getElementById('tv-connection-status').innerHTML = '<i class="fas fa-circle" style="color:#2ecc71;margin-right:4px;"></i> Live';
                     updateTV(data);
-                } catch (e) {
-                    console.error('SSE parse error:', e);
-                }
-            };
-
-            evtSource.onerror = function() {
-                document.getElementById('tv-connection-status').innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#f39c12;margin-right:4px;"></i> Reconnecting...';
-                evtSource.close();
-                setTimeout(connectSSE, 5000);
-            };
+                })
+                .catch(function() {
+                    document.getElementById('tv-connection-status').innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#f39c12;margin-right:4px;"></i> Reconnecting...';
+                });
         }
 
-        connectSSE();
+        function startTVPolling() {
+            if (tvPollTimer) { clearInterval(tvPollTimer); }
+            tvPollOnce();
+            tvPollTimer = setInterval(tvPollOnce, 15000);
+        }
+
+        startTVPolling();
     })();
     </script>
 </body>
