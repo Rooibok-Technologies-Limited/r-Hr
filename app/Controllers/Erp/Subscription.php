@@ -77,6 +77,19 @@ class Subscription extends BaseController {
 			return redirect()->to(($me['user_type'] ?? '') === 'staff' ? site_url('erp/subscription-locked') : site_url('erp/desk'));
 		}
 		$companyId  = (int) $me['user_id'];
+
+		// PesaPal return: it appends ?OrderTrackingId=... to the callback. Re-verify
+		// server-side and activate (idempotent — belt-and-suspenders with the IPN).
+		$tracking = (string) $this->request->getGet('OrderTrackingId');
+		if ($tracking !== '') {
+			$v = service('pesapalCollections')->verify($tracking);
+			if (($v['ok'] ?? false) && ($v['status'] ?? '') === 'successful'
+				&& ! empty((new \App\Libraries\SubscriptionBilling())->activateFromVerifiedPayment($v)['ok'])) {
+				return redirect()->to(site_url('erp/desk'))->with('success', 'Payment received — your subscription is now active.');
+			}
+			$session->setFlashdata('renew_error', 'We could not confirm your payment yet. If you completed it, access will be restored shortly.');
+		}
+
 		$MembershipModel = new MembershipModel();
 		$membership = (new CompanymembershipModel())->where('company_id', $companyId)->first();
 		$xin_system = (new SystemModel())->where('setting_id', 1)->first();
@@ -113,6 +126,39 @@ class Subscription extends BaseController {
 			return redirect()->to(site_url('erp/renew'))->with('renew_error', 'Please choose a plan.');
 		}
 		$companyId = (int) $me['user_id'];
+		$price     = (float) ($plan['price'] ?? 0);
+
+		// Free plan → activate immediately (no payment needed).
+		if ($price <= 0) {
+			(new \App\Libraries\SubscriptionBilling())->activateFromVerifiedPayment([
+				'tx_ref' => 'SUB-' . $companyId . '-' . $planId . '-' . bin2hex(random_bytes(4)),
+				'amount' => 0, 'company_id' => $companyId,
+			]);
+			return redirect()->to(site_url('erp/desk'))->with('success', 'Your ' . $plan['membership_type'] . ' plan is now active.');
+		}
+
+		// Paid plan → PesaPal checkout when the gateway is configured.
+		$col = service('collections');
+		if ($col->isConfigured()) {
+			$ref = 'SUB-' . $companyId . '-' . $planId . '-' . bin2hex(random_bytes(5));
+			$res = $col->initiate($companyId, $price, [
+				'tx_ref'       => $ref,
+				'redirect_url' => site_url('erp/renew'),
+				'description'  => 'Subscription: ' . $plan['membership_type'],
+				'currency'     => erp_company_settings()['default_currency'] ?? 'UGX',
+				'email'        => $me['email'] ?? '',
+				'phone'        => $me['contact_number'] ?? '',
+				'name'         => $me['company_name'] ?? ('Company ' . $companyId),
+			]);
+			if (! empty($res['ok']) && ! empty($res['link'])) {
+				return redirect()->to($res['link']); // hand off to PesaPal checkout
+			}
+			// initiate failed → fall through to the request-and-notify path below
+			log_message('warning', '[Subscription] PesaPal initiate failed: {r}', ['r' => $res['reason'] ?? '']);
+		}
+
+		// Gateway not configured (or initiate failed) → record the request + notify
+		// super-admins, who confirm the renewal via the company lifecycle tools.
 		(new CompanymembershipModel())->where('company_id', $companyId)
 			->set(['membership_id' => $planId, 'update_at' => date('d-m-Y h:i:s')])->update();
 

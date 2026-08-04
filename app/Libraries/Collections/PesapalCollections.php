@@ -252,7 +252,8 @@ class PesapalCollections implements CollectionsProviderInterface
     /** Recover company_id from a TOPUP-{companyId}-{hex} merchant_reference. */
     private function companyFromRef(string $ref): int
     {
-        if (preg_match('/^TOPUP-(\d+)-/', $ref, $m)) {
+        // TOPUP-{company}-... (wallet) or SUB-{company}-{plan}-... (subscription)
+        if (preg_match('/^(?:TOPUP|SUB)-(\d+)-/', $ref, $m)) {
             return (int) $m[1];
         }
         return 0;

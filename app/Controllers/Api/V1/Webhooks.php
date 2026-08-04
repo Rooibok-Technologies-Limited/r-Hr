@@ -348,7 +348,16 @@ class Webhooks extends ApiBaseController
         if ($tracking !== '') {
             $v = service('pesapalCollections')->verify($tracking);
             if (($v['ok'] ?? false) && ($v['status'] ?? '') === 'successful') {
-                $this->creditVerifiedTopup($v, 'Pesapal');
+                // Route by reference: SUB- = subscription activation, else wallet top-up.
+                $billing = new \App\Libraries\SubscriptionBilling();
+                if ($billing->isSubscriptionRef((string) ($v['tx_ref'] ?? ''))) {
+                    $r = $billing->activateFromVerifiedPayment($v);
+                    if (empty($r['ok'])) {
+                        log_message('warning', '[Webhook:pesapal] subscription activate failed for {t}: {r}', ['t' => $tracking, 'r' => $r['reason'] ?? '']);
+                    }
+                } else {
+                    $this->creditVerifiedTopup($v, 'Pesapal');
+                }
             } elseif (! ($v['ok'] ?? false)) {
                 log_message('warning', '[Webhook:pesapal] verify failed for {t}: {r}', ['t' => $tracking, 'r' => $v['reason'] ?? '']);
             }
