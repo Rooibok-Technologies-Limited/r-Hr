@@ -29,6 +29,11 @@ $user_id = $usession['sup_user_id'];
 $segment_id = uencode($user_id);
 $result = $UsersModel->where('user_id', $user_id)->first();
 $employee_detail = $StaffdetailsModel->where('user_id', $result['user_id'])->first();
+if (empty($employee_detail)) {
+	// staff created without a details row -> default every column so the profile
+	// renders instead of 500-ing on a missing array key.
+	$employee_detail = array_fill_keys(['staff_details_id','user_id','employee_id','department_id','designation_id','office_shift_id','basic_salary','hourly_rate','salay_type','leave_categories','role_description','date_of_joining','date_of_leaving','date_of_birth','marital_status','religion_id','blood_group','citizenship_id','bio','experience','fb_profile','twitter_profile','gplus_profile','linkedin_profile','account_title','account_number','bank_name','iban','swift_code','bank_branch','contact_full_name','contact_phone_no','contact_email','contact_address'], '');
+}
 
 $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 if($user_info['user_type'] == 'staff'){
@@ -46,13 +51,13 @@ if($user_info['user_type'] == 'staff'){
 $all_countries = $CountryModel->orderBy('country_id', 'ASC')->findAll();
 $religion = $ConstantsModel->where('type','religion')->orderBy('constants_id', 'ASC')->findAll();
 $roles = $RolesModel->orderBy('role_id', 'ASC')->findAll();
-$selected_shift = $ShiftModel->where('office_shift_id', $employee_detail['office_shift_id'])->first();
+$selected_shift = !empty($employee_detail['office_shift_id']) ? $ShiftModel->where('office_shift_id', $employee_detail['office_shift_id'])->first() : null;
 $xin_system = erp_company_settings();
 // department head
-$idepartment = $DepartmentModel->where('department_id',$employee_detail['department_id'])->first();
-$dep_user = $UsersModel->where('user_id', $idepartment['department_head'])->first();
+$idepartment = !empty($employee_detail['department_id']) ? $DepartmentModel->where('department_id',$employee_detail['department_id'])->first() : null;
+$dep_user = !empty($idepartment['department_head']) ? $UsersModel->where('user_id', $idepartment['department_head'])->first() : null;
 // user designation
-$idesignations = $DesignationModel->where('designation_id',$employee_detail['designation_id'])->first();
+$idesignations = !empty($employee_detail['designation_id']) ? $DesignationModel->where('designation_id',$employee_detail['designation_id'])->first() : null;
 ?>
 <?php if($result['is_active']=='0'): $_status = '<span class="badge badge-light-danger">'.lang('Main.xin_employees_inactive').'</span>'; endif; ?>
 <?php if($result['is_active']=='1'): $_status = '<span class="badge badge-light-success">'.lang('Main.xin_employees_active').'</span>'; endif; ?>
@@ -84,7 +89,7 @@ $status_label = '<i class="fas fa-certificate text-success bg-icon"></i><i class
               <?= $result['first_name'].' '.$result['last_name']; ?>
             </h6>
             <p class="mb-0 text-muted">
-              <?= $idesignations['designation_name'];?>
+              <?= $idesignations['designation_name'] ?? '—';?>
             </p>
           </div>
         </div>
@@ -93,7 +98,7 @@ $status_label = '<i class="fas fa-certificate text-success bg-icon"></i><i class
         <li class="list-group-item"> <span class="f-w-500"><i class="feather icon-user m-r-10"></i>
           <?= lang('Employees.xin_manager');?>
           <i class="fas fa-question-circle" data-toggle="tooltip" title="Department Head"></i></span> <a href="#" class="float-right text-body">
-          <?= $dep_user['first_name'].' '.$dep_user['last_name']; ?>
+          <?= !empty($dep_user) ? $dep_user['first_name'].' '.$dep_user['last_name'] : '—'; ?>
           </a> </li>
         <li class="list-group-item border-bottom-0"> <span class="f-w-500"><i class="feather icon-mail m-r-10"></i>
           <?= lang('Main.xin_email');?>

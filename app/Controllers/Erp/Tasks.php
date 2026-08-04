@@ -746,8 +746,8 @@ class Tasks extends BaseController {
 				$summary = strip_tags(trim($this->request->getPost('summary')));
 				$description = strip_tags(trim($this->request->getPost('description')));
 				$id = udecode(strip_tags(trim($this->request->getPost('token'))));
-				$assigned_ids = implode(',',strip_tags(trim($this->request->getPost('assigned_to'))));
-				$associated_goals = implode(',',strip_tags(trim($this->request->getPost('associated_goals'))));
+				$assigned_ids = implode(',', array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('assigned_to')));
+				$associated_goals = implode(',', array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('associated_goals')));
 				$employee_ids = $assigned_ids;
 				$data = [
 					'task_name' => $task_name,
