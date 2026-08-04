@@ -1,4 +1,6 @@
 <?php
+/** @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved. */
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -17,6 +19,10 @@ $ProjectsModel = new ProjectsModel();
 $session = \Config\Services::session();
 $usession = $session->get('sup_username');
 $request = \Config\Services::request();
+
+$__submitted = isset($_REQUEST['P'], $_REQUEST['S']) && $_REQUEST['P'] !== '';
+if ($__submitted):
+
 if($_REQUEST['P']=='all_project'){
 	$get_id = $_REQUEST['P'];
 } else {
@@ -155,6 +161,18 @@ $month_year = date('Y-m');*/
         </div>
       </div>
     </div>
-    <!-- [ Attendance view ] end --> 
+    <!-- [ Attendance view ] end -->
   </div>
 </div>
+<?php else: ?>
+<div class="row justify-content-md-center">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-body text-center py-5">
+        <h5 class="mb-2 text-primary">No report generated yet</h5>
+        <p class="text-muted mb-0">Choose the filters above and generate the report.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<?php endif; ?>

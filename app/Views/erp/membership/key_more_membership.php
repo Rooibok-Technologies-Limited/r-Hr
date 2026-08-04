@@ -1,4 +1,6 @@
 <?php
+/** @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved. */
 use App\Models\ConstantsModel;
 use App\Models\CountryModel;
 use App\Models\MembershipModel;
@@ -36,7 +38,7 @@ if($result['is_active'] == 1){
 	$status = '<span class="text-danger"><em class="fas fa-check-circle"></em> '.lang('Main.xin_employees_inactive').'</span>';
 }
 ?>
-<?php $subs_plan = $MembershipModel->where('membership_id', $company_membership['membership_id'])->first(); ?>
+<?php $subs_plan = $company_membership ? $MembershipModel->where('membership_id', $company_membership['membership_id'])->first() : null; ?>
 <?php
 $membership = $MembershipModel->orderBy('membership_id', 'ASC')->paginate(8);
 $pager = $MembershipModel->pager;
@@ -92,7 +94,7 @@ echo $converted;*/
               <?= $r['membership_type']?>
               </a> </div>
           </div>
-          <?php if($company_membership['membership_id'] == $r['membership_id']){ ?>
+          <?php if($company_membership && $company_membership['membership_id'] == $r['membership_id']){ ?>
           <h6 class="my-0 text-success"> <a  href="#!" class="btn btn-success">
             <?= lang('Membership.xin_current_plan');?>
             </a> </h6>

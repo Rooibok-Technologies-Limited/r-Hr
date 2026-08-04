@@ -1,3 +1,7 @@
+<?php
+/** @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved. */
+?>
 <?php $get_animate = ''; ?>
 <div class="ui-bordered px-4 pt-4 mb-4">
   <?php $attributes = array('name' => 'xin-form', 'id' => 'xin-form', 'autocomplete' => 'off');?>
@@ -16,9 +20,7 @@
         <?php //if(isset($employee_id)): ?>
         <?php //$result = $this->Department_model->ajax_company_employee_info($company_id); ?>
         <option value="0">All</option>
-        <?php //foreach($result as $employee) {?>
-        <option value="<?php echo $employee->user_id;?>" <?php if($employee->user_id==$employee_id): ?> selected="selected" <?php endif;?>> <?php echo $employee->first_name.' '.$employee->last_name;?></option>
-        <?php //} ?>
+        <?php // employee options are populated client-side via AJAX (data-plugin="select_hrm") ?>
         <?php //endif;?>
       </select>
     </div>
@@ -33,34 +35,35 @@
 <div class="row <?php echo $get_animate;?>">
   <div class="col-md-4">
     <div class="card">
-      <div class="card-header with-elements"> <span class="card-header-title mr-2"><strong><?php echo $r[0]->first_name.' '.$r[0]->last_name;?> - <?php echo date('F Y',strtotime($month_year));?></strong></span> </div>
+      <div class="card-header with-elements"> <span class="card-header-title mr-2"><strong><?= lang('xin_employee');?></strong></span> </div>
       <div class="card-body">
         <div class="table-responsive" data-pattern="priority-columns">
           <table class="table table-striped m-md-b-0">
             <tbody>
+              <?php // employee summary is populated client-side once an employee is selected ?>
               <tr>
                 <th scope="row"><?= lang('left_company');?></th>
-                <td class="text-right"><?php echo $comp_name;?></td>
+                <td class="text-right">--</td>
               </tr>
               <tr>
                 <th scope="row" style="border-top:0px;"><?= lang('left_department');?></th>
-                <td class="text-right"><?php echo $department_name;?></td>
+                <td class="text-right">--</td>
               </tr>
               <tr>
                 <th scope="row" style="border-top:0px;"><?= lang('left_designation');?></th>
-                <td class="text-right"><?php echo $designation_name;?></td>
+                <td class="text-right">--</td>
               </tr>
               <tr>
                 <th scope="row"><?= lang('dashboard_employee_id');?></th>
-                <td class="text-right"><?php echo $r[0]->employee_id;?></td>
+                <td class="text-right">--</td>
               </tr>
               <tr>
                 <th scope="row"><?= lang('xin_attendance_total_present');?></th>
-                <td class="text-right"><?php echo $pcount;?></td>
+                <td class="text-right">--</td>
               </tr>
               <tr>
                 <th scope="row"><?= lang('xin_attendance_total_absent');?></th>
-                <td class="text-right"><?php echo $acount;?></td>
+                <td class="text-right">--</td>
               </tr>
             </tbody>
           </table>

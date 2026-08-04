@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -148,6 +152,24 @@ class Tickets extends BaseController {
 		$data['title'] = lang('Employees.xin_employee_details').' | '.$xin_system['application_name'];
 		$data['path_url'] = 'tickets';
 		$data['breadcrumbs'] = lang('Employees.xin_employee_details');
+
+		// Helpdesk overview — company-scoped ticket KPIs + recent tickets.
+		$company_id = (($user_info['user_type'] ?? '') === 'staff')
+			? (int) ($user_info['company_id'] ?? 0)
+			: (int) ($usession['sup_user_id'] ?? 0);
+		$db = \Config\Database::connect();
+		$k  = ['total' => 0, 'open' => 0, 'closed' => 0, 'pending' => 0];
+		$recent_tickets = [];
+		try {
+			$k['total']  = $db->table('ci_support_tickets')->where('company_id', $company_id)->countAllResults();
+			$k['open']   = $db->table('ci_support_tickets')->where('company_id', $company_id)->where('ticket_status', '1')->countAllResults();
+			$k['closed'] = $db->table('ci_support_tickets')->where('company_id', $company_id)->where('ticket_status', '2')->countAllResults();
+			$k['pending'] = max(0, $k['total'] - $k['open'] - $k['closed']);
+			$recent_tickets = $db->table('ci_support_tickets')->where('company_id', $company_id)
+				->orderBy('ticket_id', 'DESC')->limit(8)->get()->getResultArray();
+		} catch (\Throwable $e) { log_message('error', 'helpdesk_dashboard: '.$e->getMessage()); }
+		$data['kpi']            = $k;
+		$data['recent_tickets'] = $recent_tickets;
 
 		$data['subview'] = view('erp/tickets/helpdesk_dashboard', $data);
 		return view('erp/layout/layout_main', $data); //page load

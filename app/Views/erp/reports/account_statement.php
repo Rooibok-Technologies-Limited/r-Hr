@@ -1,4 +1,6 @@
 <?php
+/** @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved. */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -18,6 +20,9 @@ $TransactionsModel = new TransactionsModel();
 $session = \Config\Services::session();
 $usession = $session->get('sup_username');
 $request = \Config\Services::request();
+
+$__submitted = isset($_REQUEST['A'], $_REQUEST['S'], $_REQUEST['E']) && $_REQUEST['A'] !== '';
+if ($__submitted):
 
 $account_id = udecode($_REQUEST['A']);
 $start_date = $_REQUEST['S'];
@@ -189,3 +194,15 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
     </div>
     <!-- [ basic-alert ] end -->
 </div>
+<?php else: ?>
+<div class="row justify-content-md-center">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-body text-center py-5">
+        <h5 class="mb-2 text-primary">No report generated yet</h5>
+        <p class="text-muted mb-0">Choose the filters above and generate the report.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<?php endif; ?>

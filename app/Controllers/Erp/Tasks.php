@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -216,6 +220,26 @@ class Tasks extends BaseController {
 		$data['title'] = lang('Dashboard.dashboard_employees').' | '.$xin_system['application_name'];
 		$data['path_url'] = 'tasks';
 		$data['breadcrumbs'] = lang('Dashboard.dashboard_employees');
+
+		// Tasks overview — company-scoped task KPIs by status + recent tasks.
+		$company_id = (($user_info['user_type'] ?? '') === 'staff')
+			? (int) ($user_info['company_id'] ?? 0)
+			: (int) ($usession['sup_user_id'] ?? 0);
+		$db = \Config\Database::connect();
+		$k  = ['total' => 0, 'not_started' => 0, 'in_progress' => 0, 'completed' => 0, 'cancelled' => 0, 'hold' => 0];
+		$recent_tasks = [];
+		try {
+			$k['total']       = $db->table('ci_tasks')->where('company_id', $company_id)->countAllResults();
+			$k['not_started'] = $db->table('ci_tasks')->where('company_id', $company_id)->where('task_status', '0')->countAllResults();
+			$k['in_progress'] = $db->table('ci_tasks')->where('company_id', $company_id)->where('task_status', '1')->countAllResults();
+			$k['completed']   = $db->table('ci_tasks')->where('company_id', $company_id)->where('task_status', '2')->countAllResults();
+			$k['cancelled']   = $db->table('ci_tasks')->where('company_id', $company_id)->where('task_status', '3')->countAllResults();
+			$k['hold']        = $db->table('ci_tasks')->where('company_id', $company_id)->where('task_status', '4')->countAllResults();
+			$recent_tasks     = $db->table('ci_tasks')->where('company_id', $company_id)
+				->orderBy('task_id', 'DESC')->limit(8)->get()->getResultArray();
+		} catch (\Throwable $e) { log_message('error', 'tasks_summary: '.$e->getMessage()); }
+		$data['kpi']          = $k;
+		$data['recent_tasks'] = $recent_tasks;
 
 		$data['subview'] = view('erp/projects/tasks_summary', $data);
 		return view('erp/layout/layout_main', $data); //page load

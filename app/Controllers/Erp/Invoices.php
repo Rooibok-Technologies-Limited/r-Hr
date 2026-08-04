@@ -1,4 +1,6 @@
 <?php
+/** @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved. */
 /**
  * NOTICE OF LICENSE
  *
@@ -163,19 +165,33 @@ class Invoices extends BaseController {
 		
 	}
 	public function client_invoice_calendar()
-	{		
+	{
 		$SystemModel = new SystemModel();
 		$UsersModel = new UsersModel();
+		$InvoicesModel = new InvoicesModel();
 		$session = \Config\Services::session();
 		$usession = $session->get('sup_username');
 		$xin_system = $SystemModel->where('setting_id', 1)->first();
+		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
+		// resolve company scope for the calendar data
+		if($user_info && $user_info['user_type'] == 'customer'){
+			$company_id = $user_info['company_id'];
+			$completed_invoices = $InvoicesModel->where('company_id',$company_id)->where('client_id',$usession['sup_user_id'])->where('status',1)->orderBy('invoice_id','ASC')->findAll();
+			$pending_invoices   = $InvoicesModel->where('company_id',$company_id)->where('client_id',$usession['sup_user_id'])->where('status',0)->orderBy('invoice_id','ASC')->findAll();
+		} else {
+			$company_id = ($user_info && $user_info['user_type'] == 'staff') ? $user_info['company_id'] : $usession['sup_user_id'];
+			$completed_invoices = $InvoicesModel->where('company_id',$company_id)->where('status',1)->orderBy('invoice_id','ASC')->findAll();
+			$pending_invoices   = $InvoicesModel->where('company_id',$company_id)->where('status',0)->orderBy('invoice_id','ASC')->findAll();
+		}
+		$data['completed_invoices'] = $completed_invoices ?: [];
+		$data['pending_invoices']   = $pending_invoices ?: [];
 		$data['title'] = lang('Dashboard.xin_invoice_calendar').' | '.$xin_system['application_name'];
 		$data['path_url'] = 'invoices';
 		$data['breadcrumbs'] = lang('Dashboard.xin_invoice_calendar');
 
 		$data['subview'] = view('erp/invoices/calendar_client_invoices', $data);
 		return view('erp/layout/layout_main', $data); //page load
-		
+
 	}
 	public function create_invoice()
 	{		

@@ -1,4 +1,6 @@
 <?php
+/** @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved. */
 use App\Models\RolesModel;
 use App\Models\UsersModel;
 use App\Models\SystemModel;
@@ -21,6 +23,9 @@ if($user_info['user_type'] == 'customer'){
 	$pending_invoices = $InvoicesModel->where('company_id',$user_info['company_id'])->where('client_id',$usession['sup_user_id'])->where('status', 0)->orderBy('invoice_id', 'ASC')->findAll();
 }
 $xin_com_system = erp_company_settings();
+// fall back to controller-supplied data (or empty for a clean calendar)
+$completed_invoices = $completed_invoices ?? [];
+$pending_invoices = $pending_invoices ?? [];
 ?>
 <?php
 $events_date = date('Y-m');

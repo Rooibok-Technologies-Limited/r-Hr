@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -44,6 +48,26 @@ class Department extends BaseController {
 		$data['title'] = lang('Dashboard.left_department').' | '.$xin_system['application_name'];
 		$data['path_url'] = 'departments';
 		$data['breadcrumbs'] = lang('Dashboard.left_department');
+
+		// Core-HR overview — company-scoped KPIs + recent employees.
+		$user_info  = $UsersModel->where('user_id', $usession['sup_user_id'] ?? 0)->first();
+		$company_id = ($user_info && ($user_info['user_type'] ?? '') === 'staff')
+			? (int) ($user_info['company_id'] ?? 0)
+			: (int) ($usession['sup_user_id'] ?? 0);
+		$db = \Config\Database::connect();
+		$k  = ['employees' => 0, 'active' => 0, 'inactive' => 0, 'departments' => 0, 'designations' => 0];
+		$recent_employees = [];
+		try {
+			$k['employees']    = $db->table('ci_erp_users')->where('company_id', $company_id)->where('user_type', 'staff')->countAllResults();
+			$k['active']       = $db->table('ci_erp_users')->where('company_id', $company_id)->where('user_type', 'staff')->where('is_active', 1)->countAllResults();
+			$k['inactive']     = $db->table('ci_erp_users')->where('company_id', $company_id)->where('user_type', 'staff')->where('is_active', 0)->countAllResults();
+			$k['departments']  = $db->table('ci_departments')->where('company_id', $company_id)->countAllResults();
+			$k['designations'] = $db->table('ci_designations')->where('company_id', $company_id)->countAllResults();
+			$recent_employees  = $db->table('ci_erp_users')->where('company_id', $company_id)->where('user_type', 'staff')
+				->orderBy('user_id', 'DESC')->limit(8)->get()->getResultArray();
+		} catch (\Throwable $e) { log_message('error', 'corehr_dashboard: '.$e->getMessage()); }
+		$data['kpi']              = $k;
+		$data['recent_employees'] = $recent_employees;
 
 		$data['subview'] = view('erp/department/corehr_dashboard', $data);
 		return view('erp/layout/layout_main', $data); //page load

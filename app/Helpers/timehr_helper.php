@@ -824,6 +824,10 @@ if( !function_exists('currency_converter') ){
 		$xin_system = erp_company_settings();
 		$xin_super_system = $SystemModel->where('setting_id', 1)->first();
 		$currency_val = unserialize($xin_super_system['currency_converter']);
+		// Guard: no/invalid conversion table -> return amount unchanged (backwards-compatible for valid input)
+		if(!is_array($currency_val)){
+			return $amount;
+		}
 		$i=0;
 		foreach($currency_val as $_val=>$_key){
 			if($_val == $xin_system['default_currency']){

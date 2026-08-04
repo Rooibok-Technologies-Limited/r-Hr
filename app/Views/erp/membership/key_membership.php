@@ -1,4 +1,6 @@
 <?php
+/** @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved. */
 use CodeIgniter\I18n\Time;
 use App\Models\ConstantsModel;
 use App\Models\CountryModel;
@@ -36,7 +38,7 @@ if($result['is_active'] == 1){
 	$status = '<span class="text-danger"><em class="fas fa-check-circle"></em> '.lang('Main.xin_employees_inactive').'</span>';
 }
 ?>
-<?php $subs_plan = $MembershipModel->where('membership_id', $company_membership['membership_id'])->first(); ?>
+<?php $subs_plan = $company_membership ? $MembershipModel->where('membership_id', $company_membership['membership_id'])->first() : null; ?>
 <?php if($session->get('payment_made_successfully')){?>
 
 <div class="alert alert-success alert-dismissible fade show">
@@ -45,23 +47,20 @@ if($result['is_active'] == 1){
 </div>
 <?php } ?>
 <?php
-if($company_membership['subscription_type']==1):
-	$subs_time = lang('Membership.xin_subscription_monthly');
-	$subs_price = $subs_plan['price'];
-elseif($company_membership['subscription_type']==2):
-	$subs_time = lang('Membership.xin_subscription_monthly');
-	$subs_price = $subs_plan['price'];
-elseif($company_membership['subscription_type']==3):
-	$subs_time = lang('Membership.xin_subscription_unlimit');
-	$subs_price = $subs_plan['price'];
-else:
-	$subs_time = lang('Membership.xin_subscription_monthly');
-	$subs_price = $subs_plan['price'];
+$has_membership = ($company_membership && $subs_plan);
+if($has_membership):
+	$subscription_type = $company_membership['subscription_type'] ?? 0;
+	if($subscription_type==3):
+		$subs_time = lang('Membership.xin_subscription_unlimit');
+	else:
+		$subs_time = lang('Membership.xin_subscription_monthly');
+	endif;
+	$subs_price = currency_converter($subs_plan['price'] ?? 0);
+	$company_membership_details = company_membership_details($usession['sup_user_id']);
 endif;
-$subs_price = currency_converter($subs_price);
-$company_membership_details = company_membership_details($usession['sup_user_id']);
 ?>
-<div class="row"> 
+<?php if($has_membership): ?>
+<div class="row">
   <!-- current membership start -->
   <div class="col-12">
     <div class="card">
@@ -119,8 +118,22 @@ $company_membership_details = company_membership_details($usession['sup_user_id'
       </div>
     </div>
   </div>
-  <!-- current membership  end --> 
+  <!-- current membership  end -->
 </div>
+<?php else: ?>
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body text-center py-5">
+        <em class="fas fa-info-circle fa-2x text-muted mb-3"></em>
+        <h5><?= lang('Membership.xin_current_plan');?></h5>
+        <p class="text-muted"><?= lang('Membership.xin_subscription_list_text1');?></p>
+        <a href="<?= site_url('erp/subscription-list');?>" class="btn btn-primary"><?= lang('Dashboard.dashboard_upgrade');?></a>
+      </div>
+    </div>
+  </div>
+</div>
+<?php endif; ?>
 <div class="nk-block">
   <div class="card card-bordered">
     <div class="card-body">

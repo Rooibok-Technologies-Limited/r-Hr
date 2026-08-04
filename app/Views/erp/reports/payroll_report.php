@@ -1,4 +1,6 @@
 <?php
+/** @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved. */
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -17,6 +19,10 @@ $PayrollModel = new PayrollModel();
 $session = \Config\Services::session();
 $usession = $session->get('sup_username');
 $request = \Config\Services::request();
+
+$__submitted = isset($_REQUEST['S'], $_REQUEST['M']) && $_REQUEST['S'] !== '' && $_REQUEST['M'] !== '';
+if ($__submitted):
+
 if($_REQUEST['S']=='all_employees'){
 	$staff_info = $_REQUEST['S'];
 } else {
@@ -137,6 +143,18 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
         </div>
       </div>
     </div>
-    <!-- [ Attendance view ] end --> 
+    <!-- [ Attendance view ] end -->
   </div>
 </div>
+<?php else: ?>
+<div class="row justify-content-md-center">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-body text-center py-5">
+        <h5 class="mb-2 text-primary">No report generated yet</h5>
+        <p class="text-muted mb-0">Choose the filters above and generate the report.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<?php endif; ?>

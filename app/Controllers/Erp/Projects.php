@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -58,6 +62,26 @@ class Projects extends BaseController {
 		$data['title'] = lang('Dashboard.dashboard_employees').' | '.$xin_system['application_name'];
 		$data['path_url'] = 'employees';
 		$data['breadcrumbs'] = lang('Dashboard.dashboard_employees');
+
+		// Projects overview — company-scoped project KPIs + recent projects.
+		$company_id = (($user_info['user_type'] ?? '') === 'staff')
+			? (int) ($user_info['company_id'] ?? 0)
+			: (int) ($usession['sup_user_id'] ?? 0);
+		$db = \Config\Database::connect();
+		$k  = ['total' => 0, 'not_started' => 0, 'in_progress' => 0, 'completed' => 0, 'cancelled' => 0, 'hold' => 0];
+		$recent_projects = [];
+		try {
+			$k['total']       = $db->table('ci_projects')->where('company_id', $company_id)->countAllResults();
+			$k['not_started'] = $db->table('ci_projects')->where('company_id', $company_id)->where('status', '0')->countAllResults();
+			$k['in_progress'] = $db->table('ci_projects')->where('company_id', $company_id)->where('status', '1')->countAllResults();
+			$k['completed']   = $db->table('ci_projects')->where('company_id', $company_id)->where('status', '2')->countAllResults();
+			$k['cancelled']   = $db->table('ci_projects')->where('company_id', $company_id)->where('status', '3')->countAllResults();
+			$k['hold']        = $db->table('ci_projects')->where('company_id', $company_id)->where('status', '4')->countAllResults();
+			$recent_projects  = $db->table('ci_projects')->where('company_id', $company_id)
+				->orderBy('project_id', 'DESC')->limit(8)->get()->getResultArray();
+		} catch (\Throwable $e) { log_message('error', 'projects_dashboard: '.$e->getMessage()); }
+		$data['kpi']             = $k;
+		$data['recent_projects'] = $recent_projects;
 
 		$data['subview'] = view('erp/projects/projects_dashboard', $data);
 		return view('erp/layout/layout_main', $data); //page load
