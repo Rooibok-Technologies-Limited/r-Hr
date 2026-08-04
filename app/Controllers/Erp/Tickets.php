@@ -724,7 +724,7 @@ class Tickets extends BaseController {
 					'ticket_remarks' => $remarks,
 					'ticket_status'  => $status
 				];
-				$result = $TicketsModel->update($id,$data);	
+				$result = $TicketsModel->where('company_id', $this->tenantCompanyId())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					if($count_module_attributes > 0){
@@ -813,7 +813,7 @@ class Tickets extends BaseController {
 					'ticket_priority'  => $ticket_priority
 				];
 				$TicketsModel = new TicketsModel();
-				$result = $TicketsModel->update($id,$data);	
+				$result = $TicketsModel->where('company_id', $this->tenantCompanyId())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_ticket_updated_msg');
@@ -1025,7 +1025,7 @@ class Tickets extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$TicketsModel = new TicketsModel();
-			$result = $TicketsModel->where('ticket_id', $id)->delete($id);
+			$result = $TicketsModel->where('ticket_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_ticket_deleted_msg');
 			} else {
@@ -1046,7 +1046,7 @@ class Tickets extends BaseController {
 			$id = strip_tags(trim($this->request->getVar('field_id')));
 			$Return['csrf_hash'] = csrf_hash();
 			$TicketnotesModel = new TicketnotesModel();
-			$result = $TicketnotesModel->where('ticket_note_id', $id)->delete($id);
+			$result = $TicketnotesModel->where('ticket_note_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_ticket_note_deleted_msg');
 			} else {
@@ -1067,7 +1067,7 @@ class Tickets extends BaseController {
 			$id = strip_tags(trim($this->request->getVar('field_id')));
 			$Return['csrf_hash'] = csrf_hash();
 			$TicketreplyModel = new TicketreplyModel();
-			$result = $TicketreplyModel->where('ticket_reply_id', $id)->delete($id);
+			$result = $TicketreplyModel->where('ticket_reply_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_ticket_reply_deleted_msg');
 			} else {
@@ -1088,7 +1088,7 @@ class Tickets extends BaseController {
 			$id = strip_tags(trim($this->request->getVar('field_id')));
 			$Return['csrf_hash'] = csrf_hash();
 			$TicketfilesModel = new TicketfilesModel();
-			$result = $TicketfilesModel->where('ticket_file_id', $id)->delete($id);
+			$result = $TicketfilesModel->where('ticket_file_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_ticket_file_deleted_msg');
 			} else {

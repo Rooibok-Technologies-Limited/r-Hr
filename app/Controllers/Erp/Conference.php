@@ -356,7 +356,7 @@ class Conference extends BaseController {
 					'meeting_color'  => $conference_color
 				];
 				$MeetingModel = new MeetingModel();
-				$result = $MeetingModel->update($id, $data);
+				$result = $MeetingModel->where('company_id', $this->tenantCompanyId())->update($id, $data);
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_conference_updated_msg');
@@ -402,7 +402,7 @@ class Conference extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$MeetingModel = new MeetingModel();
-			$result = $MeetingModel->where('meeting_id', $id)->delete($id);
+			$result = $MeetingModel->where('meeting_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_conference_deleted_msg');
 			} else {

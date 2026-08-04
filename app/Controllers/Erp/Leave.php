@@ -138,7 +138,7 @@ class Leave extends BaseController {
 		$session = \Config\Services::session();
 		$usession = $session->get('sup_username');
 		$ifield_id = udecode($request->uri->getSegment(3));
-		$leave_val = $LeaveModel->where('leave_id', $ifield_id)->first();
+		$leave_val = $LeaveModel->where('leave_id', $ifield_id)->where('company_id', $this->tenantCompanyId())->first();
 		if(!$leave_val){
 			$session->setFlashdata('unauthorized_module',lang('Dashboard.xin_error_unauthorized_module'));
 			return redirect()->to(site_url('erp/desk'));
@@ -604,7 +604,7 @@ class Leave extends BaseController {
 					'reason'  => $reason
 				];
 				$LeaveModel = new LeaveModel();
-				$result = $LeaveModel->update($id,$data);	
+				$result = $LeaveModel->where('company_id', $this->tenantCompanyId())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_leave_updated_msg');
@@ -669,7 +669,7 @@ class Leave extends BaseController {
 				$ConstantsModel = new ConstantsModel();
 				$EmailtemplatesModel = new EmailtemplatesModel();
 				$SmstemplatesModel = new SmstemplatesModel();
-				$result = $LeaveModel->update($id,$data);	
+				$result = $LeaveModel->where('company_id', $this->tenantCompanyId())->update($id,$data);	
 				$SystemModel = new SystemModel();
 				$xin_system = $SystemModel->where('setting_id', 1)->first();
 				$Return['csrf_hash'] = csrf_hash();	
@@ -792,7 +792,7 @@ class Leave extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$LeaveModel = new LeaveModel();
-			$result = $LeaveModel->where('leave_id', $id)->delete($id);
+			$result = $LeaveModel->where('leave_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_leave_deleted_msg');
 			} else {

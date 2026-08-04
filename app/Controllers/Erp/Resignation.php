@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -201,7 +205,7 @@ class Resignation extends BaseController {
 					'status'  => $status,
 				];
 				$ResignationsModel = new ResignationsModel();
-				$result = $ResignationsModel->update($id,$data);	
+				$result = $ResignationsModel->where('company_id', $this->tenantCompanyId())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_resignation_updated_msg');
@@ -333,7 +337,7 @@ class Resignation extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$ResignationsModel = new ResignationsModel();
-			$result = $ResignationsModel->where('resignation_id', $id)->delete($id);
+			$result = $ResignationsModel->where('resignation_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_resignation_deleted_msg');
 			} else {

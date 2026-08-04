@@ -358,7 +358,7 @@ class Travel extends BaseController {
 					'associated_goals'  => $associated_goals
 				];
 				$TravelModel = new TravelModel();
-				$result = $TravelModel->update($id,$data);
+				$result = $TravelModel->where('company_id', $this->tenantCompanyId())->update($id,$data);
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_travel_updated_msg');
@@ -411,7 +411,7 @@ class Travel extends BaseController {
 					'status'  => $status,
 				];
 				$TravelModel = new TravelModel();
-				$result = $TravelModel->update($id,$data);
+				$result = $TravelModel->where('company_id', $this->tenantCompanyId())->update($id,$data);
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_travel_status_updated_msg');
@@ -541,7 +541,7 @@ class Travel extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$TravelModel = new TravelModel();
-			$result = $TravelModel->where('travel_id', $id)->delete($id);
+			$result = $TravelModel->where('travel_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_travel_deleted_msg');
 			} else {

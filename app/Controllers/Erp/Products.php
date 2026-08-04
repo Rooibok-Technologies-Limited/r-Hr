@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -646,7 +650,7 @@ class Products extends BaseController {
 				$data = [
 					'product_image'  => $file_name
 				];
-				$result = $ProductsModel->update($id, $data);
+				$result = $ProductsModel->where('company_id', $this->tenantCompanyId())->update($id, $data);
 				$Return['csrf_hash'] = csrf_hash();	
 				$Return['result'] = lang('Inventory.xin_product_image_updated_success');
 			} else {
@@ -797,7 +801,7 @@ class Products extends BaseController {
 					'product_description'  => $product_description
 				];
 				$ProductsModel = new ProductsModel();
-				$result = $ProductsModel->update($id,$data);	
+				$result = $ProductsModel->where('company_id', $this->tenantCompanyId())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_product_updated_msg');
@@ -877,7 +881,7 @@ class Products extends BaseController {
 					'product_rating' => $product_rating,
 				];
 				$ProductsModel = new ProductsModel();
-				$result = $ProductsModel->update($id,$data);	
+				$result = $ProductsModel->where('company_id', $this->tenantCompanyId())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_product_rating_updated_msg');
@@ -923,7 +927,7 @@ class Products extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$ProductsModel = new ProductsModel();
-			$result = $ProductsModel->where('product_id', $id)->delete($id);
+			$result = $ProductsModel->where('product_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_product_deleted_msg');
 			} else {

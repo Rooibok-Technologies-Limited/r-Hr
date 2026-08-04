@@ -504,7 +504,7 @@ class Talent extends BaseController {
 				];
 				$KpiModel = new KpiModel();
 				$KpioptionsModel = new KpioptionsModel();
-				$result = $KpiModel->update($id,$data);
+				$result = $KpiModel->where('company_id', $this->tenantCompanyId())->update($id,$data);
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					foreach(array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('technical_competencies_value')) as $key=>$tech_value){
@@ -514,7 +514,7 @@ class Talent extends BaseController {
 							'indicator_option_id' => $option_id,
 							'indicator_option_value' => $star_data,
 							);
-							$KpioptionsModel->update($key,$data_ind);
+							$KpioptionsModel->where('company_id', $this->tenantCompanyId())->update($key,$data_ind);
 						}
 					}
 					foreach(array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('organizational_competencies_value')) as $ikey=>$org_value){
@@ -702,7 +702,7 @@ class Talent extends BaseController {
 				];
 				$KpaModel = new KpaModel();
 				$KpaoptionsModel = new KpaoptionsModel();
-				$result = $KpaModel->update($id,$data);	
+				$result = $KpaModel->where('company_id', $this->tenantCompanyId())->update($id,$data);	
 				
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
@@ -713,7 +713,7 @@ class Talent extends BaseController {
 							'appraisal_option_id' => $option_id,
 							'appraisal_option_value' => $star_data,
 							);
-							$KpaoptionsModel->update($key,$data_ind);
+							$KpaoptionsModel->where('company_id', $this->tenantCompanyId())->update($key,$data_ind);
 						}
 					}
 					foreach(array_map(fn($v) => strip_tags(trim((string) $v)), (array) $this->request->getPost('organizational_competencies_value')) as $ikey=>$org_value){
@@ -751,7 +751,7 @@ class Talent extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$KpiModel = new KpiModel();
-			$result = $KpiModel->where('performance_indicator_id', $id)->delete($id);
+			$result = $KpiModel->where('performance_indicator_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$MainModel = new MainModel();
 				$MainModel->delete_indicator_options($id);
@@ -774,7 +774,7 @@ class Talent extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$KpaModel = new KpaModel();
-			$result = $KpaModel->where('performance_appraisal_id', $id)->delete($id);
+			$result = $KpaModel->where('performance_appraisal_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$MainModel = new MainModel();
 				$MainModel->delete_appraisal_options($id);

@@ -1052,7 +1052,7 @@ class Finance extends BaseController {
 				}
 				
 				$TransactionsModel = new TransactionsModel();
-				$result = $TransactionsModel->update($id,$data);	
+				$result = $TransactionsModel->where('company_id', $this->tenantCompanyId())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_finance_deposit_updated_msg');
@@ -1188,7 +1188,7 @@ class Finance extends BaseController {
 				}
 				
 				$TransactionsModel = new TransactionsModel();
-				$result = $TransactionsModel->update($id,$data);	
+				$result = $TransactionsModel->where('company_id', $this->tenantCompanyId())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_finance_expense_updated_msg');
@@ -1264,7 +1264,7 @@ class Finance extends BaseController {
 					'bank_branch'  => $bank_branch
 				];
 				$AccountsModel = new AccountsModel();
-				$result = $AccountsModel->update($id,$data);	
+				$result = $AccountsModel->where('company_id', $this->tenantCompanyId())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_finance_account_updated_msg');

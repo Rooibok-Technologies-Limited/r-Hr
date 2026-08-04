@@ -772,7 +772,7 @@ class Tasks extends BaseController {
 				} else {
 					$company_info = $UsersModel->where('company_id', $user_info['company_id'])->first();
 				}
-				$result = $TasksModel->update($id,$data);	
+				$result = $TasksModel->where('company_id', $this->tenantCompanyId())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_task_updated_msg');
@@ -854,7 +854,7 @@ class Tasks extends BaseController {
 					'task_status'  => $status
 				];
 				$TasksModel = new TasksModel();
-				$result = $TasksModel->update($id,$data);	
+				$result = $TasksModel->where('company_id', $this->tenantCompanyId())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_task_status_updated_msg');
@@ -957,7 +957,7 @@ class Tasks extends BaseController {
 				'task_status' => $task_status,
 			];
 			$TasksModel = new TasksModel();
-			$result = $TasksModel->update($task_id,$data);
+			$result = $TasksModel->where('company_id', $this->tenantCompanyId())->update($task_id,$data);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_task_status_updated_msg');
 			} else {
@@ -1324,7 +1324,7 @@ class Tasks extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$TasksModel = new TasksModel();
-			$result = $TasksModel->where('task_id', $id)->delete($id);
+			$result = $TasksModel->where('task_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_task_deleted_msg');
 			} else {
@@ -1345,7 +1345,7 @@ class Tasks extends BaseController {
 			$id = strip_tags(trim($this->request->getVar('field_id')));
 			$Return['csrf_hash'] = csrf_hash();
 			$TasknotesModel = new TasknotesModel();
-			$result = $TasknotesModel->where('task_note_id', $id)->delete($id);
+			$result = $TasknotesModel->where('task_note_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_task_note_deleted_msg');
 			} else {
@@ -1366,7 +1366,7 @@ class Tasks extends BaseController {
 			$id = strip_tags(trim($this->request->getVar('field_id')));
 			$Return['csrf_hash'] = csrf_hash();
 			$TaskdiscussionModel = new TaskdiscussionModel();
-			$result = $TaskdiscussionModel->where('task_discussion_id', $id)->delete($id);
+			$result = $TaskdiscussionModel->where('task_discussion_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_task_discussion_deleted_msg');
 			} else {
@@ -1387,7 +1387,7 @@ class Tasks extends BaseController {
 			$id = strip_tags(trim($this->request->getVar('field_id')));
 			$Return['csrf_hash'] = csrf_hash();
 			$TaskfilesModel = new TaskfilesModel();
-			$result = $TaskfilesModel->where('task_file_id', $id)->delete($id);
+			$result = $TaskfilesModel->where('task_file_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_task_file_deleted_msg');
 			} else {

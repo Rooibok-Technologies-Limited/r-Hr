@@ -382,7 +382,7 @@ class Expenses extends BaseController {
 			$Return['csrf_hash'] = csrf_hash();
 
 			$ExpenseModel = new ExpenseModel();
-			$expense = $ExpenseModel->where('expense_id', $id)->first();
+			$expense = $ExpenseModel->where('expense_id', $id)->where('company_id', $this->tenantCompanyId())->first();
 
 			if(!$expense || $expense['status'] != 'pending'){
 				$Return['error'] = 'Only pending expenses can be deleted.';
@@ -398,7 +398,7 @@ class Expenses extends BaseController {
 				}
 			}
 
-			$result = $ExpenseModel->where('expense_id', $id)->delete($id);
+			$result = $ExpenseModel->where('expense_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if($result == TRUE){
 				$Return['result'] = 'Expense claim deleted successfully.';
 			} else {
@@ -514,7 +514,7 @@ class Expenses extends BaseController {
 				];
 
 				$ExpenseCategoryModel = new ExpenseCategoryModel();
-				$result = $ExpenseCategoryModel->update($id, $data);
+				$result = $ExpenseCategoryModel->where('company_id', $this->tenantCompanyId())->update($id, $data);
 				$Return['csrf_hash'] = csrf_hash();
 				if($result == TRUE){
 					$Return['result'] = 'Category updated successfully.';
@@ -542,7 +542,7 @@ class Expenses extends BaseController {
 			$Return['csrf_hash'] = csrf_hash();
 
 			$ExpenseCategoryModel = new ExpenseCategoryModel();
-			$result = $ExpenseCategoryModel->where('category_id', $id)->delete($id);
+			$result = $ExpenseCategoryModel->where('category_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if($result == TRUE){
 				$Return['result'] = 'Category deleted successfully.';
 			} else {

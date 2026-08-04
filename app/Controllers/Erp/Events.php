@@ -326,7 +326,7 @@ class Events extends BaseController {
 					'event_color'  => $event_color
 				];
 				$EventsModel = new EventsModel();
-				$result = $EventsModel->update($id, $data);	
+				$result = $EventsModel->where('company_id', $this->tenantCompanyId())->update($id, $data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_event_updated_msg');
@@ -372,7 +372,7 @@ class Events extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$EventsModel = new EventsModel();
-			$result = $EventsModel->where('event_id', $id)->delete($id);
+			$result = $EventsModel->where('event_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_event_deleted_msg');
 			} else {

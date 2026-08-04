@@ -1711,7 +1711,7 @@ class Employees extends BaseController {
 					];
 				}
 				$UserdocumentsModel = new UserdocumentsModel();
-				$result = $UserdocumentsModel->update($id,$data);	
+				$result = $UserdocumentsModel->where('company_id', $this->tenantCompanyId())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.employee_update_document_success');
@@ -2913,7 +2913,7 @@ class Employees extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$UserdocumentsModel = new UserdocumentsModel();
-			$result = $UserdocumentsModel->where('document_id', $id)->delete($id);
+			$result = $UserdocumentsModel->where('document_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.employee_delete_document_success');
 			} else {

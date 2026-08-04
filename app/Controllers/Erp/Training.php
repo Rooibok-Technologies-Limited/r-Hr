@@ -475,7 +475,7 @@ class Training extends BaseController {
 					'associated_goals'  => $associated_goals
 				];
 				$TrainingModel = new TrainingModel();
-				$result = $TrainingModel->update($id, $data);	
+				$result = $TrainingModel->where('company_id', $this->tenantCompanyId())->update($id, $data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_training_updated_msg');
@@ -559,7 +559,7 @@ class Training extends BaseController {
 					'remarks'  => $remarks
 				];
 				$TrainingModel = new TrainingModel();
-				$result = $TrainingModel->update($id, $data);
+				$result = $TrainingModel->where('company_id', $this->tenantCompanyId())->update($id, $data);
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_training_status_updated_msg');
@@ -670,7 +670,7 @@ class Training extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$TrainingModel = new TrainingModel();
-			$result = $TrainingModel->where('training_id', $id)->delete($id);
+			$result = $TrainingModel->where('training_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_training_deleted_msg');
 			} else {
@@ -691,7 +691,7 @@ class Training extends BaseController {
 			$id = strip_tags(trim($this->request->getVar('field_id')));
 			$Return['csrf_hash'] = csrf_hash();
 			$TrainingnotesModel = new TrainingnotesModel();
-			$result = $TrainingnotesModel->where('training_note_id', $id)->delete($id);
+			$result = $TrainingnotesModel->where('training_note_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_training_note_deleted_msg');
 			} else {

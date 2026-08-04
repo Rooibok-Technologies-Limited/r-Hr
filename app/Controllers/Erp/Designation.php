@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -247,7 +251,7 @@ class Designation extends BaseController {
 					'description'  => $description
 				];
 				$DesignationModel = new DesignationModel();
-				$result = $DesignationModel->update($id, $data);
+				$result = $DesignationModel->where('company_id', $this->tenantCompanyId())->update($id, $data);
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_designation_updated_msg');
@@ -330,7 +334,7 @@ class Designation extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$DesignationModel = new DesignationModel();
-			$result = $DesignationModel->where('designation_id', $id)->delete($id);
+			$result = $DesignationModel->where('designation_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_designation_deleted_msg');
 			} else {

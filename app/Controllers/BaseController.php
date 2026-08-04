@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 namespace App\Controllers;
 
 /**
@@ -77,6 +81,28 @@ class BaseController extends Controller
 	protected function numericPost(string $field): string {
 		$val = strip_tags(trim($this->request->getPost($field) ?? ''));
 		return str_replace(',', '', $val);
+	}
+
+	/**
+	 * Company scope for the current session, used to tenant-guard record
+	 * mutations/reads against cross-tenant IDOR. Staff resolve to their
+	 * `company_id` column; company owners and super users resolve to their own
+	 * `user_id` (which IS the company_id in this schema). Mirrors the inline
+	 * staff/else idiom already used across the ERP save handlers, so scoped
+	 * queries behave identically to the existing Finance delete exemplars.
+	 * Returns 0 when unauthenticated (callers sit behind the login filter).
+	 */
+	protected function tenantCompanyId(): int {
+		$usession = \Config\Services::session()->get('sup_username');
+		$uid = (int) ($usession['sup_user_id'] ?? 0);
+		if ($uid === 0) {
+			return 0;
+		}
+		$u = (new \App\Models\UsersModel())->where('user_id', $uid)->first();
+		if ($u && ($u['user_type'] ?? '') === 'staff') {
+			return (int) $u['company_id'];
+		}
+		return $uid;
 	}
 
 	/*Function to set JSON output*/

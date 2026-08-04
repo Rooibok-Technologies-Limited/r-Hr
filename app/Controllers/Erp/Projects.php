@@ -1128,7 +1128,7 @@ class Projects extends BaseController {
 					'description'  => $description
 				];
 				$ProjectsModel = new ProjectsModel();
-				$result = $ProjectsModel->update($id,$data);	
+				$result = $ProjectsModel->where('company_id', $this->tenantCompanyId())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_project_updated_msg');
@@ -1198,7 +1198,7 @@ class Projects extends BaseController {
 					'priority'  => $priority
 				];
 				$ProjectsModel = new ProjectsModel();
-				$result = $ProjectsModel->update($id,$data);	
+				$result = $ProjectsModel->where('company_id', $this->tenantCompanyId())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_project_status_updated_msg');
@@ -1543,7 +1543,7 @@ class Projects extends BaseController {
 					'timelogs_memo'  => $memo
 				];
 				$ProjecttimelogsModel = new ProjecttimelogsModel();
-				$result = $ProjecttimelogsModel->update($id,$data);
+				$result = $ProjecttimelogsModel->where('company_id', $this->tenantCompanyId())->update($id,$data);
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_timelog_updated_msg');
@@ -1722,7 +1722,7 @@ class Projects extends BaseController {
 				'status' => $status,
 			];
 			$ProjectsModel = new ProjectsModel();
-			$result = $ProjectsModel->update($id,$data);
+			$result = $ProjectsModel->where('company_id', $this->tenantCompanyId())->update($id,$data);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_project_status_updated_msg');
 			} else {
@@ -1972,7 +1972,7 @@ class Projects extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$ProjectsModel = new ProjectsModel();
-			$result = $ProjectsModel->where('project_id', $id)->delete($id);
+			$result = $ProjectsModel->where('project_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_project_deleted_msg');
 			} else {
@@ -1993,7 +1993,7 @@ class Projects extends BaseController {
 			$id = strip_tags(trim($this->request->getVar('field_id')));
 			$Return['csrf_hash'] = csrf_hash();
 			$ProjectnotesModel = new ProjectnotesModel();
-			$result = $ProjectnotesModel->where('project_note_id', $id)->delete($id);
+			$result = $ProjectnotesModel->where('project_note_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_project_note_deleted_msg');
 			} else {
@@ -2014,7 +2014,7 @@ class Projects extends BaseController {
 			$id = strip_tags(trim($this->request->getVar('field_id')));
 			$Return['csrf_hash'] = csrf_hash();
 			$ProjectbugsModel = new ProjectbugsModel();
-			$result = $ProjectbugsModel->where('project_bug_id', $id)->delete($id);
+			$result = $ProjectbugsModel->where('project_bug_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_project_bug_deleted_msg');
 			} else {
@@ -2035,7 +2035,7 @@ class Projects extends BaseController {
 			$id = strip_tags(trim($this->request->getVar('field_id')));
 			$Return['csrf_hash'] = csrf_hash();
 			$ProjectdiscussionModel = new ProjectdiscussionModel();
-			$result = $ProjectdiscussionModel->where('project_discussion_id', $id)->delete($id);
+			$result = $ProjectdiscussionModel->where('project_discussion_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_project_discussion_deleted_msg');
 			} else {
@@ -2056,7 +2056,7 @@ class Projects extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$ProjecttimelogsModel = new ProjecttimelogsModel();
-			$result = $ProjecttimelogsModel->where('timelogs_id', $id)->delete($id);
+			$result = $ProjecttimelogsModel->where('timelogs_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_timelog_deleted_msg');
 			} else {
@@ -2077,7 +2077,7 @@ class Projects extends BaseController {
 			$id = strip_tags(trim($this->request->getVar('field_id')));
 			$Return['csrf_hash'] = csrf_hash();
 			$ProjectfilesModel = new ProjectfilesModel();
-			$result = $ProjectfilesModel->where('project_file_id', $id)->delete($id);
+			$result = $ProjectfilesModel->where('project_file_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_project_file_deleted_msg');
 			} else {

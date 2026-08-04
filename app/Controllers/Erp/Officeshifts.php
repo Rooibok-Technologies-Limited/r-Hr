@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -342,7 +346,7 @@ class Officeshifts extends BaseController {
 					'sunday_out_time'  => $sunday_out_time
 				];
 				$ShiftModel = new ShiftModel();
-				$result = $ShiftModel->update($id, $data);	
+				$result = $ShiftModel->where('company_id', $this->tenantCompanyId())->update($id, $data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.employee_update_shift_success');
@@ -388,7 +392,7 @@ class Officeshifts extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$ShiftModel = new ShiftModel();
-			$result = $ShiftModel->where('office_shift_id', $id)->delete($id);
+			$result = $ShiftModel->where('office_shift_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.employee_delete_shift_success');
 			} else {

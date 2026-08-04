@@ -215,7 +215,7 @@ class Complaints extends BaseController {
 					'status'  => $status
 				];
 				$ComplaintsModel = new ComplaintsModel();
-				$result = $ComplaintsModel->update($id,$data);	
+				$result = $ComplaintsModel->where('company_id', $this->tenantCompanyId())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_complaint_updated_msg');
@@ -334,7 +334,7 @@ class Complaints extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$ComplaintsModel = new ComplaintsModel();
-			$result = $ComplaintsModel->where('complaint_id', $id)->delete($id);
+			$result = $ComplaintsModel->where('complaint_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_complaint_deleted_msg');
 			} else {
