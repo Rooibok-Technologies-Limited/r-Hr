@@ -335,6 +335,7 @@ class Employees extends BaseController {
 		$id = $request->uri->getSegment(4);
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if(empty($id)){ echo json_encode(["data"=>[]]); return; }
+		if(!$this->ownsEmployee($id)){ echo json_encode(["data"=>[]]); return; }
 		$get_data = $ContractModel->where('user_id',$id)->where('salay_type','allowances')->orderBy('contract_option_id', 'ASC')->findAll();
 		$data = array();
 		
@@ -394,6 +395,7 @@ class Employees extends BaseController {
 		$ContractModel = new ContractModel();
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if(empty($id)){ echo json_encode(["data"=>[]]); return; }
+		if(!$this->ownsEmployee($id)){ echo json_encode(["data"=>[]]); return; }
 		$get_data = $ContractModel->where('user_id',$id)->where('salay_type','commissions')->orderBy('contract_option_id', 'ASC')->findAll();
 		$data = array();
 		
@@ -453,6 +455,7 @@ class Employees extends BaseController {
 		$ContractModel = new ContractModel();
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if(empty($id)){ echo json_encode(["data"=>[]]); return; }
+		if(!$this->ownsEmployee($id)){ echo json_encode(["data"=>[]]); return; }
 		$get_data = $ContractModel->where('user_id',$id)->where('salay_type','statutory')->orderBy('contract_option_id', 'ASC')->findAll();
 		$data = array();
 		
@@ -503,6 +506,7 @@ class Employees extends BaseController {
 		$ContractModel = new ContractModel();
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if(empty($id)){ echo json_encode(["data"=>[]]); return; }
+		if(!$this->ownsEmployee($id)){ echo json_encode(["data"=>[]]); return; }
 		$get_data = $ContractModel->where('user_id',$id)->where('salay_type','other_payments')->orderBy('contract_option_id', 'ASC')->findAll();
 		$data = array();
 		
@@ -562,6 +566,7 @@ class Employees extends BaseController {
 		$UserdocumentsModel = new UserdocumentsModel();
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if(empty($id)){ echo json_encode(["data"=>[]]); return; }
+		if(!$this->ownsEmployee($id)){ echo json_encode(["data"=>[]]); return; }
 		$get_data = $UserdocumentsModel->where('user_id',$id)->orderBy('document_id', 'ASC')->findAll();
 		$data = array();
 		

@@ -677,7 +677,7 @@ class Timesheet extends BaseController {
 				$uid = $this->request->getGet('user');
 			}
 			$date = $this->request->getGet('date');
-			$get_data = $TimesheetModel->where('employee_id',$uid)->where('attendance_date',$date)->findAll();
+			$get_data = $TimesheetModel->where('employee_id',$uid)->where('attendance_date',$date)->where('company_id', $this->tenantCompanyId())->findAll();
 		}
 		$data = array();
 		

@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * Rooibok HR System — Archive Export Controller
  * Phase 10.10: Unified export endpoint for archive data.
  *
@@ -44,12 +48,21 @@ class ArchiveExport extends BaseController
 
         // Company admins may only export their own company data
         if ($user_info['user_type'] !== 'super_user') {
-            if ($type === 'companies') {
+            // 'companies' is platform-wide, and the contacts archive carries no
+            // tenant column, so neither can be safely scoped to one tenant. [SECURITY]
+            if ($type === 'companies' || $type === 'contacts') {
                 $session->setFlashdata('unauthorized_module', lang('Dashboard.xin_error_unauthorized_module'));
                 return redirect()->to(site_url('erp/desk'));
             }
-            // Scope filters to current company
-            $filters['company_id'] = $user_info['company_id'] ?? null;
+            // Force the tenant scope to the caller's own company and FAIL CLOSED if
+            // it cannot be resolved — never fall through to an unscoped full export.
+            $cid = $this->tenantCompanyId();
+            if ($cid <= 0) {
+                $session->setFlashdata('unauthorized_module', lang('Dashboard.xin_error_unauthorized_module'));
+                return redirect()->to(site_url('erp/desk'));
+            }
+            unset($filters['company_id']);
+            $filters['source_company_id'] = $cid;
         }
 
         $data  = $this->fetchData($type, $filters);
@@ -98,8 +111,10 @@ class ArchiveExport extends BaseController
         // Apply common filters (ignore internal keys)
         $reserved = ['type', 'format', 'csrf_token'];
 
-        if (!empty($filters['company_id'])) {
-            $builder->where('company_id', $filters['company_id']);
+        // Archive tables key tenancy on source_company_id (set by export() for
+        // non-super callers); a super export leaves it unset to span all tenants.
+        if (!empty($filters['source_company_id'])) {
+            $builder->where('source_company_id', (int) $filters['source_company_id']);
         }
         if (!empty($filters['date_from'])) {
             $dateCol = ($type === 'attendance') ? 'clock_in' : 'created_at';
