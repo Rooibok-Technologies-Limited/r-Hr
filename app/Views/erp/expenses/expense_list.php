@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -181,8 +185,62 @@ $get_animate = '';
   </div>
 </div>
 
+<!-- Expense detail modal -->
+<div class="modal fade" id="expense-view-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Expense claim</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-borderless mb-0">
+          <tr><th style="width:40%">Employee</th><td id="ev-employee">--</td></tr>
+          <tr><th>Category</th><td id="ev-category">--</td></tr>
+          <tr><th>Amount</th><td id="ev-amount">--</td></tr>
+          <tr><th>Date</th><td id="ev-date">--</td></tr>
+          <tr><th>Description</th><td id="ev-description">--</td></tr>
+          <tr><th>Status</th><td id="ev-status">--</td></tr>
+          <tr><th>Approved by</th><td id="ev-approved-by">--</td></tr>
+          <tr><th>Approved at</th><td id="ev-approved-at">--</td></tr>
+          <tr><th>Submitted</th><td id="ev-created">--</td></tr>
+          <tr id="ev-receipt-row" class="d-none"><th>Receipt</th><td><a id="ev-receipt" href="#" target="_blank" class="btn btn-sm btn-light-info"><i class="feather icon-paperclip"></i> Open receipt</a></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 $(document).ready(function(){
+  // view expense detail
+  $(document).on('click', '.view-expense', function(){
+    var id = $(this).data('record-id');
+    $.ajax({
+      url: site_url + '/erp/expenses/read/',
+      type: 'POST',
+      data: { _token: id, csrf_token_name: csrf_hash },
+      dataType: 'json',
+      success: function(data){
+        if(data.csrf_hash){ csrf_hash = data.csrf_hash; }
+        if(!data.ok){ toastr.error(data.reason || 'Could not load expense'); return; }
+        var badge = {approved:'success', rejected:'danger', pending:'warning'}[data.status] || 'secondary';
+        $('#ev-employee').text(data.employee);
+        $('#ev-category').text(data.category);
+        $('#ev-amount').text(data.amount);
+        $('#ev-date').text(data.date);
+        $('#ev-description').text(data.description);
+        $('#ev-status').html('<span class="badge badge-'+badge+'">'+data.status+'</span>');
+        $('#ev-approved-by').text(data.approved_by || '--');
+        $('#ev-approved-at').text(data.approved_at || '--');
+        $('#ev-created').text(data.created_at || '--');
+        if(data.receipt){ $('#ev-receipt').attr('href', data.receipt); $('#ev-receipt-row').removeClass('d-none'); }
+        else { $('#ev-receipt-row').addClass('d-none'); }
+        $('#expense-view-modal').modal('show');
+      },
+      error: function(){ toastr.error('Could not load expense'); }
+    });
+  });
   // approve expense
   $(document).on('click', '.approve-expense', function(){
     var id = $(this).data('record-id');

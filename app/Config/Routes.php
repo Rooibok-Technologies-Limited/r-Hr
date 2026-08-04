@@ -460,6 +460,7 @@ $routes->post('erp/visitors-list-server', 'Erp\Visitors::visitors_list_server', 
 // Phase 7.3: Expense Claims
 $routes->get('erp/expenses', 'Erp\Expenses::index', ['filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/expenses/list', 'Erp\Expenses::expenses_list', ['filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/expenses/read', 'Erp\Expenses::read', ['filter' => 'checklogin']);
 $routes->post('erp/expenses/add', 'Erp\Expenses::add_expense', ['filter' => 'checklogin']);
 $routes->post('erp/expenses/approve', 'Erp\Expenses::approve_expense', ['filter' => 'checklogin']);
 $routes->post('erp/expenses/reject', 'Erp\Expenses::reject_expense', ['filter' => 'checklogin']);

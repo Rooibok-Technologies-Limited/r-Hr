@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * Phase 7.3: Expense Claims Module
  */
 namespace App\Controllers\Erp;
@@ -101,7 +105,7 @@ class Expenses extends BaseController {
 			}
 
 			// actions
-			$actions = '';
+			$actions = '<button type="button" class="btn icon-btn btn-sm btn-light-primary waves-effect waves-light view-expense" data-record-id="'.uencode($r['expense_id']).'" data-toggle="tooltip" title="View"><i class="feather icon-eye"></i></button> ';
 			if($r['status'] == 'pending'){
 				if(in_array('expense3',staff_role_resource()) || $user_info['user_type'] == 'company'){
 					$actions .= '<button type="button" class="btn icon-btn btn-sm btn-light-success waves-effect waves-light approve-expense" data-record-id="'.uencode($r['expense_id']).'" data-toggle="tooltip" title="Approve"><i class="feather icon-check"></i></button> ';
@@ -125,6 +129,56 @@ class Expenses extends BaseController {
 		$output = array("data" => $data);
 		echo json_encode($output);
 		exit();
+	}
+
+	// GET/POST - full detail for one expense (view modal), tenant-scoped.
+	public function read()
+	{
+		$session  = \Config\Services::session();
+		$usession = $session->get('sup_username');
+		if (! $session->has('sup_username')) {
+			return $this->response->setStatusCode(401)->setJSON(['ok' => false]);
+		}
+		$UsersModel = new UsersModel();
+		$user_info  = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
+		if (empty($user_info)) {
+			return $this->response->setStatusCode(401)->setJSON(['ok' => false]);
+		}
+
+		$id = (int) udecode(strip_tags(trim((string) ($this->request->getPost('_token') ?: $this->request->getGet('id')))));
+		$exp = (new ExpenseModel())->where('expense_id', $id)->first();
+		if (! $exp) {
+			return $this->response->setJSON(['ok' => false, 'reason' => 'not found']);
+		}
+
+		// [SECURITY] tenant scoping: staff → own claims; company → own company; super → any.
+		$type = $user_info['user_type'];
+		if ($type === 'staff' && (int) $exp['employee_id'] !== (int) $usession['sup_user_id']) {
+			return $this->response->setStatusCode(403)->setJSON(['ok' => false]);
+		}
+		if ($type === 'company' && (int) $exp['company_id'] !== (int) $usession['sup_user_id']) {
+			return $this->response->setStatusCode(403)->setJSON(['ok' => false]);
+		}
+
+		$xin_system = erp_company_settings();
+		$emp   = $UsersModel->where('user_id', $exp['employee_id'])->first();
+		$cat   = (new ExpenseCategoryModel())->where('category_id', $exp['category_id'])->first();
+		$appr  = ! empty($exp['approved_by']) ? $UsersModel->where('user_id', $exp['approved_by'])->first() : null;
+
+		return $this->response->setJSON([
+			'ok'          => true,
+			'employee'    => $emp ? trim($emp['first_name'] . ' ' . $emp['last_name']) : '--',
+			'category'    => $cat ? $cat['category_name'] : '--',
+			'amount'      => number_to_currency($exp['amount'], $exp['currency'] ?: ($xin_system['default_currency'] ?? 'UGX'), null, 2),
+			'date'        => $exp['expense_date'],
+			'description' => $exp['description'] ?: '--',
+			'status'      => $exp['status'],
+			'receipt'     => ! empty($exp['receipt_path']) ? site_url('public/uploads/expenses/' . $exp['receipt_path']) : null,
+			'approved_by' => $appr ? trim($appr['first_name'] . ' ' . $appr['last_name']) : null,
+			'approved_at' => $exp['approved_at'],
+			'created_at'  => $exp['created_at'],
+			'csrf_hash'   => csrf_hash(),
+		]);
 	}
 
 	// POST - staff submits expense
