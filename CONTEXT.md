@@ -3,21 +3,28 @@
   @copyright 2026 Rooibok Technologies. All rights reserved.
 -->
 # Project Context
-Last updated: 2026-08-04
+Last updated: 2026-08-04 (eve)
 
 ## Current task
 **Public-launch deployment-readiness push (2026-08-04, in progress).** Ran a 6-agent
-audit of the whole system (crash, super-admin, security, staff/client, company-admin,
-UX). Fixed + pushed: super-admin **privilege escalation** (42 routes → `superauth`),
-**forgeable id tokens** (HMAC), super-admin Add-Company/Update-Plan/invoice bugs,
-Tasks save crash, staff my-profile / create-ticket / double-logout / attendance-list
-500s, CSV import templates, employee-360 + staff-list null crashes, 35 orphaned ajax
-routes, team-member flow, feature-gating by plan tier. **▶ RESUME = Class A save 500s
-(6 modules: Invoices/Purchases/Orders/Estimates/Quotes/Talent — line-item array bug).**
-Then: tenant-scoping (~25 controllers), XSS + Auth is_active + rate-limits, branded
-404/500 pages, fill legal pages, then the live Playwright suite. **PENDING USER: the
-employee-ID auto-gen format image.** Full detail: `.claude`-memory
+audit then worked the security backlog to a stopping point. All fixed + pushed to main:
+super-admin **privilege escalation** (42 routes→`superauth`), **forgeable id tokens**
+(HMAC), Class-A save 500s (array-input crash, 15 controllers `79fcf00`), **tenant
+scoping WRITE surface** (86 sites + Employees `ownsEmployee`, `ce0be9d`/`173cf76`),
+**XSS + Auth is_active** (org_chart esc-js, `hex_color` theme guard, `9653cfb`),
+**reset anti-enumeration + register throttle** (`d4ba521`), **read-surface IDOR**
+(5 Employees lists + Timesheet + ArchiveExport full-tenant-dump, `743524e`), and
+**notification/email/search hardening** (notif IDOR, global-search fail-closed,
+email-template superauth lockdown, Notifier try/catch, `71f2ea3`). Search audit found
+**0 SQL injection** app-wide.
+
+**▶ RESUME = `docs/security/security-backlog-2026-08.md` (P1–P9).** Top items:
+**P1 [HIGH] dialog_* modal stored-XSS + object-level authz sweep** (cloned scaffold →
+scoped fetch + `esc()`, then sweep), **P2 [HIGH] Mailbox reply/send IDOR**. Then P3–P9,
+branded 404/500 + legal pages, then the live Playwright suite. **PENDING USER: the
+employee-ID auto-gen format image.** Full detail: that backlog doc + `.claude`-memory
 `hr-audit-findings-2026-08-04` + `hr-deploy-readiness-2026-08`.
+_(User pausing 2026-08-04 eve — continues tomorrow after limit reset.)_
 
 ### Prior: ADR-003 **Phase 2 — tenant enforcement + clean erp-less URLs** — DONE (2026-08-04).
 Resolution moved from a filter to the `pre_system` event (`App\Libraries\TenantBootstrap`)
