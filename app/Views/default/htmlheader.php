@@ -110,7 +110,7 @@ $xin_com_system = erp_company_settings();
    <link rel="stylesheet" href="<?= base_url();?>/public/assets/css/plugins/bars-1to10.css">
    <!-- rangeslider css -->
 	<link rel="stylesheet" href="<?= base_url();?>/public/assets/css/plugins/bootstrap-slider.min.css">
-    <?php if($user_info['user_type'] == 'customer'){?>
+    <?php if(($user_info['user_type'] ?? '') == 'customer'){?>
 	<link rel="stylesheet" href="<?= base_url();?>/public/assets/css/layout-advance.css">
     <?php } ?>
     <link rel="stylesheet" href="<?= base_url();?>/public/assets/css/plugins/fullcalendar.min.css">

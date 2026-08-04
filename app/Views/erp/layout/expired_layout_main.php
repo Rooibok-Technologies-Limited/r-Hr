@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -13,13 +17,10 @@ $ConstantsModel = new ConstantsModel();
 $xin_system = $SystemModel->where('setting_id', 1)->first();
 $role_user = $UserRolesModel->where('role_id', 1)->first();
 
-$session = \Config\Services::session();
-$router = service('router');
-
-$username = $session->get('sup_username');
-$user_id = $username['sup_user_id'];
-$user_info = $UsersModel->where('user_id', $user_id)->first();
-$company_types = $ConstantsModel->where('type','company_type')->orderBy('constants_id', 'ASC')->findAll();
+// This layout renders AFTER the session is destroyed (post-expiry), so no
+// logged-in user is available — the old $username['sup_user_id'] lookup crashed
+// on PHP 8 (offset on null). It was dead code anyway (only htmlheader + subview
+// are rendered below).
 ?>
 <?= view('default/htmlheader');?>
 <?= $subview;?>

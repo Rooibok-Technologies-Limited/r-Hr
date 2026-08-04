@@ -1,16 +1,17 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
-use App\Models\UsersModel;
 
+// Public password-reset landing — no logged-in user here. Only system settings
+// (toastr config below) are needed; the old session/user_info lookup crashed on
+// PHP 8 (session key is 'sup_username', not 'sup_user_id' → offset on null).
 $SystemModel = new SystemModel();
-$UsersModel = new UsersModel();
+$xin_system  = $SystemModel->where('setting_id', 1)->first();
 
-$session = \Config\Services::session();
-$username = $session->get('sup_user_id');
-$xin_system = $SystemModel->where('setting_id', 1)->first();
-$user_info = $UsersModel->where('user_id', $username['sup_user_id'])->first();
-
-?>  
+?>
 <!DOCTYPE html>
 <html lang="en">
 

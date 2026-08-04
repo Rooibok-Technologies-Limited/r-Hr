@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\ConstantsModel;
 use App\Models\CountryModel;
 use App\Models\MembershipModel;
@@ -32,8 +36,8 @@ $all_countries = $CountryModel->orderBy('country_id', 'ASC')->findAll();
 //$result = $UsersModel->where('user_id', $field_id)->first();
 //$company_membership = $CompanymembershipModel->where('membership_id', $result['membership_id'])->first();
 
-$result = $UsersModel->where('user_id', $usession['sup_user_id'])->where('user_type','company')->first();
-$membership = $MembershipModel->where('membership_id', $membership_id)->first();
+// (removed dead $result/$membership lookups — unused, and crashed on PHP 8 when
+// the session was already destroyed: offset on null $usession.)
 ?>
 
 <div class="auth-wrapper maintance">
