@@ -622,6 +622,13 @@ class Employees extends BaseController {
 				$company_id = $usession['sup_user_id'];
 				$company_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 			}
+				// Enforce the subscription plan's employee-seat limit.
+				$__seat = company_employee_limit((int) $company_id);
+				if ($__seat['reached']) {
+					$Return['error'] = 'Your ' . ($__seat['plan'] ?: 'current') . ' plan allows up to ' . $__seat['limit'] . ' employees (you have ' . $__seat['current'] . '). Upgrade your plan to add more.';
+					$this->output($Return);
+					exit;
+				}
 			// set rules
 			$validation->setRules([
 					'first_name' => 'required',

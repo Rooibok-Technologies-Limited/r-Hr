@@ -222,8 +222,11 @@ class Application extends BaseController {
 			$defShift = $shift ? (int) $shift['office_shift_id'] : 0;
 			$company     = $UsersModel->where('user_id', $companyId)->first();
 			$companyName = $company['company_name'] ?? '';
+			$seat = company_employee_limit($companyId);
+			$remaining = $seat['limit'] > 0 ? max(0, $seat['limit'] - $seat['current']) : PHP_INT_MAX;
 			foreach ($rows as $i => $row) {
 				$rn    = $i + 2;
+				if ($imported >= $remaining) { $errors[] = "Row $rn: plan employee limit (" . $seat['limit'] . ") reached — upgrade to add more"; continue; }
 				$first = strip_tags(trim((string) ($row['first_name'] ?? '')));
 				$last  = strip_tags(trim((string) ($row['last_name'] ?? '')));
 				$email = strip_tags(trim((string) ($row['email'] ?? '')));

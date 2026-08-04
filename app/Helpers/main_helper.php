@@ -92,6 +92,31 @@ if( !function_exists('asset_v') ){
 	}
 }
 
+if( !function_exists('company_employee_limit') ){
+	/**
+	 * A company's employee-seat status from its subscription plan.
+	 * Returns ['limit'=>int (0 = unlimited), 'current'=>int, 'reached'=>bool,
+	 * 'plan'=>string]. Used to ENFORCE the plan's total_employees privilege when
+	 * adding staff (manual add + CSV import).
+	 */
+	function company_employee_limit(int $companyId): array {
+		$db = \Config\Database::connect();
+		$limit = 0; $plan = '';
+		$cm = $db->table('ci_company_membership')->select('membership_id')->where('company_id', $companyId)->get()->getRowArray();
+		if ($cm) {
+			$m = $db->table('ci_membership')->select('total_employees, membership_type')->where('membership_id', $cm['membership_id'])->get()->getRowArray();
+			if ($m) { $limit = (int) $m['total_employees']; $plan = (string) $m['membership_type']; }
+		}
+		$current = $db->table('ci_erp_users')->where('company_id', $companyId)->where('user_type', 'staff')->countAllResults();
+		return [
+			'limit'   => $limit,
+			'current' => $current,
+			'reached' => ($limit > 0 && $current >= $limit),
+			'plan'    => $plan,
+		];
+	}
+}
+
 if( !function_exists('tenant_url') ){
 	/**
 	 * Canonical tenant URL in the clean, erp-less form (ADR-003 Phase 2).
