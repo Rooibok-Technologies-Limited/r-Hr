@@ -301,6 +301,14 @@ $routes->get('erp/contact-support', 'Contact::index', ['namespace' => 'App\Contr
 $routes->get('erp/payroll-list', 'Payroll::index', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/payroll-view/(:segment)', 'Payroll::payroll_view', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/payslip-history', 'Payroll::payroll_history', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+// payroll run wizard (ADR-001): period -> preview -> approve -> disburse
+$routes->get('erp/payroll-run', 'PayrollRun::wizard', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->get('erp/payroll-run/list', 'PayrollRun::list_runs', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->post('erp/payroll-run/preview', 'PayrollRun::preview', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->post('erp/payroll-run/generate', 'PayrollRun::generate', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->post('erp/payroll-run/approve', 'PayrollRun::approve', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->post('erp/payroll-run/disburse', 'PayrollRun::disburse', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->post('erp/payroll-run/cancel', 'PayrollRun::cancel', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/advance-salary', 'Payroll::advance_salary', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/loan-request', 'Payroll::request_loan', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 // invoices || Staff

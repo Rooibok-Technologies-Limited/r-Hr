@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\SuperroleModel;
 use App\Models\UsersModel;
@@ -55,6 +59,9 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
   <li class="pc-item"><a href="<?= site_url('erp/payslip-history');?>" class="pc-link "><span class="pc-micon"><i data-feather="speaker"></i></span><span class="pc-mtext">
     <?= lang('Dashboard.left_payroll');?>
     </span></a></li>
+  <?php } ?>
+  <?php if(in_array('pay1',staff_role_resource())) {?>
+  <li class="pc-item"><a href="<?= site_url('erp/payroll-run');?>" class="pc-link "><span class="pc-micon"><i data-feather="dollar-sign"></i></span><span class="pc-mtext">Payroll run</span></a></li>
   <?php } ?>
   <?php if(in_array('leave1',staff_role_resource()) || in_array('expense1',staff_role_resource()) || in_array('overtime_req1',staff_role_resource()) || in_array('travel1',staff_role_resource())) {?>
   <!-- Requests -->

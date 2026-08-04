@@ -99,6 +99,7 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
   <li class="pc-item"> <a href="<?= site_url('erp/payroll-list');?>" class="pc-link"> <span class="pc-micon"><i data-feather="speaker"></i></span><span class="pc-mtext">
     <?= lang('Dashboard.left_payroll');?>
     </span> </a> </li>
+  <li class="pc-item"> <a href="<?= site_url('erp/payroll-run');?>" class="pc-link"> <span class="pc-micon"><i data-feather="dollar-sign"></i></span><span class="pc-mtext">Payroll run</span> </a> </li>
   <!-- Wallet & Disbursements (ROADMAP F2, ADR-002) -->
   <li class="pc-item"> <a href="<?= site_url('erp/wallet');?>" class="pc-link"> <span class="pc-micon"><i data-feather="credit-card"></i></span><span class="pc-mtext">Wallet</span> </a> </li>
   <li class="pc-item"> <a href="<?= site_url('erp/disbursements');?>" class="pc-link"> <span class="pc-micon"><i data-feather="send"></i></span><span class="pc-mtext">Disbursements</span> </a> </li>

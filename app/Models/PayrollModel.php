@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 namespace App\Models;
 
 use CodeIgniter\Model;
@@ -10,7 +14,7 @@ class PayrollModel extends Model {
     protected $primaryKey = 'payslip_id';
     
 	// get all fields of table
-    protected $allowedFields = ['payslip_id','payslip_key','company_id','staff_id','salary_month','wages_type','payslip_type','basic_salary','daily_wages','hours_worked','total_allowances','total_commissions','total_statutory_deductions','total_other_payments','net_salary','paye_tax','nssf_employee','nssf_employer','payment_method','pay_comments','is_payment','year_to_date','is_advance_salary_deduct','advance_salary_amount','is_loan_deduct','loan_amount','status','created_at'];
+    protected $allowedFields = ['payslip_id','payslip_key','company_id','staff_id','salary_month','wages_type','payslip_type','basic_salary','daily_wages','hours_worked','total_allowances','total_commissions','total_statutory_deductions','total_other_payments','net_salary','paye_tax','nssf_employee','nssf_employer','payment_method','pay_comments','is_payment','year_to_date','is_advance_salary_deduct','advance_salary_amount','is_loan_deduct','loan_amount','status','payroll_run_id','created_at'];
 	
 	protected $validationRules = [];
 	protected $validationMessages = [];
