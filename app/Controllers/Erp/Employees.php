@@ -2963,7 +2963,8 @@ class Employees extends BaseController {
 
 		return $this->response->setJSON([
 			'employee_id' => $id,
-			'qr_url'      => $qrUrl,
+			'qr_url'      => $qrUrl,               // legacy Google-Charts URL (defunct)
+			'qr_data'     => uencode((int) $id),   // render this client-side (qrcode.min.js)
 			'name'        => $employee['first_name'] . ' ' . $employee['last_name'],
 		]);
 	}

@@ -57,7 +57,7 @@ $is_super_user = !empty($user_info['user_type']) && $user_info['user_type'] === 
           <h6>1. Scan this QR code with your authenticator app</h6>
           <p class="text-muted mb-2">(Google Authenticator, Authy, etc.)</p>
           <div class="mb-3">
-            <img id="2fa-qr-image" src="" alt="QR Code" style="max-width: 200px; height: 200px; border: 1px solid #ddd; padding: 8px;">
+            <div id="2fa-qr-image" style="display:inline-block; border: 1px solid #ddd; padding: 8px; min-width: 200px; min-height: 200px;"></div>
           </div>
           <div class="mb-3">
             <label class="text-muted">Or enter this key manually:</label>
@@ -124,6 +124,7 @@ $is_super_user = !empty($user_info['user_type']) && $user_info['user_type'] === 
   </div>
 </div>
 
+<script src="<?= base_url('public/assets/plugins/qrcode/qrcode.min.js'); ?>"></script>
 <script type="text/javascript">
 $(document).ready(function(){
 
@@ -141,9 +142,16 @@ $(document).ready(function(){
 					toastr.error(res.error);
 					btn.prop('disabled', false).html('<i class="fas fa-shield-alt mr-1"></i> Enable Two-Factor Authentication');
 				} else {
-					// Show QR code using Google Charts API
-					var qrImageUrl = 'https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' + encodeURIComponent(res.qr_url);
-					$('#2fa-qr-image').attr('src', qrImageUrl);
+					// Render the QR client-side from the otpauth:// URI. The TOTP
+					// secret never leaves the browser (unlike the old Google Charts
+					// approach, which sent it to a third party and is now defunct).
+					var qrEl = document.getElementById('2fa-qr-image');
+					qrEl.innerHTML = '';
+					try {
+						new QRCode(qrEl, { text: res.qr_url, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });
+					} catch (e) {
+						qrEl.innerHTML = '<div class="text-muted small p-3">QR unavailable — enter the key below manually.</div>';
+					}
 					$('#2fa-secret-text').val(res.secret);
 					$('#2fa-step-1').hide();
 					$('#2fa-step-2').show();

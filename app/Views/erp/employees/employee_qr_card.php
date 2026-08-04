@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\UsersModel;
 use App\Models\SystemModel;
 use App\Models\DepartmentModel;
@@ -20,7 +24,9 @@ $employee_detail = $StaffdetailsModel->where('user_id', $employee_id)->first();
 $department  = $DepartmentModel->where('department_id', $employee_detail['department_id'] ?? 0)->first();
 $designation = $DesignationModel->where('designation_id', $employee_detail['designation_id'] ?? 0)->first();
 
-$qr_url = $QrCodeGenerator->getEmployeeQrUrl((int)$employee_id, 150);
+// QR payload (encrypted employee id) — rendered client-side below so it works
+// without the defunct Google Charts image API.
+$qr_data = uencode((int) $employee_id);
 
 $photo = (!empty($employee['profile_photo']) && $employee['profile_photo'] !== 'no-photo.jpg')
     ? base_url('uploads/profile/' . $employee['profile_photo'])
@@ -156,10 +162,17 @@ $photo = (!empty($employee['profile_photo']) && $employee['profile_photo'] !== '
         <div class="employee-designation"><?= esc($designation['designation_name'] ?? 'N/A') ?></div>
         <div class="employee-department"><?= esc($department['department_name'] ?? 'N/A') ?></div>
         <div class="qr-container">
-            <img src="<?= $qr_url ?>" alt="Employee QR Code">
+            <div id="empQr" style="display:inline-block;"></div>
         </div>
         <div class="company-name"><?= esc($xin_system['company_name'] ?? $xin_system['application_name'] ?? 'Company') ?></div>
     </div>
     <button class="btn-print" onclick="window.print()">Print ID Card</button>
+<script src="<?= base_url('public/assets/plugins/qrcode/qrcode.min.js'); ?>"></script>
+<script>
+  (function () {
+    var el = document.getElementById('empQr');
+    if (el) { try { new QRCode(el, { text: '<?= esc($qr_data, 'js'); ?>', width: 150, height: 150, correctLevel: QRCode.CorrectLevel.M }); } catch (e) {} }
+  })();
+</script>
 </body>
 </html>

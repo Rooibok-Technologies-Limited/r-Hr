@@ -270,7 +270,7 @@
             <div class="badge-label">Visitor Badge</div>
             <div class="visitor-name-display" id="badgeName"></div>
             <div class="visit-info" id="badgeInfo"></div>
-            <img class="qr-image" id="badgeQr" src="" alt="Visitor QR" width="160" height="160">
+            <div class="qr-image" id="badgeQr" style="width:160px;height:160px;display:inline-block;"></div>
             <div class="qr-note">Show this QR code when checking out</div>
             <button class="btn-new-visitor" id="btnNewVisitor" onclick="resetKiosk()">New Visitor</button>
         </div>
@@ -279,6 +279,7 @@
     <!-- Toast -->
     <div class="toast" id="toast"></div>
 
+    <script src="<?= base_url('public/assets/plugins/qrcode/qrcode.min.js'); ?>"></script>
     <script>
     (function () {
         const BASE = '<?= site_url() ?>';
@@ -368,10 +369,11 @@
         function showBadge(data, name, purpose) {
             document.getElementById('badgeName').textContent = name;
             document.getElementById('badgeInfo').textContent = purpose + ' - ' + new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-            // QR encodes visitor_id for checkout scanning
-            const qrUrl = 'https://chart.googleapis.com/chart?chs=160x160&cht=qr&chl='
-                + encodeURIComponent('visitor:' + data.visitor_id) + '&choe=UTF-8';
-            document.getElementById('badgeQr').src = qrUrl;
+            // QR encodes visitor_id for checkout scanning — rendered locally
+            // (the old Google Charts QR API is defunct).
+            var qrEl = document.getElementById('badgeQr');
+            qrEl.innerHTML = '';
+            try { new QRCode(qrEl, { text: 'visitor:' + data.visitor_id, width: 160, height: 160, correctLevel: QRCode.CorrectLevel.M }); } catch (e) {}
             document.getElementById('badgeOverlay').classList.add('active');
         }
 
