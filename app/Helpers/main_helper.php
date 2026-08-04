@@ -823,23 +823,35 @@ if( !function_exists('all_timezones') ){
 		}
 	}
 	if( !function_exists('uencode') ){
-		function uencode($value=false){ 
+		// Encrypt-then-MAC: AES-256-CBC ciphertext with an appended HMAC-SHA256 tag.
+		// The raw CBC scheme was malleable (an attacker could bit-flip the IV to make a
+		// token decrypt to any id without the key) — the MAC makes tokens unforgeable.
+		function uencode($value=false){
 			if(!$value) return false;
-			$iv_size = openssl_cipher_iv_length('aes-256-cbc');
-			$iv = openssl_random_pseudo_bytes($iv_size);
+			$iv_size   = openssl_cipher_iv_length('aes-256-cbc');
+			$iv        = openssl_random_pseudo_bytes($iv_size);
 			$crypttext = openssl_encrypt($value, 'aes-256-cbc', secret_key(), OPENSSL_RAW_DATA, $iv);
-			return safe_b64encode($iv.$crypttext); 
+			$payload   = $iv.$crypttext;
+			$mac       = hash_hmac('sha256', $payload, secret_key(), true);
+			return safe_b64encode($payload.$mac);
 		}
 	}
 	if( !function_exists('udecode') ){
 		function udecode($value=false){
 			if(!$value) return false;
-			$crypttext = safe_b64decode($value);
+			$raw     = safe_b64decode($value);
 			$iv_size = openssl_cipher_iv_length('aes-256-cbc');
-			$iv = substr($crypttext, 0, $iv_size);
-			$crypttext = substr($crypttext, $iv_size);
+			$maclen  = 32; // HMAC-SHA256
+			if(strlen($raw) < $iv_size + $maclen + 1) return false;
+			$mac     = substr($raw, -$maclen);
+			$payload = substr($raw, 0, -$maclen);
+			// Reject any tampered/forged token in constant time before decrypting.
+			if(!hash_equals(hash_hmac('sha256', $payload, secret_key(), true), $mac)) return false;
+			$iv        = substr($payload, 0, $iv_size);
+			$crypttext = substr($payload, $iv_size);
 			if(!$crypttext) return false;
 			$decrypttext = openssl_decrypt($crypttext, 'aes-256-cbc', secret_key(), OPENSSL_RAW_DATA, $iv);
+			if($decrypttext === false) return false;
 			return rtrim($decrypttext);
 		}
 	}
