@@ -105,6 +105,28 @@ class BaseController extends Controller
 		return $uid;
 	}
 
+	/**
+	 * Ownership guard for employee-record mutations. Here $id is a target
+	 * employee's user_id. Returns true when the target is the acting user
+	 * themselves (owners carry company_id=0 on their own ci_erp_users row, so a
+	 * plain company_id scope would lock them out of their own account) or a user
+	 * belonging to the acting session's company. Use as a guard-then-act check on
+	 * ci_erp_users / ci_erp_users_details writes.
+	 */
+	protected function ownsEmployee($id): bool {
+		$id = (int) $id;
+		if ($id === 0) {
+			return false;
+		}
+		$usession = \Config\Services::session()->get('sup_username');
+		$ownId = (int) ($usession['sup_user_id'] ?? 0);
+		if ($id === $ownId) {
+			return true;
+		}
+		$u = (new \App\Models\UsersModel())->select('company_id')->where('user_id', $id)->first();
+		return $u !== null && (int) $u['company_id'] === $this->tenantCompanyId();
+	}
+
 	/*Function to set JSON output*/
 	public function output($Return=array()){
 		/*Set response header*/

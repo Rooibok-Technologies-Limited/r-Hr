@@ -1025,6 +1025,7 @@ class Employees extends BaseController {
 					'option_title'  => $option_title,
 					'contract_amount'  => $contract_amount
 				];
+				if(!($__o=(new ContractModel())->select('user_id')->where('contract_option_id',$id)->first()) || !$this->ownsEmployee($__o['user_id'])){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 				$result = $ContractModel->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
@@ -1200,6 +1201,7 @@ class Employees extends BaseController {
 					'option_title'  => $option_title,
 					'contract_amount'  => $contract_amount
 				];
+				if(!($__o=(new ContractModel())->select('user_id')->where('contract_option_id',$id)->first()) || !$this->ownsEmployee($__o['user_id'])){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 				$result = $ContractModel->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
@@ -1358,6 +1360,7 @@ class Employees extends BaseController {
 					'option_title'  => $option_title,
 					'contract_amount'  => $contract_amount
 				];
+				if(!($__o=(new ContractModel())->select('user_id')->where('contract_option_id',$id)->first()) || !$this->ownsEmployee($__o['user_id'])){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 				$result = $ContractModel->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
@@ -1533,6 +1536,7 @@ class Employees extends BaseController {
 					'option_title'  => $option_title,
 					'contract_amount'  => $contract_amount
 				];
+				if(!($__o=(new ContractModel())->select('user_id')->where('contract_option_id',$id)->first()) || !$this->ownsEmployee($__o['user_id'])){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 				$result = $ContractModel->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
@@ -1857,6 +1861,7 @@ class Employees extends BaseController {
 				'gender' => $gender,
 				'is_active'  => $status
 			];
+			if(!$this->ownsEmployee($id)){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 			$result = $UsersModel->update($id, $data);
 			// employee details
 			$data2 = [
@@ -1983,6 +1988,7 @@ class Employees extends BaseController {
 				'experience' => $experience,
 			];
 			$MainModel = new MainModel();
+			if(!$this->ownsEmployee($id)){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 			$result = $MainModel->update_employee_record($data,$id);
 			$Return['csrf_hash'] = csrf_hash();	
 			if ($result == TRUE) {
@@ -2054,6 +2060,7 @@ class Employees extends BaseController {
 				'linkedin_profile' => $linkedin_profile,
 			];
 			$MainModel = new MainModel();
+			if(!$this->ownsEmployee($id)){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 			$result = $MainModel->update_employee_record($data,$id);
 			$Return['csrf_hash'] = csrf_hash();	
 			if ($result == TRUE) {
@@ -2153,6 +2160,7 @@ class Employees extends BaseController {
 				'bank_branch' => $bank_branch,
 			];
 			$MainModel = new MainModel();
+			if(!$this->ownsEmployee($id)){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 			$result = $MainModel->update_employee_record($data,$id);
 			$Return['csrf_hash'] = csrf_hash();	
 			if ($result == TRUE) {
@@ -2234,6 +2242,7 @@ class Employees extends BaseController {
 				'contact_address' => $contact_address,
 			];
 			$MainModel = new MainModel();
+			if(!$this->ownsEmployee($id)){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 			$result = $MainModel->update_employee_record($data,$id);
 			$Return['csrf_hash'] = csrf_hash();	
 			if ($result == TRUE) {
@@ -2386,6 +2395,7 @@ class Employees extends BaseController {
 				'gender' => $gender,
 				'is_active'  => $status
 			];
+			if(!$this->ownsEmployee($id)){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 			$result = $UsersModel->update($id, $data);
 			// employee details
 			$data2 = [
@@ -2543,6 +2553,7 @@ class Employees extends BaseController {
 				'role_description' => $role_description,
 			];
 			$MainModel = new MainModel();
+			if(!$this->ownsEmployee($id)){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 			$result = $MainModel->update_employee_record($data2,$id);
 			$Return['csrf_hash'] = csrf_hash();	
 			if ($result == TRUE) {
@@ -2635,6 +2646,7 @@ class Employees extends BaseController {
 				'email'  => $email,
 				'username'  => $username,
 			];
+			if(!$this->ownsEmployee($id)){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 			$result = $UsersModel->update($id, $data);
 			$Return['csrf_hash'] = csrf_hash();	
 			if ($result == TRUE) {
@@ -2692,6 +2704,7 @@ class Employees extends BaseController {
 				$data = [
 					'profile_photo'  => $file_name
 				];
+				if(!$this->ownsEmployee($id)){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 				$result = $UsersModel->update($id, $data);
 				$Return['csrf_hash'] = csrf_hash();	
 			} else {
@@ -2757,6 +2770,7 @@ class Employees extends BaseController {
 				'password' => $password_hash,
 			];
 			
+			if(!$this->ownsEmployee($id)){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 			$result = $UsersModel->update($id, $data);	
 			$Return['csrf_hash'] = csrf_hash();	
 			if ($result == TRUE) {
@@ -2821,6 +2835,7 @@ class Employees extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$ContractModel = new ContractModel();
+			if(!($__o=(new ContractModel())->select('user_id')->where('contract_option_id',$id)->first()) || !$this->ownsEmployee($__o['user_id'])){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 			$result = $ContractModel->where('contract_option_id', $id)->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.employee_delete_allowance_success');
@@ -2844,6 +2859,7 @@ class Employees extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$ContractModel = new ContractModel();
+			if(!($__o=(new ContractModel())->select('user_id')->where('contract_option_id',$id)->first()) || !$this->ownsEmployee($__o['user_id'])){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 			$result = $ContractModel->where('contract_option_id', $id)->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.employee_delete_commission_success');
@@ -2867,6 +2883,7 @@ class Employees extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$ContractModel = new ContractModel();
+			if(!($__o=(new ContractModel())->select('user_id')->where('contract_option_id',$id)->first()) || !$this->ownsEmployee($__o['user_id'])){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 			$result = $ContractModel->where('contract_option_id', $id)->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.employee_delete_statutory_deduction_success');
@@ -2890,6 +2907,7 @@ class Employees extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$ContractModel = new ContractModel();
+			if(!($__o=(new ContractModel())->select('user_id')->where('contract_option_id',$id)->first()) || !$this->ownsEmployee($__o['user_id'])){ $this->output(['result'=>'','error'=>lang('Main.xin_error_msg'),'csrf_hash'=>csrf_hash()]); }
 			$result = $ContractModel->where('contract_option_id', $id)->delete($id);
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.employee_delete_reimbursement_success');
