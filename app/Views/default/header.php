@@ -359,7 +359,8 @@ $setup_modules = !empty($xin_com_system['setup_modules']) ? unserialize($xin_com
       data.notifications.forEach(function(n){
         var cls = n.is_read == 0 ? 'notif-item unread' : 'notif-item';
         var href = n.link ? (n.link.indexOf('http') === 0 ? n.link : baseUrl + n.link.replace(/^\//, '')) : '<?= site_url("erp/notifications-page"); ?>';
-        html += '<a href="'+href+'" class="'+cls+'" data-nid="'+n.notification_id+'">';
+        var safeHref = String(href).replace(/"/g,'%22').replace(/</g,'%3C');
+        html += '<a href="'+safeHref+'" class="'+cls+'" data-nid="'+n.notification_id+'">';
         html += '<div class="notif-item-title">'+gsEsc(n.title)+'</div>';
         if(n.body) html += '<div class="notif-item-body">'+gsEsc(n.body)+'</div>';
         html += '<div class="notif-item-time">'+timeAgo(n.created_at)+'</div>';

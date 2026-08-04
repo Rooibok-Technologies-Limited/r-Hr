@@ -1601,9 +1601,18 @@ class Settings extends BaseController {
 		$validation =  \Config\Services::validation();
 		$session = \Config\Services::session();
 		$request = \Config\Services::request();
-		$usession = $session->get('sup_username');		
+		$usession = $session->get('sup_username');
 		$EmailtemplatesModel = new EmailtemplatesModel();
-	
+
+		// Defence-in-depth (the route is also superauth-gated): transactional
+		// email/SMS templates are GLOBAL — shared by every tenant — so only the
+		// platform super-admin may edit them. Otherwise any staff member could
+		// rewrite the password-reset body ({password}/{site_url}) for all tenants. [SECURITY]
+		$__actor = (new \App\Models\UsersModel())->where('user_id', $usession['sup_user_id'] ?? 0)->first();
+		if (empty($__actor) || $__actor['user_type'] !== 'super_user') {
+			return $this->response->setStatusCode(403)->setJSON(['error' => 'unauthorized']);
+		}
+
 		if ($this->request->getPost('type') === 'edit_template') {
 			$Return = array('result'=>'', 'error'=>'', 'csrf_hash'=>'');
 			$Return['csrf_hash'] = csrf_hash();

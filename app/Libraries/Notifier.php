@@ -87,14 +87,20 @@ class Notifier
             $tokens  = $this->tokens($user, $data);
             $allowed = $this->channelsFor($userId, $event, $channels);
 
-            if ($allowed['inapp']) {
-                $this->sendInApp($user, $data, $tokens);
-            }
-            if ($allowed['email'] && $emailTemplate !== null && ! empty($user['email'])) {
-                $this->queueEmail($user['email'], $emailTemplate, $tokens);
-            }
-            if ($allowed['sms'] && $smsTemplate !== null && ! empty($user['contact_number'])) {
-                $this->queueSms((int) $user['user_id'], $user['contact_number'], $smsTemplate, $tokens);
+            // A delivery failure must never abort the business action that triggered
+            // the notification (leave approval, registration, ...). Log and move on. [RELIABILITY]
+            try {
+                if ($allowed['inapp']) {
+                    $this->sendInApp($user, $data, $tokens);
+                }
+                if ($allowed['email'] && $emailTemplate !== null && ! empty($user['email'])) {
+                    $this->queueEmail($user['email'], $emailTemplate, $tokens);
+                }
+                if ($allowed['sms'] && $smsTemplate !== null && ! empty($user['contact_number'])) {
+                    $this->queueSms((int) $user['user_id'], $user['contact_number'], $smsTemplate, $tokens);
+                }
+            } catch (\Throwable $e) {
+                log_message('error', 'Notifier delivery failed for user ' . $userId . ': ' . $e->getMessage());
             }
         }
     }

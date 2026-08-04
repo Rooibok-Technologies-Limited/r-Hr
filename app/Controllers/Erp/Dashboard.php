@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -174,15 +178,23 @@ class Dashboard extends BaseController {
 			$companies = $cq ? $cq->getResultArray() : [];
 		}
 
-		// Employees
+		// Employees — fail CLOSED: only super (all), company (own) and staff (own
+		// company) may search staff; any other user_type gets nothing rather than
+		// falling through to an unscoped, cross-tenant list. [SECURITY]
 		$emp_where = '';
+		$emp_allowed = true;
 		if ($user_type === 'company') {
 			$emp_where = " AND company_id=" . (int)$user_id;
 		} elseif ($user_type === 'staff') {
 			$emp_where = " AND company_id=" . (int)($user['company_id'] ?? 0);
+		} elseif ($user_type !== 'super_user') {
+			$emp_allowed = false;
 		}
-		$eq = $db->query("SELECT user_id, first_name, last_name, email FROM ci_erp_users WHERE user_type='staff'".$emp_where." AND (first_name ILIKE ".$db->escape($term)." OR last_name ILIKE ".$db->escape($term)." OR email ILIKE ".$db->escape($term).") LIMIT 5");
-		$employees = $eq ? $eq->getResultArray() : [];
+		$employees = [];
+		if ($emp_allowed) {
+			$eq = $db->query("SELECT user_id, first_name, last_name, email FROM ci_erp_users WHERE user_type='staff'".$emp_where." AND (first_name ILIKE ".$db->escape($term)." OR last_name ILIKE ".$db->escape($term)." OR email ILIKE ".$db->escape($term).") LIMIT 5");
+			$employees = $eq ? $eq->getResultArray() : [];
+		}
 
 		// Invoices (super_user only)
 		$invoices = [];
@@ -213,10 +225,17 @@ class Dashboard extends BaseController {
 	 */
 	public function delete_notification()
 	{
+		$session = \Config\Services::session();
+		$usession = $session->get('sup_username');
 		$id = $this->request->getPost('id');
-		if ($id) {
+		if ($id && !empty($usession)) {
 			$db = \Config\Database::connect();
-			$db->table('ci_notifications')->where('notification_id', (int)$id)->delete();
+			// Scope to the caller's own notifications — a bare notification_id is a
+			// guessable sequential PK, so an unscoped delete is cross-tenant IDOR. [SECURITY]
+			$db->table('ci_notifications')
+				->where('notification_id', (int)$id)
+				->where('user_id', (int)$usession['sup_user_id'])
+				->delete();
 		}
 		return $this->response->setJSON(['ok'=>true]);
 	}
@@ -276,10 +295,16 @@ class Dashboard extends BaseController {
 	 */
 	public function mark_notification_read()
 	{
+		$session = \Config\Services::session();
+		$usession = $session->get('sup_username');
 		$id = $this->request->getPost('id');
-		if ($id) {
+		if ($id && !empty($usession)) {
 			$db = \Config\Database::connect();
-			$db->table('ci_notifications')->where('notification_id', (int)$id)->update(['is_read' => 1]);
+			// Same ownership scope as delete — never mark another user's row read. [SECURITY]
+			$db->table('ci_notifications')
+				->where('notification_id', (int)$id)
+				->where('user_id', (int)$usession['sup_user_id'])
+				->update(['is_read' => 1]);
 		}
 		return $this->response->setJSON(['ok'=>true]);
 	}

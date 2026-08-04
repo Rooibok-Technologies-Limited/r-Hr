@@ -126,9 +126,9 @@ $routes->match(['get', 'post'], 'erp/settings/delete_db_backup', 'Settings::dele
 $routes->match(['get', 'post'], 'erp/settings/delete_dbsingle_backup', 'Settings::delete_dbsingle_backup', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
 //10: System||Email Templates
 $routes->get('erp/email-templates', 'Settings::email_templates', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
-$routes->match(['get', 'post'], 'erp/settings/update_template', 'Settings::update_template', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
+$routes->match(['get', 'post'], 'erp/settings/update_template', 'Settings::update_template', ['namespace' => 'App\Controllers\Erp','filter' => 'superauth',]);
 $routes->get('erp/sms-templates', 'Settings::sms_templates', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
-$routes->match(['get', 'post'], 'erp/settings/update_sms_template', 'Settings::update_template', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
+$routes->match(['get', 'post'], 'erp/settings/update_sms_template', 'Settings::update_template', ['namespace' => 'App\Controllers\Erp','filter' => 'superauth',]);
 // AJAX list endpoints for settings DataTables
 $routes->get('erp/settings/company_type_list', 'Settings::company_type_list', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/settings/religion_list', 'Settings::religion_list', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
