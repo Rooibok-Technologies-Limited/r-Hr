@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\UsersModel;
 use App\Models\LanguageModel;
@@ -25,7 +29,8 @@ $xin_com_system = erp_company_settings();
 $xin_system = erp_company_settings();
 if($request->getGet('data') === 'deposit' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $TransactionsModel->where('transaction_id', $ifield_id)->where('entity_type','payer')->first();
+$result = $TransactionsModel->where('transaction_id', $ifield_id)->where('entity_type','payer')->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 // payment method
 $payment_method = $ConstantsModel->where('type','payment_method')->orderBy('constants_id', 'ASC')->findAll();
 //get info
@@ -81,7 +86,7 @@ if($user_info['user_type'] == 'staff'){
           <div class="input-group-prepend"><span class="input-group-text">
             <?= $xin_system['default_currency'];?>
             </span></div>
-          <input class="form-control" name="amount" type="text" data-placeholder="<?= lang('Invoices.xin_amount');?>" value="<?php echo $result['amount'];?>">
+          <input class="form-control" name="amount" type="text" data-placeholder="<?= lang('Invoices.xin_amount');?>" value="<?php echo esc($result['amount'] ?? '', 'attr');?>">
         </div>
       </div>
     </div>
@@ -91,7 +96,7 @@ if($user_info['user_type'] == 'staff'){
           <?= lang('Main.xin_e_details_date');?> <span class="text-danger">*</span>
         </label>
         <div class="input-group">
-          <input class="form-control d_date" placeholder="<?php echo date('Y-m-d');?>" name="deposit_date" type="text" value="<?php echo $result['transaction_date'];?>">
+          <input class="form-control d_date" placeholder="<?php echo date('Y-m-d');?>" name="deposit_date" type="text" value="<?php echo esc($result['transaction_date'] ?? '', 'attr');?>">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
         </div>
       </div>
@@ -140,7 +145,7 @@ if($user_info['user_type'] == 'staff'){
         <label for="employee">
           <?= lang('Finance.xin_acc_ref_no');?>
         </label>
-        <input class="form-control" placeholder="<?= lang('Finance.xin_acc_ref_example');?>" name="reference" type="text" value="<?php echo $result['reference'];?>">
+        <input class="form-control" placeholder="<?= lang('Finance.xin_acc_ref_example');?>" name="reference" type="text" value="<?php echo esc($result['reference'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-4">
@@ -176,7 +181,7 @@ if($user_info['user_type'] == 'staff'){
         <label for="description">
           <?= lang('Main.xin_description');?>
         </label>
-        <textarea class="form-control textarea" placeholder="<?= lang('Main.xin_description');?>" name="description" cols="30" rows="2"><?php echo $result['description'];?></textarea>
+        <textarea class="form-control textarea" placeholder="<?= lang('Main.xin_description');?>" name="description" cols="30" rows="2"><?php echo esc($result['description'] ?? '');?></textarea>
       </div>
     </div>
   </div>
@@ -272,7 +277,8 @@ if($user_info['user_type'] == 'staff'){
   </script>
 <?php } else if($request->getGet('data') === 'expense' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $TransactionsModel->where('transaction_id', $ifield_id)->where('entity_type','payee')->first();
+$result = $TransactionsModel->where('transaction_id', $ifield_id)->where('entity_type','payee')->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 // payment method
 $payment_method = $ConstantsModel->where('type','payment_method')->orderBy('constants_id', 'ASC')->findAll();
 //get info
@@ -327,7 +333,7 @@ if($user_info['user_type'] == 'staff'){
           <div class="input-group-prepend"><span class="input-group-text">
             <?= $xin_system['default_currency'];?>
             </span></div>
-          <input class="form-control" name="amount" type="text" data-placeholder="<?= lang('Invoices.xin_amount');?>" value="<?php echo $result['amount'];?>">
+          <input class="form-control" name="amount" type="text" data-placeholder="<?= lang('Invoices.xin_amount');?>" value="<?php echo esc($result['amount'] ?? '', 'attr');?>">
         </div>
       </div>
     </div>
@@ -337,7 +343,7 @@ if($user_info['user_type'] == 'staff'){
           <?= lang('Main.xin_e_details_date');?> <span class="text-danger">*</span>
         </label>
         <div class="input-group">
-          <input class="form-control d_date" placeholder="<?php echo date('Y-m-d');?>" name="deposit_date" type="text" value="<?php echo $result['transaction_date'];?>">
+          <input class="form-control d_date" placeholder="<?php echo date('Y-m-d');?>" name="deposit_date" type="text" value="<?php echo esc($result['transaction_date'] ?? '', 'attr');?>">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
         </div>
       </div>
@@ -386,7 +392,7 @@ if($user_info['user_type'] == 'staff'){
         <label for="employee">
           <?= lang('Finance.xin_acc_ref_no');?>
         </label>
-        <input class="form-control" placeholder="<?= lang('Finance.xin_acc_ref_example');?>" name="reference" type="text" value="<?php echo $result['reference'];?>">
+        <input class="form-control" placeholder="<?= lang('Finance.xin_acc_ref_example');?>" name="reference" type="text" value="<?php echo esc($result['reference'] ?? '', 'attr');?>">
         <br />
       </div>
     </div>
@@ -423,7 +429,7 @@ if($user_info['user_type'] == 'staff'){
         <label for="description">
           <?= lang('Main.xin_description');?>
         </label>
-        <textarea class="form-control textarea" placeholder="<?= lang('Main.xin_description');?>" name="description" cols="30" rows="2"><?php echo $result['description'];?></textarea>
+        <textarea class="form-control textarea" placeholder="<?= lang('Main.xin_description');?>" name="description" cols="30" rows="2"><?php echo esc($result['description'] ?? '');?></textarea>
       </div>
     </div>
   </div>

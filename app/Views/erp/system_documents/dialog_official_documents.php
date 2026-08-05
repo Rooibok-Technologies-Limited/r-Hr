@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -15,7 +19,8 @@ $get_animate = '';
 $xin_com_system = erp_company_settings();
 if($request->getGet('data') === 'official_document' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $OfficialdocumentsModel->where('document_id', $ifield_id)->first();
+$result = $OfficialdocumentsModel->where('document_id', $ifield_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 //$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 ?>
 
@@ -40,7 +45,7 @@ $result = $OfficialdocumentsModel->where('document_id', $ifield_id)->first();
         <label for="date_of_expiry" class="control-label">
           <?= lang('Employees.xin_license_name');?>
           <span class="text-danger">*</span></label>
-        <input class="form-control" placeholder="<?= lang('Employees.xin_license_name');?>" name="license_name" type="text" value="<?= $result['license_name'];?>">
+        <input class="form-control" placeholder="<?= lang('Employees.xin_license_name');?>" name="license_name" type="text" value="<?= esc($result['license_name'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-sm-4">
@@ -48,7 +53,7 @@ $result = $OfficialdocumentsModel->where('document_id', $ifield_id)->first();
         <label for="title" class="control-label">
           <?= lang('Employees.xin_document_type');?>
           <span class="text-danger">*</span></label>
-        <input class="form-control" placeholder="<?= lang('Employees.xin_document_eg_payslip_etc');?>" name="document_type" type="text" value="<?= $result['document_type'];?>">
+        <input class="form-control" placeholder="<?= lang('Employees.xin_document_eg_payslip_etc');?>" name="document_type" type="text" value="<?= esc($result['document_type'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-4">
@@ -57,7 +62,7 @@ $result = $OfficialdocumentsModel->where('document_id', $ifield_id)->first();
           <?= lang('Employees.xin_document_doe');?> <span class="text-danger">*</span>
         </label>
         <div class="input-group">
-          <input class="form-control d_date" placeholder="<?= lang('Employees.xin_document_doe');?>" name="expiry_date" type="text" value="<?= $result['expiry_date'];?>">
+          <input class="form-control d_date" placeholder="<?= lang('Employees.xin_document_doe');?>" name="expiry_date" type="text" value="<?= esc($result['expiry_date'] ?? '', 'attr');?>">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
         </div>
       </div>
@@ -67,7 +72,7 @@ $result = $OfficialdocumentsModel->where('document_id', $ifield_id)->first();
         <label for="license_number">
           <?= lang('Employees.xin_license_number');?> <span class="text-danger">*</span>
         </label>
-        <input class="form-control" placeholder="<?= lang('Employees.xin_license_number');?>" name="license_number" type="text" value="<?= $result['license_no'];?>">
+        <input class="form-control" placeholder="<?= lang('Employees.xin_license_number');?>" name="license_number" type="text" value="<?= esc($result['license_no'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-sm-4">

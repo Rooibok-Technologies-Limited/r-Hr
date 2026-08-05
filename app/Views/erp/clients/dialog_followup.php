@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -13,7 +17,8 @@ $get_animate = '';
 $xin_com_system = erp_company_settings();
 if($request->getGet('data') === 'followup' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $LeadsfollowupModel->where('followup_id', $ifield_id)->first();
+$result = $LeadsfollowupModel->where('followup_id', $ifield_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 ?>
 
@@ -39,7 +44,7 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
             <?= lang('Main.xin_next_follow_up');?>
             <span class="text-danger">*</span> </label>
             <div class="input-group">
-                <input class="form-control d_date" placeholder="<?= lang('Main.xin_next_follow_up');?>" name="next_follow_up" type="text" value="<?= $result['next_followup'];?>">
+                <input class="form-control d_date" placeholder="<?= lang('Main.xin_next_follow_up');?>" name="next_follow_up" type="text" value="<?= esc($result['next_followup'] ?? '', 'attr');?>">
                 <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
               </div>
         </div>
@@ -50,7 +55,7 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
           <label for="address_1">
             <?= lang('Main.xin_description');?> <span class="text-danger">*</span>
             </label>
-          <textarea class="form-control" placeholder="<?= lang('Main.xin_description');?>" name="description" rows="3"><?= $result['description'];?></textarea>
+          <textarea class="form-control" placeholder="<?= lang('Main.xin_description');?>" name="description" rows="3"><?= esc($result['description'] ?? '');?></textarea>
         </div>
       </div>
     </div>

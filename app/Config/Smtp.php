@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 namespace Config;
 
 use CodeIgniter\Config\BaseConfig;
@@ -54,17 +58,17 @@ class Smtp extends BaseConfig
 	 *
 	 * @var string
 	 */
-	// Enter your email id from where you send email
-	public $SMTPUser = 'test@gmail.com';
-	
+	// Loaded from .env (smtp.SMTPUser). Never hardcode credentials here.
+	public $SMTPUser = '';
+
 
 	/**
 	 * SMTP Password
 	 *
 	 * @var string
 	 */
-	// Enter your email's password
-	public $SMTPPass = 'xxxxxxxxxxx';
+	// Loaded from .env (smtp.SMTPPass). Never hardcode credentials here.
+	public $SMTPPass = '';
 
 	/**
 	 * SMTP Port
@@ -170,4 +174,25 @@ class Smtp extends BaseConfig
 	 * @var boolean
 	 */
 	public $DSN = false;
+
+	/**
+	 * Pull SMTP credentials/host from the environment at construction so no
+	 * secret ships in tracked source. Set these in `.env`:
+	 *   smtp.SMTPHost, smtp.SMTPUser, smtp.SMTPPass, smtp.SMTPPort,
+	 *   smtp.SMTPCrypto, smtp.protocol, smtp.fromEmail, smtp.fromName
+	 * (CI4's BaseConfig also auto-applies these, but we set them explicitly to
+	 * keep the mapping obvious and independent of env-prefix casing.)
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->protocol   = env('smtp.protocol', $this->protocol);
+		$this->SMTPHost   = env('smtp.SMTPHost', $this->SMTPHost);
+		$this->SMTPUser   = env('smtp.SMTPUser', $this->SMTPUser);
+		$this->SMTPPass   = env('smtp.SMTPPass', $this->SMTPPass);
+		$this->SMTPPort   = (int) env('smtp.SMTPPort', $this->SMTPPort);
+		$this->SMTPCrypto = env('smtp.SMTPCrypto', $this->SMTPCrypto);
+		$this->fromEmail  = env('smtp.fromEmail', $this->fromEmail);
+		$this->fromName   = env('smtp.fromName', $this->fromName);
+	}
 }

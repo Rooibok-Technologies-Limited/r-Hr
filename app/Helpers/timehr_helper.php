@@ -522,8 +522,16 @@ function generate_timezone_list()
 if( !function_exists('timehrm_mail_data') ){
 
 	function timehrm_mail_data($from,$from_name,$to,$subject,$body){
-	  
-		
+
+		// [SECURITY] Strip CR/LF from every header-bound value so a tenant-set
+		// company email / subject cannot inject extra SMTP headers (Bcc:, etc.)
+		// — critical for the raw mail() branch below, harmless for the others.
+		$strip = static function($v){ return str_replace(["\r", "\n", "%0a", "%0d", "%0A", "%0D"], '', (string) $v); };
+		$from      = $strip($from);
+		$from_name = $strip($from_name);
+		$to        = $strip($to);
+		$subject   = $strip($subject);
+
 		// get session
 		$session = \Config\Services::session();
 		$usession = $session->get('sup_username');

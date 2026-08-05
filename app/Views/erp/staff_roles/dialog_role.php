@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\UsersModel;
 use App\Models\RolesModel;
 use App\Models\MembershipModel;
@@ -14,7 +18,8 @@ $usession = $session->get('sup_username');
 
 if($request->getGet('data') === 'role' && $request->getGet('field_id')){
 $role_id = udecode($field_id);
-$result = $RolesModel->where('role_id', $role_id)->first();
+$result = $RolesModel->where('role_id', $role_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 $role_resources_ids = explode(',',$result['role_resources']);
 ?>
 <?php
@@ -49,7 +54,7 @@ $mem_info = $MembershipModel->where('membership_id', $cmembership['membership_id
         <label for="role_name">
           <?= lang('Users.xin_role_name');?>
           <span class="text-danger">*</span> </label>
-        <input class="form-control" placeholder="<?= lang('Users.xin_role_name');?>" name="role_name" type="text" value="<?= $result['role_name'];?>">
+        <input class="form-control" placeholder="<?= lang('Users.xin_role_name');?>" name="role_name" type="text" value="<?= esc($result['role_name'] ?? '', 'attr');?>">
       </div>
     </div>
     <input type="checkbox" name="role_resources[]" value="0" checked style="display:none;"/>

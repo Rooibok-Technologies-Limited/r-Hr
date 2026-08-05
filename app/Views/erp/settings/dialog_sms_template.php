@@ -1,10 +1,15 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SmstemplatesModel;
 $request = \Config\Services::request();
 if($request->getGet('data') === 'sms_tempalte' && $request->getGet('field_id')){
 $template_id = udecode($field_id);
 $SmstemplatesModel = new SmstemplatesModel();
 $result = $SmstemplatesModel->where('template_id', $template_id)->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 
 ?>
 
@@ -29,7 +34,7 @@ $result = $SmstemplatesModel->where('template_id', $template_id)->first();
         <label for="subject">
           <?= lang('Main.xin_subject');?>
           <span class="text-danger">*</span></label>
-        <input class="form-control" name="subject" type="text" value="<?php echo $result['subject'];?>">
+        <input class="form-control" name="subject" type="text" value="<?php echo esc($result['subject'] ?? '', 'attr');?>">
       </div>
     </div>
   </div>
@@ -39,7 +44,7 @@ $result = $SmstemplatesModel->where('template_id', $template_id)->first();
         <label for="message">
           <?= lang('Main.xin_message');?> <span class="text-danger">*</span>
         </label>
-        <textarea class="form-control" placeholder="<?= lang('Main.xin_message');?>" name="message" rows="4"><?php echo $result['message'];?></textarea>
+        <textarea class="form-control" placeholder="<?= lang('Main.xin_message');?>" name="message" rows="4"><?php echo esc($result['message'] ?? '');?></textarea>
       </div>
     </div>
   </div>
@@ -47,7 +52,7 @@ $result = $SmstemplatesModel->where('template_id', $template_id)->first();
     <div class="col-md-12">
       <div class="form-group">
         
-        <?php echo html_entity_decode($result['message']);?>
+        <?php echo esc($result['message'] ?? '');?>
       </div>
     </div>
   </div>

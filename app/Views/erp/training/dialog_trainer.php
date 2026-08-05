@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -15,7 +19,8 @@ $get_animate = '';
 
 if($request->getGet('data') === 'trainer' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $TrainersModel->where('trainer_id', $ifield_id)->first();
+$result = $TrainersModel->where('trainer_id', $ifield_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 
 <div class="modal-header">
@@ -41,7 +46,7 @@ $result = $TrainersModel->where('trainer_id', $ifield_id)->first();
         </label>
         <div class="input-group">
           <div class="input-group-prepend"><span class="input-group-text"> <i class="fas fa-user"></i> </span></div>
-          <input class="form-control" placeholder="<?= lang('Main.xin_employee_first_name');?>" name="first_name" type="text" value="<?php echo $result['first_name'];?>">
+          <input class="form-control" placeholder="<?= lang('Main.xin_employee_first_name');?>" name="first_name" type="text" value="<?php echo esc($result['first_name'] ?? '', 'attr');?>">
         </div>
       </div>
     </div>
@@ -52,7 +57,7 @@ $result = $TrainersModel->where('trainer_id', $ifield_id)->first();
         </label>
         <div class="input-group">
           <div class="input-group-prepend"><span class="input-group-text"> <i class="fas fa-user"></i> </span></div>
-          <input class="form-control" placeholder="<?= lang('Main.xin_employee_last_name');?>" name="last_name" type="text" value="<?php echo $result['last_name'];?>">
+          <input class="form-control" placeholder="<?= lang('Main.xin_employee_last_name');?>" name="last_name" type="text" value="<?php echo esc($result['last_name'] ?? '', 'attr');?>">
         </div>
       </div>
     </div>
@@ -63,7 +68,7 @@ $result = $TrainersModel->where('trainer_id', $ifield_id)->first();
         </label>
         <div class="input-group">
           <div class="input-group-prepend"><span class="input-group-text"> <i class="fas fa-envelope"></i> </span></div>
-          <input class="form-control" placeholder="<?= lang('Main.xin_email');?>" name="email" type="text" value="<?php echo $result['email'];?>">
+          <input class="form-control" placeholder="<?= lang('Main.xin_email');?>" name="email" type="text" value="<?php echo esc($result['email'] ?? '', 'attr');?>">
         </div>
       </div>
     </div>
@@ -72,7 +77,7 @@ $result = $TrainersModel->where('trainer_id', $ifield_id)->first();
         <label for="contact_number">
           <?= lang('Main.xin_contact_number');?> <span class="text-danger">*</span>
         </label>
-        <input class="form-control" placeholder="<?= lang('Main.xin_contact_number');?>" name="contact_number" type="text" value="<?php echo $result['contact_number'];?>">
+        <input class="form-control" placeholder="<?= lang('Main.xin_contact_number');?>" name="contact_number" type="text" value="<?php echo esc($result['contact_number'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-12">
@@ -80,7 +85,7 @@ $result = $TrainersModel->where('trainer_id', $ifield_id)->first();
         <label for="expertise">
           <?= lang('Recruitment.xin_expertise');?> <span class="text-danger">*</span>
         </label>
-        <textarea class="form-control textarea" placeholder="<?= lang('Recruitment.xin_expertise');?>" name="expertise" cols="30" rows="2" id="expertise2"><?php echo $result['expertise'];?></textarea>
+        <textarea class="form-control textarea" placeholder="<?= lang('Recruitment.xin_expertise');?>" name="expertise" cols="30" rows="2" id="expertise2"><?php echo esc($result['expertise'] ?? '');?></textarea>
       </div>
     </div>
     <div class="col-md-12">
@@ -88,7 +93,7 @@ $result = $TrainersModel->where('trainer_id', $ifield_id)->first();
         <label for="address">
           <?= lang('Main.xin_address');?>
         </label>
-        <textarea class="form-control" placeholder="<?= lang('Main.xin_address');?>" name="address" cols="30" rows="2" id="address"><?php echo $result['address'];?></textarea>
+        <textarea class="form-control" placeholder="<?= lang('Main.xin_address');?>" name="address" cols="30" rows="2" id="address"><?php echo esc($result['address'] ?? '');?></textarea>
       </div>
     </div>
   </div>

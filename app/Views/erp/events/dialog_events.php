@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -13,7 +17,8 @@ $get_animate = '';
 $xin_com_system = erp_company_settings();
 if($request->getGet('data') === 'event' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $EventsModel->where('event_id', $ifield_id)->first();
+$result = $EventsModel->where('event_id', $ifield_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 ?>
 
@@ -38,7 +43,7 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
         <label for="title">
           <?= lang('Conference.xin_event_title');?> <span class="text-danger">*</span>
         </label>
-        <input class="form-control" placeholder="<?= lang('Conference.xin_event_title');?>" name="event_title" type="text" value="<?php echo $result['event_title'];?>">
+        <input class="form-control" placeholder="<?= lang('Conference.xin_event_title');?>" name="event_title" type="text" value="<?php echo esc($result['event_title'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-6">
@@ -47,7 +52,7 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
           <?= lang('Conference.xin_hr_event_date');?> <span class="text-danger">*</span>
         </label>
         <div class="input-group">
-          <input class="form-control mdate" name="event_date" type="text" value="<?php echo $result['event_date'];?>">
+          <input class="form-control mdate" name="event_date" type="text" value="<?php echo esc($result['event_date'] ?? '', 'attr');?>">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
         </div>
       </div>
@@ -58,7 +63,7 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
           <?= lang('Conference.xin_hr_event_time');?> <span class="text-danger">*</span>
         </label>
         <div class="input-group">
-          <input class="form-control mtimepicker" name="event_time" type="text" value="<?php echo $result['event_time'];?>">
+          <input class="form-control mtimepicker" name="event_time" type="text" value="<?php echo esc($result['event_time'] ?? '', 'attr');?>">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-clock"></i></span></div>
         </div>
       </div>
@@ -69,7 +74,7 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
           <?= lang('Conference.xin_event_color');?>
         </label>
         <div class="input-group mhr_color" title="<?= lang('Conference.xin_event_color');?>"> <span class="input-group-append"> <span class="input-group-text colorpicker-input-addon"><i></i></span> </span>
-          <input class="form-control mhr_color" type="text" value="<?php echo $result['event_color'];?>" name="event_color">
+          <input class="form-control mhr_color" type="text" value="<?php echo esc($result['event_color'] ?? '', 'attr');?>" name="event_color">
         </div>
       </div>
     </div>
@@ -78,7 +83,7 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
         <label for="description">
           <?= lang('Conference.xin_hr_event_note');?> <span class="text-danger">*</span>
         </label>
-        <textarea class="form-control textarea" placeholder="<?= lang('Conference.xin_hr_event_note');?>" name="event_note" cols="30" rows="3" id="event_note2"><?php echo $result['event_note'];?></textarea>
+        <textarea class="form-control textarea" placeholder="<?= lang('Conference.xin_hr_event_note');?>" name="event_note" cols="30" rows="3" id="event_note2"><?php echo esc($result['event_note'] ?? '');?></textarea>
       </div>
     </div>
   </div>

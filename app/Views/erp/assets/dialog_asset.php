@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -26,7 +30,8 @@ if($user_info['user_type'] == 'staff'){
 $get_animate = '';
 if($request->getGet('data') === 'asset' && $request->getGet('field_id')){
 $assets_id = udecode($field_id);
-$result = $AssetsModel->where('assets_id', $assets_id)->first();
+$result = $AssetsModel->where('assets_id', $assets_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 
 <div class="modal-header">
@@ -52,7 +57,7 @@ $result = $AssetsModel->where('assets_id', $assets_id)->first();
             <label for="asset_name" class="control-label">
               <?= lang('Asset.xin_asset_name');?>
               <span class="text-danger">*</span> </label>
-            <input class="form-control" placeholder="<?= lang('Asset.xin_asset_name');?>" name="asset_name" type="text" value="<?= $result['name'];?>">
+            <input class="form-control" placeholder="<?= lang('Asset.xin_asset_name');?>" name="asset_name" type="text" value="<?= esc($result['name'] ?? '', 'attr');?>">
           </div>
         </div>
         <div class="col-md-6">
@@ -96,7 +101,7 @@ $result = $AssetsModel->where('assets_id', $assets_id)->first();
             <label for="manufacturer">
               <?= lang('Asset.xin_manufacturer');?>
             </label>
-            <input class="form-control" placeholder="<?= lang('Asset.xin_manufacturer');?>" name="manufacturer" type="text" value="<?= $result['manufacturer'];?>">
+            <input class="form-control" placeholder="<?= lang('Asset.xin_manufacturer');?>" name="manufacturer" type="text" value="<?= esc($result['manufacturer'] ?? '', 'attr');?>">
           </div>
         </div>
         <div class="col-md-6">
@@ -104,7 +109,7 @@ $result = $AssetsModel->where('assets_id', $assets_id)->first();
             <label for="xin_serial_number" class="control-label">
               <?= lang('Asset.xin_serial_number');?>
             </label>
-            <input class="form-control" placeholder="<?= lang('Asset.xin_serial_number');?>" name="serial_number" type="text" value="<?= $result['serial_number'];?>">
+            <input class="form-control" placeholder="<?= lang('Asset.xin_serial_number');?>" name="serial_number" type="text" value="<?= esc($result['serial_number'] ?? '', 'attr');?>">
           </div>
         </div>
       </div>
@@ -168,7 +173,7 @@ $result = $AssetsModel->where('assets_id', $assets_id)->first();
             <label for="company_asset_code">
               <?= lang('Asset.xin_company_asset_code');?>
             </label>
-            <input class="form-control" placeholder="<?= lang('Asset.xin_company_asset_code');?>" name="company_asset_code" type="text" value="<?= $result['company_asset_code'];?>">
+            <input class="form-control" placeholder="<?= lang('Asset.xin_company_asset_code');?>" name="company_asset_code" type="text" value="<?= esc($result['company_asset_code'] ?? '', 'attr');?>">
           </div>
         </div>
         <div class="col-md-6">
@@ -194,7 +199,7 @@ $result = $AssetsModel->where('assets_id', $assets_id)->first();
               <?= lang('Asset.xin_purchase_date');?>
             </label>
             <div class="input-group">
-              <input class="form-control m_date" placeholder="<?= lang('Asset.xin_purchase_date');?>" name="purchase_date" type="text" value="<?= $result['purchase_date'];?>">
+              <input class="form-control m_date" placeholder="<?= lang('Asset.xin_purchase_date');?>" name="purchase_date" type="text" value="<?= esc($result['purchase_date'] ?? '', 'attr');?>">
               <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
             </div>
           </div>
@@ -206,7 +211,7 @@ $result = $AssetsModel->where('assets_id', $assets_id)->first();
             </label>
             <div class="input-group">
               <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-file-invoice"></i></span></div>
-              <input class="form-control" placeholder="<?= lang('Main.xin_invoice_number');?>" name="invoice_number" type="text" value="<?= $result['invoice_number'];?>">
+              <input class="form-control" placeholder="<?= lang('Main.xin_invoice_number');?>" name="invoice_number" type="text" value="<?= esc($result['invoice_number'] ?? '', 'attr');?>">
             </div>
           </div>
         </div>
@@ -218,7 +223,7 @@ $result = $AssetsModel->where('assets_id', $assets_id)->first();
               <?= lang('Asset.xin_warranty_end_date');?>
             </label>
             <div class="input-group">
-              <input class="form-control m_date" placeholder="<?= lang('Asset.xin_warranty_end_date');?>" name="warranty_end_date" type="text" value="<?= $result['warranty_end_date'];?>">
+              <input class="form-control m_date" placeholder="<?= lang('Asset.xin_warranty_end_date');?>" name="warranty_end_date" type="text" value="<?= esc($result['warranty_end_date'] ?? '', 'attr');?>">
               <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
             </div>
           </div>
@@ -232,7 +237,7 @@ $result = $AssetsModel->where('assets_id', $assets_id)->first();
         <label for="award_information">
           <?= lang('Asset.xin_asset_note');?>
         </label>
-        <textarea class="form-control" placeholder="<?= lang('Asset.xin_asset_note');?>" name="asset_note" cols="30" rows="2" id="asset_note"><?= $result['asset_note'];?>
+        <textarea class="form-control" placeholder="<?= lang('Asset.xin_asset_note');?>" name="asset_note" cols="30" rows="2" id="asset_note"><?= esc($result['asset_note'] ?? '');?>
 </textarea>
       </div>
     </div>
@@ -330,7 +335,8 @@ $(document).ready(function(){
 <?php } if($request->getGet('type') === 'view_asset' && $request->getGet('field_id')){ ?>
 <?php
 $assets_id = udecode($field_id);
-$result = $AssetsModel->where('assets_id', $assets_id)->first(); ?>
+$result = $AssetsModel->where('assets_id', $assets_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; } ?>
 <div class="modal-header">
   <h5 class="modal-title">
     <?= lang('Asset.xin_view_asset');?>
@@ -345,7 +351,7 @@ $result = $AssetsModel->where('assets_id', $assets_id)->first(); ?>
     <tbody>
       <tr>
         <th><?= lang('Asset.xin_asset_name');?></th>
-        <td style="display: table-cell;"><?= $result['name'];?></td>
+        <td style="display: table-cell;"><?= esc($result['name'] ?? '');?></td>
       </tr>
       <tr>
         <th><?= lang('Dashboard.xin_category');?></th>
@@ -357,7 +363,7 @@ $result = $AssetsModel->where('assets_id', $assets_id)->first(); ?>
       </tr>
       <tr>
         <th><?= lang('Asset.xin_company_asset_code');?></th>
-        <td style="display: table-cell;"><?= $result['company_asset_code'];?></td>
+        <td style="display: table-cell;"><?= esc($result['company_asset_code'] ?? '');?></td>
       </tr>
       <tr>
         <th><?= lang('Dashboard.dashboard_employee');?></th>
@@ -380,15 +386,15 @@ $result = $AssetsModel->where('assets_id', $assets_id)->first(); ?>
       </tr>
       <tr>
         <th><?= lang('Main.xin_invoice_number');?></th>
-        <td style="display: table-cell;"><?= $result['invoice_number'];?></td>
+        <td style="display: table-cell;"><?= esc($result['invoice_number'] ?? '');?></td>
       </tr>
       <tr>
         <th><?= lang('Asset.xin_manufacturer');?></th>
-        <td style="display: table-cell;"><?= $result['manufacturer'];?></td>
+        <td style="display: table-cell;"><?= esc($result['manufacturer'] ?? '');?></td>
       </tr>
       <tr>
         <th><?= lang('Asset.xin_serial_number');?></th>
-        <td style="display: table-cell;"><?= $result['serial_number'];?></td>
+        <td style="display: table-cell;"><?= esc($result['serial_number'] ?? '');?></td>
       </tr>
       <tr>
         <th><?= lang('Asset.xin_warranty_end_date');?></th>

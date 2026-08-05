@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -16,7 +20,8 @@ $StaffdetailsModel = new StaffdetailsModel();
 $get_animate = '';
 if($request->getGet('data') === 'document' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $DocumentsModel->where('document_id', $ifield_id)->first();
+$result = $DocumentsModel->where('document_id', $ifield_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 if($user_info['user_type'] == 'staff'){
 	$val = $result['department_id'];
@@ -46,13 +51,13 @@ if($user_info['user_type'] == 'staff'){
         <label for="name">
           <?= lang('Employees.xin_document_name');?>
           <span class="text-danger">*</span> </label>
-        <input type="text" class="form-control" name="document_name" placeholder="<?= lang('Employees.xin_document_name');?>" value="<?= $result['document_name'];?>">
+        <input type="text" class="form-control" name="document_name" placeholder="<?= lang('Employees.xin_document_name');?>" value="<?= esc($result['document_name'] ?? '', 'attr');?>">
       </div>
       <div class="form-group">
         <label for="name">
           <?= lang('Employees.xin_document_type');?>
           <span class="text-danger">*</span> </label>
-        <input type="text" class="form-control" name="document_type" placeholder="<?= lang('Employees.xin_document_eg_payslip_etc');?>" value="<?= $result['document_type'];?>">
+        <input type="text" class="form-control" name="document_type" placeholder="<?= lang('Employees.xin_document_eg_payslip_etc');?>" value="<?= esc($result['document_type'] ?? '', 'attr');?>">
       </div>
     </div>
   </div>

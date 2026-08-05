@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -173,9 +177,9 @@ class Todo extends BaseController {
 				'is_done' => $is_done,
 			];
 			$TodoModel = new TodoModel();
-			$result = $TodoModel->update($id,$data);
-				
-			//$result = $TodoModel->where('todo_item_id', $id)->where('company_id', $company_id)->delete($id);
+			// Tenant-scope the toggle: without the company_id filter any authed
+			// user could flip is_done on another company's todo (cross-tenant IDOR).
+			$result = $TodoModel->where('todo_item_id', $id)->where('company_id', $company_id)->set($data)->update();
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_item_updated_msg');
 			} else {

@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -177,7 +181,8 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 <?php
 } elseif($request->getGet('data') === 'edit_attendance' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $OvertimerequestModel->where('time_request_id', $ifield_id)->first();
+$result = $OvertimerequestModel->where('time_request_id', $ifield_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 ?>
 <div class="modal-header">
@@ -222,7 +227,7 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
           <label for="date"><?= lang('Main.xin_e_details_date');?> <span class="text-danger">*</span></label>
           
           <div class="input-group">
-                <input class="form-control attendance_date_e" placeholder="<?= lang('Main.xin_e_details_date');?>" readonly="true" name="attendance_date_m" type="text" value="<?php echo $result['request_date'];?>">
+                <input class="form-control attendance_date_e" placeholder="<?= lang('Main.xin_e_details_date');?>" readonly="true" name="attendance_date_m" type="text" value="<?php echo esc($result['request_date'] ?? '', 'attr');?>">
                 <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
             </div>
         </div>
@@ -271,7 +276,7 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
           <div class="col-md-12">
             <div class="form-group">
               <label for="date"><?= lang('Main.xin_reason');?> <span class="text-danger">*</span></label>
-              <textarea class="form-control" placeholder="<?= lang('Main.xin_reason');?>" name="reason" type="text"><?= $result['request_reason'];?></textarea>
+              <textarea class="form-control" placeholder="<?= lang('Main.xin_reason');?>" name="reason" type="text"><?= esc($result['request_reason'] ?? '');?></textarea>
             </div>
           </div>
         </div>

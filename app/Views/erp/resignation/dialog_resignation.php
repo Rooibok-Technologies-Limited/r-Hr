@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -17,7 +21,8 @@ $get_animate = '';
 $xin_com_system = erp_company_settings();
 if($request->getGet('data') === 'resignation' && $request->getGet('field_id')){
 $resignation_id = udecode($field_id);
-$result = $ResignationsModel->where('resignation_id', $resignation_id)->first();
+$result = $ResignationsModel->where('resignation_id', $resignation_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 
 <div class="modal-header">
@@ -42,7 +47,7 @@ $result = $ResignationsModel->where('resignation_id', $resignation_id)->first();
           <?= lang('Employees.xin_notice_date');?> <span class="text-danger">*</span>
         </label>
         <div class="input-group">
-          <input class="form-control d_date" placeholder="<?= lang('Employees.xin_notice_date');?>" name="notice_date" type="text" value="<?php echo $result['notice_date'];?>">
+          <input class="form-control d_date" placeholder="<?= lang('Employees.xin_notice_date');?>" name="notice_date" type="text" value="<?php echo esc($result['notice_date'] ?? '', 'attr');?>">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
         </div>
       </div>
@@ -53,7 +58,7 @@ $result = $ResignationsModel->where('resignation_id', $resignation_id)->first();
           <?= lang('Employees.xin_resignation_date');?> <span class="text-danger">*</span>
         </label>
         <div class="input-group">
-          <input class="form-control d_date" placeholder="<?= lang('Employees.xin_resignation_date');?>" name="resignation_date" type="text" value="<?php echo $result['resignation_date'];?>">
+          <input class="form-control d_date" placeholder="<?= lang('Employees.xin_resignation_date');?>" name="resignation_date" type="text" value="<?php echo esc($result['resignation_date'] ?? '', 'attr');?>">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
         </div>
       </div>
@@ -84,7 +89,7 @@ $result = $ResignationsModel->where('resignation_id', $resignation_id)->first();
         <label for="reason">
           <?= lang('Employees.xin_resignation_reason');?> <span class="text-danger">*</span>
         </label>
-        <textarea class="form-control textarea" placeholder="<?= lang('Employees.xin_resignation_reason');?>" name="reason" cols="30" rows="4"><?php echo $result['reason'];?></textarea>
+        <textarea class="form-control textarea" placeholder="<?= lang('Employees.xin_resignation_reason');?>" name="reason" cols="30" rows="4"><?php echo esc($result['reason'] ?? '');?></textarea>
       </div>
     </div>
   </div>

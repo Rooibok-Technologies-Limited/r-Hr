@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -177,7 +181,8 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 <?php
 } elseif($request->getGet('data') === 'edit_attendance' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $TimesheetModel->where('time_attendance_id', $ifield_id)->first();
+$result = $TimesheetModel->where('time_attendance_id', $ifield_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 ?>
 <div class="modal-header">
@@ -223,7 +228,7 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
               <?= lang('Attendance.xin_attendance_date');?> <span class="text-danger">*</span>
             </label>
             <div class="input-group">
-              <input class="form-control attendance_date_e" placeholder="<?= lang('Attendance.xin_attendance_date');?>" name="attendance_date_m" type="text" value="<?php echo $result['attendance_date'];?>">
+              <input class="form-control attendance_date_e" placeholder="<?= lang('Attendance.xin_attendance_date');?>" name="attendance_date_m" type="text" value="<?php echo esc($result['attendance_date'] ?? '', 'attr');?>">
               <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
             </div>
           </div>

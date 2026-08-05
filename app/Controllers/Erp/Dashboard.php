@@ -250,10 +250,14 @@ class Dashboard extends BaseController {
 		if (!empty($usession)) {
 			$db = \Config\Database::connect();
 			$uid = $usession['sup_user_id'];
+			$cid = (int) $this->tenantCompanyId();
 			$db->table('ci_notifications')
 				->groupStart()
 					->where('user_id', $uid)
-					->orWhere('user_id', 0)
+					->orGroupStart()
+						->where('user_id', 0)
+						->whereIn('company_id', [0, $cid])
+					->groupEnd()
 				->groupEnd()
 				->delete();
 		}
@@ -271,10 +275,19 @@ class Dashboard extends BaseController {
 
 		$db = \Config\Database::connect();
 		$uid = $usession['sup_user_id'];
+		// [SECURITY] user_id=0 = broadcast. Tenant-scope it to (platform-global
+		// company_id 0) OR (this tenant) so one company's broadcast never leaks
+		// to another. company_id=0 stays platform-wide (super-admin notices).
+		$cid = (int) $this->tenantCompanyId();
 
 		$notifications = $db->table('ci_notifications')
-			->where('user_id', $uid)
-			->orWhere('user_id', 0) // system-wide notifications
+			->groupStart()
+				->where('user_id', $uid)
+				->orGroupStart()
+					->where('user_id', 0)
+					->whereIn('company_id', [0, $cid])
+				->groupEnd()
+			->groupEnd()
 			->orderBy('created_at', 'DESC')
 			->limit(15)
 			->get()->getResultArray();
@@ -282,7 +295,10 @@ class Dashboard extends BaseController {
 		$unread = $db->table('ci_notifications')
 			->groupStart()
 				->where('user_id', $uid)
-				->orWhere('user_id', 0)
+				->orGroupStart()
+					->where('user_id', 0)
+					->whereIn('company_id', [0, $cid])
+				->groupEnd()
 			->groupEnd()
 			->where('is_read', 0)
 			->countAllResults();
@@ -319,10 +335,14 @@ class Dashboard extends BaseController {
 		if (!empty($usession)) {
 			$db = \Config\Database::connect();
 			$uid = $usession['sup_user_id'];
+			$cid = (int) $this->tenantCompanyId();
 			$db->table('ci_notifications')
 				->groupStart()
 					->where('user_id', $uid)
-					->orWhere('user_id', 0)
+					->orGroupStart()
+						->where('user_id', 0)
+						->whereIn('company_id', [0, $cid])
+					->groupEnd()
 				->groupEnd()
 				->update(['is_read' => 1]);
 		}

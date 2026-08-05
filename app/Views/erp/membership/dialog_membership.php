@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\MembershipModel;
 use App\Models\CompanymembershipModel;
 use App\Models\UsersModel;
@@ -15,6 +19,7 @@ if($request->getGet('type') === 'view_membership' && $request->getGet('field_id'
 $MembershipModel = new MembershipModel();
 $membership_id = udecode($field_id);
 $result = $MembershipModel->where('membership_id', $membership_id)->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 if($user_info['user_type'] == 'staff' || $user_info['user_type'] == 'company'){
 	$xin_system = erp_company_settings();
@@ -34,7 +39,7 @@ if($user_info['user_type'] == 'staff' || $user_info['user_type'] == 'company'){
     <small class="text-muted">
     <?= lang('Main.xin_below_required_info_specific');?>
     (
-    <?= $result['membership_type'];?>
+    <?= esc($result['membership_type'] ?? '');?>
     ) </small> </h5>
   <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">×</span> </button>
 </div>
@@ -45,7 +50,7 @@ if($user_info['user_type'] == 'staff' || $user_info['user_type'] == 'company'){
       <tbody>
         <tr>
           <th width="180"><?= lang('Membership.xin_membership_type');?></th>
-          <td colspan="3" style="display: table-cell;"><?= $result['membership_type'];?></td>
+          <td colspan="3" style="display: table-cell;"><?= esc($result['membership_type'] ?? '');?></td>
         </tr>
         <tr>
           <th><?= lang('Main.xin_price');?></th>
@@ -53,7 +58,7 @@ if($user_info['user_type'] == 'staff' || $user_info['user_type'] == 'company'){
         </tr>
         <tr>
           <th><?= lang('Employees.xin_total_employees');?></th>
-          <td style="display: table-cell;"><?= $result['total_employees'];?></td>
+          <td style="display: table-cell;"><?= esc($result['total_employees'] ?? '');?></td>
         </tr>
         <tr>
           <th><?= lang('Membership.xin_plan_duration');?></th>

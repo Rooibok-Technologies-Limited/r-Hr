@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -17,6 +21,7 @@ $xin_system = $SystemModel->where('setting_id', 1)->first();
 if($request->getGet('data') === 'user_allowance' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
 $result = $ContractModel->where('contract_option_id', $ifield_id)->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 //$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 ?>
 
@@ -74,7 +79,7 @@ $result = $ContractModel->where('contract_option_id', $ifield_id)->first();
         <label for="account_title">
           <?= lang('Dashboard.xin_title');?>
           <span class="text-danger">*</span></label>
-        <input class="form-control" placeholder="<?= lang('Dashboard.xin_title');?>" name="option_title" type="text" value="<?= $result['option_title'];?>">
+        <input class="form-control" placeholder="<?= lang('Dashboard.xin_title');?>" name="option_title" type="text" value="<?= esc($result['option_title'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-6">
@@ -86,7 +91,7 @@ $result = $ContractModel->where('contract_option_id', $ifield_id)->first();
           <div class="input-group-prepend"><span class="input-group-text">
             <?= $xin_system['default_currency'];?>
             </span></div>
-          <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="contract_amount" type="text" value="<?= $result['contract_amount'];?>">
+          <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="contract_amount" type="text" value="<?= esc($result['contract_amount'] ?? '', 'attr');?>">
         </div>
       </div>
     </div>
@@ -162,6 +167,7 @@ $(document).ready(function(){
 <?php } else if($request->getGet('data') === 'user_commission' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
 $result = $ContractModel->where('contract_option_id', $ifield_id)->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 //$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 ?>
 <div class="modal-header">
@@ -218,7 +224,7 @@ $result = $ContractModel->where('contract_option_id', $ifield_id)->first();
         <label for="account_title">
           <?= lang('Dashboard.xin_title');?>
           <span class="text-danger">*</span></label>
-        <input class="form-control" placeholder="<?= lang('Dashboard.xin_title');?>" name="option_title" type="text" value="<?= $result['option_title'];?>">
+        <input class="form-control" placeholder="<?= lang('Dashboard.xin_title');?>" name="option_title" type="text" value="<?= esc($result['option_title'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-6">
@@ -230,7 +236,7 @@ $result = $ContractModel->where('contract_option_id', $ifield_id)->first();
           <div class="input-group-prepend"><span class="input-group-text">
             <?= $xin_system['default_currency'];?>
             </span></div>
-          <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="contract_amount" type="text" value="<?= $result['contract_amount'];?>">
+          <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="contract_amount" type="text" value="<?= esc($result['contract_amount'] ?? '', 'attr');?>">
         </div>
       </div>
     </div>
@@ -306,6 +312,7 @@ $(document).ready(function(){
 <?php } else if($request->getGet('data') === 'user_statutory' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
 $result = $ContractModel->where('contract_option_id', $ifield_id)->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 //$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 ?>
 <div class="modal-header">
@@ -344,7 +351,7 @@ $result = $ContractModel->where('contract_option_id', $ifield_id)->first();
         <label for="account_title">
           <?= lang('Dashboard.xin_title');?>
           <span class="text-danger">*</span></label>
-        <input class="form-control" placeholder="<?= lang('Dashboard.xin_title');?>" name="option_title" type="text" value="<?= $result['option_title'];?>">
+        <input class="form-control" placeholder="<?= lang('Dashboard.xin_title');?>" name="option_title" type="text" value="<?= esc($result['option_title'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-12">
@@ -356,7 +363,7 @@ $result = $ContractModel->where('contract_option_id', $ifield_id)->first();
           <div class="input-group-prepend"><span class="input-group-text">
             <?= $xin_system['default_currency'];?>
             </span></div>
-          <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="contract_amount" type="text" value="<?= $result['contract_amount'];?>">
+          <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="contract_amount" type="text" value="<?= esc($result['contract_amount'] ?? '', 'attr');?>">
         </div>
       </div>
     </div>
@@ -432,6 +439,7 @@ $(document).ready(function(){
 <?php } else if($request->getGet('data') === 'user_other_payments' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
 $result = $ContractModel->where('contract_option_id', $ifield_id)->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 //$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 ?>
 <div class="modal-header">
@@ -488,7 +496,7 @@ $result = $ContractModel->where('contract_option_id', $ifield_id)->first();
         <label for="account_title">
           <?= lang('Dashboard.xin_title');?>
           <span class="text-danger">*</span></label>
-        <input class="form-control" placeholder="<?= lang('Dashboard.xin_title');?>" name="option_title" type="text" value="<?= $result['option_title'];?>">
+        <input class="form-control" placeholder="<?= lang('Dashboard.xin_title');?>" name="option_title" type="text" value="<?= esc($result['option_title'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-6">
@@ -500,7 +508,7 @@ $result = $ContractModel->where('contract_option_id', $ifield_id)->first();
           <div class="input-group-prepend"><span class="input-group-text">
             <?= $xin_system['default_currency'];?>
             </span></div>
-          <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="contract_amount" type="text" value="<?= $result['contract_amount'];?>">
+          <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="contract_amount" type="text" value="<?= esc($result['contract_amount'] ?? '', 'attr');?>">
         </div>
       </div>
     </div>
@@ -576,6 +584,7 @@ $(document).ready(function(){
 <?php } else if($request->getGet('data') === 'user_document' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
 $result = $UserdocumentsModel->where('document_id', $ifield_id)->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 //$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 ?>
 <div class="modal-header">
@@ -599,7 +608,7 @@ $result = $UserdocumentsModel->where('document_id', $ifield_id)->first();
         <label for="date_of_expiry" class="control-label">
           <?= lang('Employees.xin_document_name');?>
           <span class="text-danger">*</span></label>
-        <input class="form-control" placeholder="<?= lang('Employees.xin_document_name');?>" name="document_name" type="text" value="<?= $result['document_name'];?>">
+        <input class="form-control" placeholder="<?= lang('Employees.xin_document_name');?>" name="document_name" type="text" value="<?= esc($result['document_name'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-sm-6">
@@ -607,7 +616,7 @@ $result = $UserdocumentsModel->where('document_id', $ifield_id)->first();
         <label for="title" class="control-label">
           <?= lang('Employees.xin_document_type');?>
           <span class="text-danger">*</span></label>
-        <input class="form-control" placeholder="<?= lang('Employees.xin_document_eg_payslip_etc');?>" name="document_type" type="text" value="<?= $result['document_type'];?>">
+        <input class="form-control" placeholder="<?= lang('Employees.xin_document_eg_payslip_etc');?>" name="document_type" type="text" value="<?= esc($result['document_type'] ?? '', 'attr');?>">
       </div>
     </div>
   </div>

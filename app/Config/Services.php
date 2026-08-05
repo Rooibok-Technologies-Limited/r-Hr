@@ -184,4 +184,20 @@ class Services extends BaseService
 				return new \App\Libraries\Sms\NullSmsProvider();
 		}
 	}
+
+	/**
+	 * SMTP mailer. Returns a CodeIgniter Email instance initialised from the
+	 * `Config\Smtp` object (whose property names mirror the Email library), which
+	 * in turn draws its credentials from `.env` (`smtp.*` keys). This backs the
+	 * `email_type == 'smtp'` branch in timehrm_mail_data(); previously that branch
+	 * called an undefined Services::smtp() and fataled.
+	 */
+	public static function smtp($getShared = true)
+	{
+		if ($getShared) {
+			return static::getSharedInstance('smtp');
+		}
+
+		return new \CodeIgniter\Email\Email(new \Config\Smtp());
+	}
 }

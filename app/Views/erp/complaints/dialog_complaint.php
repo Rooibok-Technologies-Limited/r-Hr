@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -17,7 +21,8 @@ $get_animate = '';
 $xin_com_system = erp_company_settings();
 if($request->getGet('data') === 'complaint' && $request->getGet('field_id')){
 $complaint_id = udecode($field_id);
-$result = $ComplaintsModel->where('complaint_id', $complaint_id)->first();
+$result = $ComplaintsModel->where('complaint_id', $complaint_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 
 <div class="modal-header">
@@ -41,7 +46,7 @@ $result = $ComplaintsModel->where('complaint_id', $complaint_id)->first();
         <label for="title">
           <?= lang('Employees.xin_complaint_title');?> <span class="text-danger">*</span>
         </label>
-        <input class="form-control" placeholder="<?= lang('Employees.xin_complaint_title');?>" name="title" type="text" value="<?php echo $result['title'];?>">
+        <input class="form-control" placeholder="<?= lang('Employees.xin_complaint_title');?>" name="title" type="text" value="<?php echo esc($result['title'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-6">
@@ -68,7 +73,7 @@ $result = $ComplaintsModel->where('complaint_id', $complaint_id)->first();
           <?= lang('Employees.xin_complaint_date');?> <span class="text-danger">*</span>
         </label>
         <div class="input-group">
-          <input class="form-control d_date" placeholder="<?= lang('Employees.xin_complaint_date');?>" name="complaint_date" type="text" value="<?php echo $result['complaint_date'];?>">
+          <input class="form-control d_date" placeholder="<?= lang('Employees.xin_complaint_date');?>" name="complaint_date" type="text" value="<?php echo esc($result['complaint_date'] ?? '', 'attr');?>">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
         </div>
       </div>
@@ -78,7 +83,7 @@ $result = $ComplaintsModel->where('complaint_id', $complaint_id)->first();
         <label for="description">
           <?= lang('Main.xin_description');?> <span class="text-danger">*</span>
         </label>
-        <textarea class="form-control textarea" placeholder="<?= lang('Main.xin_description');?>" name="description" cols="30" rows="3"><?php echo $result['description'];?></textarea>
+        <textarea class="form-control textarea" placeholder="<?= lang('Main.xin_description');?>" name="description" cols="30" rows="3"><?php echo esc($result['description'] ?? '');?></textarea>
       </div>
     </div>
   </div>

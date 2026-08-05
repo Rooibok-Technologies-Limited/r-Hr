@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -12,7 +16,8 @@ $HolidaysModel = new HolidaysModel();
 $get_animate = '';
 if($request->getGet('data') === 'holiday' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $HolidaysModel->where('holiday_id', $ifield_id)->first();
+$result = $HolidaysModel->where('holiday_id', $ifield_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 
 <div class="modal-header">
@@ -36,7 +41,7 @@ $result = $HolidaysModel->where('holiday_id', $ifield_id)->first();
         <label for="title">
           <?= lang('Conference.xin_event_title');?> <span class="text-danger">*</span>
         </label>
-        <input class="form-control" placeholder="<?= lang('Conference.xin_event_title');?>" name="event_name" type="text" value="<?php echo $result['event_name'];?>">
+        <input class="form-control" placeholder="<?= lang('Conference.xin_event_title');?>" name="event_name" type="text" value="<?php echo esc($result['event_name'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-6">
@@ -45,7 +50,7 @@ $result = $HolidaysModel->where('holiday_id', $ifield_id)->first();
           <?= lang('Projects.xin_start_date');?> <span class="text-danger">*</span>
         </label>
         <div class="input-group">
-          <input class="form-control mdate" name="start_date" type="text" value="<?php echo $result['start_date'];?>">
+          <input class="form-control mdate" name="start_date" type="text" value="<?php echo esc($result['start_date'] ?? '', 'attr');?>">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
         </div>
       </div>
@@ -56,7 +61,7 @@ $result = $HolidaysModel->where('holiday_id', $ifield_id)->first();
           <?= lang('Projects.xin_end_date');?> <span class="text-danger">*</span>
         </label>
         <div class="input-group">
-          <input class="form-control mdate" name="end_date" type="text" value="<?php echo $result['end_date'];?>">
+          <input class="form-control mdate" name="end_date" type="text" value="<?php echo esc($result['end_date'] ?? '', 'attr');?>">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
         </div>
       </div>
@@ -81,7 +86,7 @@ $result = $HolidaysModel->where('holiday_id', $ifield_id)->first();
         <label for="description">
           <?= lang('Main.xin_description');?> <span class="text-danger">*</span>
         </label>
-        <textarea class="form-control textarea" placeholder="<?= lang('Main.xin_description');?>" name="description" cols="30" rows="3"><?php echo $result['description'];?></textarea>
+        <textarea class="form-control textarea" placeholder="<?= lang('Main.xin_description');?>" name="description" cols="30" rows="3"><?php echo esc($result['description'] ?? '');?></textarea>
       </div>
     </div>
   </div>

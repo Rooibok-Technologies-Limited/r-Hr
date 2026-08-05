@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -21,7 +25,8 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 $get_animate = '';
 if($request->getGet('data') === 'timelog' && $request->getGet('field_id')){
 	$timelogs_id = udecode($field_id);
-	$result = $ProjecttimelogsModel->where('timelogs_id', $timelogs_id)->first();
+	$result = $ProjecttimelogsModel->where('timelogs_id', $timelogs_id)->where('company_id', effective_company_id())->first();
+		if(!is_array($result)){ echo dialog_not_found(); return; }
 	if($user_info['user_type'] == 'staff'){
 		$staff_info = $UsersModel->where('company_id', $user_info['company_id'])->where('user_type','staff')->findAll();
 		$project_data = $ProjectsModel->where('company_id',$user_info['company_id'])->where('project_id', $result['project_id'])->first();
@@ -68,7 +73,7 @@ if($request->getGet('data') === 'timelog' && $request->getGet('field_id')){
         <div class="form-group">
           <label for="budget_hours"><?php echo lang('Projects.xin_start_time');?></label>
           <div class="input-group">
-            <input class="form-control etimepicker" placeholder="<?php echo lang('Projects.xin_start_time');?>" name="start_time" type="text" value="<?= $result['start_time'];?>">
+            <input class="form-control etimepicker" placeholder="<?php echo lang('Projects.xin_start_time');?>" name="start_time" type="text" value="<?= esc($result['start_time'] ?? '', 'attr');?>">
             <div class="input-group-append"><span class="input-group-text"><i class="fas fa-clock"></i></span></div>
           </div>
         </div>
@@ -77,7 +82,7 @@ if($request->getGet('data') === 'timelog' && $request->getGet('field_id')){
         <div class="form-group">
           <label for="budget_hours"><?php echo lang('Projects.xin_end_time');?></label>
           <div class="input-group">
-            <input class="form-control etimepicker" placeholder="<?php echo lang('Projects.xin_end_time');?>" name="end_time" type="text" value="<?= $result['end_time'];?>">
+            <input class="form-control etimepicker" placeholder="<?php echo lang('Projects.xin_end_time');?>" name="end_time" type="text" value="<?= esc($result['end_time'] ?? '', 'attr');?>">
             <div class="input-group-append"><span class="input-group-text"><i class="fas fa-clock"></i></span></div>
           </div>
         </div>
@@ -86,7 +91,7 @@ if($request->getGet('data') === 'timelog' && $request->getGet('field_id')){
         <div class="form-group">
           <label for="start_date"><?php echo lang('Projects.xin_start_date');?> <span class="text-danger">*</span></label>
           <div class="input-group">
-            <input class="form-control d_date" placeholder="<?php echo lang('Projects.xin_start_date');?>" name="start_date" type="text" value="<?= $result['start_date'];?>">
+            <input class="form-control d_date" placeholder="<?php echo lang('Projects.xin_start_date');?>" name="start_date" type="text" value="<?= esc($result['start_date'] ?? '', 'attr');?>">
             <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
           </div>
         </div>
@@ -95,7 +100,7 @@ if($request->getGet('data') === 'timelog' && $request->getGet('field_id')){
         <div class="form-group">
           <label for="end_date"><?php echo lang('Projects.xin_end_date');?> <span class="text-danger">*</span></label>
           <div class="input-group">
-            <input class="form-control d_date" placeholder="<?php echo lang('Projects.xin_end_date');?>" name="end_date" type="text" value="<?= $result['end_date'];?>">
+            <input class="form-control d_date" placeholder="<?php echo lang('Projects.xin_end_date');?>" name="end_date" type="text" value="<?= esc($result['end_date'] ?? '', 'attr');?>">
             <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
           </div>
         </div>
@@ -103,7 +108,7 @@ if($request->getGet('data') === 'timelog' && $request->getGet('field_id')){
       <div class="col-md-12">
         <div class="form-group">
           <label for="summary"><?php echo lang('Projects.xin_memo');?> <span class="text-danger">*</span></label>
-          <textarea class="form-control" placeholder="<?php echo lang('Projects.xin_memo');?>" name="memo" cols="30" rows="2"><?= $result['timelogs_memo'];?></textarea>
+          <textarea class="form-control" placeholder="<?php echo lang('Projects.xin_memo');?>" name="memo" cols="30" rows="2"><?= esc($result['timelogs_memo'] ?? '');?></textarea>
         </div>
       </div>
       
@@ -155,7 +160,7 @@ if($request->getGet('data') === 'timelog' && $request->getGet('field_id')){
 						var xin_timelogs_table = $('#xin_timelogs_table').dataTable({
 						"bDestroy": true,
 						"ajax": {
-							url : "<?php echo site_url("erp/projects/timelogs_list") ?>?project_val=<?= $result['project_id'];?>",
+							url : "<?php echo site_url("erp/projects/timelogs_list") ?>?project_val=<?= esc($result['project_id'] ?? '', 'js');?>",
 							type : 'GET'
 						},
 						"language": {

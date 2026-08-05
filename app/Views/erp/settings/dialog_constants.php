@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\ConstantsModel;
 use App\Models\CurrenciesModel;
 $ConstantsModel = new ConstantsModel();
@@ -8,6 +12,7 @@ $request = \Config\Services::request();
 if($request->getGet('data') === 'currency_type' && $request->getGet('type') === 'currency_type' && $field_id){
 $ifield_id = udecode($field_id);
 $result = $CurrenciesModel->where('currency_id', $ifield_id)->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 <div class="modal-header">
   <h5 class="modal-title">
@@ -30,7 +35,7 @@ $result = $CurrenciesModel->where('currency_id', $ifield_id)->first();
           <label class="form-label">
             <?= lang('Main.xin_country');?>
             <span class="text-danger">*</span> </label>
-          <input class="form-control" placeholder="<?= lang('Main.xin_country');?>" name="country" type="text" value="<?= $result['country_name'];?>">
+          <input class="form-control" placeholder="<?= lang('Main.xin_country');?>" name="country" type="text" value="<?= esc($result['country_name'] ?? '', 'attr');?>">
         </div>
       </div>
       <div class="col-md-4">
@@ -38,7 +43,7 @@ $result = $CurrenciesModel->where('currency_id', $ifield_id)->first();
           <label class="form-label">
             <?= lang('Main.xin_currency_name');?>
             <span class="text-danger">*</span> </label>
-          <input class="form-control" placeholder="<?= lang('Main.xin_currency_name');?>" name="currency_name" type="text" value="<?= $result['currency_name'];?>">
+          <input class="form-control" placeholder="<?= lang('Main.xin_currency_name');?>" name="currency_name" type="text" value="<?= esc($result['currency_name'] ?? '', 'attr');?>">
         </div>
       </div>
       <div class="col-md-4">
@@ -46,7 +51,7 @@ $result = $CurrenciesModel->where('currency_id', $ifield_id)->first();
           <label class="form-label">
             <?= lang('Main.xin_currency_code');?>
             <span class="text-danger">*</span> </label>
-          <input class="form-control" placeholder="<?= lang('Main.xin_currency_code');?>" name="currency_code" type="text" value="<?= $result['currency_code'];?>">
+          <input class="form-control" placeholder="<?= lang('Main.xin_currency_code');?>" name="currency_code" type="text" value="<?= esc($result['currency_code'] ?? '', 'attr');?>">
         </div>
       </div>
     </div>
@@ -144,7 +149,7 @@ $row = $ConstantsModel->where('constants_id', $ifield_id)->where('type','company
     <label for="name" class="form-control-label">
       <?= lang('Main.xin_company_type');?>
       <span class="text-danger">*</span></label>
-    <input type="text" class="form-control" name="name" placeholder="<?= lang('Main.xin_company_type');?>" value="<?php echo $row['category_name'];?>">
+    <input type="text" class="form-control" name="name" placeholder="<?= lang('Main.xin_company_type');?>" value="<?php echo esc($row['category_name'] ?? '', 'attr');?>">
   </div>
 </div>
 <div class="modal-footer">
@@ -240,7 +245,7 @@ $row = $ConstantsModel->where('constants_id', $ifield_id)->where('type','religio
     <label for="name" class="form-control-label">
       <?= lang('Main.xin_ethnicity_type_title');?>
       <span class="text-danger">*</span></label>
-    <input type="text" class="form-control" name="religion" placeholder="<?= lang('Main.xin_ethnicity_type_title');?>" value="<?php echo $row['category_name'];?>">
+    <input type="text" class="form-control" name="religion" placeholder="<?= lang('Main.xin_ethnicity_type_title');?>" value="<?php echo esc($row['category_name'] ?? '', 'attr');?>">
   </div>
 </div>
 <div class="modal-footer">

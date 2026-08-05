@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -12,7 +16,8 @@ $PayeesModel = new PayeesModel();
 $get_animate = '';
 if($request->getGet('data') === 'payer' && $request->getGet('type') === 'payer' && $request->getGet('field_id')){
 $entity_id = udecode($field_id);
-$result = $PayeesModel->where('entity_id', $entity_id)->where('type','payer')->first();
+$result = $PayeesModel->where('entity_id', $entity_id)->where('type','payer')->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 <div class="modal-header">
   <h5 class="modal-title">
@@ -33,11 +38,11 @@ $result = $PayeesModel->where('entity_id', $entity_id)->where('type','payer')->f
     <div class="col-md-12">
       <div class="form-group">
         <label for="payer_name"><?= lang('xin_acc_payer');?></label>
-        <input type="text" class="form-control" name="name" placeholder="<?= lang('xin_acc_payer_name');?>" value="<?php echo $result['name'];?>">
+        <input type="text" class="form-control" name="name" placeholder="<?= lang('xin_acc_payer_name');?>" value="<?php echo esc($result['name'] ?? '', 'attr');?>">
       </div>
       <div class="form-group">
         <label for="contact_number"><?= lang('xin_contact_number');?></label>
-        <input type="text" class="form-control" name="contact_number" placeholder="<?= lang('xin_contact_number');?>" value="<?php echo $result['contact_number'];?>">
+        <input type="text" class="form-control" name="contact_number" placeholder="<?= lang('xin_contact_number');?>" value="<?php echo esc($result['contact_number'] ?? '', 'attr');?>">
       </div>
     </div>
   </div>
@@ -46,9 +51,9 @@ $result = $PayeesModel->where('entity_id', $entity_id)->where('type','payer')->f
   <button type="button" class="btn btn-light" data-dismiss="modal"><?= lang('Main.xin_close');?></button>
   <button type="submit" class="btn btn-primary"><?= lang('Main.xin_update');?></button>
 </div>
-<?php echo form_close(); ?> 
+<?php echo form_close(); ?>
 <script type="text/javascript">
- $(document).ready(function(){ 
+ $(document).ready(function(){
 
 		Ladda.bind('button[type=submit]');
 		/* Edit data */
@@ -90,7 +95,8 @@ $result = $PayeesModel->where('entity_id', $entity_id)->where('type','payer')->f
   </script>
 <?php } elseif($request->getGet('data') === 'payee' && $request->getGet('type') === 'payee' && $request->getGet('field_id')){
 $entity_id = udecode($field_id);
-$result = $PayeesModel->where('entity_id', $entity_id)->where('type','payee')->first();
+$result = $PayeesModel->where('entity_id', $entity_id)->where('type','payee')->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 <div class="modal-header">
   <h5 class="modal-title">
@@ -111,11 +117,11 @@ $result = $PayeesModel->where('entity_id', $entity_id)->where('type','payee')->f
     <div class="col-md-12">
       <div class="form-group">
         <label for="payee_name"><?= lang('xin_acc_payee');?></label>
-        <input type="text" class="form-control" name="name" placeholder="<?= lang('xin_acc_payee_name');?>" value="<?php echo $result['name'];?>">
+        <input type="text" class="form-control" name="name" placeholder="<?= lang('xin_acc_payee_name');?>" value="<?php echo esc($result['name'] ?? '', 'attr');?>">
       </div>
       <div class="form-group">
         <label for="contact_number"><?= lang('xin_contact_number');?></label>
-        <input type="number" class="form-control" name="contact_number" placeholder="<?= lang('xin_contact_number');?>" value="<?php echo $result['contact_number'];?>">
+        <input type="number" class="form-control" name="contact_number" placeholder="<?= lang('xin_contact_number');?>" value="<?php echo esc($result['contact_number'] ?? '', 'attr');?>">
       </div>
     </div>
   </div>

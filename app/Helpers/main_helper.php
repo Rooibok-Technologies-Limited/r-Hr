@@ -15,6 +15,41 @@ if(!function_exists('hex_color')) {
 	}
 }
 
+// Effective tenant company id for the *current session*, usable from view
+// scope (mirrors BaseController::tenantCompanyId()). Staff carry the owner's
+// user_id in their company_id column; owners/super carry company_id=0 on their
+// own ci_erp_users row, so their effective company id is their own user_id.
+// Use this to scope dialog/detail record fetches for defence-in-depth authz.
+if(!function_exists('effective_company_id')) {
+	function effective_company_id(): int {
+		$usession = \Config\Services::session()->get('sup_username');
+		$uid = (int) ($usession['sup_user_id'] ?? 0);
+		if ($uid === 0) {
+			return 0;
+		}
+		$u = (new \App\Models\UsersModel())->where('user_id', $uid)->first();
+		if ($u && ($u['user_type'] ?? '') === 'staff') {
+			return (int) $u['company_id'];
+		}
+		return $uid;
+	}
+}
+
+// Empty-state markup for an edit dialog whose record was not found or is not
+// visible to the current tenant. Echo it and `return;` from the view before any
+// $result dereference, so a missing/cross-tenant record renders a clean notice
+// instead of a fatal undefined-index / blank breakout.
+if(!function_exists('dialog_not_found')) {
+	function dialog_not_found(): string {
+		return '<div class="modal-header"><h5 class="modal-title">Not found</h5>'
+			. '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+			. '<div class="modal-body"><div class="alert alert-warning mb-0">'
+			. 'This record was not found or is not available for your account.</div></div>'
+			. '<div class="modal-footer"><button type="button" class="btn btn-light" data-dismiss="modal">'
+			. esc(lang('Main.xin_close')) . '</button></div>';
+	}
+}
+
 // Create a notification for a user
 if(!function_exists('create_notification')) {
 	function create_notification(int $user_id, string $title, string $body = '', string $link = '', int $company_id = 0): void {

@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -30,7 +34,8 @@ $get_animate = '';
 $xin_com_system = erp_company_settings();
 if($request->getGet('data') === 'transfer' && $request->getGet('field_id')){
 $transfer_id = udecode($field_id);
-$result = $TransfersModel->where('transfer_id', $transfer_id)->first();
+$result = $TransfersModel->where('transfer_id', $transfer_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 
 if($user_info['user_type'] == 'staff'){
 	$departments = $DepartmentModel->where('company_id',$user_info['company_id'])->orderBy('department_id', 'ASC')->findAll();
@@ -112,7 +117,7 @@ $employee_detail = $StaffdetailsModel->where('user_id', $result['employee_id'])-
         <?= lang('Employees.xin_transfer_date');?> <span class="text-danger">*</span>
       </label>
       <div class="input-group">
-        <input class="form-control d_date" placeholder="<?= lang('Employees.xin_transfer_date');?>" name="transfer_date" type="text" value="<?= $result['transfer_date'];?>">
+        <input class="form-control d_date" placeholder="<?= lang('Employees.xin_transfer_date');?>" name="transfer_date" type="text" value="<?= esc($result['transfer_date'] ?? '', 'attr');?>">
         <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
       </div>
     </div>
@@ -143,7 +148,7 @@ $employee_detail = $StaffdetailsModel->where('user_id', $result['employee_id'])-
       <label for="reason"> 
         <?= lang('Employees.xin_transfer_reason');?> <span class="text-danger">*</span>
       </label>
-      <textarea class="form-control textarea" placeholder="<?= lang('Employees.xin_transfer_reason');?>" name="reason" cols="30" rows="3"><?= $result['reason'];?></textarea>
+      <textarea class="form-control textarea" placeholder="<?= lang('Employees.xin_transfer_reason');?>" name="reason" cols="30" rows="3"><?= esc($result['reason'] ?? '');?></textarea>
     </div>
   </div>
 </div>
