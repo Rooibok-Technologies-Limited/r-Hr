@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -25,7 +29,8 @@ $xin_system = erp_company_settings();
 $get_animate = '';
 if($request->getGet('data') === 'advance_salary' && $request->getGet('field_id')){
 $advance_salary_id = udecode($field_id);
-$result = $AdvancesalaryModel->where('advance_salary_id', $advance_salary_id)->first();
+$result = $AdvancesalaryModel->where('advance_salary_id', $advance_salary_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 
 <div class="modal-header">
@@ -70,7 +75,7 @@ $result = $AdvancesalaryModel->where('advance_salary_id', $advance_salary_id)->f
             <?= lang('Employees.xin_award_month_year');?> <span class="text-danger">*</span>
           </label>
           <div class="input-group">
-            <input class="form-control d_month_year" placeholder="<?= lang('Employees.xin_award_month_year');?>" name="month_year" type="text" value="<?= $result['month_year'];?>">
+            <input class="form-control d_month_year" placeholder="<?= lang('Employees.xin_award_month_year');?>" name="month_year" type="text" value="<?= esc($result['month_year'] ?? '', 'attr');?>">
             <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
           </div>
         </div>
@@ -84,7 +89,7 @@ $result = $AdvancesalaryModel->where('advance_salary_id', $advance_salary_id)->f
             <div class="input-group-append"><span class="input-group-text">
               <?= $xin_system['default_currency'];?>
               </span></div>
-            <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="advance_amount" type="text" value="<?= $result['advance_amount'];?>">
+            <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="advance_amount" type="text" value="<?= esc($result['advance_amount'] ?? '', 'attr');?>">
           </div>
         </div>
       </div>
@@ -112,7 +117,7 @@ $result = $AdvancesalaryModel->where('advance_salary_id', $advance_salary_id)->f
         <div class="input-group-append"><span class="input-group-text">
           <?= $xin_system['default_currency'];?>
           </span></div>
-        <input class="form-control" placeholder="<?= lang('Main.xin_emi_full_text');?>" name="emi_amount" id="mmonthly_installment" type="text" value="<?= $result['monthly_installment'];?>">
+        <input class="form-control" placeholder="<?= lang('Main.xin_emi_full_text');?>" name="emi_amount" id="mmonthly_installment" type="text" value="<?= esc($result['monthly_installment'] ?? '', 'attr');?>">
       </div>
     </div>
   </div>
@@ -144,7 +149,7 @@ $result = $AdvancesalaryModel->where('advance_salary_id', $advance_salary_id)->f
       <label for="award_information">
         <?= lang('Main.xin_reason');?> <span class="text-danger">*</span>
       </label>
-      <textarea class="form-control" placeholder="<?= lang('Main.xin_reason');?>" name="reason" cols="30" rows="3" id="reason"><?= $result['reason'];?></textarea>
+      <textarea class="form-control" placeholder="<?= lang('Main.xin_reason');?>" name="reason" cols="30" rows="3" id="reason"><?= esc($result['reason'] ?? '');?></textarea>
     </div>
   </div>
   <div class="col-md-6">
@@ -316,11 +321,11 @@ $result = $AwardsModel->where('award_id', $award_id)->first();
       </tr>
       <tr>
         <th><?= lang('Employees.xin_award_month_year');?></th>
-        <td style="display: table-cell;"><?= $result['award_month_year'];?></td>
+        <td style="display: table-cell;"><?= esc($result['award_month_year'] ?? '');?></td>
       </tr>
       <tr>
         <th><?= lang('Employees.xin_gift');?></th>
-        <td style="display: table-cell;"><?php echo $result['gift_item'];?></td>
+        <td style="display: table-cell;"><?php echo esc($result['gift_item'] ?? '');?></td>
       </tr>
       <tr>
         <th><?= lang('Employees.xin_cash');?></th>

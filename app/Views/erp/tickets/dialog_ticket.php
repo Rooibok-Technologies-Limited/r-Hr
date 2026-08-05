@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -12,7 +16,8 @@ $TicketsModel = new TicketsModel();
 $get_animate = '';
 if($request->getGet('type') === 'ticket' && $request->getGet('field_id')){
 $ticket_id = udecode($field_id);
-$result = $TicketsModel->where('ticket_id', $ticket_id)->first();
+$result = $TicketsModel->where('ticket_id', $ticket_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 
 <div class="modal-header">
@@ -36,7 +41,7 @@ $result = $TicketsModel->where('ticket_id', $ticket_id)->first();
         <label for="task_name">
           <?= lang('Main.xin_subject');?> <span class="text-danger">*</span>
         </label>
-        <input class="form-control" placeholder="<?= lang('Main.xin_subject');?>" name="subject" type="text" value="<?= $result['subject'];?>">
+        <input class="form-control" placeholder="<?= lang('Main.xin_subject');?>" name="subject" type="text" value="<?= esc($result['subject'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-12">

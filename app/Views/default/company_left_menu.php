@@ -48,6 +48,14 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
   <li class="pc-item"><a href="<?= site_url('erp/staff-list');?>" class="pc-link "><span class="pc-micon"><i data-feather="users"></i></span><span class="pc-mtext">
     <?= lang('Dashboard.dashboard_employees');?>
     </span></a></li>
+  <!-- Staff ID Cards -->
+  <li class="pc-item"><a href="<?= site_url('erp/id-cards');?>" class="pc-link "><span class="pc-micon"><i data-feather="credit-card"></i></span><span class="pc-mtext">
+    Staff ID Cards
+    </span></a></li>
+  <!-- ID Card Settings -->
+  <li class="pc-item"><a href="<?= site_url('erp/id-card-settings');?>" class="pc-link "><span class="pc-micon"><i data-feather="sliders"></i></span><span class="pc-mtext">
+    ID Card Settings
+    </span></a></li>
   <!-- CoreHR -->
   <li class="pc-item <?php if(!empty($arr_mod['corehr_open']))echo $arr_mod['corehr_open'];?>"> <a href="#" class="pc-link sidenav-toggle"> <span class="pc-micon"><i data-feather="crosshair"></i></span>
     <?= lang('Dashboard.dashboard_core_hr');?>

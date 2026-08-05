@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -14,7 +18,8 @@ $Moduleattributes = new Moduleattributes();
 $get_animate = '';
 if($request->getGet('data') === 'customfield' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $Moduleattributes->where('custom_field_id', $ifield_id)->first();
+$result = $Moduleattributes->where('custom_field_id', $ifield_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 ?>
 
@@ -60,7 +65,7 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
       <label for="name">
         <?= lang('Dashboard.xin_name');?>
         <span class="text-danger">*</span> </label>
-      <input class="form-control" placeholder="<?= lang('Dashboard.xin_name');?>" disabled="disabled" type="text" value="<?= $result['attribute'];?>">
+      <input class="form-control" placeholder="<?= lang('Dashboard.xin_name');?>" disabled="disabled" type="text" value="<?= esc($result['attribute'] ?? '', 'attr');?>">
       <small class="text-primary"><?= lang('Main.xin_cannot_update');?></small>
     </div>
   </div>
@@ -69,7 +74,7 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
       <label for="field_label">
         <?= lang('Main.xin_field_label');?> <span class="text-danger">*</span>
       </label>
-      <input class="form-control" placeholder="<?= lang('Main.xin_field_label');?>" name="field_label" type="text" value="<?= $result['attribute_label'];?>">
+      <input class="form-control" placeholder="<?= lang('Main.xin_field_label');?>" name="field_label" type="text" value="<?= esc($result['attribute_label'] ?? '', 'attr');?>">
       <small class="text-primary">for example <strong>First Name</strong> </small>
     </div>
   </div>
@@ -78,7 +83,7 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
       <label for="priority">
         <?= lang('Projects.xin_p_priority');?> <span class="text-danger">*</span>
       </label>
-      <input class="form-control" placeholder="<?= lang('Projects.xin_p_priority');?>" name="priority" type="text" value="<?= $result['priority'];?>">
+      <input class="form-control" placeholder="<?= lang('Projects.xin_p_priority');?>" name="priority" type="text" value="<?= esc($result['priority'] ?? '', 'attr');?>">
     </div>
   </div>
   <div class="col-md-3">

@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -25,6 +29,7 @@ if($user_info['user_type'] == 'staff'){
 	$result = $JobcandidatesModel->where('company_id', $usession['sup_user_id'])->where('candidate_id', $candidate_id)->first();
 	$staff_info = $UsersModel->where('company_id', $usession['sup_user_id'])->where('user_id!=', $usession['sup_user_id'])->where('user_id!=', $result['staff_id'])->where('user_type','staff')->findAll();
 }
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 
 <div class="modal-header">
@@ -191,17 +196,18 @@ if($user_info['user_type'] == 'staff'){
 	$result = $JobcandidatesModel->where('company_id', $usession['sup_user_id'])->where('candidate_id', $candidate_id)->first();
 	$job_data = $JobsModel->where('company_id',$usession['sup_user_id'])->where('job_id', $result['job_id'])->first();
 }
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 <div class="modal-header">
   <h5 class="modal-title">
-    <?= $job_data['job_title'];?>
+    <?= esc($job_data['job_title'] ?? '');?>
     <span class="font-weight-light">
     <?= lang('Recruitment.xin_cover_letter');?>
     </span> </h5>
   <button type="button" class="close" data-dismiss="modal" aria-label="<?= lang('Main.xin_close');?>"> <span aria-hidden="true">×</span> </button>
 </div>
 <div class="modal-body">
-  <?= $result['message'];?>
+  <?= esc($result['message'] ?? '');?>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-light" data-dismiss="modal">
@@ -216,6 +222,7 @@ if($user_info['user_type'] == 'staff'){
 } else {
 	$result = $JobinterviewsModel->where('company_id', $usession['sup_user_id'])->where('job_interview_id', $job_interview_id)->first();
 }
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 <div class="modal-header">
   <h5 class="modal-title">
@@ -248,7 +255,7 @@ if($user_info['user_type'] == 'staff'){
     <div class="col-md-12 reject_opt">
       <div class="form-group">
         <label for="description"><?php echo lang('Recruitment.xin_job_interview_remarks');?></label>
-        <textarea class="form-control textarea" placeholder="<?php echo lang('Recruitment.xin_job_interview_remarks');?>" name="description" cols="30" rows="3"><?= $result['interview_remarks'];?>
+        <textarea class="form-control textarea" placeholder="<?php echo lang('Recruitment.xin_job_interview_remarks');?>" name="description" cols="30" rows="3"><?= esc($result['interview_remarks'] ?? '');?>
 </textarea>
       </div>
     </div>
@@ -329,6 +336,7 @@ if($user_info['user_type'] == 'staff'){
 } else {
 	$result = $JobinterviewsModel->where('company_id', $usession['sup_user_id'])->where('job_interview_id', $interview_id)->first();
 }
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 <div class="modal-header">
   <h5 class="modal-title">
@@ -339,7 +347,7 @@ if($user_info['user_type'] == 'staff'){
 </div>
 <div class="modal-body">
   <div class="m-b-20">
-    <?= $result['interview_remarks'];?>
+    <?= esc($result['interview_remarks'] ?? '');?>
   </div>
 </div>
 <div class="modal-footer">

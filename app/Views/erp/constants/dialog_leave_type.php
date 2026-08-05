@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -12,7 +16,8 @@ $ConstantsModel = new ConstantsModel();
 $get_animate = '';
 if($request->getGet('data') === 'leave_type' && $request->getGet('field_id')){
 $category_id = udecode($field_id);
-$result = $ConstantsModel->where('constants_id', $category_id)->where('type','leave_type')->first();
+$result = $ConstantsModel->where('constants_id', $category_id)->where('type','leave_type')->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 
 <div class="modal-header">
@@ -36,7 +41,7 @@ $result = $ConstantsModel->where('constants_id', $category_id)->where('type','le
         <label for="name">
           <?= lang('Leave.xin_leave_type');?>
           <span class="text-danger">*</span> </label>
-        <input type="text" class="form-control" name="name" placeholder="<?= lang('Leave.xin_leave_type');?>" value="<?= $result['category_name'];?>">
+        <input type="text" class="form-control" name="name" placeholder="<?= lang('Leave.xin_leave_type');?>" value="<?= esc($result['category_name'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-12">
@@ -44,7 +49,7 @@ $result = $ConstantsModel->where('constants_id', $category_id)->where('type','le
         <label for="name">
           <?= lang('Leave.xin_leave_days_per_year');?>
           <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" name="days_per_year" placeholder="<?= lang('Leave.xin_leave_days_per_year');?>" value="<?= $result['field_one'];?>">
+        <input type="text" class="form-control" name="days_per_year" placeholder="<?= lang('Leave.xin_leave_days_per_year');?>" value="<?= esc($result['field_one'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-12">

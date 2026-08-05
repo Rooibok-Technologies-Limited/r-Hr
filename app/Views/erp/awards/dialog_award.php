@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -25,7 +29,8 @@ $xin_system = erp_company_settings();
 $get_animate = '';
 if($request->getGet('data') === 'award' && $request->getGet('field_id')){
 $award_id = udecode($field_id);
-$result = $AwardsModel->where('award_id', $award_id)->first();
+$result = $AwardsModel->where('award_id', $award_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 
 <div class="modal-header">
@@ -66,7 +71,7 @@ $result = $AwardsModel->where('award_id', $award_id)->first();
         </label>
         <div class="input-group">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-gift"></i></span></div>
-          <input class="form-control" placeholder="<?= lang('Employees.xin_award_gift');?>" name="gift" type="text" value="<?php echo $result['gift_item'];?>">
+          <input class="form-control" placeholder="<?= lang('Employees.xin_award_gift');?>" name="gift" type="text" value="<?php echo esc($result['gift_item'] ?? '', 'attr');?>">
         </div>
       </div>
     </div>
@@ -76,7 +81,7 @@ $result = $AwardsModel->where('award_id', $award_id)->first();
           <?= lang('Main.xin_e_details_date');?> <span class="text-danger">*</span>
         </label>
         <div class="input-group">
-          <input class="form-control d_award_date" placeholder="<?= lang('Employees.xin_award_date');?>" name="award_date" type="text" value="<?php echo $result['created_at'];?>">
+          <input class="form-control d_award_date" placeholder="<?= lang('Employees.xin_award_date');?>" name="award_date" type="text" value="<?php echo esc($result['created_at'] ?? '', 'attr');?>">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
         </div>
       </div>
@@ -90,7 +95,7 @@ $result = $AwardsModel->where('award_id', $award_id)->first();
           <div class="input-group-append"><span class="input-group-text">
             <?= $xin_system['default_currency'];?>
             </span></div>
-          <input class="form-control" placeholder="<?= lang('Employees.xin_award_cash');?>" name="cash" type="text" value="<?php echo $result['cash_price'];?>">
+          <input class="form-control" placeholder="<?= lang('Employees.xin_award_cash');?>" name="cash" type="text" value="<?php echo esc($result['cash_price'] ?? '', 'attr');?>">
         </div>
       </div>
     </div>
@@ -100,7 +105,7 @@ $result = $AwardsModel->where('award_id', $award_id)->first();
           <?= lang('Employees.xin_award_month_year');?> <span class="text-danger">*</span>
         </label>
         <div class="input-group">
-          <input class="form-control d_month_year" placeholder="<?= lang('Employees.xin_award_month_year');?>" name="month_year" type="text" value="<?php echo $result['award_month_year'];?>">
+          <input class="form-control d_month_year" placeholder="<?= lang('Employees.xin_award_month_year');?>" name="month_year" type="text" value="<?php echo esc($result['award_month_year'] ?? '', 'attr');?>">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
         </div>
       </div>
@@ -124,7 +129,7 @@ $result = $AwardsModel->where('award_id', $award_id)->first();
       <div class='form-group'>
         <label for="logo">&nbsp;</label>
         <?php if($result['award_photo']!='' && $result['award_photo']!='no file') {?>
-        <img src="<?php echo base_url().'/public/uploads/awards/'.$result['award_photo'];?>" class="d-block" width="70px" id="u_file"> <a href="<?php echo site_url()?>download?type=awards&filename=<?php echo uencode($result['award_photo']);?>">
+        <img src="<?php echo base_url().'/public/uploads/awards/'.esc($result['award_photo'] ?? '', 'attr');?>" class="d-block" width="70px" id="u_file"> <a href="<?php echo site_url()?>download?type=awards&filename=<?php echo uencode($result['award_photo']);?>">
         <?= lang('Main.xin_download');?>
         </a>
         <?php } else {?>
@@ -137,7 +142,7 @@ $result = $AwardsModel->where('award_id', $award_id)->first();
         <label for="description">
           <?= lang('Main.xin_description');?>
         </label>
-        <textarea class="form-control textarea" placeholder="<?= lang('Main.xin_description');?>" name="description" cols="30" rows="2"><?php echo $result['description'];?></textarea>
+        <textarea class="form-control textarea" placeholder="<?= lang('Main.xin_description');?>" name="description" cols="30" rows="2"><?php echo esc($result['description'] ?? '');?></textarea>
       </div>
     </div>
     <div class="col-md-12">
@@ -145,7 +150,7 @@ $result = $AwardsModel->where('award_id', $award_id)->first();
         <label for="award_information">
           <?= lang('Employees.xin_award_info');?> <span class="text-danger">*</span>
         </label>
-        <textarea class="form-control" placeholder="<?= lang('Employees.xin_award_info');?>" name="award_information" cols="30" rows="2" id="award_information"><?php echo $result['award_information'];?></textarea>
+        <textarea class="form-control" placeholder="<?= lang('Employees.xin_award_info');?>" name="award_information" cols="30" rows="2" id="award_information"><?php echo esc($result['award_information'] ?? '');?></textarea>
       </div>
     </div>
   </div>
@@ -261,7 +266,8 @@ $result = $AwardsModel->where('award_id', $award_id)->first();
   </script>
 <?php } elseif($request->getGet('type') === 'view_award' && $request->getGet('field_id')){
 $award_id = udecode($field_id);
-$result = $AwardsModel->where('award_id', $award_id)->first();
+$result = $AwardsModel->where('award_id', $award_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 <div class="modal-header">
   <h5 class="modal-title">
@@ -289,11 +295,11 @@ $result = $AwardsModel->where('award_id', $award_id)->first();
       </tr>
       <tr>
         <th><?= lang('Employees.xin_award_month_year');?></th>
-        <td style="display: table-cell;"><?= $result['award_month_year'];?></td>
+        <td style="display: table-cell;"><?= esc($result['award_month_year'] ?? '');?></td>
       </tr>
       <tr>
         <th><?= lang('Employees.xin_gift');?></th>
-        <td style="display: table-cell;"><?php echo $result['gift_item'];?></td>
+        <td style="display: table-cell;"><?php echo esc($result['gift_item'] ?? '');?></td>
       </tr>
       <tr>
         <th><?= lang('Employees.xin_cash');?></th>
@@ -302,7 +308,7 @@ $result = $AwardsModel->where('award_id', $award_id)->first();
       <tr>
         <th><?= lang('Main.xin_attachment');?></th>
         <td style="display: table-cell;"><?php if($result['award_photo']!='' && $result['award_photo']!='no file') {?>
-          <img src="<?php echo base_url().'/public/uploads/awards/'.$result['award_photo'];?>" width="70px" id="u_file">&nbsp; <a href="<?php echo site_url()?>download?type=awards&filename=<?php echo uencode($result['award_photo']);?>">
+          <img src="<?php echo base_url().'/public/uploads/awards/'.esc($result['award_photo'] ?? '', 'attr');?>" width="70px" id="u_file">&nbsp; <a href="<?php echo site_url()?>download?type=awards&filename=<?php echo uencode($result['award_photo']);?>">
           <?= lang('Main.xin_download');?>
           </a>
           <?php } ?></td>

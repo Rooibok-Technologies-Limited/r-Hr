@@ -1,11 +1,16 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\LeaveModel;
 $LeaveModel = new LeaveModel();
 $request = \Config\Services::request();
 
 if($request->getGet('data') === 'leave' && $field_id){
 $ifield_id = udecode($field_id);
-$result = $LeaveModel->where('leave_id', $ifield_id)->first();
+$result = $LeaveModel->where('leave_id', $ifield_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 
 <div class="modal-header">
@@ -29,7 +34,7 @@ $result = $LeaveModel->where('leave_id', $ifield_id)->first();
         <label for="description">
           <?= lang('Recruitment.xin_remarks');?> <span class="text-danger">*</span>
         </label>
-        <textarea class="form-control textarea" placeholder="<?= lang('Recruitment.xin_remarks');?>" name="remarks" cols="30" rows="2"><?php echo $result['remarks'];?></textarea>
+        <textarea class="form-control textarea" placeholder="<?= lang('Recruitment.xin_remarks');?>" name="remarks" cols="30" rows="2"><?php echo esc($result['remarks'] ?? '');?></textarea>
       </div>
     </div>
     <div class="col-md-12">
@@ -37,7 +42,7 @@ $result = $LeaveModel->where('leave_id', $ifield_id)->first();
         <label for="reason">
           <?= lang('Leave.xin_leave_reason');?> <span class="text-danger">*</span>
         </label>
-        <textarea class="form-control" placeholder="<?= lang('Leave.xin_leave_reason');?>" name="reason" cols="30" rows="5" id="reason"><?php echo $result['reason'];?></textarea>
+        <textarea class="form-control" placeholder="<?= lang('Leave.xin_leave_reason');?>" name="reason" cols="30" rows="5" id="reason"><?php echo esc($result['reason'] ?? '');?></textarea>
       </div>
     </div>
   </div>

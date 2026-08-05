@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -25,7 +29,8 @@ $xin_system = $SystemModel->where('setting_id', 1)->first();
 $get_animate = '';
 if($request->getGet('data') === 'warning' && $request->getGet('field_id')){
 $warning_id = udecode($field_id);
-$result = $WarningModel->where('warning_id', $warning_id)->first();
+$result = $WarningModel->where('warning_id', $warning_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 
 <div class="modal-header">
@@ -51,7 +56,7 @@ $result = $WarningModel->where('warning_id', $warning_id)->first();
             <label for="subject">
               <?= lang('Main.xin_subject');?> <span class="text-danger">*</span>
             </label>
-            <input class="form-control" placeholder="<?= lang('Main.xin_subject');?>" name="subject" type="text" value="<?php echo $result['subject'];?>">
+            <input class="form-control" placeholder="<?= lang('Main.xin_subject');?>" name="subject" type="text" value="<?php echo esc($result['subject'] ?? '', 'attr');?>">
           </div>
         </div>
         <div class="col-md-6">
@@ -60,7 +65,7 @@ $result = $WarningModel->where('warning_id', $warning_id)->first();
               <?= lang('Employees.xin_case_date');?> <span class="text-danger">*</span>
             </label>
             <div class="input-group">
-              <input class="form-control d_date" placeholder="<?= lang('Employees.xin_case_date');?>" name="warning_date" type="text" value="<?php echo $result['warning_date'];?>">
+              <input class="form-control d_date" placeholder="<?= lang('Employees.xin_case_date');?>" name="warning_date" type="text" value="<?php echo esc($result['warning_date'] ?? '', 'attr');?>">
               <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
             </div>
           </div>
@@ -72,7 +77,7 @@ $result = $WarningModel->where('warning_id', $warning_id)->first();
             <label for="description">
               <?= lang('Main.xin_description');?> <span class="text-danger">*</span>
             </label>
-            <textarea class="form-control textarea" placeholder="<?= lang('Main.xin_description');?>" name="description" cols="30" rows="3"><?php echo $result['description'];?></textarea>
+            <textarea class="form-control textarea" placeholder="<?= lang('Main.xin_description');?>" name="description" cols="30" rows="3"><?php echo esc($result['description'] ?? '');?></textarea>
           </div>
         </div>
       </div>
@@ -157,7 +162,8 @@ $result = $WarningModel->where('warning_id', $warning_id)->first();
 </script>
 <?php } elseif($request->getGet('type') === 'view_warning' && $request->getGet('field_id')){
 $warning_id = udecode($field_id);
-$result = $WarningModel->where('warning_id', $warning_id)->first();
+$result = $WarningModel->where('warning_id', $warning_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 <div class="modal-header">
   <h5 class="modal-title">
@@ -185,7 +191,7 @@ $result = $WarningModel->where('warning_id', $warning_id)->first();
       </tr>
       <tr>
         <th><?= lang('Main.xin_subject');?></th>
-        <td style="display: table-cell;"><?php echo $result['subject'];?></td>
+        <td style="display: table-cell;"><?php echo esc($result['subject'] ?? '');?></td>
       </tr>
       <tr>
         <th><?= lang('Employees.xin_case_by');?></th>
@@ -201,7 +207,7 @@ $result = $WarningModel->where('warning_id', $warning_id)->first();
       <tr>
         <th><?= lang('Main.xin_attachment');?></th>
         <td style="display: table-cell;"><?php if($result['attachment']!='' && $result['attachment']!='no file') {?>
-          <img src="<?php echo base_url().'/public/uploads/warning/'.$result['attachment'];?>" width="70px" id="u_file">&nbsp; <a href="<?= site_url()?>download?type=warning&filename=<?php echo uencode($result['attachment']);?>">
+          <img src="<?php echo base_url().'/public/uploads/warning/'.esc($result['attachment'] ?? '', 'attr');?>" width="70px" id="u_file">&nbsp; <a href="<?= site_url()?>download?type=warning&filename=<?php echo uencode($result['attachment']);?>">
           <?= lang('Main.xin_download');?>
           </a>
           <?php } ?></td>

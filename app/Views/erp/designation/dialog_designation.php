@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -14,7 +18,8 @@ $DesignationModel = new DesignationModel();
 $get_animate = '';
 if($request->getGet('data') === 'designation' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $DesignationModel->where('designation_id', $ifield_id)->first();
+$result = $DesignationModel->where('designation_id', $ifield_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 if($user_info['user_type'] == 'staff'){
    $main_department = $DepartmentModel->where('company_id', $user_info['company_id'])->findAll();
@@ -57,13 +62,13 @@ if($user_info['user_type'] == 'staff'){
         <label for="name">
           <?= lang('Dashboard.left_designation_name');?> <span class="text-danger">*</span>
         </label>
-        <input type="text" class="form-control" name="designation_name" placeholder="<?= lang('Dashboard.left_designation_name');?>" value="<?= $result['designation_name'];?>">
+        <input type="text" class="form-control" name="designation_name" placeholder="<?= lang('Dashboard.left_designation_name');?>" value="<?= esc($result['designation_name'] ?? '', 'attr');?>">
       </div>
       <div class="form-group">
         <label for="description">
           <?= lang('Main.xin_description');?>
         </label>
-        <textarea type="text" class="form-control" name="description" placeholder="<?= lang('Main.xin_description');?>"><?= $result['description'];?>
+        <textarea type="text" class="form-control" name="description" placeholder="<?= lang('Main.xin_description');?>"><?= esc($result['description'] ?? '');?>
 </textarea>
       </div>
     </div>

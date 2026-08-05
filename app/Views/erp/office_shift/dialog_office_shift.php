@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -12,7 +16,8 @@ $ShiftModel = new ShiftModel();
 $get_animate = '';
 if($request->getGet('data') === 'shift' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $ShiftModel->where('office_shift_id', $ifield_id)->first();
+$result = $ShiftModel->where('office_shift_id', $ifield_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 
 <div class="modal-header">
@@ -36,7 +41,7 @@ $result = $ShiftModel->where('office_shift_id', $ifield_id)->first();
         <label for="shift_name">
           <?= lang('Employees.xin_shift_name');?>
           <span class="text-danger">*</span> </label>
-        <input class="form-control" placeholder="<?= lang('Employees.xin_shift_name');?>" name="shift_name" type="text" value="<?= $result['shift_name'];?>">
+        <input class="form-control" placeholder="<?= lang('Employees.xin_shift_name');?>" name="shift_name" type="text" value="<?= esc($result['shift_name'] ?? '', 'attr');?>">
       </div>
     </div>
   </div>
@@ -47,7 +52,7 @@ $result = $ShiftModel->where('office_shift_id', $ifield_id)->first();
           <?= lang('Employees.xin_monday_in_time');?>
           <span class="text-danger">*</span> </label>
         <div class="input-group">
-          <input class="form-control etimepicker clear-1" placeholder="<?= lang('Employees.xin_shift_in_time');?>" readonly name="monday_in_time" type="text" value="<?= $result['monday_in_time'];?>">
+          <input class="form-control etimepicker clear-1" placeholder="<?= lang('Employees.xin_shift_in_time');?>" readonly name="monday_in_time" type="text" value="<?= esc($result['monday_in_time'] ?? '', 'attr');?>">
           <div class="input-group-append clear-time" data-clear-id="1"><span class="input-group-text text-danger"><i class="fas fa-trash-alt"></i></span></div>
         </div>
       </div>
@@ -58,7 +63,7 @@ $result = $ShiftModel->where('office_shift_id', $ifield_id)->first();
           <?= lang('Employees.xin_monday_out_time');?>
           <span class="text-danger">*</span> </label>
         <div class="input-group">
-          <input class="form-control etimepicker clear-2" placeholder="<?= lang('Employees.xin_shift_out_time');?>" readonly name="monday_out_time" type="text" value="<?= $result['monday_out_time'];?>">
+          <input class="form-control etimepicker clear-2" placeholder="<?= lang('Employees.xin_shift_out_time');?>" readonly name="monday_out_time" type="text" value="<?= esc($result['monday_out_time'] ?? '', 'attr');?>">
           <div class="input-group-append clear-time" data-clear-id="2"><span class="input-group-text text-danger"><i class="fas fa-trash-alt"></i></span></div>
         </div>
       </div>
@@ -71,7 +76,7 @@ $result = $ShiftModel->where('office_shift_id', $ifield_id)->first();
           <?= lang('Employees.xin_tuesday_in_time');?>
           <span class="text-danger">*</span> </label>
         <div class="input-group">
-          <input class="form-control etimepicker clear-3" placeholder="<?= lang('Employees.xin_shift_in_time');?>" readonly name="tuesday_in_time" type="text" value="<?= $result['tuesday_in_time'];?>">
+          <input class="form-control etimepicker clear-3" placeholder="<?= lang('Employees.xin_shift_in_time');?>" readonly name="tuesday_in_time" type="text" value="<?= esc($result['tuesday_in_time'] ?? '', 'attr');?>">
           <div class="input-group-append clear-time" data-clear-id="3"><span class="input-group-text text-danger"><i class="fas fa-trash-alt"></i></span></div>
         </div>
       </div>
@@ -82,7 +87,7 @@ $result = $ShiftModel->where('office_shift_id', $ifield_id)->first();
           <?= lang('Employees.xin_tuesday_out_time');?>
           <span class="text-danger">*</span> </label>
         <div class="input-group">
-          <input class="form-control etimepicker clear-4" placeholder="<?= lang('Employees.xin_shift_out_time');?>" readonly name="tuesday_out_time" type="text" value="<?= $result['tuesday_out_time'];?>">
+          <input class="form-control etimepicker clear-4" placeholder="<?= lang('Employees.xin_shift_out_time');?>" readonly name="tuesday_out_time" type="text" value="<?= esc($result['tuesday_out_time'] ?? '', 'attr');?>">
           <div class="input-group-append clear-time" data-clear-id="4"><span class="input-group-text text-danger"><i class="fas fa-trash-alt"></i></span></div>
         </div>
       </div>
@@ -95,7 +100,7 @@ $result = $ShiftModel->where('office_shift_id', $ifield_id)->first();
           <?= lang('Employees.xin_wednesday_in_time');?>
           <span class="text-danger">*</span> </label>
         <div class="input-group">
-          <input class="form-control etimepicker clear-5" placeholder="<?= lang('Employees.xin_shift_in_time');?>" readonly name="wednesday_in_time" type="text" value="<?= $result['wednesday_in_time'];?>">
+          <input class="form-control etimepicker clear-5" placeholder="<?= lang('Employees.xin_shift_in_time');?>" readonly name="wednesday_in_time" type="text" value="<?= esc($result['wednesday_in_time'] ?? '', 'attr');?>">
           <div class="input-group-append clear-time" data-clear-id="5"><span class="input-group-text text-danger"><i class="fas fa-trash-alt"></i></span></div>
         </div>
       </div>
@@ -106,7 +111,7 @@ $result = $ShiftModel->where('office_shift_id', $ifield_id)->first();
           <?= lang('Employees.xin_wednesday_out_time');?>
           <span class="text-danger">*</span> </label>
         <div class="input-group">
-          <input class="form-control etimepicker clear-6" placeholder="<?= lang('Employees.xin_shift_out_time');?>" readonly name="wednesday_out_time" type="text" value="<?= $result['wednesday_out_time'];?>">
+          <input class="form-control etimepicker clear-6" placeholder="<?= lang('Employees.xin_shift_out_time');?>" readonly name="wednesday_out_time" type="text" value="<?= esc($result['wednesday_out_time'] ?? '', 'attr');?>">
           <div class="input-group-append clear-time" data-clear-id="6"><span class="input-group-text text-danger"><i class="fas fa-trash-alt"></i></span></div>
         </div>
       </div>
@@ -119,7 +124,7 @@ $result = $ShiftModel->where('office_shift_id', $ifield_id)->first();
           <?= lang('Employees.xin_thursday_in_time');?>
           <span class="text-danger">*</span> </label>
         <div class="input-group">
-          <input class="form-control etimepicker clear-7" placeholder="<?= lang('Employees.xin_shift_in_time');?>" readonly name="thursday_in_time" type="text" value="<?= $result['thursday_in_time'];?>">
+          <input class="form-control etimepicker clear-7" placeholder="<?= lang('Employees.xin_shift_in_time');?>" readonly name="thursday_in_time" type="text" value="<?= esc($result['thursday_in_time'] ?? '', 'attr');?>">
           <div class="input-group-append clear-time" data-clear-id="7"><span class="input-group-text text-danger"><i class="fas fa-trash-alt"></i></span></div>
         </div>
       </div>
@@ -130,7 +135,7 @@ $result = $ShiftModel->where('office_shift_id', $ifield_id)->first();
           <?= lang('Employees.xin_thursday_out_time');?>
           <span class="text-danger">*</span> </label>
         <div class="input-group">
-          <input class="form-control etimepicker clear-8" placeholder="<?= lang('Employees.xin_shift_out_time');?>" readonly name="thursday_out_time" type="text" value="<?= $result['thursday_out_time'];?>">
+          <input class="form-control etimepicker clear-8" placeholder="<?= lang('Employees.xin_shift_out_time');?>" readonly name="thursday_out_time" type="text" value="<?= esc($result['thursday_out_time'] ?? '', 'attr');?>">
           <div class="input-group-append clear-time" data-clear-id="8"><span class="input-group-text text-danger"><i class="fas fa-trash-alt"></i></span></div>
         </div>
       </div>
@@ -143,7 +148,7 @@ $result = $ShiftModel->where('office_shift_id', $ifield_id)->first();
           <?= lang('Employees.xin_friday_in_time');?>
           <span class="text-danger">*</span> </label>
         <div class="input-group">
-          <input class="form-control etimepicker clear-9" placeholder="<?= lang('Employees.xin_shift_in_time');?>" readonly name="friday_in_time" type="text" value="<?= $result['friday_in_time'];?>">
+          <input class="form-control etimepicker clear-9" placeholder="<?= lang('Employees.xin_shift_in_time');?>" readonly name="friday_in_time" type="text" value="<?= esc($result['friday_in_time'] ?? '', 'attr');?>">
           <div class="input-group-append clear-time" data-clear-id="9"><span class="input-group-text text-danger"><i class="fas fa-trash-alt"></i></span></div>
         </div>
       </div>
@@ -154,7 +159,7 @@ $result = $ShiftModel->where('office_shift_id', $ifield_id)->first();
           <?= lang('Employees.xin_friday_out_time');?>
           <span class="text-danger">*</span> </label>
         <div class="input-group">
-          <input class="form-control etimepicker clear-10" placeholder="<?= lang('Employees.xin_shift_out_time');?>" readonly name="friday_out_time" type="text" value="<?= $result['friday_out_time'];?>">
+          <input class="form-control etimepicker clear-10" placeholder="<?= lang('Employees.xin_shift_out_time');?>" readonly name="friday_out_time" type="text" value="<?= esc($result['friday_out_time'] ?? '', 'attr');?>">
           <div class="input-group-append clear-time" data-clear-id="10"><span class="input-group-text text-danger"><i class="fas fa-trash-alt"></i></span></div>
         </div>
       </div>
@@ -167,7 +172,7 @@ $result = $ShiftModel->where('office_shift_id', $ifield_id)->first();
           <?= lang('Employees.xin_saturday_in_time');?>
           <span class="text-danger">*</span> </label>
         <div class="input-group">
-          <input class="form-control etimepicker clear-11" placeholder="<?= lang('Employees.xin_shift_in_time');?>" readonly name="saturday_in_time" type="text" value="<?= $result['saturday_in_time'];?>">
+          <input class="form-control etimepicker clear-11" placeholder="<?= lang('Employees.xin_shift_in_time');?>" readonly name="saturday_in_time" type="text" value="<?= esc($result['saturday_in_time'] ?? '', 'attr');?>">
           <div class="input-group-append clear-time" data-clear-id="11"><span class="input-group-text text-danger"><i class="fas fa-trash-alt"></i></span></div>
         </div>
       </div>
@@ -178,7 +183,7 @@ $result = $ShiftModel->where('office_shift_id', $ifield_id)->first();
           <?= lang('Employees.xin_saturday_out_time');?>
           <span class="text-danger">*</span> </label>
         <div class="input-group">
-          <input class="form-control etimepicker clear-12" placeholder="<?= lang('Employees.xin_shift_out_time');?>" readonly name="saturday_out_time" type="text" value="<?= $result['saturday_out_time'];?>">
+          <input class="form-control etimepicker clear-12" placeholder="<?= lang('Employees.xin_shift_out_time');?>" readonly name="saturday_out_time" type="text" value="<?= esc($result['saturday_out_time'] ?? '', 'attr');?>">
           <div class="input-group-append clear-time" data-clear-id="12"><span class="input-group-text text-danger"><i class="fas fa-trash-alt"></i></span></div>
         </div>
       </div>
@@ -191,7 +196,7 @@ $result = $ShiftModel->where('office_shift_id', $ifield_id)->first();
           <?= lang('Employees.xin_sunday_in_time');?>
           <span class="text-danger">*</span> </label>
         <div class="input-group">
-          <input class="form-control etimepicker clear-13" placeholder="<?= lang('Employees.xin_shift_in_time');?>" readonly name="sunday_in_time" type="text" value="<?= $result['sunday_in_time'];?>">
+          <input class="form-control etimepicker clear-13" placeholder="<?= lang('Employees.xin_shift_in_time');?>" readonly name="sunday_in_time" type="text" value="<?= esc($result['sunday_in_time'] ?? '', 'attr');?>">
           <div class="input-group-append clear-time" data-clear-id="13"><span class="input-group-text text-danger"><i class="fas fa-trash-alt"></i></span></div>
         </div>
       </div>
@@ -202,7 +207,7 @@ $result = $ShiftModel->where('office_shift_id', $ifield_id)->first();
           <?= lang('Employees.xin_sunday_out_time');?>
           <span class="text-danger">*</span> </label>
         <div class="input-group">
-          <input class="form-control etimepicker clear-14" placeholder="<?= lang('Employees.xin_shift_out_time');?>" readonly name="sunday_out_time" type="text" value="<?= $result['sunday_out_time'];?>">
+          <input class="form-control etimepicker clear-14" placeholder="<?= lang('Employees.xin_shift_out_time');?>" readonly name="sunday_out_time" type="text" value="<?= esc($result['sunday_out_time'] ?? '', 'attr');?>">
           <div class="input-group-append clear-time" data-clear-id="14"><span class="input-group-text text-danger"><i class="fas fa-trash-alt"></i></span></div>
         </div>
       </div>

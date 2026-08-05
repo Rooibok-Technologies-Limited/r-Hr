@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SuperroleModel;
 
 $SuperroleModel = new SuperroleModel();
@@ -7,7 +11,7 @@ $request = \Config\Services::request();
 if($request->getGet('data') === 'role' && !empty($field_id)){
 $role_id = udecode($field_id);
 $result = $SuperroleModel->where('role_id', $role_id)->first();
-if(!$result) { echo '<div class="modal-body"><p>Role not found.</p></div>'; return; }
+if(!is_array($result)){ echo dialog_not_found(); return; }
 $role_resources_ids = !empty($result['role_resources']) ? explode(',', $result['role_resources']) : [];
 
 $permissions = [
@@ -25,7 +29,7 @@ $permissions = [
 ?>
 
 <div class="modal-header">
-  <h5 class="modal-title">Edit Role: <?= esc($result['role_name']); ?></h5>
+  <h5 class="modal-title">Edit Role: <?= esc($result['role_name'] ?? ''); ?></h5>
   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 </div>
 <?php $attributes = array('name' => 'edit_role', 'id' => 'edit_role', 'autocomplete' => 'off'); ?>
@@ -36,7 +40,7 @@ $permissions = [
     <div class="col-md-6">
       <div class="form-group">
         <label>Role Name <span class="text-danger">*</span></label>
-        <input class="form-control" name="role_name" type="text" value="<?= esc($result['role_name']); ?>">
+        <input class="form-control" name="role_name" type="text" value="<?= esc($result['role_name'] ?? '', 'attr'); ?>">
       </div>
     </div>
     <div class="col-md-6">

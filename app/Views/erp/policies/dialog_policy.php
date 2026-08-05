@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -12,7 +16,8 @@ $PolicyModel = new PolicyModel();
 $get_animate = '';
 if($request->getGet('data') === 'policy' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $PolicyModel->where('policy_id', $ifield_id)->first();
+$result = $PolicyModel->where('policy_id', $ifield_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 ?>
 
@@ -35,13 +40,13 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
     <label for="title">
       <?= lang('Dashboard.xin_title');?> <span class="text-danger">*</span>
     </label>
-    <input type="text" class="form-control" name="title" placeholder="<?= lang('Dashboard.xin_title');?>" value="<?php echo $result['title'];?>">
+    <input type="text" class="form-control" name="title" placeholder="<?= lang('Dashboard.xin_title');?>" value="<?php echo esc($result['title'] ?? '', 'attr');?>">
   </div>
   <div class="form-group">
     <label for="message">
       <?= lang('Main.xin_description');?> <span class="text-danger">*</span>
     </label>
-    <textarea class="form-control" placeholder="<?= lang('Main.xin_description');?>" name="description" rows="4"><?php echo $result['description'];?></textarea>
+    <textarea class="form-control" placeholder="<?= lang('Main.xin_description');?>" name="description" rows="4"><?php echo esc($result['description'] ?? '');?></textarea>
   </div>
   <div class="row m-b-1 <?php echo $get_animate;?>">
     <div class="col-md-6">

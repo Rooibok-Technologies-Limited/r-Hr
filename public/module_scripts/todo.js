@@ -1,3 +1,7 @@
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 $(document).ready(function() {
    var xin_table = $('#xin_table').dataTable({
         "bDestroy": true,
@@ -75,43 +79,33 @@ $(document).ready(function() {
 		var field_id = $(this).data('fieldid');
 		$.ajax({
 		url : main_url+"todo/delete_todo",
-		type: "GET",
-		data: 'jd=1&data=todo&field_id='+field_id,
-		success: function (response) {
-			if(response) {
-				toastr.success('Item deleted.');
-			}
+		type: "POST",
+		dataType: "json",
+		data: {field_id: field_id, csrf_token: $('input[name="csrf_token"]').val()},
+		success: function (JSON) {
+			if(JSON.csrf_hash){ $('input[name="csrf_token"]').val(JSON.csrf_hash); }
+			if(JSON.error){ toastr.error(JSON.error); } else { toastr.success(JSON.result || 'Item deleted.'); }
 		}
 		});
     });
 	$('.to-do-list input[type=checkbox]').on("click", function() {
-		if ($(this).prop('checked')) {
+		var checked = $(this).prop('checked');
+		if (checked) {
 			$(this).parent().addClass('done-task');
-			var field_id = $(this).data('field-id');
-			$.ajax({
-			url : main_url+"todo/update_item",
-			type: "GET",
-			data: 'jd=1&data=todo&field_id='+field_id+'&task_done=1',
-			success: function (response) {
-				if(response) {
-					toastr.success('Item updated.');
-				}
-			}
-			});
 		} else {
 			$(this).parent().removeClass('done-task');
-			var field_id = $(this).data('field-id');
-			$.ajax({
-			url : main_url+"todo/update_item",
-			type: "GET",
-			data: 'jd=1&data=todo&field_id='+field_id+'&task_done=0',
-			success: function (response) {
-				if(response) {
-					toastr.success('Item updated.');
-				}
-			}
-			});
 		}
+		var field_id = $(this).data('field-id');
+		$.ajax({
+		url : main_url+"todo/update_item",
+		type: "POST",
+		dataType: "json",
+		data: {field_id: field_id, task_done: checked ? 1 : 0, csrf_token: $('input[name="csrf_token"]').val()},
+		success: function (JSON) {
+			if(JSON.csrf_hash){ $('input[name="csrf_token"]').val(JSON.csrf_hash); }
+			if(JSON.error){ toastr.error(JSON.error); } else { toastr.success(JSON.result || 'Item updated.'); }
+		}
+		});
 	});
 	var i = 7;
 	/* Add data */ /*Form Submit*/

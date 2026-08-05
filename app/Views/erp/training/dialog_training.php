@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -26,7 +30,8 @@ $get_animate = '';
 $xin_system = erp_company_settings();
 if($request->getGet('data') === 'training' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $TrainingModel->where('training_id', $ifield_id)->first();
+$result = $TrainingModel->where('training_id', $ifield_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 if($user_info['user_type'] == 'company'){
 	$trainer = $TrainersModel->where('company_id', $usession['sup_user_id'])->orderBy('trainer_id','ASC')->findAll();
@@ -97,7 +102,7 @@ $xin_com_system = erp_company_settings();
           <div class="input-group-prepend"><span class="input-group-text">
             <?= $xin_system['default_currency'];?>
             </span></div>
-          <input class="form-control" placeholder="<?= lang('Main.xin_training_cost');?>" name="training_cost" type="text" value="<?php echo $result['training_cost'];?>">
+          <input class="form-control" placeholder="<?= lang('Main.xin_training_cost');?>" name="training_cost" type="text" value="<?php echo esc($result['training_cost'] ?? '', 'attr');?>">
         </div>
       </div>
     </div>
@@ -129,7 +134,7 @@ $xin_com_system = erp_company_settings();
           <?= lang('Projects.xin_start_date');?> <span class="text-danger">*</span>
         </label>
         <div class="input-group">
-          <input class="form-control d_date" placeholder="<?= lang('Projects.xin_start_date');?>" name="start_date" type="text" value="<?php echo $result['start_date'];?>">
+          <input class="form-control d_date" placeholder="<?= lang('Projects.xin_start_date');?>" name="start_date" type="text" value="<?php echo esc($result['start_date'] ?? '', 'attr');?>">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
         </div>
       </div>
@@ -140,7 +145,7 @@ $xin_com_system = erp_company_settings();
           <?= lang('Projects.xin_end_date');?> <span class="text-danger">*</span>
         </label>
         <div class="input-group">
-          <input class="form-control d_date" placeholder="<?= lang('Projects.xin_end_date');?>" name="end_date" type="text" value="<?php echo $result['finish_date'];?>">
+          <input class="form-control d_date" placeholder="<?= lang('Projects.xin_end_date');?>" name="end_date" type="text" value="<?php echo esc($result['finish_date'] ?? '', 'attr');?>">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
         </div>
       </div>
@@ -166,7 +171,7 @@ $xin_com_system = erp_company_settings();
         <label for="description">
           <?= lang('Main.xin_description');?>
         </label>
-        <textarea class="form-control meditor" placeholder="<?= lang('Main.xin_description');?>" name="description" rows="4" id="description2"><?php echo $result['description'];?></textarea>
+        <textarea class="form-control meditor" placeholder="<?= lang('Main.xin_description');?>" name="description" rows="4" id="description2"><?php echo esc($result['description'] ?? '');?></textarea>
       </div>
     </div>
   </div>
@@ -193,7 +198,7 @@ $xin_com_system = erp_company_settings();
         <div class="form-group">
           <label for="<?php echo $mattribute['attribute'];?>"><?php echo $mattribute['attribute_label'];?> <?= $validate_opt;?></label>
           <input class="form-control d_date" 
-          placeholder="<?php echo $mattribute['attribute_label'];?>" name="<?php echo $mattribute['attribute'];?>" type="text" value="<?= $attr_val;?>">
+          placeholder="<?php echo $mattribute['attribute_label'];?>" name="<?php echo $mattribute['attribute'];?>" type="text" value="<?= esc($attr_val ?? '', 'attr');?>">
         </div>
       </div>
       <?php } else if($mattribute['attribute_type'] == 'select'){?>
@@ -227,7 +232,7 @@ $xin_com_system = erp_company_settings();
       <div class="<?= $mattribute['col_width'];?>">
         <div class="form-group">
           <label for="<?php echo $mattribute['attribute'];?>"><?php echo $mattribute['attribute_label'];?> <?= $validate_opt;?></label>
-          <textarea class="form-control" placeholder="<?php echo $mattribute['attribute_label'];?>" name="<?php echo $mattribute['attribute'];?>" type="text"><?= $attr_val;?></textarea>
+          <textarea class="form-control" placeholder="<?php echo $mattribute['attribute_label'];?>" name="<?php echo $mattribute['attribute'];?>" type="text"><?= esc($attr_val ?? '');?></textarea>
         </div>
       </div>
       <?php } else { ?>
@@ -241,7 +246,7 @@ $xin_com_system = erp_company_settings();
       <div class="<?= $mattribute['col_width'];?>">
         <div class="form-group">
           <label for="<?php echo $mattribute['attribute'];?>"><?php echo $mattribute['attribute_label'];?> <?= $validate_opt;?></label>
-          <input class="form-control" placeholder="<?php echo $mattribute['attribute_label'];?>" name="<?php echo $mattribute['attribute'];?>" type="text" value="<?= $attr_val;?>">
+          <input class="form-control" placeholder="<?php echo $mattribute['attribute_label'];?>" name="<?php echo $mattribute['attribute'];?>" type="text" value="<?= esc($attr_val ?? '', 'attr');?>">
         </div>
       </div>
       <?php }	?>

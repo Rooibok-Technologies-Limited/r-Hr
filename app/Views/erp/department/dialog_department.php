@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -12,7 +16,8 @@ $DepartmentModel = new DepartmentModel();
 $get_animate = '';
 if($request->getGet('data') === 'department' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $DepartmentModel->where('department_id', $ifield_id)->first();
+$result = $DepartmentModel->where('department_id', $ifield_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 ?>
 
@@ -37,7 +42,7 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
         <label for="name">
           <?= lang('Dashboard.xin_name');?>
           <span class="text-danger">*</span> </label>
-        <input type="text" class="form-control" name="department_name" placeholder="<?= lang('Dashboard.xin_name');?>" value="<?= $result['department_name'];?>">
+        <input type="text" class="form-control" name="department_name" placeholder="<?= lang('Dashboard.xin_name');?>" value="<?= esc($result['department_name'] ?? '', 'attr');?>">
       </div>
       <?php if($user_info['user_type'] == 'company'){?>
       <?php $staff_info = $UsersModel->where('company_id', $usession['sup_user_id'])->where('user_type','staff')->findAll();?>

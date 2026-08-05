@@ -78,6 +78,15 @@ $bmodule_attributes = $Moduleattributes->where('company_id',$company_id)->where(
 //personal info custom fields
 $ccount_module_attributes = $Moduleattributes->where('company_id',$company_id)->where('module_id',9)->orderBy('custom_field_id', 'ASC')->countAllResults();
 $cmodule_attributes = $Moduleattributes->where('company_id',$company_id)->where('module_id',9)->orderBy('custom_field_id', 'ASC')->findAll();
+// ID Card panel (Task B): manager flag + current card row, tenant-scoped.
+$isManager = in_array(($user_info['user_type'] ?? ''), ['company','super_user']);
+$idc_card = \Config\Database::connect()->table('ci_employee_id_cards')
+	->where('company_id', effective_company_id())
+	->where('user_id', $user_id)
+	->get()->getRowArray();
+$idc_status = $idc_card['status'] ?? 'not_issued';
+$idc_badge_map = ['active'=>['badge-light-success','Active'],'revoked'=>['badge-light-danger','Revoked'],'expired'=>['badge-light-warning','Expired'],'inactive'=>['badge-light-secondary','Inactive'],'not_issued'=>['badge-light-secondary','Not issued']];
+$idc_b = $idc_badge_map[$idc_status] ?? $idc_badge_map['not_issued'];
 ?>
 <?php if($result['is_active']=='0'): $_status = '<span class="badge badge-light-danger">'.lang('Main.xin_employees_inactive').'</span>'; endif; ?>
 <?php if($result['is_active']=='1'): $_status = '<span class="badge badge-light-success">'.lang('Main.xin_employees_active').'</span>'; endif; ?>
@@ -160,6 +169,11 @@ $cmodule_attributes = $Moduleattributes->where('company_id',$company_id)->where(
         <?php if(in_array('staff4',staff_role_resource()) || $user_info['user_type'] == 'company') { ?>
         <a class="nav-link list-group-item list-group-item-action" id="user-set-password-tab" data-toggle="pill" href="#user-set-password" role="tab" aria-controls="user-set-password" aria-selected="false"> <span class="f-w-500"><i class="feather icon-shield m-r-10 h5 "></i>
         <?= lang('Main.header_change_password');?>
+        </span> <span class="float-right"><i class="feather icon-chevron-right"></i></span> </a>
+        <?php } ?>
+        <?php if(in_array('staff4',staff_role_resource()) || $user_info['user_type'] == 'company') { ?>
+        <a class="nav-link list-group-item list-group-item-action" id="user-set-idcard-tab" data-toggle="pill" href="#user-set-idcard" role="tab" aria-controls="user-set-idcard" aria-selected="false"> <span class="f-w-500"><i class="feather icon-credit-card m-r-10 h5 "></i>
+        ID Card
         </span> <span class="float-right"><i class="feather icon-chevron-right"></i></span> </a>
         <?php } ?>
       </div>
@@ -1996,7 +2010,108 @@ $cmodule_attributes = $Moduleattributes->where('company_id',$company_id)->where(
         </div>
       </div>
       <?php } ?>
+      <?php if(in_array('staff4',staff_role_resource()) || $user_info['user_type'] == 'company') { ?>
+      <div class="tab-pane fade" id="user-set-idcard" role="tabpanel" aria-labelledby="user-set-idcard-tab">
+        <div class="card">
+          <div class="card-header">
+            <h5><i data-feather="credit-card" class="icon-svg-primary wid-20"></i><span class="p-l-5">ID Card</span></h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-7 mb-3">
+                <div id="idc-panel-preview" class="d-flex flex-wrap" style="gap:16px;">
+                  <div class="idc-panel-box" data-side="front" style="width:240px;aspect-ratio:540/856;overflow:hidden;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.14);background:#ECE8E1;"></div>
+                  <div class="idc-panel-box" data-side="back" style="width:240px;aspect-ratio:540/856;overflow:hidden;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.14);background:#ECE8E1;"></div>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <ul class="list-group list-group-flush mb-3">
+                  <li class="list-group-item d-flex justify-content-between"><span class="f-w-500">Card Number</span><span id="idc-meta-number"><?= $idc_card ? esc($idc_card['card_number']) : 'Not issued yet';?></span></li>
+                  <li class="list-group-item d-flex justify-content-between"><span class="f-w-500">Issued</span><span id="idc-meta-issued"><?= !empty($idc_card['issued_at']) ? esc($idc_card['issued_at']) : '—';?></span></li>
+                  <li class="list-group-item d-flex justify-content-between"><span class="f-w-500">Expiry</span><span id="idc-meta-expiry"><?= !empty($idc_card['expiry_date']) ? esc($idc_card['expiry_date']) : '—';?></span></li>
+                  <li class="list-group-item d-flex justify-content-between"><span class="f-w-500">Status</span><span id="idc-meta-status" class="badge <?= $idc_b[0];?>"><?= $idc_b[1];?></span></li>
+                  <li class="list-group-item d-flex justify-content-between"><span class="f-w-500">Verification</span><span id="idc-meta-verify"><?= $idc_status === 'revoked' ? 'Revoked' : 'Active';?></span></li>
+                </ul>
+                <div class="d-flex flex-wrap" style="gap:8px;">
+                  <a href="<?= site_url('erp/id-cards');?>" class="btn btn-sm btn-outline-primary" target="_blank"><i class="feather icon-external-link"></i> Open console</a>
+                  <a href="<?= site_url('erp/id-card/'.$user_id);?>" class="btn btn-sm btn-outline-primary" target="_blank"><i class="feather icon-printer"></i> Print / PDF</a>
+                  <?php if($isManager): ?>
+                  <button type="button" class="btn btn-sm btn-primary" id="idc-panel-generate"><i class="feather icon-refresh-cw"></i> Generate / Regenerate</button>
+                  <button type="button" class="btn btn-sm btn-outline-danger" id="idc-panel-revoke"><i class="feather icon-slash"></i> Revoke</button>
+                  <?php endif; ?>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <?php } ?>
     </div>
   </div>
-  <!-- [] end --> 
+  <!-- [] end -->
 </div>
+
+<?php if(in_array('staff4',staff_role_resource()) || $user_info['user_type'] == 'company') { ?>
+<script src="<?= base_url('public/assets/plugins/qrcode/qrcode.min.js') ?>"></script>
+<script src="<?= base_url('public/module_scripts/idcard.js') ?>"></script>
+<script>
+(function(){
+  var UID      = <?= (int) $user_id ?>;
+  var facesUrl = "<?= site_url('erp/id-cards/faces') ?>";
+  var genUrl   = "<?= site_url('erp/id-cards/generate') ?>";
+  var revUrl   = "<?= site_url('erp/id-cards/revoke') ?>";
+  var csrf     = { field: "<?= csrf_token() ?>", hash: "<?= csrf_hash() ?>" };
+  var canManage = <?= $isManager ? 'true' : 'false' ?>;
+  var $preview = $('#idc-panel-preview');
+
+  var BADGE = { active:['badge-light-success','Active'], revoked:['badge-light-danger','Revoked'],
+    expired:['badge-light-warning','Expired'], inactive:['badge-light-secondary','Inactive'],
+    not_issued:['badge-light-secondary','Not issued'] };
+  function paintStatus(s){
+    var m = BADGE[s] || BADGE.active;
+    $('#idc-meta-status').attr('class','badge '+m[0]).text(m[1]);
+    $('#idc-meta-verify').text(s === 'revoked' ? 'Revoked' : 'Active');
+  }
+  function inject(faces){
+    $preview.find('[data-side="front"]').html((faces && faces.portrait_front) || '');
+    $preview.find('[data-side="back"]').html((faces && faces.portrait_back) || '');
+    $preview.find('svg').css('width','100%');
+    if(window.IdCard) IdCard.renderQR($preview[0]);
+  }
+  function loadPanel(){
+    $.getJSON(facesUrl + '?user_id=' + UID).done(function(j){
+      if(j && j.ok){ if(j.csrf_hash) csrf.hash = j.csrf_hash; inject(j.faces); paintStatus(j.status); }
+    });
+  }
+  // Fetch preview only when the ID Card tab is shown.
+  $('#user-set-idcard-tab').on('shown.bs.tab', function(){ loadPanel(); });
+
+  if(canManage){
+    $('#idc-panel-generate').on('click', function(){
+      var body = new FormData();
+      body.append('user_id', UID); body.append('orientation', ''); body.append('regenerate', 1);
+      body.append(csrf.field, csrf.hash);
+      fetch(genUrl, {method:'POST', credentials:'same-origin', body:body}).then(function(r){ return r.json(); }).then(function(j){
+        if(j.csrf_hash) csrf.hash = j.csrf_hash;
+        if(j.ok){
+          if(window.toastr) toastr.success('Card issued: ' + j.card_number);
+          $('#idc-meta-number').text(j.card_number);
+          if(j.expiry) $('#idc-meta-expiry').text(j.expiry);
+          paintStatus(j.status); loadPanel();
+        } else if(window.toastr) toastr.error(j.error || 'Failed');
+      });
+    });
+    $('#idc-panel-revoke').on('click', function(){
+      if(!confirm("Revoke this employee's ID card? The QR will immediately show CARD REVOKED.")) return;
+      var body = new FormData();
+      body.append('user_id', UID); body.append(csrf.field, csrf.hash);
+      fetch(revUrl, {method:'POST', credentials:'same-origin', body:body}).then(function(r){ return r.json(); }).then(function(j){
+        if(j.csrf_hash) csrf.hash = j.csrf_hash;
+        if(j.ok){ if(window.toastr) toastr.success('Card revoked'); paintStatus('revoked'); loadPanel(); }
+        else if(window.toastr) toastr.error('Failed to revoke');
+      });
+    });
+  }
+})();
+</script>
+<?php } ?>

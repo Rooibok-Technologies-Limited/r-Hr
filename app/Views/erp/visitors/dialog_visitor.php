@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -14,7 +18,8 @@ $VisitorsModel = new VisitorsModel();
 $get_animate = '';
 if($request->getGet('data') === 'visitor' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $VisitorsModel->where('visitor_id', $ifield_id)->first();
+$result = $VisitorsModel->where('visitor_id', $ifield_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 if($user_info['user_type'] == 'staff'){
    $main_department = $DepartmentModel->where('company_id', $user_info['company_id'])->findAll();
@@ -59,7 +64,7 @@ if($user_info['user_type'] == 'staff'){
         <label for="start_date">
           <?= lang('Employees.xin_visit_purpose');?> <span class="text-danger">*</span>
         </label>
-        <input class="form-control" placeholder="<?= lang('Employees.xin_visit_purpose');?>" name="visit_purpose" type="text" value="<?= $result['visit_purpose'];?>">
+        <input class="form-control" placeholder="<?= lang('Employees.xin_visit_purpose');?>" name="visit_purpose" type="text" value="<?= esc($result['visit_purpose'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-4">
@@ -69,7 +74,7 @@ if($user_info['user_type'] == 'staff'){
         </label>
         <div class="input-group">
           <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-user"></i></span></div>
-          <input class="form-control" placeholder="<?= lang('Main.xin_visitor_name');?>" name="visitor_name" type="text" value="<?= $result['visitor_name'];?>">
+          <input class="form-control" placeholder="<?= lang('Main.xin_visitor_name');?>" name="visitor_name" type="text" value="<?= esc($result['visitor_name'] ?? '', 'attr');?>">
         </div>
       </div>
     </div>
@@ -79,7 +84,7 @@ if($user_info['user_type'] == 'staff'){
           <?= lang('Main.xin_visit_date');?> <span class="text-danger">*</span>
         </label>
         <div class="input-group">
-          <input class="form-control d_date" placeholder="<?= lang('Main.xin_visit_date');?>" name="visit_date" type="text" value="<?= $result['visit_date'];?>">
+          <input class="form-control d_date" placeholder="<?= lang('Main.xin_visit_date');?>" name="visit_date" type="text" value="<?= esc($result['visit_date'] ?? '', 'attr');?>">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-alt"></i></span></div>
         </div>
       </div>
@@ -90,7 +95,7 @@ if($user_info['user_type'] == 'staff'){
           <?= lang('Employees.xin_shift_in_time');?> <span class="text-danger">*</span>
         </label>
         <div class="input-group">
-          <input type="text" class="form-control etimepicker" placeholder="<?= lang('Employees.xin_shift_in_time');?>" name="check_in" value="<?= $result['check_in'];?>">
+          <input type="text" class="form-control etimepicker" placeholder="<?= lang('Employees.xin_shift_in_time');?>" name="check_in" value="<?= esc($result['check_in'] ?? '', 'attr');?>">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-clock"></i></span></div>
         </div>
       </div>
@@ -101,7 +106,7 @@ if($user_info['user_type'] == 'staff'){
           <?= lang('Employees.xin_shift_out_time');?> <span class="text-danger">*</span>
         </label>
         <div class="input-group">
-          <input type="text" class="form-control etimepicker" placeholder="<?= lang('Employees.xin_shift_out_time');?>" name="check_out" value="<?= $result['check_out'];?>">
+          <input type="text" class="form-control etimepicker" placeholder="<?= lang('Employees.xin_shift_out_time');?>" name="check_out" value="<?= esc($result['check_out'] ?? '', 'attr');?>">
           <div class="input-group-append"><span class="input-group-text"><i class="fas fa-clock"></i></span></div>
         </div>
       </div>
@@ -111,7 +116,7 @@ if($user_info['user_type'] == 'staff'){
         <label for="description">
           <?= lang('Main.xin_phone');?> <span class="text-danger">*</span>
         </label>
-        <input type="text" class="form-control" placeholder="<?= lang('Main.xin_phone');?>" name="phone" value="<?= $result['phone'];?>">
+        <input type="text" class="form-control" placeholder="<?= lang('Main.xin_phone');?>" name="phone" value="<?= esc($result['phone'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-5">
@@ -121,7 +126,7 @@ if($user_info['user_type'] == 'staff'){
         </label>
         <div class="input-group">
           <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-envelope"></i></span></div>
-          <input type="text" class="form-control" placeholder="<?= lang('Main.xin_email');?>" name="email" value="<?= $result['email'];?>">
+          <input type="text" class="form-control" placeholder="<?= lang('Main.xin_email');?>" name="email" value="<?= esc($result['email'] ?? '', 'attr');?>">
         </div>
       </div>
     </div>
@@ -130,7 +135,7 @@ if($user_info['user_type'] == 'staff'){
         <label for="address">
           <?= lang('Main.xin_address');?> <span class="text-danger">*</span>
         </label>
-        <input type="text" class="form-control" placeholder="<?= lang('Main.xin_address');?>" name="address" value="<?= $result['address'];?>">
+        <input type="text" class="form-control" placeholder="<?= lang('Main.xin_address');?>" name="address" value="<?= esc($result['address'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-12">
@@ -138,7 +143,7 @@ if($user_info['user_type'] == 'staff'){
         <label for="description">
           <?= lang('Main.xin_description');?>
         </label>
-        <textarea class="form-control textarea" placeholder="<?= lang('Main.xin_description');?>" name="description" cols="8" rows="2" id="description"><?= $result['description'];?>
+        <textarea class="form-control textarea" placeholder="<?= lang('Main.xin_description');?>" name="description" cols="8" rows="2" id="description"><?= esc($result['description'] ?? '');?>
 </textarea>
       </div>
     </div>

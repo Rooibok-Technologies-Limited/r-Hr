@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -12,7 +16,8 @@ $ConstantsModel = new ConstantsModel();
 $get_animate = '';
 if($request->getGet('data') === 'income_type' && $request->getGet('field_id')){
 $category_id = udecode($field_id);
-$result = $ConstantsModel->where('constants_id', $category_id)->where('type','income_type')->first();
+$result = $ConstantsModel->where('constants_id', $category_id)->where('type','income_type')->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 
 <div class="modal-header">
@@ -36,7 +41,7 @@ $result = $ConstantsModel->where('constants_id', $category_id)->where('type','in
         <label for="name">
           <?= lang('Dashboard.xin_category');?>
           <span class="text-danger">*</span> </label>
-        <input type="text" class="form-control" name="name" placeholder="<?= lang('Dashboard.xin_category');?>" value="<?= $result['category_name'];?>">
+        <input type="text" class="form-control" name="name" placeholder="<?= lang('Dashboard.xin_category');?>" value="<?= esc($result['category_name'] ?? '', 'attr');?>">
       </div>
     </div>
   </div>

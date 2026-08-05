@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -26,7 +30,8 @@ $xin_com_system = erp_company_settings();
 $get_animate = '';
 if($request->getGet('data') === 'employee_exit' && $request->getGet('field_id')){
 $exit_id = udecode($field_id);
-$result = $OffModel->where('exit_id', $exit_id)->first();
+$result = $OffModel->where('exit_id', $exit_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 
 <div class="modal-header">
@@ -50,7 +55,7 @@ $result = $OffModel->where('exit_id', $exit_id)->first();
         <label for="exit_date">
           <?= lang('Employees.xin_exit_date');?>
           <span class="text-danger">*</span></label>
-        <input class="form-control d_date" placeholder="<?= lang('Employees.xin_exit_date');?>" readonly name="exit_date" type="text" value="<?php echo $result['exit_date'];?>">
+        <input class="form-control d_date" placeholder="<?= lang('Employees.xin_exit_date');?>" readonly name="exit_date" type="text" value="<?php echo esc($result['exit_date'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-6">
@@ -103,7 +108,7 @@ $result = $OffModel->where('exit_id', $exit_id)->first();
         <label for="description">
           <?= lang('Main.xin_description');?>
         </label>
-        <textarea class="form-control textarea" placeholder="<?= lang('Main.xin_description');?>" name="reason" cols="30" rows="5"><?php echo $result['reason'];?></textarea>
+        <textarea class="form-control textarea" placeholder="<?= lang('Main.xin_description');?>" name="reason" cols="30" rows="5"><?php echo esc($result['reason'] ?? '');?></textarea>
       </div>
     </div>
   </div>
@@ -190,7 +195,8 @@ $(document).ready(function(){
 </script>
 <?php } elseif($request->getGet('type') === 'view_employee_exit' && $request->getGet('field_id')){
 $exit_id = udecode($field_id);
-$result = $OffModel->where('exit_id', $exit_id)->first();
+$result = $OffModel->where('exit_id', $exit_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 <div class="modal-header">
   <h5 class="modal-title">

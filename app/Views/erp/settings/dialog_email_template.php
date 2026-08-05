@@ -1,10 +1,15 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\EmailtemplatesModel;
 $request = \Config\Services::request();
 if($request->getGet('data') === 'email_template' && $request->getGet('field_id')){
 $template_id = udecode($field_id);
 $EmailtemplatesModel = new EmailtemplatesModel();
 $result = $EmailtemplatesModel->where('template_id', $template_id)->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 
 ?>
 
@@ -29,7 +34,7 @@ $result = $EmailtemplatesModel->where('template_id', $template_id)->first();
         <label for="name">
           <?= lang('Main.xin_template_name');?>
           <span class="text-danger">*</span></label>
-        <input class="form-control" name="name" type="text" value="<?php echo $result['name'];?>">
+        <input class="form-control" name="name" type="text" value="<?php echo esc($result['name'] ?? '', 'attr');?>">
       </div>
     </div>
   </div>
@@ -39,7 +44,7 @@ $result = $EmailtemplatesModel->where('template_id', $template_id)->first();
         <label for="subject">
           <?= lang('Main.xin_subject');?>
           <span class="text-danger">*</span></label>
-        <input class="form-control" name="subject" type="text" value="<?php echo $result['subject'];?>">
+        <input class="form-control" name="subject" type="text" value="<?php echo esc($result['subject'] ?? '', 'attr');?>">
       </div>
     </div>
     <div class="col-md-6">
@@ -66,7 +71,7 @@ $result = $EmailtemplatesModel->where('template_id', $template_id)->first();
           <?= lang('Main.xin_message');?>
         </label>
         <textarea class="form-control meditor" placeholder="<?= lang('Main.xin_message');?>" name="message" rows="10" style="height:350px;">
-		  <?php echo $result['message'];?></textarea>
+		  <?php echo esc($result['message'] ?? '');?></textarea>
       </div>
     </div>
   </div>
@@ -74,7 +79,7 @@ $result = $EmailtemplatesModel->where('template_id', $template_id)->first();
     <div class="col-md-12">
       <div class="form-group">
         
-        <?php echo html_entity_decode($result['message']);?>
+        <?php echo esc($result['message'] ?? '');?>
       </div>
     </div>
   </div>

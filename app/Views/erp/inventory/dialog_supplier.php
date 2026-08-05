@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -14,7 +18,8 @@ $SuppliersModel = new SuppliersModel();
 $get_animate = '';
 if($request->getGet('data') === 'supplier' && $request->getGet('field_id')){
 $ifield_id = udecode($field_id);
-$result = $SuppliersModel->where('supplier_id', $ifield_id)->first();
+$result = $SuppliersModel->where('supplier_id', $ifield_id)->where('company_id', effective_company_id())->first();
+if(!is_array($result)){ echo dialog_not_found(); return; }
 $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 $all_countries = $CountryModel->orderBy('country_id', 'ASC')->findAll();
 ?>
@@ -40,7 +45,7 @@ $all_countries = $CountryModel->orderBy('country_id', 'ASC')->findAll();
           <label for="start_date">
             <?= lang('Inventory.xin_supplier_name');?>
             <span class="text-danger">*</span> </label>
-          <input class="form-control" placeholder="<?= lang('Inventory.xin_supplier_name');?>" name="name" type="text" value="<?= $result['supplier_name'];?>">
+          <input class="form-control" placeholder="<?= lang('Inventory.xin_supplier_name');?>" name="name" type="text" value="<?= esc($result['supplier_name'] ?? '', 'attr');?>">
         </div>
       </div>
       <div class="col-md-4">
@@ -48,7 +53,7 @@ $all_countries = $CountryModel->orderBy('country_id', 'ASC')->findAll();
           <label for="email">
             <?= lang('Main.xin_email');?>
             <span class="text-danger">*</span> </label>
-          <input class="form-control" placeholder="<?= lang('Main.xin_email');?>" name="email" type="email" value="<?= $result['email'];?>">
+          <input class="form-control" placeholder="<?= lang('Main.xin_email');?>" name="email" type="email" value="<?= esc($result['email'] ?? '', 'attr');?>">
         </div>
       </div>
       <div class="col-md-4">
@@ -56,7 +61,7 @@ $all_countries = $CountryModel->orderBy('country_id', 'ASC')->findAll();
           <label for="registration">
             <?= lang('Company.xin_company_registration');?>
           </label>
-          <input class="form-control" placeholder="<?= lang('Company.xin_company_registration');?>" name="registration" type="text" value="<?= $result['registration_no'];?>">
+          <input class="form-control" placeholder="<?= lang('Company.xin_company_registration');?>" name="registration" type="text" value="<?= esc($result['registration_no'] ?? '', 'attr');?>">
         </div>
       </div>
       <div class="col-md-4">
@@ -64,7 +69,7 @@ $all_countries = $CountryModel->orderBy('country_id', 'ASC')->findAll();
           <label for="website_url">
             <?= lang('Inventory.xin_website_url');?>
           </label>
-          <input class="form-control" placeholder="<?= lang('Inventory.xin_website_url');?>" name="website_url" type="text" value="<?= $result['website_url'];?>">
+          <input class="form-control" placeholder="<?= lang('Inventory.xin_website_url');?>" name="website_url" type="text" value="<?= esc($result['website_url'] ?? '', 'attr');?>">
         </div>
       </div>
       <div class="col-md-4">
@@ -72,7 +77,7 @@ $all_countries = $CountryModel->orderBy('country_id', 'ASC')->findAll();
           <label for="contact_number">
             <?= lang('Main.xin_contact_number');?>
             <span class="text-danger">*</span></label>
-          <input class="form-control" placeholder="<?= lang('Main.xin_contact_number');?>" name="contact_number" type="text" value="<?= $result['contact_number'];?>">
+          <input class="form-control" placeholder="<?= lang('Main.xin_contact_number');?>" name="contact_number" type="text" value="<?= esc($result['contact_number'] ?? '', 'attr');?>">
         </div>
       </div>
       <div class="col-md-4">
@@ -97,13 +102,13 @@ $all_countries = $CountryModel->orderBy('country_id', 'ASC')->findAll();
           <label for="address_1">
             <?= lang('Main.xin_address');?>
           </label>
-          <input class="form-control" placeholder="<?= lang('Main.xin_address');?>" name="address_1" type="text" value="<?= $result['address_1'];?>">
+          <input class="form-control" placeholder="<?= lang('Main.xin_address');?>" name="address_1" type="text" value="<?= esc($result['address_1'] ?? '', 'attr');?>">
         </div>
       </div>
       <div class="col-md-6">
         <div class="form-group">
           <label for="address_2"> &nbsp;</label>
-          <input class="form-control" placeholder="<?= lang('Main.xin_address_2');?>" name="address_2" type="text" value="<?= $result['address_2'];?>">
+          <input class="form-control" placeholder="<?= lang('Main.xin_address_2');?>" name="address_2" type="text" value="<?= esc($result['address_2'] ?? '', 'attr');?>">
         </div>
       </div>
       <div class="col-md-4">
@@ -111,7 +116,7 @@ $all_countries = $CountryModel->orderBy('country_id', 'ASC')->findAll();
           <label for="city">
             <?= lang('Main.xin_city');?>
           </label>
-          <input class="form-control" placeholder="<?= lang('Main.xin_city');?>" name="city" type="text" value="<?= $result['city'];?>">
+          <input class="form-control" placeholder="<?= lang('Main.xin_city');?>" name="city" type="text" value="<?= esc($result['city'] ?? '', 'attr');?>">
         </div>
       </div>
       <div class="col-md-4">
@@ -119,7 +124,7 @@ $all_countries = $CountryModel->orderBy('country_id', 'ASC')->findAll();
           <label for="state">
             <?= lang('Main.xin_state');?>
           </label>
-          <input class="form-control" placeholder="<?= lang('Main.xin_state');?>" name="state" type="text" value="<?= $result['state'];?>">
+          <input class="form-control" placeholder="<?= lang('Main.xin_state');?>" name="state" type="text" value="<?= esc($result['state'] ?? '', 'attr');?>">
         </div>
       </div>
       <div class="col-md-4">
@@ -127,7 +132,7 @@ $all_countries = $CountryModel->orderBy('country_id', 'ASC')->findAll();
           <label for="zipcode">
             <?= lang('Main.xin_zipcode');?>
           </label>
-          <input class="form-control" placeholder="<?= lang('Main.xin_zipcode');?>" name="zipcode" type="text" value="<?= $result['zipcode'];?>">
+          <input class="form-control" placeholder="<?= lang('Main.xin_zipcode');?>" name="zipcode" type="text" value="<?= esc($result['zipcode'] ?? '', 'attr');?>">
         </div>
       </div>
     </div>
