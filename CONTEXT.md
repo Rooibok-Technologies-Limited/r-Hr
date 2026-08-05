@@ -3,28 +3,28 @@
   @copyright 2026 Rooibok Technologies. All rights reserved.
 -->
 # Project Context
-Last updated: 2026-08-04 (eve)
+Last updated: 2026-08-05
 
 ## Current task
-**Public-launch deployment-readiness push (2026-08-04, in progress).** Ran a 6-agent
-audit then worked the security backlog to a stopping point. All fixed + pushed to main:
-super-admin **privilege escalation** (42 routes→`superauth`), **forgeable id tokens**
-(HMAC), Class-A save 500s (array-input crash, 15 controllers `79fcf00`), **tenant
-scoping WRITE surface** (86 sites + Employees `ownsEmployee`, `ce0be9d`/`173cf76`),
-**XSS + Auth is_active** (org_chart esc-js, `hex_color` theme guard, `9653cfb`),
-**reset anti-enumeration + register throttle** (`d4ba521`), **read-surface IDOR**
-(5 Employees lists + Timesheet + ArchiveExport full-tenant-dump, `743524e`), and
-**notification/email/search hardening** (notif IDOR, global-search fail-closed,
-email-template superauth lockdown, Notifier try/catch, `71f2ea3`). Search audit found
-**0 SQL injection** app-wide.
+**Security backlog P1–P9 CLOSED + Staff ID Card system SHIPPED + launch polish DONE
+(2026-08-05).** On branch `feature/idcard-security-hardening` (3 signed commits;
+migrations 000001/000002/000003 run):
+- **Security P1–P9** — P1 dialog XSS+authz sweep (58 `dialog_*` views scoped/guarded/
+  encoded, `effective_company_id()`+`dialog_not_found()` helpers), P2 dead-Mailbox
+  removed, P4 SMTP-from-env service, P5 Todo cross-tenant IDOR + POST/CSRF, P7 mail
+  CRLF header-injection, P9 notif broadcast tenant-scope. P6 = dead JS (no bug).
+  **P8 (notif idempotency/dedupe before paid SMS) = DEFERRED enhancement.**
+- **Staff ID Card system** — Abstract Organic SVG, portrait+landscape (4 faces),
+  live console + template builder, secure QR + public `/verify/staff/{token}`, bulk
+  gen, PNG/print, tenant-theme-coloured, tenant-only branding. See
+  `.claude`-memory `hr-idcard-system`.
+- **Launch polish** — branded self-contained 404/500; legal pages (privacy/terms/
+  cookies) seeded in `ci_landing_content`; Playwright smoke green.
 
-**▶ RESUME = `docs/security/security-backlog-2026-08.md` (P1–P9).** Top items:
-**P1 [HIGH] dialog_* modal stored-XSS + object-level authz sweep** (cloned scaffold →
-scoped fetch + `esc()`, then sweep), **P2 [HIGH] Mailbox reply/send IDOR**. Then P3–P9,
-branded 404/500 + legal pages, then the live Playwright suite. **PENDING USER: the
-employee-ID auto-gen format image.** Full detail: that backlog doc + `.claude`-memory
-`hr-audit-findings-2026-08-04` + `hr-deploy-readiness-2026-08`.
-_(User pausing 2026-08-04 eve — continues tomorrow after limit reset.)_
+**▶ RESUME:** branch is committed but **NOT pushed / NOT merged to main**, and NOT
+deployed. Next: push + merge, run migrations on each env, then (optional) P8 + a full
+regression suite. Legal copy is boilerplate — get counsel review before go-live.
+Detail: `.claude`-memory `hr-security-backlog-closed-2026-08` + `hr-idcard-system`.
 
 ### Prior: ADR-003 **Phase 2 — tenant enforcement + clean erp-less URLs** — DONE (2026-08-04).
 Resolution moved from a filter to the `pre_system` event (`App\Libraries\TenantBootstrap`)
