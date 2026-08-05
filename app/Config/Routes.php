@@ -1140,6 +1140,30 @@ $routes->match(['get','post'], 'erp/documents/update_official_document', 'Docume
 $routes->match(['get','post'], 'erp/leaving/update_exit', 'Leaving::update_exit', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/officeshifts/update_office_shift', 'Officeshifts::update_office_shift', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/settings/update_religion', 'Settings::update_religion', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+// Route-drift sweep (2026-08-05): dialog/list form actions that posted to the
+// controller.s real method but had no matching route (or a mis-named one) -> 404 on
+// save/create. Methods verified to exist; wiring the routes the forms target.
+$routes->match(['get','post'], 'erp/assets/update_asset_image', 'Assets::update_asset_image', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/auth/check_password', 'Auth::check_password', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/awards/add_awards', 'Awards::add_awards', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/crm/add_customer', 'Crm::add_customer', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/crm/update_customer', 'Crm::update_customer', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/crm/update_profile_photo', 'Crm::update_profile_photo', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/customfields/add_customfield', 'Customfields::add_customfield', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/documents/add_official_document', 'Documents::add_official_document', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/leaving/add_exit', 'Leaving::add_exit', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/officeshifts/add_office_shift', 'Officeshifts::add_office_shift', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/orderquotes/cancel_quote_record', 'Orderquotes::cancel_quote_record', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/orderquotes/convert_quote_record', 'Orderquotes::convert_quote_record', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/orders/delivery_status', 'Orders::delivery_status', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/orders/packing_status', 'Orders::packing_status', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/orders/pay_invoice_record', 'Orders::pay_invoice_record', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/products/update_product_image', 'Products::update_product_image', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/products/update_rating', 'Products::update_rating', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/purchases/update_purchase_record', 'Purchases::update_purchase_record', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/settings/add_other_logo', 'Settings::add_other_logo', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/settings/sms_info', 'Settings::sms_info', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/travel/update_travel_status', 'Travel::update_travel_status', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/customfields/fields_list', 'Customfields::fields_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/customfields/read_field', 'Customfields::read_field', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/customfields/delete_field', 'Customfields::delete_field', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
