@@ -55,14 +55,14 @@ $coName = trim((string) ($c['company']['name'] ?? ''));
       font-family="Poppins,Segoe UI,sans-serif" font-size="28" letter-spacing="6" font-weight="700">INFORMATION</text>
 
 <?php $qy = $headY + 104; if ($enableQr): ?>
-  <rect x="160" y="<?= $qy ?>" width="220" height="220" rx="10" fill="#ffffff" stroke="var(--c-light)" stroke-width="2"/>
-  <image class="idcard-qr" x="176" y="<?= $qy + 16 ?>" width="188" height="188" preserveAspectRatio="xMidYMid meet"/>
+  <rect x="146" y="<?= $qy ?>" width="248" height="248" rx="12" fill="#ffffff" stroke="var(--c-light)" stroke-width="2"/>
+  <image class="idcard-qr" x="162" y="<?= $qy + 16 ?>" width="216" height="216" preserveAspectRatio="xMidYMid meet"/>
 <?php else: ?>
-  <text x="270" y="<?= $qy + 110 ?>" text-anchor="middle" fill="var(--c-muted)" font-family="Poppins,Segoe UI,sans-serif" font-size="18">QR verification disabled</text>
+  <text x="270" y="<?= $qy + 124 ?>" text-anchor="middle" fill="var(--c-muted)" font-family="Poppins,Segoe UI,sans-serif" font-size="18">QR verification disabled</text>
 <?php endif; ?>
 
 <!-- ============ TERMS ============ -->
-<?php $tTop = $qy + 268; ?>
+<?php $tTop = $qy + 300; ?>
 <text x="270" y="<?= $tTop ?>" text-anchor="middle" fill="var(--c-text)"
       font-family="Poppins,Segoe UI,sans-serif" font-size="22" letter-spacing="3" font-weight="700">TERMS &amp; CONDITIONS</text>
 <?php $ty = $tTop + 30; foreach ($termLines as $tl): ?>

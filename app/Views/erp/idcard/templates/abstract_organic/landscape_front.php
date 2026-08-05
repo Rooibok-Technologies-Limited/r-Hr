@@ -26,13 +26,15 @@ $posSize= $posT !== '' ? $fit($posT, 20, 12, 0.58, $colW) : 0;
 $idText = 'ID. ' . ($c['staff_id'] ?? '');
 $idSize = $fit($idText, 22, 12, 0.55, 230);
 
-$nameTop = 176;
+// Content column follows the horizontal thirds: logo top, name+position on the
+// centre line, ID strip + dates filling toward the lower third.
+$nameTop = 208;
 $lineGap = $nameSize + 6;
 $nameBottom = $nameTop + (count($nameLines) - 1) * $lineGap;
-$posY    = $nameBottom + ($posT !== '' ? 30 : 0);
-$stripTop= $posY + ($posT !== '' ? 18 : 24);
+$posY    = $nameBottom + ($posT !== '' ? 32 : 0);
+$stripTop= $posY + ($posT !== '' ? 24 : 30);
 $stripTy = $stripTop + 26;
-$datesY  = $stripTop + 62;
+$datesY  = $stripTop + 66;
 ?>
 <!-- ============ LANDSCAPE FRONT PATTERN ============ -->
 <g class="pattern" aria-hidden="true">

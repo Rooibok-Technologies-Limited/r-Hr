@@ -27,14 +27,16 @@ $posSize= $posT !== '' ? $fit($posT, 21, 12, 0.60, 340) : 0;
 $idText = 'ID. ' . ($c['staff_id'] ?? '');
 $idSize = $fit($idText, 23, 12, 0.56, 200);
 
-// vertical rhythm below the photo (photo ends at y=488)
-$nameTop = 548;
+// Rule-of-thirds rhythm: logo (top), photo straddling the upper third (~285),
+// name+position at centre, ID strip on the lower-third line (~570), dates + bottom
+// pattern filling the last third. Photo now ends at y=406 (lifted to kill the top gap).
+$nameTop = 470;
 $lineGap = $nameSize + 6;
 $nameBottom = $nameTop + (count($nameLines) - 1) * $lineGap;
-$posY    = $nameBottom + ($posT !== '' ? 34 : 0);
-$stripTop= $posY + ($posT !== '' ? 20 : 26);
+$posY    = $nameBottom + ($posT !== '' ? 36 : 0);
+$stripTop= $posY + ($posT !== '' ? 26 : 30);
 $stripTy = $stripTop + 27;
-$datesY  = $stripTop + 66;
+$datesY  = $stripTop + 70;
 ?>
 <!-- ============ PORTRAIT FRONT PATTERN ============ -->
 <g class="pattern" aria-hidden="true">
@@ -61,21 +63,21 @@ $datesY  = $stripTop + 66;
 <!-- ============ CONTENT ============ -->
 <?php if ($showLogo): ?>
   <image href="<?= $E($c['company']['logo']) ?>" xlink:href="<?= $E($c['company']['logo']) ?>"
-         x="170" y="34" width="200" height="80" preserveAspectRatio="xMidYMid meet"/>
+         x="150" y="44" width="240" height="70" preserveAspectRatio="xMidYMid meet"/>
 <?php endif; ?>
 
 <?php if (! empty($f['photo'])): ?>
-  <clipPath id="pf-photo"><rect x="172" y="248" width="196" height="240" rx="3"/></clipPath>
-  <rect x="166" y="242" width="208" height="252" rx="6" fill="#ffffff"/>
+  <clipPath id="pf-photo"><rect x="164" y="150" width="212" height="256" rx="3"/></clipPath>
+  <rect x="158" y="144" width="224" height="268" rx="6" fill="#ffffff"/>
   <?php if (! empty($c['photo_url'])): ?>
     <image href="<?= $E($c['photo_url']) ?>" xlink:href="<?= $E($c['photo_url']) ?>"
-           x="172" y="248" width="196" height="240" preserveAspectRatio="xMidYMid slice" clip-path="url(#pf-photo)"/>
+           x="164" y="150" width="212" height="256" preserveAspectRatio="xMidYMid slice" clip-path="url(#pf-photo)"/>
   <?php else: ?>
-    <rect x="172" y="248" width="196" height="240" fill="var(--c-light)"/>
-    <circle cx="270" cy="336" r="42" fill="var(--c-muted)" opacity="0.5"/>
-    <path d="M198,488 C198,420 342,420 342,488 Z" fill="var(--c-muted)" opacity="0.5"/>
+    <rect x="164" y="150" width="212" height="256" fill="var(--c-light)"/>
+    <circle cx="270" cy="248" r="46" fill="var(--c-muted)" opacity="0.5"/>
+    <path d="M188,406 C188,332 352,332 352,406 Z" fill="var(--c-muted)" opacity="0.5"/>
   <?php endif; ?>
-  <rect x="172" y="248" width="196" height="240" rx="3" fill="none" stroke="var(--c-secondary)" stroke-width="7"/>
+  <rect x="164" y="150" width="212" height="256" rx="3" fill="none" stroke="var(--c-secondary)" stroke-width="7"/>
 <?php endif; ?>
 
 <?php if (! empty($f['name'])): $ny = $nameTop; foreach ($nameLines as $nl): ?>
