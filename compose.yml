@@ -1,3 +1,5 @@
+# @author Bodo Desderio <rooiboktechltd@gmail.com>
+# @copyright 2026 Rooibok Technologies. All rights reserved.
 services:
 
   app:
@@ -6,11 +8,9 @@ services:
       dockerfile: docker/php/Dockerfile
     container_name: rooibok_app
     restart: unless-stopped
-    # Run php-fpm as the host bind-mount owner (uid 1000) so the framework can
-    # write writable/ (sessions, cache, logs). Without this, fpm runs as
-    # www-data and cannot write the host-owned tree — every request 500s on the
-    # first session write, with no log (the log dir is unwritable too).
-    user: "1000:1000"
+    # The entrypoint starts as root (to chown the named volumes), applies
+    # migrations + first-boot seed, then runs php-fpm whose workers drop to the
+    # remapped www-data (uid 1000 = host bind-mount owner) so writable/ is writable.
     volumes:
       - .:/var/www/html
       - uploads_data:/var/www/html/public/uploads
@@ -22,7 +22,8 @@ services:
     networks:
       - rooibok_net
     environment:
-      APP_ENV:     ${APP_ENV}
+      APP_ENV:     ${APP_ENV:-production}
+      RUN_INIT:    "1"          # this replica owns migrate + app:init on boot
       DB_HOST:     postgres
       DB_PORT:     5432
       DB_NAME:     ${DB_NAME}
@@ -102,6 +103,38 @@ services:
     restart: unless-stopped
     networks:
       - rooibok_net
+
+  # Background job processor (in-app + email + SMS fan-out over beanstalkd). Shares
+  # the app image; RUN_INIT is unset so it never races migrations — it just waits
+  # for the DB then consumes the queue.
+  queue-worker:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: rooibok_worker
+    restart: unless-stopped
+    command: ["php", "/var/www/html/spark", "queue:worker"]
+    volumes:
+      - .:/var/www/html
+      - uploads_data:/var/www/html/public/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      beanstalkd:
+        condition: service_started
+      app:
+        condition: service_started
+    networks:
+      - rooibok_net
+    environment:
+      APP_ENV:     ${APP_ENV:-production}
+      DB_HOST:     postgres
+      DB_PORT:     5432
+      DB_NAME:     ${DB_NAME}
+      DB_USER:     ${DB_USER}
+      DB_PASS:     ${DB_PASS}
+      REDIS_HOST:  redis
+      BEANSTALK:   beanstalkd
 
   pgadmin:
     image: dpage/pgadmin4:latest
