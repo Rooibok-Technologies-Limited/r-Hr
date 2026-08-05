@@ -26,9 +26,9 @@ services:
       RUN_INIT:    "1"          # this replica owns migrate + app:init on boot
       DB_HOST:     postgres
       DB_PORT:     5432
-      DB_NAME:     ${DB_NAME}
-      DB_USER:     ${DB_USER}
-      DB_PASS:     ${DB_PASS}
+      DB_NAME:     ${DB_NAME:-rooibok_hr}
+      DB_USER:     ${DB_USER:-rooibok_user}
+      DB_PASS:     ${DB_PASS:-rooibok_local_pw}
       REDIS_HOST:  redis
       BEANSTALK:   beanstalkd
 
@@ -54,14 +54,14 @@ services:
     container_name: rooibok_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB:       ${DB_NAME}
-      POSTGRES_USER:     ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB:       ${DB_NAME:-rooibok_hr}
+      POSTGRES_USER:     ${DB_USER:-rooibok_user}
+      POSTGRES_PASSWORD: ${DB_PASS:-rooibok_local_pw}
     volumes:
       - pg_data:/var/lib/postgresql/data
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/01_schema.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-rooibok_user} -d ${DB_NAME:-rooibok_hr}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -74,13 +74,13 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB:       rooibok_archive
-      POSTGRES_USER:     ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_USER:     ${DB_USER:-rooibok_user}
+      POSTGRES_PASSWORD: ${DB_PASS:-rooibok_local_pw}
     volumes:
       - pg_archive_data:/var/lib/postgresql/data
       - ./docker/postgres/archive_schema.sql:/docker-entrypoint-initdb.d/01_archive_schema.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d rooibok_archive"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-rooibok_user} -d rooibok_archive"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -130,9 +130,9 @@ services:
       APP_ENV:     ${APP_ENV:-production}
       DB_HOST:     postgres
       DB_PORT:     5432
-      DB_NAME:     ${DB_NAME}
-      DB_USER:     ${DB_USER}
-      DB_PASS:     ${DB_PASS}
+      DB_NAME:     ${DB_NAME:-rooibok_hr}
+      DB_USER:     ${DB_USER:-rooibok_user}
+      DB_PASS:     ${DB_PASS:-rooibok_local_pw}
       REDIS_HOST:  redis
       BEANSTALK:   beanstalkd
 
@@ -141,8 +141,8 @@ services:
     container_name: rooibok_pgadmin
     restart: unless-stopped
     environment:
-      PGADMIN_DEFAULT_EMAIL:    ${PGADMIN_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASS}
+      PGADMIN_DEFAULT_EMAIL:    ${PGADMIN_EMAIL:-admin@rooibok.local}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASS:-admin}
     ports:
       - "12020:80"
     depends_on:
