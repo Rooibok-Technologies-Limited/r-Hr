@@ -1,3 +1,7 @@
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 <style type="text/css">
 #ui-datepicker-div {
 	z-index:1100 !important;
@@ -27,7 +31,7 @@
           </strong> </div>
       </div>
       <?php $attributes = array('name' => 'delete_record', 'id' => 'delete_record', 'autocomplete' => 'off', 'role'=>'form');?>
-      <?php $hidden = array('_method' => 'DELETE', '_token' => '000');?>
+      <?php $hidden = array('_token' => '000');?>
       <?= form_open('', $attributes, $hidden);?>
       <div class="modal-footer">
         <?php

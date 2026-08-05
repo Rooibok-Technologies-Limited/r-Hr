@@ -1095,9 +1095,14 @@ class CodeIgniter
 			return;
 		}
 
-		$method = $this->request->getPost('_method'); // @phpstan-ignore-line
+		$method = strtoupper((string) $this->request->getPost('_method')); // @phpstan-ignore-line
 
-		if (empty($method))
+		// Backport of CI4 4.2 behaviour: only the standard REST verbs may be
+		// spoofed. This app defines ZERO put/patch/delete routes and its dialog
+		// forms carry a vestigial `_method=EDIT|ADD`; unrestricted spoofing turned
+		// those POSTs into EDIT/ADD requests that no explicit route matched → 404
+		// on every dialog save. Restricting the allowlist keeps them as POST.
+		if ($method === '' || ! in_array($method, ['PUT', 'PATCH', 'DELETE'], true))
 		{
 			return;
 		}
