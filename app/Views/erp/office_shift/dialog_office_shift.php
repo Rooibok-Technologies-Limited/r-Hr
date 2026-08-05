@@ -259,7 +259,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
 						var xin_table = $('#xin_table').dataTable({
 							"bDestroy": true,
 							"ajax": {
-								url : "<?php echo site_url("erp/Officeshifts/office_shifts_list") ?>",
+								url : "<?php echo site_url("erp/officeshifts/office_shifts_list") ?>",
 								type : 'GET'
 							},
 							"language": {

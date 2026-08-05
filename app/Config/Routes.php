@@ -1132,6 +1132,14 @@ $routes->post('erp/todo/delete_todo', 'Todo::delete_todo', ['namespace' => 'App\
 // Custom Fields
 $routes->match(['get','post'], 'erp/customfields/add_field', 'Customfields::add_field', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/customfields/update_field', 'Customfields::update_field', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+// Route-drift fixes: these dialog edit forms post to the controller's real method
+// name, but the routes were registered under a different name — so saving 404'd.
+// The methods exist; wire the routes the forms actually target.
+$routes->match(['get','post'], 'erp/customfields/update_customfield', 'Customfields::update_customfield', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/documents/update_official_document', 'Documents::update_official_document', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/leaving/update_exit', 'Leaving::update_exit', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/officeshifts/update_office_shift', 'Officeshifts::update_office_shift', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/settings/update_religion', 'Settings::update_religion', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/customfields/fields_list', 'Customfields::fields_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/customfields/read_field', 'Customfields::read_field', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/customfields/delete_field', 'Customfields::delete_field', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
