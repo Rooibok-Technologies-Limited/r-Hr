@@ -52,6 +52,8 @@ $routes->get('demo', 'Home::demo');
 // Kiosk modes (no auth — tablet/kiosk devices)
 $routes->get('kiosk', 'Home::kiosk');
 $routes->get('visitor-kiosk', 'Home::visitor_kiosk');
+// PUBLIC staff-card verification (scanned from the printed QR) — no auth by design.
+$routes->get('verify/staff/(:segment)', 'Verify::staff/$1');
 
 // Landing Page CMS (super_user)
 $routes->get('erp/landing-page', 'Erp\Landingpage::index', ['filter' => 'checklogin']);
@@ -202,7 +204,17 @@ $routes->get('erp/staff-dashboard', 'Employees::staff_dashboard', ['namespace' =
 $routes->get('erp/organization-chart', 'Employees::staff_chart', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/employee-details/(:segment)', 'Employees::staff_details', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/employee-qr/(:num)', 'Erp\Employees::employee_qr/$1', ['filter' => 'checklogin']);
-$routes->get('erp/employee-id-card/(:num)', 'Erp\Employees::employee_id_card/$1', ['filter' => 'checklogin']);
+// Staff ID Card system (Abstract Organic; portrait + landscape)
+$routes->get('erp/id-cards', 'Erp\IdCard::index', ['filter' => 'checklogin']);
+$routes->get('erp/id-cards/faces', 'Erp\IdCard::faces', ['filter' => 'checklogin']);
+$routes->post('erp/id-cards/generate', 'Erp\IdCard::generate', ['filter' => 'checklogin']);
+$routes->post('erp/id-cards/revoke', 'Erp\IdCard::revoke', ['filter' => 'checklogin']);
+$routes->post('erp/id-cards/bulk', 'Erp\IdCard::bulk', ['filter' => 'checklogin']);
+$routes->get('erp/id-card-settings', 'Erp\IdCard::settingsPage', ['filter' => 'checklogin']);
+$routes->post('erp/id-cards/save-settings', 'Erp\IdCard::saveSettings', ['filter' => 'checklogin']);
+$routes->get('erp/id-card/(:num)', 'Erp\IdCard::card/$1', ['filter' => 'checklogin']);
+// Profile "ID Card / QR" button → new card system (was Employees::employee_id_card)
+$routes->get('erp/employee-id-card/(:num)', 'Erp\IdCard::card/$1', ['filter' => 'checklogin']);
 // awards
 $routes->get('erp/awards-list', 'Awards::index', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/award-view/(:segment)', 'Awards::award_view', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
@@ -1116,7 +1128,7 @@ $routes->match(['get','post'], 'erp/visitors/delete_visitor', 'Visitors::delete_
 $routes->match(['get','post'], 'erp/todo/add_todo', 'Todo::add_todo', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/todo/update_todo', 'Todo::update_todo', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/todo/todo_list', 'Todo::todo_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/todo/delete_todo', 'Todo::delete_todo', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/todo/delete_todo', 'Todo::delete_todo', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 // Custom Fields
 $routes->match(['get','post'], 'erp/customfields/add_field', 'Customfields::add_field', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/customfields/update_field', 'Customfields::update_field', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
@@ -1221,8 +1233,6 @@ $routes->match(['get','post'], 'erp/documents/read_official_document', 'Document
 $routes->match(['get','post'], 'erp/documents/system_documents_list/did/(:num)', 'Documents::system_documents_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/events/read_event_record', 'Events::read_event_record', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/languages/languages_list', 'Languages::languages_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/mailbox/update_important_mail_record', 'Mailbox::update_important_mail_record', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/mailbox/update_starmail_record', 'Mailbox::update_starmail_record', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/orderquotes/read_quote_data', 'Orderquotes::read_quote_data', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/orders/read_invoice_data', 'Orders::read_invoice_data', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/paymenthistory/payment_history_list', 'Paymenthistory::payment_history_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
@@ -1231,7 +1241,7 @@ $routes->match(['get','post'], 'erp/purchases/get_purchase_items', 'Purchases::g
 $routes->match(['get','post'], 'erp/purchases/read_purchase_data', 'Purchases::read_purchase_data', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/settings/read_sms_tempalte', 'Settings::read_sms_tempalte', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/settings/read_tempalte', 'Settings::read_tempalte', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/todo/update_item', 'Todo::update_item', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/todo/update_item', 'Todo::update_item', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/trainers/trainer_list', 'Trainers::trainer_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/transfers/is_department/(:num)', 'Transfers::is_department', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 

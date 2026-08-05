@@ -190,6 +190,7 @@ class Employees extends BaseController {
 		$DesignationModel = new DesignationModel();
 		$StaffdetailsModel = new StaffdetailsModel();
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
+		$isManager = in_array(($user_info['user_type'] ?? ''), ['company','super_user']);
 		if($user_info['user_type'] == 'staff'){
 			$staff = $UsersModel->where('company_id',$user_info['company_id'])->where('user_type','staff')->orderBy('user_id', 'ASC')->findAll();
 		} else {
@@ -255,15 +256,18 @@ class Employees extends BaseController {
 				</div>
 			';
 									 			  				
-			$data[] = array(
-				$links,
-				$designation_name,
-				$r['contact_number'],
-				$gender,
-				$country_info['country_name'] ?? '--',
-				$role_name,
-				$status
-			);
+			$row = array();
+			if($isManager){
+				$row[] = '<input type="checkbox" class="idc-row-check" value="'.$r['user_id'].'">';
+			}
+			$row[] = $links;
+			$row[] = $designation_name;
+			$row[] = $r['contact_number'];
+			$row[] = $gender;
+			$row[] = $country_info['country_name'] ?? '--';
+			$row[] = $role_name;
+			$row[] = $status;
+			$data[] = $row;
 		}
           $output = array(
                //"draw" => $draw,

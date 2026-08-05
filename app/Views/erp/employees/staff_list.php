@@ -36,6 +36,9 @@ if($user_info['user_type'] == 'staff'){
 $xin_system = $SystemModel->where('setting_id', 1)->first();
 $employee_id = generate_random_employeeid();
 $get_animate='';
+// Managers (company/super) get the ID-card bulk column + toolbar.
+$_acting = $UsersModel->where('user_id', session('sup_username')['sup_user_id'])->first();
+$isManager = in_array(($_acting['user_type'] ?? ''), ['company','super_user']);
 ?>
 <?php if(in_array('staff2',staff_role_resource()) || in_array('shift1',staff_role_resource()) || in_array('staffexit1',staff_role_resource()) || $user_info['user_type'] == 'company') { ?>
 <div id="smartwizard-2" class="border-bottom smartwizard-example sw-main sw-theme-default mt-2">
@@ -355,10 +358,28 @@ $get_animate='';
     </div>
   </div>
   <div class="card-body">
+    <?php if($isManager): ?>
+    <div class="d-flex align-items-end flex-wrap mb-3" id="idc-bulk-toolbar" style="gap:10px;">
+      <div class="form-group mb-0">
+        <label class="mb-1 d-block" for="idc-bulk-orient">Orientation</label>
+        <select class="form-control form-control-sm" id="idc-bulk-orient" style="min-width:170px;">
+          <option value="">Company default</option>
+          <option value="portrait">Portrait</option>
+          <option value="landscape">Landscape</option>
+        </select>
+      </div>
+      <button type="button" class="btn btn-sm btn-primary" id="idc-bulk-generate">
+        <i class="feather icon-credit-card"></i> Generate ID Cards (<span id="idc-bulk-count">0</span>)
+      </button>
+    </div>
+    <?php endif; ?>
     <div class="box-datatable table-responsive">
       <table class="datatables-demo table table-striped table-bordered" id="xin_table">
         <thead>
           <tr>
+            <?php if($isManager): ?>
+            <th style="width:1%;"><input type="checkbox" id="idc-check-all"></th>
+            <?php endif; ?>
             <th><?= lang('Main.xin_name');?></th>
             <th><?= lang('Dashboard.left_designation');?></th>
             <th><?= lang('Main.xin_contact_number');?></th>
@@ -372,3 +393,36 @@ $get_animate='';
     </div>
   </div>
 </div>
+<?php if($isManager): ?>
+<script>
+$(function(){
+  var bulkUrl = "<?= site_url('erp/id-cards/bulk') ?>";
+  var csrfField = "<?= csrf_token() ?>";
+  var csrfHash  = "<?= csrf_hash() ?>";
+  function idcRefreshCount(){
+    $('#idc-bulk-count').text($('.idc-row-check:checked').length);
+  }
+  // Delegated so checkboxes rendered by DataTables ajax are handled.
+  $(document).on('change', '.idc-row-check', idcRefreshCount);
+  $(document).on('change', '#idc-check-all', function(){
+    $('.idc-row-check').prop('checked', $(this).prop('checked'));
+    idcRefreshCount();
+  });
+  $(document).on('click', '#idc-bulk-generate', function(){
+    var ids = $('.idc-row-check:checked').map(function(){ return this.value; }).get();
+    if(ids.length === 0){
+      if(window.toastr) toastr.warning('Select at least one employee.');
+      return;
+    }
+    var orient = $('#idc-bulk-orient').val();
+    var $f = $('<form>', {method:'POST', action:bulkUrl, target:'_blank'});
+    ids.forEach(function(id){
+      $f.append($('<input>', {type:'hidden', name:'ids[]', value:id}));
+    });
+    $f.append($('<input>', {type:'hidden', name:'orientation', value:orient}));
+    $f.append($('<input>', {type:'hidden', name:csrfField, value:csrfHash}));
+    $f.appendTo('body').submit().remove();
+  });
+});
+</script>
+<?php endif; ?>

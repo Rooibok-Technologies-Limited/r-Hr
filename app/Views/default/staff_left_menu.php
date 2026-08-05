@@ -36,7 +36,11 @@ $setup_modules = unserialize($xin_com_system['setup_modules']);
   <li class="pc-item"><a href="<?= site_url('erp/desk');?>" class="pc-link "><span class="pc-micon"><i data-feather="home"></i></span><span class="pc-mtext">
     <?= lang('Dashboard.dashboard_title');?>
     </span></a></li>
-  <?php if(in_array('attendance',staff_role_resource())) {?>  
+  <!-- Staff ID Cards -->
+  <li class="pc-item"><a href="<?= site_url('erp/id-cards');?>" class="pc-link "><span class="pc-micon"><i data-feather="credit-card"></i></span><span class="pc-mtext">
+    Staff ID Cards
+    </span></a></li>
+  <?php if(in_array('attendance',staff_role_resource())) {?>
   <!-- Attendance -->
   <li class="pc-item"><a href="<?= site_url('erp/attendance-list');?>" class="pc-link "><span class="pc-micon"><i data-feather="clock"></i></span><span class="pc-mtext">
     <?= lang('Dashboard.left_attendance');?>
