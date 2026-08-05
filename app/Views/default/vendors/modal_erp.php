@@ -1,7 +1,7 @@
-/**
+<?php /**
  * @author Bodo Desderio <rooiboktechltd@gmail.com>
  * @copyright 2026 Rooibok Technologies. All rights reserved.
- */
+ */ ?>
 <style type="text/css">
 #ui-datepicker-div {
 	z-index:1100 !important;
