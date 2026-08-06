@@ -104,22 +104,22 @@ $routes->get('erp/system-payment-settings', 'Settings::super_settings/payments',
 $routes->get('erp/system-sms-settings', 'Settings::super_settings/sms', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/system-api-settings', 'Settings::super_settings/api', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/system-tax-settings', 'Settings::super_settings/tax', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
-$routes->post('erp/settings/save_super_settings', 'Settings::save_super_settings', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
-$routes->match(['get', 'post'],'erp/settings/system_info', 'Settings::system_info', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
-$routes->match(['get', 'post'],'erp/settings/add_logo', 'Settings::add_logo', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
-$routes->match(['get', 'post'],'erp/settings/add_favicon', 'Settings::add_favicon', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
+$routes->post('erp/settings/save_super_settings', 'Settings::save_super_settings', ['namespace' => 'App\Controllers\Erp','filter' => 'superauth']);
+$routes->match(['get', 'post'],'erp/settings/system_info', 'Settings::system_info', ['namespace' => 'App\Controllers\Erp','filter' => 'superauth',]);
+$routes->match(['get', 'post'],'erp/settings/add_logo', 'Settings::add_logo', ['namespace' => 'App\Controllers\Erp','filter' => 'superauth',]);
+$routes->match(['get', 'post'],'erp/settings/add_favicon', 'Settings::add_favicon', ['namespace' => 'App\Controllers\Erp','filter' => 'superauth',]);
 $routes->match(['get', 'post'],'erp/settings/add_singin_logo', 'Settings::add_singin_logo', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
-$routes->match(['get', 'post'],'erp/settings/update_payment_gateway', 'Settings::update_payment_gateway', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
+$routes->match(['get', 'post'],'erp/settings/update_payment_gateway', 'Settings::update_payment_gateway', ['namespace' => 'App\Controllers\Erp','filter' => 'superauth',]);
 $routes->match(['get', 'post'],'erp/settings/email_info', 'Settings::email_info', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
-$routes->match(['get', 'post'],'erp/settings/notification_position_info', 'Settings::notification_position_info', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
+$routes->match(['get', 'post'],'erp/settings/notification_position_info', 'Settings::notification_position_info', ['namespace' => 'App\Controllers\Erp','filter' => 'superauth',]);
 //8: System||Constants
 $routes->get('erp/system-constants', 'Settings::constants', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->match(['get', 'post'], 'erp/settings/company_type_info', 'Settings::company_type_info', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
-$routes->match(['get', 'post'], 'erp/settings/update_company_type', 'Settings::update_company_type', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
-$routes->match(['get', 'post'], 'erp/settings/delete_company_type', 'Settings::delete_company_type', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
+$routes->match(['get', 'post'], 'erp/settings/update_company_type', 'Settings::update_company_type', ['namespace' => 'App\Controllers\Erp','filter' => 'superauth',]);
+$routes->match(['get', 'post'], 'erp/settings/delete_company_type', 'Settings::delete_company_type', ['namespace' => 'App\Controllers\Erp','filter' => 'superauth',]);
 $routes->match(['get', 'post'], 'erp/settings/currency_type_info', 'Settings::currency_type_info', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
-$routes->match(['get', 'post'], 'erp/settings/update_currency_type', 'Settings::update_currency_type', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
-$routes->match(['get', 'post'], 'erp/settings/delete_currency_type', 'Settings::delete_currency_type', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin',]);
+$routes->match(['get', 'post'], 'erp/settings/update_currency_type', 'Settings::update_currency_type', ['namespace' => 'App\Controllers\Erp','filter' => 'superauth',]);
+$routes->match(['get', 'post'], 'erp/settings/delete_currency_type', 'Settings::delete_currency_type', ['namespace' => 'App\Controllers\Erp','filter' => 'superauth',]);
 //9: System||Database Backup
 $routes->get('erp/theme-settings', 'Settings::theme_settings', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->post('erp/settings/save_theme', 'Settings::save_theme', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
@@ -141,10 +141,10 @@ $routes->get('erp/settings/email_template_list', 'Settings::email_template_list'
 $routes->get('erp/settings/sms_template_list', 'Settings::sms_template_list', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/settings/database_backup_list', 'Settings::database_backup_list', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/settings/read', 'Settings::read', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/settings/add_religion_info', 'Settings::add_religion_info', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/settings/update_religion_info', 'Settings::update_religion_info', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/settings/delete_religion_type', 'Settings::delete_religion_type', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/settings/update_currency', 'Settings::update_currency', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/settings/add_religion_info', 'Settings::add_religion_info', ['namespace' => 'App\Controllers\Erp','filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/settings/update_religion_info', 'Settings::update_religion_info', ['namespace' => 'App\Controllers\Erp','filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/settings/delete_religion_type', 'Settings::delete_religion_type', ['namespace' => 'App\Controllers\Erp','filter' => 'superauth']);
+$routes->match(['get','post'], 'erp/settings/update_currency', 'Settings::update_currency', ['namespace' => 'App\Controllers\Erp','filter' => 'superauth']);
 
 /***************************************************************************************************************/
 /***************************************************************************************************************/
@@ -1147,7 +1147,7 @@ $routes->match(['get','post'], 'erp/customfields/update_customfield', 'Customfie
 $routes->match(['get','post'], 'erp/documents/update_official_document', 'Documents::update_official_document', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/leaving/update_exit', 'Leaving::update_exit', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/officeshifts/update_office_shift', 'Officeshifts::update_office_shift', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/settings/update_religion', 'Settings::update_religion', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/settings/update_religion', 'Settings::update_religion', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
 // Route-drift sweep (2026-08-05): dialog/list form actions that posted to the
 // controller.s real method but had no matching route (or a mis-named one) -> 404 on
 // save/create. Methods verified to exist; wiring the routes the forms target.
@@ -1169,7 +1169,7 @@ $routes->match(['get','post'], 'erp/orders/pay_invoice_record', 'Orders::pay_inv
 $routes->match(['get','post'], 'erp/products/update_product_image', 'Products::update_product_image', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/products/update_rating', 'Products::update_rating', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/purchases/update_purchase_record', 'Purchases::update_purchase_record', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/settings/add_other_logo', 'Settings::add_other_logo', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/settings/add_other_logo', 'Settings::add_other_logo', ['namespace' => 'App\Controllers\Erp', 'filter' => 'superauth']);
 $routes->match(['get','post'], 'erp/settings/sms_info', 'Settings::sms_info', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/travel/update_travel_status', 'Travel::update_travel_status', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/customfields/fields_list', 'Customfields::fields_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
