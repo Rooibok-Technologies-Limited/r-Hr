@@ -1274,4 +1274,33 @@ class Recruitment extends BaseController {
 			$this->output($Return);
 		}
 	}
+
+	/** Recruitment overview page (route erp/jobs-dashboard; view is self-contained). */
+	public function recruitment_dashboard()
+	{
+		$UsersModel = new UsersModel();
+		$SystemModel = new SystemModel();
+		$session = \Config\Services::session();
+		if(!$session->has('sup_username')){
+			return redirect()->to(site_url('erp/login'));
+		}
+		$usession = $session->get('sup_username');
+		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
+		if($user_info['user_type'] != 'company' && $user_info['user_type']!='staff'){
+			$session->setFlashdata('unauthorized_module',lang('Dashboard.xin_error_unauthorized_module'));
+			return redirect()->to(site_url('erp/desk'));
+		}
+		if($user_info['user_type'] != 'company'){
+			if(!in_array('ats2',staff_role_resource())) {
+				$session->setFlashdata('unauthorized_module',lang('Dashboard.xin_error_unauthorized_module'));
+				return redirect()->to(site_url('erp/desk'));
+			}
+		}
+		$xin_system = $SystemModel->where('setting_id', 1)->first();
+		$data['title'] = lang('Dashboard.left_recruitment').' | '.$xin_system['application_name'];
+		$data['path_url'] = 'jobs';
+		$data['breadcrumbs'] = lang('Dashboard.left_recruitment');
+		$data['subview'] = view('erp/recruitment/key_jobs_dashboard', $data);
+		return view('erp/layout/layout_main', $data);
+	}
 }

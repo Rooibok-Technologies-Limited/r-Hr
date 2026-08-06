@@ -41,6 +41,13 @@ class TenantBootstrap
         helper('main');
         $tenant = service('tenant');
 
+        // CI4 4.1.3's Router never trims a trailing slash, so "/erp/" matches no
+        // route ("erp") and 404s. Normalize once here, before any resolution.
+        $p = $request->getPath();
+        if ($p !== '' && $p !== '/' && str_ends_with($p, '/')) {
+            $request->setPath(rtrim($p, '/'));
+        }
+
         $rawHost  = strtolower((string) $request->getServer('HTTP_HOST') ?: '');
         $host     = preg_replace('/:\d+$/', '', $rawHost);
         $platform = strtolower((string) (getenv('PLATFORM_HOST') ?: 'localhost'));

@@ -62,6 +62,7 @@ $routes->post('erp/landing-page/upload', 'Erp\Landingpage::upload_image', ['filt
 
 // ERP|TimeHRM
 ///$routes->get('erp/{locale}/dashboard', 'Dashboard::language', ['namespace' => 'App\Controllers\Erp']);
+$routes->get('erp', 'Home::login', ['namespace' => 'App\Controllers']);
 $routes->get('erp/', 'Home::login', ['namespace' => 'App\Controllers']);
 $routes->get('erp/login', 'Home::login', ['namespace' => 'App\Controllers']);
 $routes->post('erp/auth/login', 'Auth::login', ['namespace' => 'App\Controllers\Erp']);
@@ -201,7 +202,8 @@ $routes->get('erp/all-policies', 'Policies::staff_policies_all', ['namespace' =>
 $routes->get('erp/staff-list', 'Employees::index', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/staff-grid', 'Employees::staff_grid', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/staff-dashboard', 'Employees::staff_dashboard', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
-$routes->get('erp/organization-chart', 'Employees::staff_chart', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
+// org chart lives at erp/org-chart (Orgchart::index); the old organization-chart
+// alias pointed at a method that never existed.
 $routes->get('erp/employee-details/(:segment)', 'Employees::staff_details', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/employee-qr/(:num)', 'Erp\Employees::employee_qr/$1', ['filter' => 'checklogin']);
 // Staff ID Card system (Abstract Organic; portrait + landscape)
@@ -233,7 +235,6 @@ $routes->get('erp/employee-exit', 'Leaving::index', ['namespace' => 'App\Control
 // documents || upload files, official and expired documents
 $routes->get('erp/upload-files', 'Documents::upload_files', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 $routes->get('erp/official-documents', 'Documents::official_documents', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
-$routes->get('erp/expired-documents', 'Documents::expired_documents', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 // warning
 $routes->get('erp/disciplinary-cases', 'Warning::index', ['namespace' => 'App\Controllers\Erp','filter' => 'checklogin']);
 // tickets
@@ -633,7 +634,6 @@ $routes->match(['get','post'], 'erp/employees/delete_all_commissions', 'Employee
 $routes->match(['get','post'], 'erp/employees/delete_all_statutory_deductions', 'Employees::delete_all_statutory_deductions', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/employees/delete_all_other_payments', 'Employees::delete_all_other_payments', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/employees/delete_document', 'Employees::delete_document', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->get('erp/employees/staff_chart', 'Employees::staff_chart', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 
 /***************************************************************************************************************/
 // AJAX/POST ENDPOINTS — Timesheet / Attendance

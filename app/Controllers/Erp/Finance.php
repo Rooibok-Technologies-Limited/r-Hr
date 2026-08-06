@@ -1373,6 +1373,26 @@ class Finance extends BaseController {
 		}
 	}
 
+	/** Finance overview page (route erp/finance-dashboard; view is self-contained). */
+	public function finance_dashboard()
+	{
+		$session = \Config\Services::session();
+		if (! $session->has('sup_username')) { return redirect()->to(site_url('erp/login')); }
+		$usession = $session->get('sup_username');
+		$SystemModel = new SystemModel();
+		$user_info = (new UsersModel())->where('user_id', $usession['sup_user_id'])->first();
+		if (($user_info['user_type'] ?? '') !== 'company' && ($user_info['user_type'] ?? '') !== 'staff') {
+			$session->setFlashdata('unauthorized_module', lang('Dashboard.xin_error_unauthorized_module'));
+			return redirect()->to(site_url('erp/desk'));
+		}
+		$xin_system = $SystemModel->where('setting_id', 1)->first();
+		$data['title']       = lang('Dashboard.hr_accounting_dashboard_title') . ' | ' . $xin_system['application_name'];
+		$data['path_url']    = 'finance_accounts';
+		$data['breadcrumbs'] = lang('Dashboard.hr_accounting_dashboard_title');
+		$data['subview']     = view('erp/finance/finance_dashboard', $data);
+		return view('erp/layout/layout_main', $data);
+	}
+
 	// ================= Payees / Payers (ci_finance_entity) =================
 	// Completes the previously half-built finance-contacts feature (views + model +
 	// JS existed; the controller CRUD did not → every form 404'd). All tenant-scoped
