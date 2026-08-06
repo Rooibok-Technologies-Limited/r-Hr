@@ -163,6 +163,21 @@ class Holidays extends BaseController {
           exit();
     }
 	// |||add record|||
+	/**
+	 * Server-side authz for holiday create/edit/delete: company owner or a staff
+	 * member with the holiday2 (manage) resource. The list VIEW is open to all
+	 * staff (read-only), but mutations must be gated here — the sidebar/view
+	 * hiding a button is never the security control. [SECURITY]
+	 */
+	private function canManageHolidays(string $resource): bool
+	{
+		$usession = \Config\Services::session()->get('sup_username');
+		$uid = is_array($usession) ? ($usession['sup_user_id'] ?? 0) : 0;
+		$u = $uid ? (new UsersModel())->where('user_id', $uid)->first() : null;
+		if (($u['user_type'] ?? '') === 'company') { return true; }
+		return function_exists('staff_role_resource') && in_array($resource, (array) staff_role_resource(), true);
+	}
+
 	public function add_holiday() {
 			
 		$validation =  \Config\Services::validation();
@@ -170,6 +185,9 @@ class Holidays extends BaseController {
 		$request = \Config\Services::request();
 		$usession = $session->get('sup_username');	
 		if ($this->request->getPost('type') === 'add_record') {
+			if (! $this->canManageHolidays('holiday2')) {
+				return $this->output(['result'=>'','error'=>lang('Dashboard.xin_error_unauthorized_module'),'csrf_hash'=>csrf_hash()]);
+			}
 			$Return = array('result'=>'', 'error'=>'', 'csrf_hash'=>'');
 			$Return['csrf_hash'] = csrf_hash();
 			// set rules
@@ -260,6 +278,9 @@ class Holidays extends BaseController {
 		$request = \Config\Services::request();
 		$usession = $session->get('sup_username');	
 		if ($this->request->getPost('type') === 'edit_record') {
+			if (! $this->canManageHolidays('holiday3')) {
+				return $this->output(['result'=>'','error'=>lang('Dashboard.xin_error_unauthorized_module'),'csrf_hash'=>csrf_hash()]);
+			}
 			$Return = array('result'=>'', 'error'=>'', 'csrf_hash'=>'');
 			$Return['csrf_hash'] = csrf_hash();
 			// set rules
@@ -355,6 +376,9 @@ class Holidays extends BaseController {
 	public function delete_holiday() {
 		
 		if($this->request->getPost('type')=='delete_record') {
+			if (! $this->canManageHolidays('holiday4')) {
+				return $this->output(['result'=>'','error'=>lang('Dashboard.xin_error_unauthorized_module'),'csrf_hash'=>csrf_hash()]);
+			}
 			/* Define return | here result is used to return user data and error for error message */
 			$Return = array('result'=>'', 'error'=>'', 'csrf_hash'=>'');
 			$session = \Config\Services::session();
