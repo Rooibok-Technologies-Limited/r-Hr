@@ -31,7 +31,18 @@ global row seeded USD, no-settings companies borrowed company 2's GBP row, AND
 the localization form was un-saveable (ci_currencies data blanked → 155 empty
 options; ci_languages all inactive → required select empty; save didn't drop the
 settings cache). Verified GBP→USD→GBP round-trip flips the whole app instantly.
-Platform default = UGX (DB + init.sql + add-company + registration). **#6 ajax half FULLY CLOSED
+Platform default = UGX (DB + init.sql + add-company + registration).
+**Symbol display (41477ff):** `erp_currency_symbol()` (USh/KSh/$/£/€; EA map→ICU→
+code) at every display site; data/formatter/payment sites keep ISO codes.
+**Live Playwright suite — core pass DONE (9c682fe):** login, desk, staff-list
+(DataTable+prefill), leave/attendance, payees full CRUD via real UI, id-cards
+faces, payroll wizard, plan-gating (Projects blocked on Pro → upgrade page),
+staff role scoping (menu + 307s), super-admin pages, currency GBP→USD→GBP
+round-trip. Fixed en route: [SECURITY] finance_dashboard missing staff resource
+gate; 3 public JS files 600-perms → nginx 403 (announcements/expenses pages had
+NO working JS); 2 inline scripts ran pre-jQuery; module-script tag now emitted
+only when the file exists (8 custom pages 404'd it). NOT yet browser-walked:
+recruitment pipeline, clients/invoices/inventory deep flows. **#6 ajax half FULLY CLOSED
 (87d5919):** all remaining "missing" endpoints = dead JS (no trigger DOM;
 editing via *_details pages) — nothing built. [SECURITY] dead `Crm` module
 (unreachable duplicate of `Clients`) had 5 routed ajax endpoints with
