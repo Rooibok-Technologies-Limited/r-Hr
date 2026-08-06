@@ -21,7 +21,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 <div class="modal-header">
   <h5 class="modal-title">
-    <?= lang('Asset.xin_edit_assets_category');?>
+    <?= lang('Main.xin_edit');?> <?= lang('Dashboard.xin_acc_payer');?>
     <span class="font-weight-light">
     <?= lang('Main.xin_information');?>
     </span> <br>
@@ -31,18 +31,18 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
   <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">×</span> </button>
 </div>
 <?php $attributes = array('name' => 'update_payer', 'id' => 'update_payer', 'autocomplete' => 'off');?>
-<?php $hidden = array('_method' => 'EDIT', 'token' => $field_id, 'ext_name' => $payer_name);?>
+<?php $hidden = array('_method' => 'EDIT', 'token' => $field_id);?>
 <?php echo form_open('erp/finance/update_payer', $attributes, $hidden);?>
 <div class="modal-body">
   <div class="row">
     <div class="col-md-12">
       <div class="form-group">
-        <label for="payer_name"><?= lang('xin_acc_payer');?></label>
-        <input type="text" class="form-control" name="name" placeholder="<?= lang('xin_acc_payer_name');?>" value="<?php echo esc($result['name'] ?? '', 'attr');?>">
+        <label for="payer_name"><?= lang('Dashboard.xin_acc_payer');?></label>
+        <input type="text" class="form-control" name="name" placeholder="<?= lang('Dashboard.xin_acc_payer_name');?>" value="<?php echo esc($result['name'] ?? '', 'attr');?>">
       </div>
       <div class="form-group">
-        <label for="contact_number"><?= lang('xin_contact_number');?></label>
-        <input type="text" class="form-control" name="contact_number" placeholder="<?= lang('xin_contact_number');?>" value="<?php echo esc($result['contact_number'] ?? '', 'attr');?>">
+        <label for="contact_number"><?= lang('Main.xin_contact_number');?></label>
+        <input type="text" class="form-control" name="contact_number" placeholder="<?= lang('Main.xin_contact_number');?>" value="<?php echo esc($result['contact_number'] ?? '', 'attr');?>">
       </div>
     </div>
   </div>
@@ -100,7 +100,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
 ?>
 <div class="modal-header">
   <h5 class="modal-title">
-    <?= lang('Asset.xin_edit_assets_category');?>
+    <?= lang('Main.xin_edit');?> <?= lang('Dashboard.xin_acc_payee');?>
     <span class="font-weight-light">
     <?= lang('Main.xin_information');?>
     </span> <br>
@@ -110,18 +110,18 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
   <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">×</span> </button>
 </div>
 <?php $attributes = array('name' => 'update_payee', 'id' => 'update_payee', 'autocomplete' => 'off');?>
-<?php $hidden = array('_method' => 'EDIT', 'token' => $field_id, 'ext_name' => $payee_name);?>
+<?php $hidden = array('_method' => 'EDIT', 'token' => $field_id);?>
 <?php echo form_open('erp/finance/update_payee', $attributes, $hidden);?>
 <div class="modal-body">
   <div class="row">
     <div class="col-md-12">
       <div class="form-group">
-        <label for="payee_name"><?= lang('xin_acc_payee');?></label>
-        <input type="text" class="form-control" name="name" placeholder="<?= lang('xin_acc_payee_name');?>" value="<?php echo esc($result['name'] ?? '', 'attr');?>">
+        <label for="payee_name"><?= lang('Dashboard.xin_acc_payee');?></label>
+        <input type="text" class="form-control" name="name" placeholder="<?= lang('Dashboard.xin_acc_payee_name');?>" value="<?php echo esc($result['name'] ?? '', 'attr');?>">
       </div>
       <div class="form-group">
-        <label for="contact_number"><?= lang('xin_contact_number');?></label>
-        <input type="number" class="form-control" name="contact_number" placeholder="<?= lang('xin_contact_number');?>" value="<?php echo esc($result['contact_number'] ?? '', 'attr');?>">
+        <label for="contact_number"><?= lang('Main.xin_contact_number');?></label>
+        <input type="text" class="form-control" name="contact_number" placeholder="<?= lang('Main.xin_contact_number');?>" value="<?php echo esc($result['contact_number'] ?? '', 'attr');?>">
       </div>
     </div>
   </div>

@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\UsersModel;
 use App\Models\LanguageModel;
@@ -53,6 +57,13 @@ $get_animate = '';
       <div class="text-muted small">
         <?= lang('Main.xin_add');?>
         <?= lang('Dashboard.xin_acc_deposit');?>
+      </div>
+      </a> </li>
+    <li class="nav-item clickable"> <a href="<?= site_url('erp/payers-list');?>" class="mb-3 nav-link"> <span class="sw-done-icon feather icon-check-circle"></span> <span class="sw-icon fas fa-user-tag"></span>
+      <?= lang('Dashboard.xin_acc_payers');?>
+      <div class="text-muted small">
+        <?= lang('Main.xin_add');?>
+        <?= lang('Dashboard.xin_acc_payers');?>
       </div>
       </a> </li>
     <?php } ?>

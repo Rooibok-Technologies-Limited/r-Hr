@@ -915,6 +915,14 @@ $routes->match(['get','post'], 'erp/finance/read_accounts', 'Finance::read_accou
 $routes->match(['get','post'], 'erp/finance/read_transactions', 'Finance::read_transactions', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/finance/delete_account', 'Finance::delete_account', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/finance/delete_transaction', 'Finance::delete_transaction', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/finance/payees_list', 'Finance::payees_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/finance/payers_list', 'Finance::payers_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/finance/read_payee_payers', 'Finance::read_payee_payers', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/finance/add_payee', 'Finance::add_payee', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/finance/add_payer', 'Finance::add_payer', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/finance/update_payee', 'Finance::update_payee', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/finance/update_payer', 'Finance::update_payer', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->post('erp/finance/delete_payeers', 'Finance::delete_payeers', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->get('erp/finance-dashboard', 'Finance::finance_dashboard', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->get('erp/payees-list', 'Finance::payees', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->get('erp/payers-list', 'Finance::payers', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);

@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 //Dashboard override core en language system validation or define your own en language validation message
 return [
 	'dashboard_title' => 'Home',
@@ -158,6 +162,9 @@ return [
 	'xin_acc_payers' => 'Payers',
 	'xin_acc_payee' => 'Payee',
 	'xin_acc_payer' => 'Payer',
+	'xin_acc_payee_name' => 'Payee name',
+	'xin_acc_payer_name' => 'Payer name',
+	'xin_acc_created_at' => 'Created at',
 	'xin_hr_sub_departments' => 'Sub Departments',
 	'xin_hr_events' => 'Events',
 	'xin_hr_meetings' => 'Conference Booking',

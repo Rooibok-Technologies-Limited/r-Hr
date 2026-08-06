@@ -3,12 +3,23 @@
   @copyright 2026 Rooibok Technologies. All rights reserved.
 -->
 # Project Context
-Last updated: 2026-08-05
+Last updated: 2026-08-06
 
 ## Current task
-**Security backlog P1–P9 CLOSED + Staff ID Card system SHIPPED + launch polish DONE
-(2026-08-05).** On branch `feature/idcard-security-hardening` (3 signed commits;
-migrations 000001/000002/000003 run):
+**Finance payees/payers feature-gap CLOSED (2026-08-06).** The orphan
+`finance_payees.js`/`finance_payers.js` UIs (backlog #6 "genuinely missing methods"
+list) now have their full CRUD: `Finance::payees/payers` pages, `payees_list`/
+`payers_list` DataTables JSON, `add_/update_` save, `read_payee_payers` edit dialog,
+`delete_payeers` — all tenant-scoped (`tenantCompanyId()`), staff-gated (payees=
+`expense1`, payers=`deposit1` cluster), on `ci_finance_entity` (table pre-existed).
+Routes wired; lang keys prefixed + 3 added; reachable via new nav tabs on the
+expense (Payees) and deposit (Payers) pages. Verified live end-to-end (add→list→
+dialog→update→delete, both types) as Demo Corp. Remaining #6 endpoints still to
+triage: crm/customer_read, mailbox delete, projects/tasks/talent/todo/trackgoals
+read_* (many likely dead JS — triage per the memory checklist first).
+
+### Prior: Security backlog P1–P9 CLOSED + Staff ID Card system SHIPPED + launch
+polish DONE (2026-08-05). Merged to main (migrations 000001/000002/000003 run):
 - **Security P1–P9** — P1 dialog XSS+authz sweep (58 `dialog_*` views scoped/guarded/
   encoded, `effective_company_id()`+`dialog_not_found()` helpers), P2 dead-Mailbox
   removed, P4 SMTP-from-env service, P5 Todo cross-tenant IDOR + POST/CSRF, P7 mail
@@ -21,10 +32,11 @@ migrations 000001/000002/000003 run):
 - **Launch polish** — branded self-contained 404/500; legal pages (privacy/terms/
   cookies) seeded in `ci_landing_content`; Playwright smoke green.
 
-**▶ RESUME:** branch is committed but **NOT pushed / NOT merged to main**, and NOT
-deployed. Next: push + merge, run migrations on each env, then (optional) P8 + a full
-regression suite. Legal copy is boilerplate — get counsel review before go-live.
-Detail: `.claude`-memory `hr-security-backlog-closed-2026-08` + `hr-idcard-system`.
+**▶ RESUME:** next big items = Phase 3 Traefik deploy (owner-run, config authored),
+remaining #6 dead-JS triage, employee-ID auto-gen (awaiting owner's format image),
+Playwright live suite, P8 notif idempotency. Legal copy is boilerplate — get counsel
+review before go-live. Detail: `.claude`-memory `hr-pending-work-2026-08` +
+`hr-deploy-readiness-2026-08`.
 
 ### Prior: ADR-003 **Phase 2 — tenant enforcement + clean erp-less URLs** — DONE (2026-08-04).
 Resolution moved from a filter to the `pre_system` event (`App\Libraries\TenantBootstrap`)

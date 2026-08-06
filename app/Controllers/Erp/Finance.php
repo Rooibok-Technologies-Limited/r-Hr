@@ -1372,4 +1372,115 @@ class Finance extends BaseController {
 			$this->output($Return);
 		}
 	}
+
+	// ================= Payees / Payers (ci_finance_entity) =================
+	// Completes the previously half-built finance-contacts feature (views + model +
+	// JS existed; the controller CRUD did not → every form 404'd). All tenant-scoped
+	// via BaseController::tenantCompanyId().
+
+	/** Payers list page. */
+	public function payers() { return $this->entityPage('payer'); }
+	/** Payees list page. */
+	public function payees() { return $this->entityPage('payee'); }
+
+	private function entityPage(string $type) {
+		$session = \Config\Services::session();
+		if (! $session->has('sup_username')) { return redirect()->to(site_url('erp/login')); }
+		$usession = $session->get('sup_username');
+		$SystemModel = new SystemModel();
+		$xin_system = $SystemModel->where('setting_id', 1)->first();
+		$user_info = (new UsersModel())->where('user_id', $usession['sup_user_id'])->first();
+		if (($user_info['user_type'] ?? '') !== 'company' && ($user_info['user_type'] ?? '') !== 'staff') {
+			$session->setFlashdata('unauthorized_module', lang('Dashboard.xin_error_unauthorized_module'));
+			return redirect()->to(site_url('erp/desk'));
+		}
+		if ($user_info['user_type'] !== 'company' && ! in_array($type === 'payer' ? 'deposit1' : 'expense1', staff_role_resource())) {
+			$session->setFlashdata('unauthorized_module', lang('Dashboard.xin_error_unauthorized_module'));
+			return redirect()->to(site_url('erp/desk'));
+		}
+		$label = $type === 'payer' ? lang('Dashboard.xin_acc_payers') : lang('Dashboard.xin_acc_payees');
+		$data['title']       = $label . ' | ' . $xin_system['application_name'];
+		$data['path_url']    = $type === 'payer' ? 'finance_payers' : 'finance_payees';
+		$data['breadcrumbs'] = $label;
+		$data['subview']     = view('erp/finance/finance_' . ($type === 'payer' ? 'payers' : 'payees'), $data);
+		return view('erp/layout/layout_main', $data);
+	}
+
+	/** DataTables JSON. */
+	public function payers_list() { return $this->entityList('payer'); }
+	public function payees_list() { return $this->entityList('payee'); }
+
+	private function entityList(string $type) {
+		$session = \Config\Services::session();
+		if (! $session->has('sup_username')) { return redirect()->to(site_url('erp/login')); }
+		$rows = (new PayeesModel())->where('company_id', $this->tenantCompanyId())
+			->where('type', $type)->orderBy('entity_id', 'ASC')->findAll();
+		$data = array();
+		foreach ($rows as $r) {
+			$edit = '<span data-toggle="tooltip" data-placement="top" data-state="primary" title="'.lang('Main.xin_edit').'"><button type="button" class="btn icon-btn btn-sm btn-light-primary waves-effect waves-light" data-toggle="modal" data-target=".view-modal-data" data-field_id="'. uencode($r['entity_id']) . '"><i class="feather icon-edit"></i></button></span>';
+			$delete = '<span data-toggle="tooltip" data-placement="top" data-state="danger" title="'.lang('Main.xin_delete').'"><button type="button" class="btn icon-btn btn-sm btn-light-danger waves-effect waves-light delete" data-toggle="modal" data-target=".delete-modal" data-record-id="'. uencode($r['entity_id']) . '"><i class="feather icon-trash-2"></i></button></span>';
+			$data[] = array(
+				esc($r['name']) . '<div class="overlay-edit">' . $edit . $delete . '</div>',
+				esc($r['contact_number']),
+				set_date_format($r['created_at']),
+			);
+		}
+		echo json_encode(array('data' => $data));
+		exit();
+	}
+
+	/** Create. */
+	public function add_payer() { $this->entitySave('payer', false); }
+	public function add_payee() { $this->entitySave('payee', false); }
+	/** Update. */
+	public function update_payer() { $this->entitySave('payer', true); }
+	public function update_payee() { $this->entitySave('payee', true); }
+
+	private function entitySave(string $type, bool $isEdit) {
+		$wantType = $isEdit ? 'edit_record' : 'add_record';
+		if ($this->request->getPost('type') !== $wantType) { return; }
+		$validation = \Config\Services::validation();
+		$Return = array('result'=>'', 'error'=>'', 'csrf_hash'=>csrf_hash());
+		if (! $this->validate(['name' => ['rules'=>'required','errors'=>['required'=>lang('Main.xin_error_field_text')]]])) {
+			$Return['error'] = $validation->getError('name');
+			$this->output($Return); return;
+		}
+		$fields = [
+			'name'           => strip_tags(trim($this->request->getPost('name'))),
+			'contact_number' => strip_tags(trim($this->request->getPost('contact_number'))),
+		];
+		$PayeesModel = new PayeesModel();
+		if ($isEdit) {
+			$id = (int) udecode(strip_tags(trim($this->request->getPost('token'))));
+			$PayeesModel->where('company_id', $this->tenantCompanyId())->where('type', $type)->update($id, $fields);
+			$Return['result'] = lang('Success.ci_finance_account_updated_msg');
+		} else {
+			$fields['company_id'] = $this->tenantCompanyId();
+			$fields['type']       = $type;
+			$fields['created_at']  = date('d-m-Y h:i:s');
+			$PayeesModel->insert($fields);
+			$Return['result'] = lang('Success.ci_finance_account_added_msg');
+		}
+		$Return['csrf_hash'] = csrf_hash();
+		$this->output($Return);
+	}
+
+	/** Render the payer/payee edit dialog (populated inside the view by field_id). */
+	public function read_payee_payers() {
+		$session = \Config\Services::session();
+		$request = \Config\Services::request();
+		if (! $session->has('sup_username')) { return redirect()->to(site_url('erp/login')); }
+		return view('erp/finance/dialog_payer_payees', ['field_id' => $request->getGet('field_id')]);
+	}
+
+	/** Delete a payer/payee (tenant-scoped). */
+	public function delete_payeers() {
+		if ($this->request->getPost('type') !== 'delete_record') { return; }
+		$Return = array('result'=>'', 'error'=>'', 'csrf_hash'=>csrf_hash());
+		$id = (int) udecode(strip_tags(trim($this->request->getPost('_token'))));
+		(new PayeesModel())->where('entity_id', $id)->where('company_id', $this->tenantCompanyId())->delete($id);
+		$Return['csrf_hash'] = csrf_hash();
+		$Return['result'] = lang('Success.ci_finance_account_deleted_msg');
+		$this->output($Return);
+	}
 }
