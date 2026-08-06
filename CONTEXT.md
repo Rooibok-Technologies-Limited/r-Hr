@@ -14,9 +14,13 @@ list) now have their full CRUD: `Finance::payees/payers` pages, `payees_list`/
 `expense1`, payers=`deposit1` cluster), on `ci_finance_entity` (table pre-existed).
 Routes wired; lang keys prefixed + 3 added; reachable via new nav tabs on the
 expense (Payees) and deposit (Payers) pages. Verified live end-to-end (add→list→
-dialog→update→delete, both types) as Demo Corp. Remaining #6 endpoints still to
-triage: crm/customer_read, mailbox delete, projects/tasks/talent/todo/trackgoals
-read_* (many likely dead JS — triage per the memory checklist first).
+dialog→update→delete, both types) as Demo Corp. **#6 ajax half FULLY CLOSED
+(87d5919):** all remaining "missing" endpoints = dead JS (no trigger DOM;
+editing via *_details pages) — nothing built. [SECURITY] dead `Crm` module
+(unreachable duplicate of `Clients`) had 5 routed ajax endpoints with
+un-tenant-scoped list dumps → de-routed. **Docker renamed (6ad6fe6):** compose
+project `rooibok-hr`, containers `rhr_*`, network `rhr_net`, volumes copied to
+`rooibok-hr_*` (old `hr_*` volumes kept as rollback — delete when confident).
 
 ### Prior: Security backlog P1–P9 CLOSED + Staff ID Card system SHIPPED + launch
 polish DONE (2026-08-05). Merged to main (migrations 000001/000002/000003 run):
