@@ -1393,13 +1393,15 @@ class Types extends BaseController {
 				$category_name = $r['category_name'];
 			}
 			//$combhr = $edit.$delete;	
-			$data[] = array(
-				$category_name,
-				$r['field_one'],
-				$is_require
-			);	
-			
-		}
+			$max_pr = (int) ($r['leave_max_per_request'] ?? 0);
+				$data[] = array(
+					$category_name,
+					$r['field_one'],
+					$max_pr > 0 ? $max_pr : '<span class="text-muted">'.lang('Leave.xin_leave_no_cap').'</span>',
+					$is_require
+				);
+
+			}
           $output = array(
                //"draw" => $draw,
 			   "data" => $data

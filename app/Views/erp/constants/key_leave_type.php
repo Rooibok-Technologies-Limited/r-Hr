@@ -126,6 +126,7 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
                 <th><i class="fas fa-braille"></i>
                   <?= lang('Leave.xin_leave_type');?></th>
                 <th> <?= lang('Leave.xin_leave_days_per_year');?></th>
+                <th> <?= lang('Leave.xin_leave_max_per_request');?></th>
                 <th> <?= lang('Leave.left_requires_approval');?></th>
               </tr>
             </thead>
