@@ -243,7 +243,10 @@ $user_info = $UsersModel->where('user_id', $session['sup_user_id'])->first();
 		});
 	});
 	</script>
+	<?php // Custom pages (payroll-run, wallet, ...) ship inline JS and have no module script. ?>
+	<?php if (is_file(FCPATH . 'module_scripts/' . $path_url . '.js')): ?>
 	<script type="text/javascript" src="<?= asset_v('public/module_scripts/'.$path_url.'.js'); ?>"></script>
+	<?php endif; ?>
     <?php if($router->controllerName() == '\App\Controllers\Erp\Dashboard') { ?>
     	<?php if($user_info['user_type'] == 'staff'){ ?>
 			<?php if($xin_system['is_ssl_available'] == 1){ ?>

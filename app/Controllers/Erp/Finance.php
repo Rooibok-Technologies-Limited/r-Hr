@@ -1385,6 +1385,11 @@ class Finance extends BaseController {
 			$session->setFlashdata('unauthorized_module', lang('Dashboard.xin_error_unauthorized_module'));
 			return redirect()->to(site_url('erp/desk'));
 		}
+		if ($user_info['user_type'] !== 'company'
+			&& ! array_intersect(['accounts1', 'deposit1', 'expense1', 'transaction1'], staff_role_resource())) {
+			$session->setFlashdata('unauthorized_module', lang('Dashboard.xin_error_unauthorized_module'));
+			return redirect()->to(site_url('erp/desk'));
+		}
 		$xin_system = $SystemModel->where('setting_id', 1)->first();
 		$data['title']       = lang('Dashboard.hr_accounting_dashboard_title') . ' | ' . $xin_system['application_name'];
 		$data['path_url']    = 'finance_accounts';
