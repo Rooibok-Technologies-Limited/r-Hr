@@ -1154,9 +1154,9 @@ $routes->match(['get','post'], 'erp/settings/update_religion', 'Settings::update
 $routes->match(['get','post'], 'erp/assets/update_asset_image', 'Assets::update_asset_image', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/auth/check_password', 'Auth::check_password', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/awards/add_awards', 'Awards::add_awards', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/crm/add_customer', 'Crm::add_customer', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/crm/update_customer', 'Crm::update_customer', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/crm/update_profile_photo', 'Crm::update_profile_photo', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+// NOTE: no erp/crm/* routes on purpose — the Crm controller is a dead legacy
+// duplicate of Clients (its pages were never routed) and its list endpoints
+// are NOT tenant-scoped; do not re-wire without scoping + a reachable UI.
 $routes->match(['get','post'], 'erp/customfields/add_customfield', 'Customfields::add_customfield', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/documents/add_official_document', 'Documents::add_official_document', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/leaving/add_exit', 'Leaving::add_exit', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
@@ -1266,8 +1266,6 @@ $routes->match(['get','post'], 'erp/agenda/tasks_list/(:num)', 'Agenda::tasks_li
 $routes->match(['get','post'], 'erp/agenda/travel_list/(:num)', 'Agenda::travel_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/complaints/read_complaints', 'Complaints::read_complaints', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/conference/read_meeting_record', 'Conference::read_meeting_record', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/crm/customers_list', 'Crm::customers_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
-$routes->match(['get','post'], 'erp/crm/leads_list', 'Crm::leads_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/customfields/read_customfield', 'Customfields::read_customfield', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/documents/read_official_document', 'Documents::read_official_document', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/documents/system_documents_list/did/(:num)', 'Documents::system_documents_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
