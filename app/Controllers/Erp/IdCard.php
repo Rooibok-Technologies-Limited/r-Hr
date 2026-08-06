@@ -192,7 +192,7 @@ class IdCard extends BaseController
             'show_logo'                => $r->getPost('show_logo') ? 1 : 0,
             'enable_qr'                => $r->getPost('enable_qr') ? 1 : 0,
             'fields'                   => json_encode($fields),
-            'id_prefix'                => strtoupper(preg_replace('/[^A-Za-z0-9]/', '', (string) $r->getPost('id_prefix')) ?: 'RT'),
+            'id_prefix'                => strtoupper(preg_replace('/[^A-Za-z0-9]/', '', (string) $r->getPost('id_prefix'))),
             'id_pattern'               => (string) ($r->getPost('id_pattern') ?: '{PREFIX}-{YEAR}-{SEQUENCE}'),
             'seq_length'               => max(1, min(10, (int) $r->getPost('seq_length'))),
             'validity_years'           => max(1, min(20, (int) $r->getPost('validity_years'))),

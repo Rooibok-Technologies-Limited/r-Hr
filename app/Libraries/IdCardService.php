@@ -23,7 +23,7 @@ class IdCardService
         'allow_orientation_choice' => 1,
         'show_logo'       => 1,
         'enable_qr'       => 1,
-        'id_prefix'       => 'RT',
+        'id_prefix'       => '',   // empty = derive per tenant from the company name
         'id_pattern'      => '{PREFIX}-{YEAR}-{SEQUENCE}',
         'seq_length'      => 4,
         'validity_years'  => 2,
@@ -80,6 +80,11 @@ class IdCardService
                 $out[$k] = $row[$k];
             }
         }
+        // No explicit prefix saved → derive it from THIS tenant's company name
+        // (never a fixed brand default).
+        if (trim((string) ($row['id_prefix'] ?? '')) === '') {
+            $out['id_prefix'] = $this->defaultPrefix($companyId);
+        }
         $out['show_logo'] = isset($row['show_logo']) ? (int) $row['show_logo'] : 1;
         $out['enable_qr'] = isset($row['enable_qr']) ? (int) $row['enable_qr'] : 1;
         $out['allow_orientation_choice'] = isset($row['allow_orientation_choice']) ? (int) $row['allow_orientation_choice'] : 1;
@@ -100,6 +105,31 @@ class IdCardService
         }
         $out['fields'] = $fields;
         return $out;
+    }
+
+    /**
+     * Tenant-derived ID prefix: initials of the company name ("Acme Corp" → AC,
+     * "Lira Digital Ltd" → LDL), first 3 letters for a single-word name.
+     */
+    public function defaultPrefix(int $companyId): string
+    {
+        $name = '';
+        try {
+            $owner = \Config\Database::connect()->table('ci_erp_users')
+                ->where('user_id', $companyId)->get()->getRowArray() ?: [];
+            $name  = trim((string) ($owner['company_name'] ?? $owner['first_name'] ?? ''));
+        } catch (\Throwable $e) {
+            // fall through to the neutral default
+        }
+        $words = preg_split('/[^A-Za-z0-9]+/', $name, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        if (count($words) >= 2) {
+            $prefix = '';
+            foreach (array_slice($words, 0, 4) as $w) { $prefix .= $w[0]; }
+        } else {
+            $prefix = substr($words[0] ?? '', 0, 3);
+        }
+        $prefix = strtoupper(preg_replace('/[^A-Z0-9]/i', '', $prefix));
+        return $prefix !== '' ? $prefix : 'ID';
     }
 
     /** Persist (upsert) a tenant's settings from a sanitised assoc array. */

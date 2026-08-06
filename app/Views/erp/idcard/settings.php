@@ -157,7 +157,7 @@ $fieldLabels = [
     return p.toString();
   }
   function example(){
-    var pre=(document.getElementById('f_id_prefix').value||'RT').toUpperCase();
+    var pre=(document.getElementById('f_id_prefix').value||<?= json_encode($s['id_prefix'] ?? 'ID') ?>).toUpperCase();
     var len=parseInt(document.getElementById('f_seq_length').value,10)||4;
     var pat=document.getElementById('f_id_pattern').value||'{PREFIX}-{YEAR}-{SEQUENCE}';
     var seq=('0'.repeat(len)+'47').slice(-len);

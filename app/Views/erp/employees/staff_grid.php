@@ -41,7 +41,7 @@ if($user_info['user_type'] == 'staff'){
 $roles = $RolesModel->orderBy('role_id', 'ASC')->findAll();
 $xin_system = $SystemModel->where('setting_id', 1)->first();
 $get_animate = '';
-$employee_id = generate_random_employeeid();
+$employee_id = (new \App\Libraries\IdCardService())->generateNumber(effective_company_id());
 ?>
 
 <div id="smartwizard-2" class="border-bottom smartwizard-example sw-main sw-theme-default mt-2">

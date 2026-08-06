@@ -255,7 +255,7 @@ class Application extends BaseController {
 				if (! $uid) { $errors[] = "Row $rn: could not create user"; continue; }
 				$join = strip_tags(trim((string) ($row['joining_date'] ?? ''))) ?: date('d-m-Y');
 				$StaffdetailsModel->insert([
-					'user_id' => (int) $uid, 'employee_id' => generate_random_employeeid(),
+					'user_id' => (int) $uid, 'employee_id' => (new \App\Libraries\IdCardService())->generateNumber($companyId),
 					'department_id' => (int) $dept['department_id'], 'designation_id' => (int) $desig['designation_id'],
 					'office_shift_id' => $defShift, 'date_of_joining' => $join, 'date_of_leaving' => '', 'date_of_birth' => '',
 					'marital_status' => 0, 'religion_id' => 0, 'blood_group' => '', 'citizenship_id' => 0,

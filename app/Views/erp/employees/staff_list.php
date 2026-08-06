@@ -34,7 +34,7 @@ if($user_info['user_type'] == 'staff'){
 		
 
 $xin_system = $SystemModel->where('setting_id', 1)->first();
-$employee_id = generate_random_employeeid();
+$employee_id = (new \App\Libraries\IdCardService())->generateNumber(effective_company_id());
 $get_animate='';
 // Managers (company/super) get the ID-card bulk column + toolbar.
 $_acting = $UsersModel->where('user_id', session('sup_username')['sup_user_id'])->first();
