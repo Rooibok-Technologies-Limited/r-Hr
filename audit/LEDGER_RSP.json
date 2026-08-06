@@ -40,7 +40,8 @@
       "id": "RSP-S7-PAYROLL",
       "phase": "S7",
       "target": "payroll state machine + calc integrity + idempotency",
-      "status": "PENDING"
+      "status": "DONE",
+      "verification": "assessment: reconciles by construction + consistent 2dp tax rounding + disbursement idempotency present. D-PAY-01 (float money, latent) + D-PAY-02 (UGX 2dp vs whole-shilling) documented for owner-gated decimal migration \u2014 NOT blindly changed (integrity rule). See audit/PAYROLL_INTEGRITY.md"
     },
     {
       "id": "RSP-S8-NOTIFICATIONS",
