@@ -196,12 +196,12 @@ $result = $TravelModel->where('travel_id', $travel_id)->first();
                   <tr>
                     <td><?php echo lang('Employees.xin_expected_travel_budget');?></td>
                     <td class="text-success"><i class="fas fa-money-check-alt"></i>&nbsp;
-                      <?= number_to_currency($result['expected_budget'], erp_currency(),null,2);?></td>
+                      <?= money_fmt($result['expected_budget']);?></td>
                   </tr>
                   <tr>
                     <td><?php echo lang('Employees.xin_actual_travel_budget');?></td>
                     <td class="text-warning"><i class="fas fa-money-check-alt"></i>&nbsp;
-                      <?= number_to_currency($result['actual_budget'], erp_currency(),null,2);?></td>
+                      <?= money_fmt($result['actual_budget']);?></td>
                   </tr>
                 </tbody>
               </table>

@@ -209,7 +209,7 @@ class Training extends BaseController {
 			$start_date = set_date_format($r['start_date']);
 			$finish_date = set_date_format($r['finish_date']);
 			// set currency
-			$training_cost = number_to_currency($r['training_cost'], erp_currency(),null,2);
+			$training_cost = money_fmt($r['training_cost']);
 			$combhr = $edit.$view.$delete;	
 			$t_type = '
 				'.$itype.'

@@ -91,7 +91,7 @@ $paid = $EstimatesModel->where('company_id',$company_id)->where('status', 1)->co
 		} else if($r['status'] == 2) {
 			$status = '<span class="badge badge-light-danger">'.lang('Projects.xin_project_cancelled').'</span>';
 		}
-		$invoice_total = number_to_currency($r['grand_total'], erp_currency(),null,2);
+		$invoice_total = money_fmt($r['grand_total']);
 		$client_info = $UsersModel->where('user_id',$r['client_id'])->where('user_type','customer')->first();
 		$_payment_method = $ConstantsModel->where('type','payment_method')->where('constants_id', $r['payment_method'])->first();
 		if($_payment_method){

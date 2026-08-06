@@ -129,7 +129,7 @@ $csz = $company_info['city'].', '.$company_info['state'].' '.$company_info['zipc
                 <h6 class="text-uppercase text-primary">
                   <?= lang('Main.xin_total');?>
                   : <span>
-                  <?= number_to_currency($result['membership_price'],erp_currency(),null,2);?>
+                  <?= money_fmt($result['membership_price']);?>
                   </span> </h6>
               </div>
             </div>
@@ -156,8 +156,8 @@ $csz = $company_info['city'].', '.$company_info['state'].' '.$company_info['zipc
                             <?= $result['subscription_id'];?>
                           </p></td>
                         <td>1</td>
-                        <td><?= number_to_currency($result['membership_price'],erp_currency(),null,2);?></td>
-                        <td><?= number_to_currency($result['membership_price'],erp_currency(),null,2);?></td>
+                        <td><?= money_fmt($result['membership_price']);?></td>
+                        <td><?= money_fmt($result['membership_price']);?></td>
                       </tr>
                     </tbody>
                   </table>
@@ -171,7 +171,7 @@ $csz = $company_info['city'].', '.$company_info['state'].' '.$company_info['zipc
                     <tr>
                       <th><?= lang('Invoices.xin_subtotal');?>
                         :</th>
-                      <td><?= number_to_currency($result['membership_price'],erp_currency(),null,2);?></td>
+                      <td><?= money_fmt($result['membership_price']);?></td>
                     </tr>
                     <tr>
                       <th><?= lang('Invoices.xin_tax');?>
@@ -190,7 +190,7 @@ $csz = $company_info['city'].', '.$company_info['state'].' '.$company_info['zipc
                           :</h5></td>
                       <td><hr />
                         <h5 class="text-primary">
-                          <?= number_to_currency($result['membership_price'],erp_currency(),null,2);?>
+                          <?= money_fmt($result['membership_price']);?>
                         </h5></td>
                     </tr>
                   </tbody>

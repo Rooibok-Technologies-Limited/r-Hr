@@ -215,14 +215,14 @@ foreach($get_projects as $_project){
         <div class="row pb-2">
           <div class="col-auto m-b-10">
             <h3 class="mb-1">
-              <?= number_to_currency(client_total_paid_invoices(), erp_currency(),null,2);?>
+              <?= money_fmt(client_total_paid_invoices());?>
             </h3>
             <span>
             <?= lang('Invoices.xin_total_paid');?>
             </span> </div>
           <div class="col-auto m-b-10">
             <h3 class="mb-1">
-              <?= number_to_currency(client_total_unpaid_invoices(), erp_currency(),null,2);?>
+              <?= money_fmt(client_total_unpaid_invoices());?>
             </h3>
             <span>
             <?= lang('Invoices.xin_total_unpaid');?>

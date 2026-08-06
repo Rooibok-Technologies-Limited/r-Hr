@@ -1189,7 +1189,7 @@ class Types extends BaseController {
 			}
 			
 			$created_at = set_date_format($r['created_at']);
-			$field_one = number_to_currency($r['field_one'], erp_currency(),null,2);
+			$field_one = money_fmt($r['field_one']);
 			if($r['field_two']=='fixed'){
 				$_type = lang('Employees.xin_title_tax_fixed');
 			} else {

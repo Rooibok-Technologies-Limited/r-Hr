@@ -155,7 +155,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
   <div class="col-md-6">
     <div class="form-group">
       <div class="alert alert-success" role="alert">
-        <?= lang('Invoices.xin_paid');?>:&nbsp;<?= number_to_currency($result['total_paid'], erp_currency(),null,2);?>
+        <?= lang('Invoices.xin_paid');?>:&nbsp;<?= money_fmt($result['total_paid']);?>
     </div>
     </div>
       </div>
@@ -163,7 +163,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
       <div class="col-md-6">
         <div class="form-group">
           <div class="alert alert-warning" role="alert">
-            <?= lang('Main.xin_remaining');?>:&nbsp;<?= number_to_currency($remaining_amount, erp_currency(),null,2);?>
+            <?= lang('Main.xin_remaining');?>:&nbsp;<?= money_fmt($remaining_amount);?>
         </div>
         </div>
       </div>
@@ -329,7 +329,7 @@ $result = $AwardsModel->where('award_id', $award_id)->first();
       </tr>
       <tr>
         <th><?= lang('Employees.xin_cash');?></th>
-        <td style="display: table-cell;"><?= number_to_currency($result['cash_price'], erp_currency(),null,2);?></td>
+        <td style="display: table-cell;"><?= money_fmt($result['cash_price']);?></td>
       </tr>
       <tr>
         <th><?= lang('Main.xin_attachment');?></th>

@@ -303,7 +303,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
       </tr>
       <tr>
         <th><?= lang('Employees.xin_cash');?></th>
-        <td style="display: table-cell;"><?= number_to_currency($result['cash_price'], erp_currency(),null,2);?></td>
+        <td style="display: table-cell;"><?= money_fmt($result['cash_price']);?></td>
       </tr>
       <tr>
         <th><?= lang('Main.xin_attachment');?></th>

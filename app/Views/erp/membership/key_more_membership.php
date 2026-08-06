@@ -123,7 +123,7 @@ echo $converted;*/
                     <?= $r['total_employees']?>
                     </small> </a> </div></td>
                 <td width="350"><h5>
-                    <?= number_to_currency($converted, erp_currency(),null,2);?>
+                    <?= money_fmt($converted);?>
                   </h5></td>
                 <td class="text-left"><div class="text-left d-inline-block">
                     <h6 class="my-0">

@@ -150,7 +150,7 @@ $converted = currency_converter($membership['price']);
                                         </p>
                                     </td>
                                     <td class="text-right">
-                                        <?= number_to_currency($converted, erp_currency(),null,2);?>
+                                        <?= money_fmt($converted);?>
                                     </td>
                                 </tr>
                             </tbody>
@@ -189,7 +189,7 @@ $converted = currency_converter($membership['price']);
                                     <h6 class="m-0"><?= lang('Invoices.xin_subtotal');?>:</h6>
                                 </td>
                                 <td>
-                                    <?= number_to_currency($converted, erp_currency(),null,2);?>
+                                    <?= money_fmt($converted);?>
                                 </td>
                             </tr>
                             <tr class="border-top">
@@ -197,7 +197,7 @@ $converted = currency_converter($membership['price']);
                                     <h5 class="m-0"><?= lang('Main.xin_total');?>:</h5>
                                 </td>
                                 <td class="font-weight-semibold">
-                                    <?= number_to_currency($converted, erp_currency(),null,2);?>
+                                    <?= money_fmt($converted);?>
                                 </td>
                             </tr>
                         </tbody>

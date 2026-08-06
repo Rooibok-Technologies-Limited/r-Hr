@@ -173,7 +173,7 @@ if($_payment_method){
                 <h6 class="text-uppercase text-primary">
                   <?= lang('Main.xin_total');?>
                   : <span>
-                  <?= number_to_currency($result['grand_total'],erp_currency(),null,2);?>
+                  <?= money_fmt($result['grand_total']);?>
                   </span> </h6>
               </div>
             </div>
@@ -196,8 +196,8 @@ if($_payment_method){
                             <?= $item['item_name'];?>
                           </h6></td>
                         <td><?= $item['item_qty'];?></td>
-                        <td><?= number_to_currency($item['item_unit_price'],erp_currency(),null,2);?></td>
-                        <td><?= number_to_currency($item['item_sub_total'],erp_currency(),null,2);?></td>
+                        <td><?= money_fmt($item['item_unit_price']);?></td>
+                        <td><?= money_fmt($item['item_sub_total']);?></td>
                       </tr>
                       <?php } ?>
                     </tbody>
@@ -212,17 +212,17 @@ if($_payment_method){
                     <tr>
                       <th><?= lang('Invoices.xin_subtotal');?>
                         :</th>
-                      <td><?= number_to_currency($result['sub_total_amount'],erp_currency(),null,2);?></td>
+                      <td><?= money_fmt($result['sub_total_amount']);?></td>
                     </tr>
                     <tr>
                       <th><?= lang('Invoices.xin_tax');?>
                         (0%) :</th>
-                      <td><?= number_to_currency($result['total_tax'],erp_currency(),null,2);?></td>
+                      <td><?= money_fmt($result['total_tax']);?></td>
                     </tr>
                     <tr>
                       <th><?= lang('Invoices.xin_discount');?>
                         (0%) :</th>
-                      <td><?= number_to_currency($result['total_discount'],erp_currency(),null,2);?></td>
+                      <td><?= money_fmt($result['total_discount']);?></td>
                     </tr>
                     <tr class="text-info">
                       <td><hr />
@@ -231,7 +231,7 @@ if($_payment_method){
                           :</h5></td>
                       <td><hr />
                         <h5 class="text-primary">
-                          <?= number_to_currency($result['grand_total'],erp_currency(),null,2);?>
+                          <?= money_fmt($result['grand_total']);?>
                         </h5></td>
                     </tr>
                   </tbody>

@@ -144,7 +144,7 @@ $result = $AwardsModel->where('award_id', $award_id)->first();
                   </tr>
                   <tr>
                     <td><?= lang('Employees.xin_cash');?></td>
-                    <td><?= number_to_currency($result['cash_price'], erp_currency(),null,2);?></td>
+                    <td><?= money_fmt($result['cash_price']);?></td>
                   </tr>
                   </td>
                   </tr>

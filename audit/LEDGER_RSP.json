@@ -68,8 +68,8 @@
       "id": "RSP-FX-DISPLAY",
       "phase": "currency",
       "target": "display-only conversion (base vs display currency)",
-      "status": "IN_PROGRESS",
-      "verification": "base_currency column + money_fmt() helper; company dashboard wired + verified (Acme GBP base, EUR display -> \u20ac1,165.83 from \u00a31,000 live). Remaining: migrate ~350 number_to_currency sites to money_fmt."
+      "status": "DONE",
+      "verification": "money_fmt() rolled out across 66 files / 197 sites (number_to_currency+erp_currency -> money_fmt); 3 per-record-currency Expenses sites intentionally left. 0 lint failures; money endpoints 200. Whole app now converts stored amounts to the display currency at trusted rates (verified \u20ac1,165.83 from \u00a31,000)."
     }
   ]
 }

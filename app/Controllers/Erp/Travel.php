@@ -471,8 +471,8 @@ class Travel extends BaseController {
 
 				if($r['status']==0): $status = '<span class="badge badge-warning">'.lang('Main.xin_pending').'</span>';
 				elseif($r['status']==1): $status = '<span class="badge badge-success">'.lang('Main.xin_accepted').'</span>';else: $status = '<span class="badge badge-danger">'.lang('Main.xin_rejected'); endif;
-				$expected_budget = number_to_currency($r['expected_budget'], erp_currency(),null,2);
-				$actual_budget = number_to_currency($r['actual_budget'], erp_currency(),null,2);
+				$expected_budget = money_fmt($r['expected_budget']);
+				$actual_budget = money_fmt($r['actual_budget']);
 				if($iuser_info){
 					$employee_name = $iuser_info['first_name'].' '.$iuser_info['last_name'];
 					$iemployee_name = '<div class="d-inline-block align-middle">

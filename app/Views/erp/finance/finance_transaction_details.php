@@ -128,7 +128,7 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
                                                 </td>
                                                 <td><?= $ipayment_method;?></td>
                                                 <td><?= $transaction_data['reference'];?></td>
-                                                <td><?= number_to_currency($transaction_data['amount'], erp_currency(),null,2)?></td>
+                                                <td><?= money_fmt($transaction_data['amount'])?></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -141,7 +141,7 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
                                     <tbody>
                                         <tr>
                                             <th><?= lang('Main.xin_total');?> : </th>
-                                            <td> <?= number_to_currency($transaction_data['amount'], erp_currency(),null,2)?></td>
+                                            <td> <?= money_fmt($transaction_data['amount'])?></td>
                                         </tr>
                                     </tbody>
                                 </table>

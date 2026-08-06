@@ -387,8 +387,8 @@ class Payroll extends BaseController {
 				
 				// net salary
 				$inet_salary = $ibasic_salary + $allowance_amount + $commissions_amount + $other_payments_amount - $statutory_deductions_amount + $deduct_salary + $lo_deduct_salary;
-				$net_salary = '<h6 class="text-success">'.number_to_currency($inet_salary, erp_currency(),null,2).'</h6>';
-				$basic_salary = '<h6 class="text-primary">'.number_to_currency($ibasic_salary, erp_currency(),null,2).'</h6>';
+				$net_salary = '<h6 class="text-success">'.money_fmt($inet_salary).'</h6>';
+				$basic_salary = '<h6 class="text-primary">'.money_fmt($ibasic_salary).'</h6>';
 				$links = '
 					'.$uname.'
 					<div class="overlay-edit">
@@ -508,9 +508,9 @@ class Payroll extends BaseController {
 			}
 			$created_at = set_date_format($r['created_at']);
 			// advance_amount
-			$advance_amount = number_to_currency($r['advance_amount'], erp_currency(),null,2);
-			$monthly_installment = number_to_currency($r['monthly_installment'], erp_currency(),null,2);
-			$total_paid = number_to_currency($r['total_paid'], erp_currency(),null,2);
+			$advance_amount = money_fmt($r['advance_amount']);
+			$monthly_installment = money_fmt($r['monthly_installment']);
+			$total_paid = money_fmt($r['total_paid']);
 			$itotal_paid = $advance_amount.'<br>'.lang('Invoices.xin_paid').': '.$total_paid;
 			$iapp_status = $created_at.'<br>'.$app_status;
 			//'xin_paid' => 'Paid',
@@ -606,9 +606,9 @@ class Payroll extends BaseController {
 			}
 			$created_at = set_date_format($r['created_at']);
 			// advance_amount
-			$advance_amount = number_to_currency($r['advance_amount'], erp_currency(),null,2);
-			$monthly_installment = number_to_currency($r['monthly_installment'], erp_currency(),null,2);
-			$total_paid = number_to_currency($r['total_paid'], erp_currency(),null,2);
+			$advance_amount = money_fmt($r['advance_amount']);
+			$monthly_installment = money_fmt($r['monthly_installment']);
+			$total_paid = money_fmt($r['total_paid']);
 			$itotal_paid = $advance_amount.'<br>'.lang('Invoices.xin_paid').': '.$total_paid;
 			$iapp_status = $created_at.'<br>'.$app_status;
 			//'xin_paid' => 'Paid',
@@ -707,7 +707,7 @@ class Payroll extends BaseController {
 				$smonth = strtotime($r['salary_month']);
 				$smonth = date('F, Y',$smonth);
 				$salary_month = set_date_format($r['salary_month']);
-				$net_salary = '<h6 class="text-success">'.number_to_currency($inet_salary, erp_currency(),null,2).'</h6>';
+				$net_salary = '<h6 class="text-success">'.money_fmt($inet_salary).'</h6>';
 				$combhr = $view;
 				$links = '
 					'.$uname.'

@@ -52,6 +52,8 @@ symbol. The safe path is (1) for viewing and (2) as an explicit, audited migrati
 - **Wired**: company dashboard money figures (9) now use money_fmt → real conversion.
   Verified: Acme (base GBP) with display EUR shows £1,000 stored as **€1,165.83** (live rate),
   stored value unchanged.
-- **Remaining (mechanical follow-up)**: migrate the other ~350 `number_to_currency($x,
-  erp_currency())` sites to `money_fmt($x)` so the whole app converts for display (not just the
-  dashboard). Same one-line swap; can be swept per-controller/view.
+- **DONE — full rollout**: 197 `number_to_currency($x, erp_currency())` sites across 66 files
+  migrated to `money_fmt($x)`. The whole app now converts stored amounts to the display currency
+  at trusted rates. (3 Expenses sites use each record's OWN stored currency `$r['currency']` —
+  intentionally left; those already display in the currency the expense was recorded in.)
+  0 lint failures; money endpoints return 200.

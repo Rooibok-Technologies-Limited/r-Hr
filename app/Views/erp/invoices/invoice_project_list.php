@@ -118,7 +118,7 @@ $paid = number_format((float)$paid, 1, '.', '');
             <p class="m-b-10 m-t-30">
               <?= lang('Invoices.xin_due');?>
               <span class="float-right"><i class="fa fa-caret-down m-r-10"></i>
-              <?= number_to_currency(erp_total_unpaid_invoices(), erp_currency(),null,2);?>
+              <?= money_fmt(erp_total_unpaid_invoices());?>
               </span></p>
             <div class="progress red">
               <div class="progress-bar bg-danger" style="width:<?= $unpaid;?>%"></div>
@@ -126,7 +126,7 @@ $paid = number_format((float)$paid, 1, '.', '');
             <p class="m-b-10 m-t-30">
               <?= lang('Invoices.xin_paid_amount');?>
               <span class="float-right"><i class="fa fa-caret-up m-r-10"></i>
-              <?= number_to_currency(erp_total_paid_invoices(), erp_currency(),null,2);?>
+              <?= money_fmt(erp_total_paid_invoices());?>
               </span></p>
             <div class="progress">
               <div class="progress-bar bg-info" style="width:<?= $paid;?>%"></div>
@@ -183,7 +183,7 @@ $paid = number_format((float)$paid, 1, '.', '');
 		} else {
 			$status = '<span class="badge badge-light-danger">'.lang('Invoices.xin_unpaid').'</span>';
 		}
-		$invoice_total = number_to_currency($r['grand_total'], erp_currency(),null,2);
+		$invoice_total = money_fmt($r['grand_total']);
 		$client_info = $UsersModel->where('user_id',$r['client_id'])->where('user_type','customer')->first();
 		if($client_info){
 			$iclient_info = $client_info['first_name'].' '.$client_info['last_name'];

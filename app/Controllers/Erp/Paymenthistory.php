@@ -91,7 +91,7 @@ class Paymenthistory extends BaseController {
 				$subscription = '<span class="text-info">'.lang('Membership.xin_subscription_yearly').'</span>';
 			}
 			$mp_subs = $membership['membership_type'];	
-			$price = number_to_currency($r['membership_price'], erp_currency(),null,2);
+			$price = money_fmt($r['membership_price']);
 
 			$transaction_date = set_date_format($r['transaction_date']);
 			if($r['payment_method'] == 'Stripe'){

@@ -124,7 +124,7 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
 								<td><?= $trainer_name;?></td>
 								<td><?= set_date_format($_training['start_date']);?></td>
 								<td><?= set_date_format($_training['finish_date']);?></td>
-								<td><?= number_to_currency($_training['training_cost'], erp_currency(),null,2);;?></td>
+								<td><?= money_fmt($_training['training_cost']);;?></td>
 								<td><?= $status;?></td>
 							  </tr>
                     <?php } ?> 

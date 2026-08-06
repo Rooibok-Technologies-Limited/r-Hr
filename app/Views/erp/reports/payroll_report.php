@@ -121,7 +121,7 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
                                 <p class="m-b-0"><?= $pay_user['email'];?></p>
                             </div>
                         </div></td>
-                        <td width="200"><strong class="text-success"><?= number_to_currency($_payslip['net_salary'], erp_currency(),null,2);?></strong></td>
+                        <td width="200"><strong class="text-success"><?= money_fmt($_payslip['net_salary']);?></strong></td>
                         <td><?= $_payslip['salary_month'];?></td>
                         <td><?= set_date_format($_payslip['created_at']);?></td>
                         <td><?= $wages_type;?></td>

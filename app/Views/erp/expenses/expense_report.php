@@ -53,7 +53,7 @@ $staff_list = ($user_info['user_type'] == 'company') ? $UsersModel->where('compa
     <div class="card bg-primary text-white">
       <div class="card-body text-center">
         <h6>Total Expenses</h6>
-        <h4><?= number_to_currency($total_amount, erp_currency(), null, 2)?></h4>
+        <h4><?= money_fmt($total_amount)?></h4>
       </div>
     </div>
   </div>
@@ -61,7 +61,7 @@ $staff_list = ($user_info['user_type'] == 'company') ? $UsersModel->where('compa
     <div class="card bg-success text-white">
       <div class="card-body text-center">
         <h6>Approved</h6>
-        <h4><?= number_to_currency($total_approved, erp_currency(), null, 2)?></h4>
+        <h4><?= money_fmt($total_approved)?></h4>
       </div>
     </div>
   </div>
@@ -69,7 +69,7 @@ $staff_list = ($user_info['user_type'] == 'company') ? $UsersModel->where('compa
     <div class="card bg-warning text-white">
       <div class="card-body text-center">
         <h6>Pending</h6>
-        <h4><?= number_to_currency($total_pending, erp_currency(), null, 2)?></h4>
+        <h4><?= money_fmt($total_pending)?></h4>
       </div>
     </div>
   </div>

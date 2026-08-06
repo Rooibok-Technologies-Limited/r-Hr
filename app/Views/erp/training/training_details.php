@@ -234,7 +234,7 @@ endif;
                     <td><i class="far fa-credit-card m-r-5"></i>
                       <?= lang('Main.xin_training_cost');?>
                       :</td>
-                    <td class="text-right"><?= number_to_currency($result['training_cost'], erp_currency(),null,2);?></td>
+                    <td class="text-right"><?= money_fmt($result['training_cost']);?></td>
                   </tr>
                   <tr>
                     <td><i class="far fa-calendar-alt m-r-5"></i>
