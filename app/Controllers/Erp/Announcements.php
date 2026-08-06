@@ -55,12 +55,8 @@ class Announcements extends BaseController {
 			$session->setFlashdata('unauthorized_module',lang('Dashboard.xin_error_unauthorized_module'));
 			return redirect()->to(site_url('erp/desk'));
 		}
-		if($user_info['user_type'] != 'company'){
-			if(!in_array('news1',staff_role_resource())) {
-				$session->setFlashdata('unauthorized_module',lang('Dashboard.xin_error_unauthorized_module'));
-				return redirect()->to(site_url('erp/desk'));
-			}
-		}
+		// Announcements are company-wide reading for every employee (ESS); the view
+		// gates create/edit/delete on news2, so opening the list is safe. [ESS]
 		$xin_system = $SystemModel->where('setting_id', 1)->first();
 		$data['title'] = lang('Dashboard.left_announcements').' | '.$xin_system['application_name'];
 		$data['path_url'] = 'announcements';
