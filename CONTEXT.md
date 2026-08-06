@@ -23,7 +23,15 @@ routed-but-missing dashboards (jobs-dashboard, finance-dashboard), removed 3 rou
 to nonexistent methods (organization-chart/staff_chart→real page is erp/org-chart;
 expired-documents), fixed app-wide trailing-slash 404s (path normalized in
 TenantBootstrap). ID-card system re-verified end-to-end (faces/card/verify/revoke/
-re-issue+token-rotation, cross-tenant 404). **#6 ajax half FULLY CLOSED
+re-issue+token-rotation, cross-tenant 404).
+**Currency overhaul (fb3c661):** ALL money displays now call `erp_currency()`
+(tenant-first→global→UGX; ~350 call sites converted — never read
+default_currency off a row again). Root causes of the mixed-currency bug fixed:
+global row seeded USD, no-settings companies borrowed company 2's GBP row, AND
+the localization form was un-saveable (ci_currencies data blanked → 155 empty
+options; ci_languages all inactive → required select empty; save didn't drop the
+settings cache). Verified GBP→USD→GBP round-trip flips the whole app instantly.
+Platform default = UGX (DB + init.sql + add-company + registration). **#6 ajax half FULLY CLOSED
 (87d5919):** all remaining "missing" endpoints = dead JS (no trigger DOM;
 editing via *_details pages) — nothing built. [SECURITY] dead `Crm` module
 (unreachable duplicate of `Clients`) had 5 routed ajax endpoints with
