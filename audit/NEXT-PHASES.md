@@ -111,7 +111,8 @@ The mandate audit this session focused on navigation + role authz. Extend to the
 ## Open defects/notes carried forward
 - **D-HOLIDAY-01** (Low, noted not fixed): `Holidays::add_holiday` POST lacks a method-level
   resource gate (view hides the control; endpoint relies on that). Fix in Phase D2.
-- Staff self-service pages over-gated on ADMIN role-resources (payslips, expenses, documents,
+- ESS ungating IN PROGRESS: Holidays (0a9febe) + Announcements (this commit) opened to
+  all staff (company-wide read; create still gated). STILL over-gated on ADMIN role-resources (payslips, expenses, documents,
   assets, awards, training, announcements all 307 for a bare role) — the dashboard advertises
   them as tiles → dead clicks. Decide per page: personal ESS should be self-accessible
   (ungate view like Holidays was) vs genuinely admin-only. Phase A2 + B.
