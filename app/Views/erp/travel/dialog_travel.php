@@ -117,7 +117,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
             <label for="expected_budget"><?= lang('xin_expected_travel_budget');?> <span class="text-danger">*</span></label>
             <div class="input-group">
                   <div class="input-group-prepend"><span class="input-group-text">
-                    <?= $xin_system['default_currency'];?>
+                    <?= erp_currency();?>
                     </span></div>
                   <input class="form-control" placeholder="<?= lang('xin_expected_travel_budget');?>" name="expected_budget" type="text" value="<?php echo esc($result['expected_budget'] ?? '', 'attr');?>">
                 </div>
@@ -128,7 +128,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
             <label for="actual_budget"><?= lang('xin_actual_travel_budget');?> <span class="text-danger">*</span></label>
             <div class="input-group">
               <div class="input-group-prepend"><span class="input-group-text">
-                <?= $xin_system['default_currency'];?>
+                <?= erp_currency();?>
                 </span></div>
               <input class="form-control" placeholder="<?= lang('xin_actual_travel_budget');?>" name="actual_budget" type="text" value="<?php echo esc($result['actual_budget'] ?? '', 'attr');?>">
             </div>

@@ -86,7 +86,7 @@ class Expenses extends BaseController {
 			$category_name = $cat_info ? $cat_info['category_name'] : '--';
 
 			// amount
-			$amount = number_to_currency($r['amount'], $r['currency'] ?? $xin_system['default_currency'], null, 2);
+			$amount = number_to_currency($r['amount'], $r['currency'] ?? erp_currency(), null, 2);
 
 			// receipt link
 			if(!empty($r['receipt_path'])){
@@ -169,7 +169,7 @@ class Expenses extends BaseController {
 			'ok'          => true,
 			'employee'    => $emp ? trim($emp['first_name'] . ' ' . $emp['last_name']) : '--',
 			'category'    => $cat ? $cat['category_name'] : '--',
-			'amount'      => number_to_currency($exp['amount'], $exp['currency'] ?: ($xin_system['default_currency'] ?? 'UGX'), null, 2),
+			'amount'      => number_to_currency($exp['amount'], $exp['currency'] ?: (erp_currency() ?? 'UGX'), null, 2),
 			'date'        => $exp['expense_date'],
 			'description' => $exp['description'] ?: '--',
 			'status'      => $exp['status'],
@@ -628,7 +628,7 @@ class Expenses extends BaseController {
 			$cat_info = $ExpenseCategoryModel->where('category_id', $r['category_id'])->first();
 			$category_name = $cat_info ? $cat_info['category_name'] : '--';
 			$xin_system = erp_company_settings();
-			$amount = number_to_currency($r['amount'], $r['currency'] ?? $xin_system['default_currency'], null, 2);
+			$amount = number_to_currency($r['amount'], $r['currency'] ?? erp_currency(), null, 2);
 
 			if($r['status'] == 'approved'){
 				$status = '<span class="badge badge-success">Approved</span>';

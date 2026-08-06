@@ -145,7 +145,7 @@ class Subscription extends BaseController {
 				'tx_ref'       => $ref,
 				'redirect_url' => site_url('erp/renew'),
 				'description'  => 'Subscription: ' . $plan['membership_type'],
-				'currency'     => erp_company_settings()['default_currency'] ?? 'UGX',
+				'currency'     => erp_currency(),
 				'email'        => $me['email'] ?? '',
 				'phone'        => $me['contact_number'] ?? '',
 				'name'         => $me['company_name'] ?? ('Company ' . $companyId),

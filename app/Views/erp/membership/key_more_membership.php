@@ -43,7 +43,7 @@ if($result['is_active'] == 1){
 $membership = $MembershipModel->orderBy('membership_id', 'ASC')->paginate(8);
 $pager = $MembershipModel->pager;
 
-/*$converted = currency_converter($xin_super_system['default_currency'],$xin_system['default_currency'],2);	
+/*$converted = currency_converter($xin_super_system['default_currency'],erp_currency(),2);	
 		
 echo $converted;*/
 //echo $url;
@@ -123,7 +123,7 @@ echo $converted;*/
                     <?= $r['total_employees']?>
                     </small> </a> </div></td>
                 <td width="350"><h5>
-                    <?= number_to_currency($converted, $xin_system['default_currency'],null,2);?>
+                    <?= number_to_currency($converted, erp_currency(),null,2);?>
                   </h5></td>
                 <td class="text-left"><div class="text-left d-inline-block">
                     <h6 class="my-0">

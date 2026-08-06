@@ -114,7 +114,7 @@ echo view('frontend/components/htmlhead'); ?>
                                        <?php foreach ($__plans as $__p): ?>
                                        <option value="<?= (int) $__p['membership_id']; ?>">
                                           <?= esc($__p['membership_type']); ?> —
-                                          <?= $__p['price'] > 0 ? number_to_currency($__p['price'], erp_company_settings()['default_currency'] ?? 'UGX', null, 0) : 'Free'; ?>
+                                          <?= $__p['price'] > 0 ? number_to_currency($__p['price'], erp_currency(), null, 0) : 'Free'; ?>
                                           <?= ((int) ($__p['plan_duration'] ?? 1) === 2) ? '/ year' : '/ month'; ?>
                                        </option>
                                        <?php endforeach; ?>

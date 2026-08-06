@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -140,7 +144,7 @@ $result = $AwardsModel->where('award_id', $award_id)->first();
                   </tr>
                   <tr>
                     <td><?= lang('Employees.xin_cash');?></td>
-                    <td><?= number_to_currency($result['cash_price'], $xin_system['default_currency'],null,2);?></td>
+                    <td><?= number_to_currency($result['cash_price'], erp_currency(),null,2);?></td>
                   </tr>
                   </td>
                   </tr>
@@ -229,7 +233,7 @@ $result = $AwardsModel->where('award_id', $award_id)->first();
                     </label>
                     <div class="input-group">
                       <div class="input-group-append"><span class="input-group-text">
-                        <?= $xin_system['default_currency'];?>
+                        <?= erp_currency();?>
                         </span></div>
                       <input class="form-control" placeholder="<?= lang('Employees.xin_award_cash');?>" name="cash" type="text" value="<?php echo $result['cash_price'];?>">
                     </div>

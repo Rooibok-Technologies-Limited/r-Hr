@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\RolesModel;
 use App\Models\UsersModel;
 use App\Models\SystemModel;
@@ -133,7 +137,7 @@ if($user_info['user_type'] == 'company'){
               </label>
               <div class="input-group">
                 <div class="input-group-prepend"><span class="input-group-text">
-                  <?= $xin_system['default_currency'];?>
+                  <?= erp_currency();?>
                   </span></div>
                 <input class="form-control" placeholder="<?= lang('Main.xin_training_cost');?>" name="training_cost" type="text" value="">
               </div>

@@ -96,7 +96,7 @@ $get_animate = '';
                     <div class="form-group">
                       <label for="amount">Amount <span class="text-danger">*</span></label>
                       <div class="input-group">
-                        <div class="input-group-append"><span class="input-group-text"><?= $xin_system['default_currency'];?></span></div>
+                        <div class="input-group-append"><span class="input-group-text"><?= erp_currency();?></span></div>
                         <input class="form-control" placeholder="Amount" name="amount" type="number" step="0.01">
                       </div>
                     </div>
@@ -125,7 +125,7 @@ $get_animate = '';
                       </div>
                     </div>
                   </div>
-                  <input type="hidden" name="currency" value="<?= $xin_system['default_currency'];?>">
+                  <input type="hidden" name="currency" value="<?= erp_currency();?>">
                 </div>
               </div>
               <div class="card-footer text-right">

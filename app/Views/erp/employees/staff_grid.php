@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\DepartmentModel;
 use App\Models\DesignationModel;
 use App\Models\RolesModel;
@@ -259,7 +263,7 @@ $employee_id = (new \App\Libraries\IdCardService())->generateNumber(effective_co
                     <span class="text-danger">*</span></label>
                   <div class="input-group">
                     <div class="input-group-prepend"><span class="input-group-text">
-                      <?= $xin_system['default_currency'];?>
+                      <?= erp_currency();?>
                       </span></div>
                     <input type="text" class="form-control" name="basic_salary" placeholder="<?= lang('Employees.xin_gross_salary');?>" value="0">
                   </div>
@@ -272,7 +276,7 @@ $employee_id = (new \App\Libraries\IdCardService())->generateNumber(effective_co
                     <span class="text-danger">*</span></label>
                   <div class="input-group">
                     <div class="input-group-prepend"><span class="input-group-text">
-                      <?= $xin_system['default_currency'];?>
+                      <?= erp_currency();?>
                       </span></div>
                     <input type="text" class="form-control" name="hourly_rate" placeholder="<?= lang('Employees.xin_hourly_rate');?>" value="0">
                   </div>

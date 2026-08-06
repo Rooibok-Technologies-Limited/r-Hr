@@ -44,7 +44,7 @@ $closed = $TicketsModel->where('company_id',$company_id)->where('ticket_status',
 
 // Rooibok HR KPIs (Phase 2) — resilient: any missing table just yields 0.
 $rk_db = \Config\Database::connect();
-try { $rk_wallet = service('wallet')->balance((int) $company_id); } catch (\Throwable $e) { $rk_wallet = ['available' => 0, 'currency' => ($xin_system['default_currency'] ?? 'UGX')]; }
+try { $rk_wallet = service('wallet')->balance((int) $company_id); } catch (\Throwable $e) { $rk_wallet = ['available' => 0, 'currency' => (erp_currency() ?? 'UGX')]; }
 try { $rk_present_today = $rk_db->table('ci_timesheet')->where('company_id', $company_id)->where('attendance_date', date('Y-m-d'))->countAllResults(); } catch (\Throwable $e) { $rk_present_today = 0; }
 try { $rk_pending_leaves = $rk_db->table('ci_leave_applications')->where('company_id', $company_id)->where('status', 'pending')->countAllResults(); } catch (\Throwable $e) { $rk_pending_leaves = 0; }
 
@@ -72,7 +72,7 @@ if($_diff_days < 8){
   <div class="col-xl-3 col-md-6">
     <div class="card rk-kpi rk-kpi-success"><div class="card-body">
       <div class="rk-kpi-top"><span class="rk-kpi-label">Wallet balance</span><i data-feather="credit-card"></i></div>
-      <div class="rk-kpi-value"><?= number_to_currency((float) ($rk_wallet['available'] ?? 0), $rk_wallet['currency'] ?? ($xin_system['default_currency'] ?? 'UGX'), null, 0); ?></div>
+      <div class="rk-kpi-value"><?= number_to_currency((float) ($rk_wallet['available'] ?? 0), $rk_wallet['currency'] ?? (erp_currency() ?? 'UGX'), null, 0); ?></div>
     </div></div>
   </div>
   <div class="col-xl-3 col-md-6">
@@ -104,7 +104,7 @@ if($_diff_days < 8){
                       <?= lang('Dashboard.xin_total_deposit');?>
                     </h6>
                     <h3 class="m-b-0 text-white">
-                      <?= number_to_currency(total_deposit(), $xin_system['default_currency'],null,2);?>
+                      <?= number_to_currency(total_deposit(), erp_currency(),null,2);?>
                     </h3>
                   </div>
                   <div class="col-auto"> <i class="fas fa-database text-white"></i> </div>
@@ -140,14 +140,14 @@ if($_diff_days < 8){
             <div class="row pb-2">
               <div class="col-auto m-b-10">
                 <h3 class="mb-1">
-                  <?= number_to_currency(erp_total_paid_invoices(), $xin_system['default_currency'],null,2);?>
+                  <?= number_to_currency(erp_total_paid_invoices(), erp_currency(),null,2);?>
                 </h3>
                 <span>
                 <?= lang('Invoices.xin_total_paid');?>
                 </span> </div>
               <div class="col-auto m-b-10">
                 <h3 class="mb-1">
-                  <?= number_to_currency(erp_total_unpaid_invoices(), $xin_system['default_currency'],null,2);?>
+                  <?= number_to_currency(erp_total_unpaid_invoices(), erp_currency(),null,2);?>
                 </h3>
                 <span>
                 <?= lang('Invoices.xin_total_unpaid');?>
@@ -275,7 +275,7 @@ if($_diff_days < 8){
                   <?= lang('Finance.xin_total_expense');?>
                 </h6>
                 <h3 class="m-b-0 text-white">
-                  <?= number_to_currency(total_expense(), $xin_system['default_currency'],null,2);?>
+                  <?= number_to_currency(total_expense(), erp_currency(),null,2);?>
                 </h3>
               </div>
               <div class="col-auto"> <i class="fas fa-database text-white"></i> </div>
@@ -294,14 +294,14 @@ if($_diff_days < 8){
         <div class="row pb-2">
           <div class="col-auto m-b-10">
             <h3 class="mb-1">
-              <?= number_to_currency(total_payroll(), $xin_system['default_currency'],null,2);?>
+              <?= number_to_currency(total_payroll(), erp_currency(),null,2);?>
             </h3>
             <span>
             <?= lang('Main.xin_total');?>
             </span> </div>
           <div class="col-auto m-b-10">
             <h3 class="mb-1">
-              <?= number_to_currency(payroll_this_month(), $xin_system['default_currency'],null,2);?>
+              <?= number_to_currency(payroll_this_month(), erp_currency(),null,2);?>
             </h3>
             <span>
             <?= lang('Payroll.xin_payroll_this_month');?>

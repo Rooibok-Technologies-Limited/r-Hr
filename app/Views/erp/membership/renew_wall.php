@@ -10,7 +10,7 @@ $session  = \Config\Services::session();
 $plans    = $plans ?? [];
 $cur      = $current_plan ?? null;
 $exp      = $membership['expiry_date'] ?? null;
-$currency = erp_company_settings()['default_currency'] ?? 'UGX';
+$currency = erp_currency();
 ?>
 <div class="auth-wrapper" style="min-height:100vh;background:#f4f6fb;">
   <div class="container py-5">

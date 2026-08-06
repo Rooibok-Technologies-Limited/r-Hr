@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\RolesModel;
 use App\Models\UsersModel;
 use App\Models\SystemModel;
@@ -211,14 +215,14 @@ foreach($get_projects as $_project){
         <div class="row pb-2">
           <div class="col-auto m-b-10">
             <h3 class="mb-1">
-              <?= number_to_currency(client_total_paid_invoices(), $xin_system['default_currency'],null,2);?>
+              <?= number_to_currency(client_total_paid_invoices(), erp_currency(),null,2);?>
             </h3>
             <span>
             <?= lang('Invoices.xin_total_paid');?>
             </span> </div>
           <div class="col-auto m-b-10">
             <h3 class="mb-1">
-              <?= number_to_currency(client_total_unpaid_invoices(), $xin_system['default_currency'],null,2);?>
+              <?= number_to_currency(client_total_unpaid_invoices(), erp_currency(),null,2);?>
             </h3>
             <span>
             <?= lang('Invoices.xin_total_unpaid');?>

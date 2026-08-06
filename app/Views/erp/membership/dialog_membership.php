@@ -54,7 +54,7 @@ if($user_info['user_type'] == 'staff' || $user_info['user_type'] == 'company'){
         </tr>
         <tr>
           <th><?= lang('Main.xin_price');?></th>
-          <td style="display: table-cell;"><?= number_to_currency($converted, $xin_system['default_currency'],null,2);?></td>
+          <td style="display: table-cell;"><?= number_to_currency($converted, erp_currency(),null,2);?></td>
         </tr>
         <tr>
           <th><?= lang('Employees.xin_total_employees');?></th>

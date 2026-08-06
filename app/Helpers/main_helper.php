@@ -1602,3 +1602,34 @@ if( !function_exists('all_timezones') ){
 		}
 	}
 }
+// ---------------------------------------------------------------------------
+// Currency — ONE resolver for every money display. Tenant-first, then the
+// platform default, then UGX. Never read default_currency from a settings row
+// directly in views/controllers; call erp_currency() so a tenant switching
+// currency (USD/GBP/EUR/...) flips the ENTIRE app at once.
+// ---------------------------------------------------------------------------
+if( !function_exists('erp_currency') ){
+	function erp_currency(): string {
+		static $cur = null;
+		if ($cur !== null) { return $cur; }
+		$code = '';
+		$cid  = function_exists('effective_company_id') ? effective_company_id() : 0;
+		if ($cid > 0 && function_exists('erp_company_settings')) {
+			$cs = erp_company_settings() ?: [];
+			// Only trust the row if it is the tenant's OWN — the helper borrows
+			// company 2's row as a generic fallback, which must not leak its currency.
+			if ((int) ($cs['company_id'] ?? 0) === $cid) {
+				$code = trim((string) ($cs['default_currency'] ?? ''));
+			}
+		}
+		if ($code === '') {
+			try {
+				$sys  = (new \App\Models\SystemModel())->where('setting_id', 1)->first() ?: [];
+				$code = trim((string) ($sys['default_currency'] ?? ''));
+			} catch (\Throwable $e) {
+				// pre-install / no DB — fall through
+			}
+		}
+		return $cur = ($code !== '' ? strtoupper($code) : 'UGX');
+	}
+}

@@ -107,90 +107,90 @@ $company_types = $ConstantsModel->where('type','company_type')->orderBy('constan
                         </option>
                         <?php foreach($currency as $icurrency){?>
                         <?php $_currency = $icurrency['field_one'].' - '.$icurrency['field_two'];?>
-                        <option value="<?= $icurrency['field_one'];?>" <?php if($xin_system['default_currency']==$icurrency['field_one']):?> selected="selected"<?php endif;?>>
+                        <option value="<?= $icurrency['field_one'];?>" <?php if(erp_currency()==$icurrency['field_one']):?> selected="selected"<?php endif;?>>
                         <?= $_currency;?>
                         </option>
                         <?php } ?>
                       </select><?php */?>
                       <select class="form-control" name="default_currency" data-plugin="select_hrm" data-placeholder="<?= lang('Main.xin_default_currency');?>">
-    			<option value="USD" <?php if($xin_system['default_currency']=='USD'):?> selected="selected"<?php endif;?>>United States Dollars</option>
-                <option value="EUR" <?php if($xin_system['default_currency']=='EUR'):?> selected="selected"<?php endif;?>>Euro</option>
-                <option value="GBP" <?php if($xin_system['default_currency']=='GBP'):?> selected="selected"<?php endif;?>>United Kingdom Pounds</option>
-                <option value="DZD" <?php if($xin_system['default_currency']=='DZD'):?> selected="selected"<?php endif;?>>Algeria Dinars</option>
-                <option value="ARP" <?php if($xin_system['default_currency']=='ARP'):?> selected="selected"<?php endif;?>>Argentina Pesos</option>
-                <option value="AUD" <?php if($xin_system['default_currency']=='AUD'):?> selected="selected"<?php endif;?>>Australia Dollars</option>
-                <option value="ATS" <?php if($xin_system['default_currency']=='ATS'):?> selected="selected"<?php endif;?>>Austria Schillings</option>
-                <option value="BSD" <?php if($xin_system['default_currency']=='BSD'):?> selected="selected"<?php endif;?>>Bahamas Dollars</option>
-                <option value="BBD" <?php if($xin_system['default_currency']=='BBD'):?> selected="selected"<?php endif;?>>Barbados Dollars</option>
-                <option value="BEF" <?php if($xin_system['default_currency']=='BEF'):?> selected="selected"<?php endif;?>>Belgium Francs</option>
-                <option value="BMD" <?php if($xin_system['default_currency']=='BMD'):?> selected="selected"<?php endif;?>>Bermuda Dollars</option>
-                <option value="BRR" <?php if($xin_system['default_currency']=='BRR'):?> selected="selected"<?php endif;?>>Brazil Real</option>
-                <option value="BGL" <?php if($xin_system['default_currency']=='BGL'):?> selected="selected"<?php endif;?>>Bulgaria Lev</option>
-                <option value="CAD" <?php if($xin_system['default_currency']=='CAD'):?> selected="selected"<?php endif;?>>Canada Dollars</option>
-                <option value="CLP" <?php if($xin_system['default_currency']=='CLP'):?> selected="selected"<?php endif;?>>Chile Pesos</option>
-                <option value="CNY" <?php if($xin_system['default_currency']=='CNY'):?> selected="selected"<?php endif;?>>China Yuan Renmimbi</option>
-                <option value="CYP" <?php if($xin_system['default_currency']=='CYP'):?> selected="selected"<?php endif;?>>Cyprus Pounds</option>
-                <option value="CSK" <?php if($xin_system['default_currency']=='CSK'):?> selected="selected"<?php endif;?>>Czech Republic Koruna</option>
-                <option value="DKK" <?php if($xin_system['default_currency']=='DKK'):?> selected="selected"<?php endif;?>>Denmark Kroner</option>
-                <option value="NLG" <?php if($xin_system['default_currency']=='NLG'):?> selected="selected"<?php endif;?>>Dutch Guilders</option>
-                <option value="XCD" <?php if($xin_system['default_currency']=='XCD'):?> selected="selected"<?php endif;?>>Eastern Caribbean Dollars</option>
-                <option value="EGP" <?php if($xin_system['default_currency']=='EGP'):?> selected="selected"<?php endif;?>>Egypt Pounds</option>
-                <option value="FJD" <?php if($xin_system['default_currency']=='FJD'):?> selected="selected"<?php endif;?>>Fiji Dollars</option>
-                <option value="FIM" <?php if($xin_system['default_currency']=='FIM'):?> selected="selected"<?php endif;?>>Finland Markka</option>
-                <option value="FRF" <?php if($xin_system['default_currency']=='FRF'):?> selected="selected"<?php endif;?>>France Francs</option>
-                <option value="DEM" <?php if($xin_system['default_currency']=='DEM'):?> selected="selected"<?php endif;?>>Germany Deutsche Marks</option>
-                <option value="XAU" <?php if($xin_system['default_currency']=='XAU'):?> selected="selected"<?php endif;?>>Gold Ounces</option>
-                <option value="GRD" <?php if($xin_system['default_currency']=='GRD'):?> selected="selected"<?php endif;?>>Greece Drachmas</option>
-                <option value="HKD" <?php if($xin_system['default_currency']=='HKD'):?> selected="selected"<?php endif;?>>Hong Kong Dollars</option>
-                <option value="HUF" <?php if($xin_system['default_currency']=='HUF'):?> selected="selected"<?php endif;?>>Hungary Forint</option>
-                <option value="ISK" <?php if($xin_system['default_currency']=='ISK'):?> selected="selected"<?php endif;?>>Iceland Krona</option>
-                <option value="INR" <?php if($xin_system['default_currency']=='INR'):?> selected="selected"<?php endif;?>>India Rupees</option>
-                <option value="IDR" <?php if($xin_system['default_currency']=='IDR'):?> selected="selected"<?php endif;?>>Indonesia Rupiah</option>
-                <option value="IEP" <?php if($xin_system['default_currency']=='IEP'):?> selected="selected"<?php endif;?>>Ireland Punt</option>
-                <option value="ILS" <?php if($xin_system['default_currency']=='ILS'):?> selected="selected"<?php endif;?>>Israel New Shekels</option>
-                <option value="ITL" <?php if($xin_system['default_currency']=='ITL'):?> selected="selected"<?php endif;?>>Italy Lira</option>
-                <option value="JMD" <?php if($xin_system['default_currency']=='JMD'):?> selected="selected"<?php endif;?>>Jamaica Dollars</option>
-                <option value="JPY" <?php if($xin_system['default_currency']=='JPY'):?> selected="selected"<?php endif;?>>Japan Yen</option>
-                <option value="JOD" <?php if($xin_system['default_currency']=='JOD'):?> selected="selected"<?php endif;?>>Jordan Dinar</option>
-                <option value="KRW" <?php if($xin_system['default_currency']=='KRW'):?> selected="selected"<?php endif;?>>Korea (South) Won</option>
-                <option value="LBP" <?php if($xin_system['default_currency']=='LBP'):?> selected="selected"<?php endif;?>>Lebanon Pounds</option>
-                <option value="LUF" <?php if($xin_system['default_currency']=='LUF'):?> selected="selected"<?php endif;?>>Luxembourg Francs</option>
-                <option value="MYR" <?php if($xin_system['default_currency']=='MYR'):?> selected="selected"<?php endif;?>>Malaysia Ringgit</option>
-                <option value="MXP" <?php if($xin_system['default_currency']=='MXP'):?> selected="selected"<?php endif;?>>Mexico Pesos</option>
-                <option value="NLG" <?php if($xin_system['default_currency']=='NLG'):?> selected="selected"<?php endif;?>>Netherlands Guilders</option>
-                <option value="NZD" <?php if($xin_system['default_currency']=='NZD'):?> selected="selected"<?php endif;?>>New Zealand Dollars</option>
-                <option value="NOK" <?php if($xin_system['default_currency']=='NOK'):?> selected="selected"<?php endif;?>>Norway Kroner</option>
-                <option value="PKR" <?php if($xin_system['default_currency']=='PKR'):?> selected="selected"<?php endif;?>>Pakistan Rupees</option>
-                <option value="XPD" <?php if($xin_system['default_currency']=='XPD'):?> selected="selected"<?php endif;?>>Palladium Ounces</option>
-                <option value="PHP" <?php if($xin_system['default_currency']=='PHP'):?> selected="selected"<?php endif;?>>Philippines Pesos</option>
-                <option value="XPT" <?php if($xin_system['default_currency']=='XPT'):?> selected="selected"<?php endif;?>>Platinum Ounces</option>
-                <option value="PLZ" <?php if($xin_system['default_currency']=='PLZ'):?> selected="selected"<?php endif;?>>Poland Zloty</option>
-                <option value="PTE" <?php if($xin_system['default_currency']=='PTE'):?> selected="selected"<?php endif;?>>Portugal Escudo</option>
-                <option value="ROL" <?php if($xin_system['default_currency']=='ROL'):?> selected="selected"<?php endif;?>>Romania Leu</option>
-                <option value="RUR" <?php if($xin_system['default_currency']=='RUR'):?> selected="selected"<?php endif;?>>Russia Rubles</option>
-                <option value="SAR" <?php if($xin_system['default_currency']=='SAR'):?> selected="selected"<?php endif;?>>Saudi Arabia Riyal</option>
-                <option value="XAG" <?php if($xin_system['default_currency']=='XAG'):?> selected="selected"<?php endif;?>>Silver Ounces</option>
-                <option value="SGD" <?php if($xin_system['default_currency']=='SGD'):?> selected="selected"<?php endif;?>>Singapore Dollars</option>
-                <option value="SKK" <?php if($xin_system['default_currency']=='SKK'):?> selected="selected"<?php endif;?>>Slovakia Koruna</option>
-                <option value="ZAR" <?php if($xin_system['default_currency']=='ZAR'):?> selected="selected"<?php endif;?>>South Africa Rand</option>
-                <option value="KRW" <?php if($xin_system['default_currency']=='KRW'):?> selected="selected"<?php endif;?>>South Korea Won</option>
-                <option value="ESP" <?php if($xin_system['default_currency']=='ESP'):?> selected="selected"<?php endif;?>>Spain Pesetas</option>
-                <option value="XDR" <?php if($xin_system['default_currency']=='XDR'):?> selected="selected"<?php endif;?>>Special Drawing Right (IMF)</option>
-                <option value="SDD" <?php if($xin_system['default_currency']=='SDD'):?> selected="selected"<?php endif;?>>Sudan Dinar</option>
-                <option value="SEK" <?php if($xin_system['default_currency']=='SEK'):?> selected="selected"<?php endif;?>>Sweden Krona</option>
-                <option value="CHF" <?php if($xin_system['default_currency']=='CHF'):?> selected="selected"<?php endif;?>>Switzerland Francs</option>
-                <option value="TWD" <?php if($xin_system['default_currency']=='TWD'):?> selected="selected"<?php endif;?>>Taiwan Dollars</option>
-                <option value="THB" <?php if($xin_system['default_currency']=='THB'):?> selected="selected"<?php endif;?>>Thailand Baht</option>
-                <option value="TTD" <?php if($xin_system['default_currency']=='TTD'):?> selected="selected"<?php endif;?>>Trinidad and Tobago Dollars</option>
-                <option value="TRL" <?php if($xin_system['default_currency']=='TRL'):?> selected="selected"<?php endif;?>>Turkey Lira</option>
-                <option value="VEB" <?php if($xin_system['default_currency']=='VEB'):?> selected="selected"<?php endif;?>>Venezuela Bolivar</option>
-                <option value="ZMK" <?php if($xin_system['default_currency']=='ZMK'):?> selected="selected"<?php endif;?>>Zambia Kwacha</option>
-                <option value="XCD" <?php if($xin_system['default_currency']=='XCD'):?> selected="selected"<?php endif;?>>Eastern Caribbean Dollars</option>
-                <option value="XDR" <?php if($xin_system['default_currency']=='XDR'):?> selected="selected"<?php endif;?>>Special Drawing Right (IMF)</option>
-                <option value="XAG" <?php if($xin_system['default_currency']=='XAG'):?> selected="selected"<?php endif;?>>Silver Ounces</option>
-                <option value="XAU" <?php if($xin_system['default_currency']=='XAU'):?> selected="selected"<?php endif;?>>Gold Ounces</option>
-                <option value="XPD" <?php if($xin_system['default_currency']=='XPD'):?> selected="selected"<?php endif;?>>Palladium Ounces</option>
-                <option value="XPT" <?php if($xin_system['default_currency']=='XPT'):?> selected="selected"<?php endif;?>>Platinum Ounces</option>
+    			<option value="USD" <?php if(erp_currency()=='USD'):?> selected="selected"<?php endif;?>>United States Dollars</option>
+                <option value="EUR" <?php if(erp_currency()=='EUR'):?> selected="selected"<?php endif;?>>Euro</option>
+                <option value="GBP" <?php if(erp_currency()=='GBP'):?> selected="selected"<?php endif;?>>United Kingdom Pounds</option>
+                <option value="DZD" <?php if(erp_currency()=='DZD'):?> selected="selected"<?php endif;?>>Algeria Dinars</option>
+                <option value="ARP" <?php if(erp_currency()=='ARP'):?> selected="selected"<?php endif;?>>Argentina Pesos</option>
+                <option value="AUD" <?php if(erp_currency()=='AUD'):?> selected="selected"<?php endif;?>>Australia Dollars</option>
+                <option value="ATS" <?php if(erp_currency()=='ATS'):?> selected="selected"<?php endif;?>>Austria Schillings</option>
+                <option value="BSD" <?php if(erp_currency()=='BSD'):?> selected="selected"<?php endif;?>>Bahamas Dollars</option>
+                <option value="BBD" <?php if(erp_currency()=='BBD'):?> selected="selected"<?php endif;?>>Barbados Dollars</option>
+                <option value="BEF" <?php if(erp_currency()=='BEF'):?> selected="selected"<?php endif;?>>Belgium Francs</option>
+                <option value="BMD" <?php if(erp_currency()=='BMD'):?> selected="selected"<?php endif;?>>Bermuda Dollars</option>
+                <option value="BRR" <?php if(erp_currency()=='BRR'):?> selected="selected"<?php endif;?>>Brazil Real</option>
+                <option value="BGL" <?php if(erp_currency()=='BGL'):?> selected="selected"<?php endif;?>>Bulgaria Lev</option>
+                <option value="CAD" <?php if(erp_currency()=='CAD'):?> selected="selected"<?php endif;?>>Canada Dollars</option>
+                <option value="CLP" <?php if(erp_currency()=='CLP'):?> selected="selected"<?php endif;?>>Chile Pesos</option>
+                <option value="CNY" <?php if(erp_currency()=='CNY'):?> selected="selected"<?php endif;?>>China Yuan Renmimbi</option>
+                <option value="CYP" <?php if(erp_currency()=='CYP'):?> selected="selected"<?php endif;?>>Cyprus Pounds</option>
+                <option value="CSK" <?php if(erp_currency()=='CSK'):?> selected="selected"<?php endif;?>>Czech Republic Koruna</option>
+                <option value="DKK" <?php if(erp_currency()=='DKK'):?> selected="selected"<?php endif;?>>Denmark Kroner</option>
+                <option value="NLG" <?php if(erp_currency()=='NLG'):?> selected="selected"<?php endif;?>>Dutch Guilders</option>
+                <option value="XCD" <?php if(erp_currency()=='XCD'):?> selected="selected"<?php endif;?>>Eastern Caribbean Dollars</option>
+                <option value="EGP" <?php if(erp_currency()=='EGP'):?> selected="selected"<?php endif;?>>Egypt Pounds</option>
+                <option value="FJD" <?php if(erp_currency()=='FJD'):?> selected="selected"<?php endif;?>>Fiji Dollars</option>
+                <option value="FIM" <?php if(erp_currency()=='FIM'):?> selected="selected"<?php endif;?>>Finland Markka</option>
+                <option value="FRF" <?php if(erp_currency()=='FRF'):?> selected="selected"<?php endif;?>>France Francs</option>
+                <option value="DEM" <?php if(erp_currency()=='DEM'):?> selected="selected"<?php endif;?>>Germany Deutsche Marks</option>
+                <option value="XAU" <?php if(erp_currency()=='XAU'):?> selected="selected"<?php endif;?>>Gold Ounces</option>
+                <option value="GRD" <?php if(erp_currency()=='GRD'):?> selected="selected"<?php endif;?>>Greece Drachmas</option>
+                <option value="HKD" <?php if(erp_currency()=='HKD'):?> selected="selected"<?php endif;?>>Hong Kong Dollars</option>
+                <option value="HUF" <?php if(erp_currency()=='HUF'):?> selected="selected"<?php endif;?>>Hungary Forint</option>
+                <option value="ISK" <?php if(erp_currency()=='ISK'):?> selected="selected"<?php endif;?>>Iceland Krona</option>
+                <option value="INR" <?php if(erp_currency()=='INR'):?> selected="selected"<?php endif;?>>India Rupees</option>
+                <option value="IDR" <?php if(erp_currency()=='IDR'):?> selected="selected"<?php endif;?>>Indonesia Rupiah</option>
+                <option value="IEP" <?php if(erp_currency()=='IEP'):?> selected="selected"<?php endif;?>>Ireland Punt</option>
+                <option value="ILS" <?php if(erp_currency()=='ILS'):?> selected="selected"<?php endif;?>>Israel New Shekels</option>
+                <option value="ITL" <?php if(erp_currency()=='ITL'):?> selected="selected"<?php endif;?>>Italy Lira</option>
+                <option value="JMD" <?php if(erp_currency()=='JMD'):?> selected="selected"<?php endif;?>>Jamaica Dollars</option>
+                <option value="JPY" <?php if(erp_currency()=='JPY'):?> selected="selected"<?php endif;?>>Japan Yen</option>
+                <option value="JOD" <?php if(erp_currency()=='JOD'):?> selected="selected"<?php endif;?>>Jordan Dinar</option>
+                <option value="KRW" <?php if(erp_currency()=='KRW'):?> selected="selected"<?php endif;?>>Korea (South) Won</option>
+                <option value="LBP" <?php if(erp_currency()=='LBP'):?> selected="selected"<?php endif;?>>Lebanon Pounds</option>
+                <option value="LUF" <?php if(erp_currency()=='LUF'):?> selected="selected"<?php endif;?>>Luxembourg Francs</option>
+                <option value="MYR" <?php if(erp_currency()=='MYR'):?> selected="selected"<?php endif;?>>Malaysia Ringgit</option>
+                <option value="MXP" <?php if(erp_currency()=='MXP'):?> selected="selected"<?php endif;?>>Mexico Pesos</option>
+                <option value="NLG" <?php if(erp_currency()=='NLG'):?> selected="selected"<?php endif;?>>Netherlands Guilders</option>
+                <option value="NZD" <?php if(erp_currency()=='NZD'):?> selected="selected"<?php endif;?>>New Zealand Dollars</option>
+                <option value="NOK" <?php if(erp_currency()=='NOK'):?> selected="selected"<?php endif;?>>Norway Kroner</option>
+                <option value="PKR" <?php if(erp_currency()=='PKR'):?> selected="selected"<?php endif;?>>Pakistan Rupees</option>
+                <option value="XPD" <?php if(erp_currency()=='XPD'):?> selected="selected"<?php endif;?>>Palladium Ounces</option>
+                <option value="PHP" <?php if(erp_currency()=='PHP'):?> selected="selected"<?php endif;?>>Philippines Pesos</option>
+                <option value="XPT" <?php if(erp_currency()=='XPT'):?> selected="selected"<?php endif;?>>Platinum Ounces</option>
+                <option value="PLZ" <?php if(erp_currency()=='PLZ'):?> selected="selected"<?php endif;?>>Poland Zloty</option>
+                <option value="PTE" <?php if(erp_currency()=='PTE'):?> selected="selected"<?php endif;?>>Portugal Escudo</option>
+                <option value="ROL" <?php if(erp_currency()=='ROL'):?> selected="selected"<?php endif;?>>Romania Leu</option>
+                <option value="RUR" <?php if(erp_currency()=='RUR'):?> selected="selected"<?php endif;?>>Russia Rubles</option>
+                <option value="SAR" <?php if(erp_currency()=='SAR'):?> selected="selected"<?php endif;?>>Saudi Arabia Riyal</option>
+                <option value="XAG" <?php if(erp_currency()=='XAG'):?> selected="selected"<?php endif;?>>Silver Ounces</option>
+                <option value="SGD" <?php if(erp_currency()=='SGD'):?> selected="selected"<?php endif;?>>Singapore Dollars</option>
+                <option value="SKK" <?php if(erp_currency()=='SKK'):?> selected="selected"<?php endif;?>>Slovakia Koruna</option>
+                <option value="ZAR" <?php if(erp_currency()=='ZAR'):?> selected="selected"<?php endif;?>>South Africa Rand</option>
+                <option value="KRW" <?php if(erp_currency()=='KRW'):?> selected="selected"<?php endif;?>>South Korea Won</option>
+                <option value="ESP" <?php if(erp_currency()=='ESP'):?> selected="selected"<?php endif;?>>Spain Pesetas</option>
+                <option value="XDR" <?php if(erp_currency()=='XDR'):?> selected="selected"<?php endif;?>>Special Drawing Right (IMF)</option>
+                <option value="SDD" <?php if(erp_currency()=='SDD'):?> selected="selected"<?php endif;?>>Sudan Dinar</option>
+                <option value="SEK" <?php if(erp_currency()=='SEK'):?> selected="selected"<?php endif;?>>Sweden Krona</option>
+                <option value="CHF" <?php if(erp_currency()=='CHF'):?> selected="selected"<?php endif;?>>Switzerland Francs</option>
+                <option value="TWD" <?php if(erp_currency()=='TWD'):?> selected="selected"<?php endif;?>>Taiwan Dollars</option>
+                <option value="THB" <?php if(erp_currency()=='THB'):?> selected="selected"<?php endif;?>>Thailand Baht</option>
+                <option value="TTD" <?php if(erp_currency()=='TTD'):?> selected="selected"<?php endif;?>>Trinidad and Tobago Dollars</option>
+                <option value="TRL" <?php if(erp_currency()=='TRL'):?> selected="selected"<?php endif;?>>Turkey Lira</option>
+                <option value="VEB" <?php if(erp_currency()=='VEB'):?> selected="selected"<?php endif;?>>Venezuela Bolivar</option>
+                <option value="ZMK" <?php if(erp_currency()=='ZMK'):?> selected="selected"<?php endif;?>>Zambia Kwacha</option>
+                <option value="XCD" <?php if(erp_currency()=='XCD'):?> selected="selected"<?php endif;?>>Eastern Caribbean Dollars</option>
+                <option value="XDR" <?php if(erp_currency()=='XDR'):?> selected="selected"<?php endif;?>>Special Drawing Right (IMF)</option>
+                <option value="XAG" <?php if(erp_currency()=='XAG'):?> selected="selected"<?php endif;?>>Silver Ounces</option>
+                <option value="XAU" <?php if(erp_currency()=='XAU'):?> selected="selected"<?php endif;?>>Gold Ounces</option>
+                <option value="XPD" <?php if(erp_currency()=='XPD'):?> selected="selected"<?php endif;?>>Palladium Ounces</option>
+                <option value="XPT" <?php if(erp_currency()=='XPT'):?> selected="selected"<?php endif;?>>Platinum Ounces</option>
                 </select>
                     </div>
                   </div>

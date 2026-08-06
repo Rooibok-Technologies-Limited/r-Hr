@@ -1,4 +1,8 @@
 <?php 
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -145,7 +149,7 @@ $get_animate = '';
                       </label>
                       <div class="input-group">
                         <div class="input-group-append"><span class="input-group-text">
-                          <?= $xin_system['default_currency'];?>
+                          <?= erp_currency();?>
                           </span></div>
                         <input class="form-control" placeholder="<?= lang('Employees.xin_award_cash');?>" name="cash" type="text">
                       </div>

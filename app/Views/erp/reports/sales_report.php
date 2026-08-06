@@ -96,7 +96,7 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
                       <tr>
                         <td width="150"><?= $customer_name;?></td>
                         <td width="200"><?= $_invoice->order_number;?></td>
-                        <td><?= number_to_currency($_invoice->grand_total,$xin_system['default_currency'],null,2);?></td>
+                        <td><?= number_to_currency($_invoice->grand_total,erp_currency(),null,2);?></td>
                         <td><?= set_date_format($_invoice->invoice_date);?></td>
                         <td><?= $status;?></td>
                       </tr>

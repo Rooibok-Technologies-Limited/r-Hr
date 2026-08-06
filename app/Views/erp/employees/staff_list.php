@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\DepartmentModel;
 use App\Models\DesignationModel;
 use App\Models\RolesModel;
@@ -265,7 +269,7 @@ $isManager = in_array(($_acting['user_type'] ?? ''), ['company','super_user']);
                       <span class="text-danger">*</span></label>
                     <div class="input-group">
                       <div class="input-group-prepend"><span class="input-group-text">
-                        <?= $xin_system['default_currency'];?>
+                        <?= erp_currency();?>
                         </span></div>
                       <input type="text" class="form-control" name="basic_salary" placeholder="<?= lang('Employees.xin_gross_salary');?>" value="0">
                     </div>
@@ -278,7 +282,7 @@ $isManager = in_array(($_acting['user_type'] ?? ''), ['company','super_user']);
                       <span class="text-danger">*</span></label>
                     <div class="input-group">
                       <div class="input-group-prepend"><span class="input-group-text">
-                        <?= $xin_system['default_currency'];?>
+                        <?= erp_currency();?>
                         </span></div>
                       <input type="text" class="form-control" name="hourly_rate" placeholder="<?= lang('Employees.xin_hourly_rate');?>" value="0">
                     </div>
@@ -395,7 +399,8 @@ $isManager = in_array(($_acting['user_type'] ?? ''), ['company','super_user']);
 </div>
 <?php if($isManager): ?>
 <script>
-$(function(){
+// Subviews render before the footer loads jQuery — defer until window load.
+window.addEventListener('load', function(){
   var bulkUrl = "<?= site_url('erp/id-cards/bulk') ?>";
   var csrfField = "<?= csrf_token() ?>";
   var csrfHash  = "<?= csrf_hash() ?>";

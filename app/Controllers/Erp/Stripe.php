@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -59,7 +63,7 @@ class Stripe extends BaseController {
 
 		$charge = \Stripe\Charge::create ([
                 "amount" => $converted * 100,
-                "currency" => $xin_system['default_currency'],
+                "currency" => erp_currency(),
                 "source" => strip_tags(trim($this->request->getPost('stripeToken'))),
                 "description" => $result['membership_type']
         ]);

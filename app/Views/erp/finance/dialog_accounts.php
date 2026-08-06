@@ -53,7 +53,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
         </label>
         <div class="input-group">
           <div class="input-group-prepend"><span class="input-group-text">
-            <?= $xin_system['default_currency'];?>
+            <?= erp_currency();?>
             </span></div>
           <input type="text" class="form-control" name="account_balance" placeholder="<?= lang('Finance.xin_acc_initial_balance');?>" value="<?php echo esc($result['account_balance'] ?? '', 'attr');?>">
         </div>

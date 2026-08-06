@@ -1,4 +1,8 @@
 <?php 
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -86,7 +90,7 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
           </label>
           <div class="input-group">
             <div class="input-group-prepend"><span class="input-group-text">
-              <?= $xin_system['default_currency'];?>
+              <?= erp_currency();?>
               </span></div>
             <input type="text" class="form-control" name="account_balance" placeholder="<?= lang('Finance.xin_acc_initial_balance');?>">
           </div>

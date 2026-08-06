@@ -327,8 +327,8 @@ class Companies extends BaseController {
 			$CompanymembershipModel->insert($data2);
 			$data3 = array(
 				'company_id'  => $user_id,
-				'default_currency'  => 'USD',
-				'default_currency_symbol'  => 'USD',
+				'default_currency'  => 'UGX',
+				'default_currency_symbol'  => 'UGX',
 				'notification_position'  => 'toast-top-center',
 				'notification_close_btn'  => 'true',
 				'notification_bar'  => 'true',

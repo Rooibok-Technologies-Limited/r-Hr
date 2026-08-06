@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\UsersModel;
 use App\Models\MembershipModel;
@@ -125,7 +129,7 @@ $csz = $company_info['city'].', '.$company_info['state'].' '.$company_info['zipc
                 <h6 class="text-uppercase text-primary">
                   <?= lang('Main.xin_total');?>
                   : <span>
-                  <?= number_to_currency($result['membership_price'],$xin_system['default_currency'],null,2);?>
+                  <?= number_to_currency($result['membership_price'],erp_currency(),null,2);?>
                   </span> </h6>
               </div>
             </div>
@@ -152,8 +156,8 @@ $csz = $company_info['city'].', '.$company_info['state'].' '.$company_info['zipc
                             <?= $result['subscription_id'];?>
                           </p></td>
                         <td>1</td>
-                        <td><?= number_to_currency($result['membership_price'],$xin_system['default_currency'],null,2);?></td>
-                        <td><?= number_to_currency($result['membership_price'],$xin_system['default_currency'],null,2);?></td>
+                        <td><?= number_to_currency($result['membership_price'],erp_currency(),null,2);?></td>
+                        <td><?= number_to_currency($result['membership_price'],erp_currency(),null,2);?></td>
                       </tr>
                     </tbody>
                   </table>
@@ -167,7 +171,7 @@ $csz = $company_info['city'].', '.$company_info['state'].' '.$company_info['zipc
                     <tr>
                       <th><?= lang('Invoices.xin_subtotal');?>
                         :</th>
-                      <td><?= number_to_currency($result['membership_price'],$xin_system['default_currency'],null,2);?></td>
+                      <td><?= number_to_currency($result['membership_price'],erp_currency(),null,2);?></td>
                     </tr>
                     <tr>
                       <th><?= lang('Invoices.xin_tax');?>
@@ -186,7 +190,7 @@ $csz = $company_info['city'].', '.$company_info['state'].' '.$company_info['zipc
                           :</h5></td>
                       <td><hr />
                         <h5 class="text-primary">
-                          <?= number_to_currency($result['membership_price'],$xin_system['default_currency'],null,2);?>
+                          <?= number_to_currency($result['membership_price'],erp_currency(),null,2);?>
                         </h5></td>
                     </tr>
                   </tbody>

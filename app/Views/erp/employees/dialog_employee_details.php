@@ -89,7 +89,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
           <span class="text-danger">*</span></label>
         <div class="input-group">
           <div class="input-group-prepend"><span class="input-group-text">
-            <?= $xin_system['default_currency'];?>
+            <?= erp_currency();?>
             </span></div>
           <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="contract_amount" type="text" value="<?= esc($result['contract_amount'] ?? '', 'attr');?>">
         </div>
@@ -234,7 +234,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
           <span class="text-danger">*</span></label>
         <div class="input-group">
           <div class="input-group-prepend"><span class="input-group-text">
-            <?= $xin_system['default_currency'];?>
+            <?= erp_currency();?>
             </span></div>
           <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="contract_amount" type="text" value="<?= esc($result['contract_amount'] ?? '', 'attr');?>">
         </div>
@@ -361,7 +361,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
           <span class="text-danger">*</span></label>
         <div class="input-group">
           <div class="input-group-prepend"><span class="input-group-text">
-            <?= $xin_system['default_currency'];?>
+            <?= erp_currency();?>
             </span></div>
           <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="contract_amount" type="text" value="<?= esc($result['contract_amount'] ?? '', 'attr');?>">
         </div>
@@ -506,7 +506,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
           <span class="text-danger">*</span></label>
         <div class="input-group">
           <div class="input-group-prepend"><span class="input-group-text">
-            <?= $xin_system['default_currency'];?>
+            <?= erp_currency();?>
             </span></div>
           <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="contract_amount" type="text" value="<?= esc($result['contract_amount'] ?? '', 'attr');?>">
         </div>

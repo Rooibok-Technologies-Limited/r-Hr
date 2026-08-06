@@ -1,4 +1,8 @@
 <?php 
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -99,7 +103,7 @@ $paid = number_format((float)$paid, 1, '.', '');
 		} else {
 			$status = '<span class="badge badge-light-success">'.lang('Inventory.xin_delivered_orders_text').'</span>';
 		}
-		$invoice_total = number_to_currency($r['grand_total'], $xin_system['default_currency'],null,2);
+		$invoice_total = number_to_currency($r['grand_total'], erp_currency(),null,2);
 		$client_info = $UsersModel->where('user_id',$r['customer_id'])->where('user_type','customer')->first();
 		if($client_info){
 			$iclient_info = $client_info['first_name'].' '.$client_info['last_name'];

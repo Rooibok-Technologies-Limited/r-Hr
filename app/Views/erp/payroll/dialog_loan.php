@@ -87,7 +87,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
           </label>
           <div class="input-group">
             <div class="input-group-append"><span class="input-group-text">
-              <?= $xin_system['default_currency'];?>
+              <?= erp_currency();?>
               </span></div>
             <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="advance_amount" type="text" value="<?= esc($result['advance_amount'] ?? '', 'attr');?>">
           </div>
@@ -115,7 +115,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
       </label>
       <div class="input-group">
         <div class="input-group-append"><span class="input-group-text">
-          <?= $xin_system['default_currency'];?>
+          <?= erp_currency();?>
           </span></div>
         <input class="form-control" placeholder="<?= lang('Main.xin_emi_full_text');?>" name="emi_amount" id="mmonthly_installment" type="text" value="<?= esc($result['monthly_installment'] ?? '', 'attr');?>">
       </div>
@@ -155,7 +155,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
   <div class="col-md-6">
     <div class="form-group">
       <div class="alert alert-success" role="alert">
-        <?= lang('Invoices.xin_paid');?>:&nbsp;<?= number_to_currency($result['total_paid'], $xin_system['default_currency'],null,2);?>
+        <?= lang('Invoices.xin_paid');?>:&nbsp;<?= number_to_currency($result['total_paid'], erp_currency(),null,2);?>
     </div>
     </div>
       </div>
@@ -163,7 +163,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
       <div class="col-md-6">
         <div class="form-group">
           <div class="alert alert-warning" role="alert">
-            <?= lang('Main.xin_remaining');?>:&nbsp;<?= number_to_currency($remaining_amount, $xin_system['default_currency'],null,2);?>
+            <?= lang('Main.xin_remaining');?>:&nbsp;<?= number_to_currency($remaining_amount, erp_currency(),null,2);?>
         </div>
         </div>
       </div>
@@ -329,7 +329,7 @@ $result = $AwardsModel->where('award_id', $award_id)->first();
       </tr>
       <tr>
         <th><?= lang('Employees.xin_cash');?></th>
-        <td style="display: table-cell;"><?= number_to_currency($result['cash_price'], $xin_system['default_currency'],null,2);?></td>
+        <td style="display: table-cell;"><?= number_to_currency($result['cash_price'], erp_currency(),null,2);?></td>
       </tr>
       <tr>
         <th><?= lang('Main.xin_attachment');?></th>

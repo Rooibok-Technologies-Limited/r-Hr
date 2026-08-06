@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\RolesModel;
 use App\Models\UsersModel;
 use App\Models\SystemModel;
@@ -128,7 +132,7 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
               <div class="col-md-6">
                 <h5 class="m-b-10 text-primary text-uppercase"><?php echo lang('Payroll.xin_employee_net_pay');?></h5>
                 <h4 class="text-uppercase text-primary m-l-30"> <strong>
-                  <?= number_to_currency($payslip_data['net_salary'], $xin_system['default_currency'],null,2);?>
+                  <?= number_to_currency($payslip_data['net_salary'], erp_currency(),null,2);?>
                   </strong> </h4>
               </div>
             </div>
@@ -145,7 +149,7 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
                     <tbody class="text-muted">
                       <tr>
                         <td class="text-success"><?php echo lang('Employees.xin_basic_salary');?></td>
-                        <td class="text-success"><?= number_to_currency($payslip_data['basic_salary'], $xin_system['default_currency'],null,2);?></td>
+                        <td class="text-success"><?= number_to_currency($payslip_data['basic_salary'], erp_currency(),null,2);?></td>
                       </tr>
                       <?php $allowance_amount =0; if($count_pay_allowance > 0) { ?>
                       <?php foreach($pay_allowance as $_allowance):?>
@@ -172,7 +176,7 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
                           ) (
                           <?= $contract_tax_option;?>
                           )</td>
-                        <td><?= number_to_currency($_allowance['pay_amount'], $xin_system['default_currency'],null,2);?></td>
+                        <td><?= number_to_currency($_allowance['pay_amount'], erp_currency(),null,2);?></td>
                       </tr>
                       <?php endforeach?>
                       <?php } ?>
@@ -201,7 +205,7 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
                           ) (
                           <?= $ccontract_tax_option;?>
                           )</td>
-                        <td><?= number_to_currency($_commission['pay_amount'], $xin_system['default_currency'],null,2);?></td>
+                        <td><?= number_to_currency($_commission['pay_amount'], erp_currency(),null,2);?></td>
                       </tr>
                       <?php endforeach?>
                       <?php } ?>
@@ -230,7 +234,7 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
                           ) (
                           <?= $ocontract_tax_option;?>
                           )</td>
-                        <td><?= number_to_currency($_otherpayment['pay_amount'], $xin_system['default_currency'],null,2);?></td>
+                        <td><?= number_to_currency($_otherpayment['pay_amount'], erp_currency(),null,2);?></td>
                       </tr>
                       <?php endforeach?>
                       <?php } ?>
@@ -265,7 +269,7 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
                           <?= $is_sfixed;?>
                           )</td>
                         <td><span class="text-danger">
-                          <?= number_to_currency($_statutory['pay_amount'], $xin_system['default_currency'],null,2);?>
+                          <?= number_to_currency($_statutory['pay_amount'], erp_currency(),null,2);?>
                           </span></td>
                       </tr>
                       <?php endforeach?>
@@ -284,19 +288,19 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
                     <tr>
                       <th><?= lang('Payroll.xin_total_earning');?>
                         :</th>
-                      <td><?= number_to_currency($total_earning, $xin_system['default_currency'],null,2);?></td>
+                      <td><?= number_to_currency($total_earning, erp_currency(),null,2);?></td>
                     </tr>
                     <tr>
                       <th><?= lang('Payroll.xin_total_deductions');?>
                         :</th>
-                      <td><?= number_to_currency($total_deduction, $xin_system['default_currency'],null,2);?></td>
+                      <td><?= number_to_currency($total_deduction, erp_currency(),null,2);?></td>
                     </tr>
                     <tr class="text-info">
                       <td><hr>
                         <h5 class="text-primary m-r-10"><?php echo lang('Payroll.xin_net_pay');?> :</h5></td>
                       <td><hr>
                         <h5 class="text-primary">
-                          <?= number_to_currency($payslip_data['net_salary'], $xin_system['default_currency'],null,2);?>
+                          <?= number_to_currency($payslip_data['net_salary'], erp_currency(),null,2);?>
                         </h5></td>
                     </tr>
                     <tr class="text-info">

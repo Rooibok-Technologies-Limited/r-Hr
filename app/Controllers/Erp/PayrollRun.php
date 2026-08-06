@@ -47,7 +47,7 @@ class PayrollRun extends BaseController
         $data['path_url']    = 'payroll-run';
         $data['breadcrumbs'] = lang('Dashboard.left_payroll');
         $data['default_period'] = date('Y-m');
-        $data['currency']    = erp_company_settings()['default_currency_symbol'] ?? 'UGX';
+        $data['currency']    = erp_currency();
         $data['subview']     = view('erp/payroll/run_wizard', $data);
         return view('erp/layout/layout_main', $data);
     }
@@ -128,7 +128,7 @@ class PayrollRun extends BaseController
             'company_id'  => $companyId,
             'period'      => $period,
             'status'      => 'draft',
-            'currency'    => erp_company_settings()['default_currency'] ?? 'UGX',
+            'currency'    => erp_currency(),
             'prepared_by' => (int) $userInfo['user_id'],
             'created_at'  => date('Y-m-d H:i:s'),
         ]);

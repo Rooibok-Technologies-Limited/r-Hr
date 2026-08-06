@@ -126,7 +126,8 @@ $is_super_user = !empty($user_info['user_type']) && $user_info['user_type'] === 
 
 <script src="<?= base_url('public/assets/plugins/qrcode/qrcode.min.js'); ?>"></script>
 <script type="text/javascript">
-$(document).ready(function(){
+// Subviews render before the footer loads jQuery — defer until window load.
+window.addEventListener('load', function(){
 
 	// Setup 2FA - Step 1: Generate secret & show QR
 	$('#btn-setup-2fa').click(function(){

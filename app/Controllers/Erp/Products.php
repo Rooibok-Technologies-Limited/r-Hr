@@ -219,9 +219,9 @@ class Products extends BaseController {
 				$warehouse_name = '--';
 			}
 			// purchase price
-			$purchase_price = number_to_currency($r['purchase_price'], $xin_system['default_currency'],null,2);
+			$purchase_price = number_to_currency($r['purchase_price'], erp_currency(),null,2);
 			// selling price
-			$retail_price = number_to_currency($r['retail_price'], $xin_system['default_currency'],null,2);
+			$retail_price = number_to_currency($r['retail_price'], erp_currency(),null,2);
 			// product rating
 			$rating_val = $r['product_rating'];
 			$total_stars = '<span class="overall-stars">';
@@ -321,9 +321,9 @@ class Products extends BaseController {
 				$warehouse_name = '--';
 			}
 			// purchase price
-			$purchase_price = number_to_currency($r['purchase_price'], $xin_system['default_currency'],null,2);
+			$purchase_price = number_to_currency($r['purchase_price'], erp_currency(),null,2);
 			// selling price
-			$retail_price = number_to_currency($r['retail_price'], $xin_system['default_currency'],null,2);
+			$retail_price = number_to_currency($r['retail_price'], erp_currency(),null,2);
 			// product rating
 			$rating_val = $r['product_rating'];
 			$total_stars = '<span class="overall-stars">';
@@ -410,9 +410,9 @@ class Products extends BaseController {
 				$warehouse_name = '--';
 			}
 			// purchase price
-			$purchase_price = number_to_currency($r['purchase_price'], $xin_system['default_currency'],null,2);
+			$purchase_price = number_to_currency($r['purchase_price'], erp_currency(),null,2);
 			// selling price
-			$retail_price = number_to_currency($r['retail_price'], $xin_system['default_currency'],null,2);
+			$retail_price = number_to_currency($r['retail_price'], erp_currency(),null,2);
 			// product rating
 			$rating_val = $r['product_rating'];
 			$total_stars = '<span class="overall-stars">';

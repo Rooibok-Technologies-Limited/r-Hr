@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\UsersModel;
 use App\Models\ProductsModel;
@@ -180,7 +184,7 @@ if($_payment_method){
                 <h6 class="text-uppercase text-primary">
                   <?= lang('Main.xin_total');?>
                   : <span>
-                  <?= number_to_currency($result['grand_total'],$xin_system['default_currency'],null,2);?>
+                  <?= number_to_currency($result['grand_total'],erp_currency(),null,2);?>
                   </span> </h6>
               </div>
             </div>
@@ -210,8 +214,8 @@ if($_payment_method){
                             <?= $pname;?>
                           </h6></td>
                         <td><?= $item['item_qty'];?></td>
-                        <td><?= number_to_currency($item['item_unit_price'],$xin_system['default_currency'],null,2);?></td>
-                        <td><?= number_to_currency($item['item_sub_total'],$xin_system['default_currency'],null,2);?></td>
+                        <td><?= number_to_currency($item['item_unit_price'],erp_currency(),null,2);?></td>
+                        <td><?= number_to_currency($item['item_sub_total'],erp_currency(),null,2);?></td>
                       </tr>
                       <?php } ?>
                     </tbody>
@@ -226,17 +230,17 @@ if($_payment_method){
                     <tr>
                       <th><?= lang('Invoices.xin_subtotal');?>
                         :</th>
-                      <td><?= number_to_currency($result['sub_total_amount'],$xin_system['default_currency'],null,2);?></td>
+                      <td><?= number_to_currency($result['sub_total_amount'],erp_currency(),null,2);?></td>
                     </tr>
                     <tr>
                       <th><?= lang('Invoices.xin_tax');?>
                         (0%) :</th>
-                      <td><?= number_to_currency($result['total_tax'],$xin_system['default_currency'],null,2);?></td>
+                      <td><?= number_to_currency($result['total_tax'],erp_currency(),null,2);?></td>
                     </tr>
                     <tr>
                       <th><?= lang('Invoices.xin_discount');?>
                         (0%) :</th>
-                      <td><?= number_to_currency($result['total_discount'],$xin_system['default_currency'],null,2);?></td>
+                      <td><?= number_to_currency($result['total_discount'],erp_currency(),null,2);?></td>
                     </tr>
                     <tr class="text-info">
                       <td><hr />
@@ -245,7 +249,7 @@ if($_payment_method){
                           :</h5></td>
                       <td><hr />
                         <h5 class="text-primary">
-                          <?= number_to_currency($result['grand_total'],$xin_system['default_currency'],null,2);?>
+                          <?= number_to_currency($result['grand_total'],erp_currency(),null,2);?>
                         </h5></td>
                     </tr>
                   </tbody>

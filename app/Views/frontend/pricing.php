@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\ConstantsModel;
 use App\Models\CountryModel;
 use App\Models\MembershipModel;
@@ -109,7 +113,7 @@ $xin_system = $SystemModel->where('setting_id', 1)->first();
                            <span><?= $r['membership_type']?></span>
                         </div>
                         <div class="price__tag mb-15">
-                           <h3><?= number_to_currency($r['price'],$xin_system['default_currency'],null,2);?><span> <?= $plan_duration;?></span></h3>
+                           <h3><?= number_to_currency($r['price'],erp_currency(),null,2);?><span> <?= $plan_duration;?></span></h3>
                         </div>
                         <div class="price__text mb-25">
                            <p><?= lang('Frontend.xin_start_for_free_pick_a_plan');?></p>

@@ -307,7 +307,7 @@ class Finance extends BaseController {
 			} else {
 				$ledger = $r['account_name'];
 			}
-			$account_balance = number_to_currency($r['account_balance'], $xin_system['default_currency'],null,2);
+			$account_balance = number_to_currency($r['account_balance'], erp_currency(),null,2);
 			$created_at = set_date_format($r['created_at']);
 			//$account_name = $ledger;
 			$combhr = $ledger.$edit.$delete;
@@ -388,7 +388,7 @@ class Finance extends BaseController {
 				$payer_name = '';
 			}
 			
-			$amount = number_to_currency($r['amount'], $xin_system['default_currency'],null,2);
+			$amount = number_to_currency($r['amount'], erp_currency(),null,2);
 			$category_info = $ConstantsModel->where('constants_id', $r['entity_category_id'])->where('type', 'income_type')->first();
 			if($category_info){
 				$category_name = $category_info['category_name'];
@@ -478,7 +478,7 @@ class Finance extends BaseController {
 			} else {
 				$payer_name = '';
 			}
-			$amount = number_to_currency($r['amount'], $xin_system['default_currency'],null,2);
+			$amount = number_to_currency($r['amount'], erp_currency(),null,2);
 			$category_info = $ConstantsModel->where('constants_id', $r['entity_category_id'])->where('type', 'expense_type')->first();
 			if($category_info){
 				$category_name = $category_info['category_name'];
@@ -551,7 +551,7 @@ class Finance extends BaseController {
 				$account_name = '--';
 			}
 			
-			$amount = number_to_currency($r['amount'], $xin_system['default_currency'],null,2);
+			$amount = number_to_currency($r['amount'], erp_currency(),null,2);
 		//	$category_info = $ConstantsModel->where('constants_id', $r['entity_category_id'])->first();
 			$payment_method = $ConstantsModel->where('constants_id', $r['payment_method_id'])->where('type', 'payment_method')->first();
 			if($payment_method){

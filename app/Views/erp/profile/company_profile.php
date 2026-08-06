@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 /*
 * Profile View
 */
@@ -146,7 +150,7 @@ $xin_system = erp_company_settings();
                     <span class="text-danger">*</span> </label>
                   <select class="form-control" name="default_currency" data-plugin="select_hrm" data-placeholder="<?= lang('Main.xin_default_currency');?>">
                    <?php foreach($currency_list as $_currency):?>
-   					<option value="<?= $_currency['currency_code'];?>" <?php if($xin_system['default_currency']==$_currency['currency_code']):?> selected="selected"<?php endif;?>>
+   					<option value="<?= $_currency['currency_code'];?>" <?php if(erp_currency()==$_currency['currency_code']):?> selected="selected"<?php endif;?>>
 					<?= $_currency['currency_name'].' - '.$_currency['currency_code'];?></option>
                 	<?php endforeach;?>
                 </select>

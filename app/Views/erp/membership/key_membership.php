@@ -93,7 +93,7 @@ endif;
                     <?= $subs_plan['total_employees']?>
                     </small> </a> </div></td>
                 <td><h5>
-                    <?= number_to_currency($subs_price, $xin_system['default_currency'],null,2);?>
+                    <?= number_to_currency($subs_price, erp_currency(),null,2);?>
                   </h5></td>
                 <td class="text-left"><div class="text-left d-inline-block">
                     <h6 class="my-0">

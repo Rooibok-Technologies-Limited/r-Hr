@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -192,12 +196,12 @@ $result = $TravelModel->where('travel_id', $travel_id)->first();
                   <tr>
                     <td><?php echo lang('Employees.xin_expected_travel_budget');?></td>
                     <td class="text-success"><i class="fas fa-money-check-alt"></i>&nbsp;
-                      <?= number_to_currency($result['expected_budget'], $xin_system['default_currency'],null,2);?></td>
+                      <?= number_to_currency($result['expected_budget'], erp_currency(),null,2);?></td>
                   </tr>
                   <tr>
                     <td><?php echo lang('Employees.xin_actual_travel_budget');?></td>
                     <td class="text-warning"><i class="fas fa-money-check-alt"></i>&nbsp;
-                      <?= number_to_currency($result['actual_budget'], $xin_system['default_currency'],null,2);?></td>
+                      <?= number_to_currency($result['actual_budget'], erp_currency(),null,2);?></td>
                   </tr>
                 </tbody>
               </table>
@@ -318,7 +322,7 @@ $result = $TravelModel->where('travel_id', $travel_id)->first();
                   </label>
                   <div class="input-group">
                     <div class="input-group-prepend"><span class="input-group-text">
-                      <?= $xin_system['default_currency'];?>
+                      <?= erp_currency();?>
                       </span></div>
                     <input class="form-control" placeholder="<?= lang('Employees.xin_expected_travel_budget');?>" name="expected_budget" type="text" value="<?php echo $result['expected_budget'];?>">
                   </div>
@@ -331,7 +335,7 @@ $result = $TravelModel->where('travel_id', $travel_id)->first();
                   </label>
                   <div class="input-group">
                     <div class="input-group-prepend"><span class="input-group-text">
-                      <?= $xin_system['default_currency'];?>
+                      <?= erp_currency();?>
                       </span></div>
                     <input class="form-control" placeholder="<?= lang('Employees.xin_actual_travel_budget');?>" name="actual_budget" type="text" value="<?php echo $result['actual_budget'];?>">
                   </div>

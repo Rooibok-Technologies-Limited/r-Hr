@@ -1,4 +1,8 @@
 <?php 
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -88,7 +92,7 @@ $paid = $PurchasesModel->where('company_id',$company_id)->where('status', 1)->co
 		} else {
 			$status = '<span class="badge badge-light-warning">'.lang('Main.xin_pending').'</span>';
 		}
-		$invoice_total = number_to_currency($r['grand_total'], $xin_system['default_currency'],null,2);
+		$invoice_total = number_to_currency($r['grand_total'], erp_currency(),null,2);
 		$supplier_info = $SuppliersModel->where('supplier_id',$r['supplier_id'])->first();
 		if($supplier_info){
 			$supplier_name = $supplier_info['supplier_name'];

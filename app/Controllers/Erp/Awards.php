@@ -533,7 +533,7 @@ class Awards extends BaseController {
 				$cname = '--';
 			}	
 			// award cash
-			$cash_price = number_to_currency($r['cash_price'], $xin_system['default_currency'],null,2);
+			$cash_price = number_to_currency($r['cash_price'], erp_currency(),null,2);
 			$icname = '
 				'.$cname.'
 				<div class="overlay-edit">

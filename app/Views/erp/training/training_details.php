@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use CodeIgniter\I18n\Time;
 use App\Models\SystemModel;
 use App\Models\RolesModel;
@@ -230,7 +234,7 @@ endif;
                     <td><i class="far fa-credit-card m-r-5"></i>
                       <?= lang('Main.xin_training_cost');?>
                       :</td>
-                    <td class="text-right"><?= number_to_currency($result['training_cost'], $xin_system['default_currency'],null,2);?></td>
+                    <td class="text-right"><?= number_to_currency($result['training_cost'], erp_currency(),null,2);?></td>
                   </tr>
                   <tr>
                     <td><i class="far fa-calendar-alt m-r-5"></i>

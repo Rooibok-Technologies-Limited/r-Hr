@@ -93,7 +93,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
         </label>
         <div class="input-group">
           <div class="input-group-append"><span class="input-group-text">
-            <?= $xin_system['default_currency'];?>
+            <?= erp_currency();?>
             </span></div>
           <input class="form-control" placeholder="<?= lang('Employees.xin_award_cash');?>" name="cash" type="text" value="<?php echo esc($result['cash_price'] ?? '', 'attr');?>">
         </div>
@@ -303,7 +303,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
       </tr>
       <tr>
         <th><?= lang('Employees.xin_cash');?></th>
-        <td style="display: table-cell;"><?= number_to_currency($result['cash_price'], $xin_system['default_currency'],null,2);?></td>
+        <td style="display: table-cell;"><?= number_to_currency($result['cash_price'], erp_currency(),null,2);?></td>
       </tr>
       <tr>
         <th><?= lang('Main.xin_attachment');?></th>

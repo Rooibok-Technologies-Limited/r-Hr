@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\UsersModel;
 
@@ -183,7 +187,7 @@ $xin_system = erp_company_settings();
                           </button>
                         </div>
                       </div>
-                      <?php $sc_show = $xin_system['default_currency_symbol']; ?>
+                      <?php $sc_show = erp_currency(); ?>
                       <input type="hidden" class="items-sub-total" name="items_sub_total" value="0" />
                       <div class="row">
                         <div class="col-md-6 col-sm-12 text-xs-center text-md-left">&nbsp; </div>
@@ -243,7 +247,7 @@ $xin_system = erp_company_settings();
 											   if($_tax['field_two']=='percentage') {
 													$_tax_type = $_tax['field_one'].'%';
 												} else {
-													$_tax_type = number_to_currency($_tax['field_one'], $xin_system['default_currency'],null,2);
+													$_tax_type = number_to_currency($_tax['field_one'], erp_currency(),null,2);
 												}
 												?>
                                                 <option tax-type="<?php echo $_tax['field_two'];?>" tax-rate="<?php echo $_tax['field_one'];?>" value="<?php echo $_tax['constants_id'];?>"> <?php echo $_tax['category_name'];?> (<?php echo $_tax_type;?>)</option>

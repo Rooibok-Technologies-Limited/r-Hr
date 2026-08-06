@@ -1129,7 +1129,10 @@ class Profile extends BaseController {
         ];
 		$MainModel = new MainModel();
 		$result = $MainModel->update_company_settings($data,$id);
-		$Return['csrf_hash'] = csrf_hash();	
+		// erp_company_settings() caches per company — drop it so a currency/format
+		// change takes effect on the very next request.
+		\Config\Services::cache()->delete('company_settings_' . effective_company_id());
+		$Return['csrf_hash'] = csrf_hash();
 		if ($result == TRUE) {
 			$Return['result'] = lang('Success.xin_account_settings_updated_success');
 		} else {

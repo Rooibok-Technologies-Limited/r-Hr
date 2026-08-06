@@ -241,7 +241,7 @@ $status_label = '<i class="fas fa-certificate text-success bg-icon"></i><i class
                           <span class="text-danger">*</span></label>
                         <div class="input-group">
                           <div class="input-group-prepend"><span class="input-group-text">
-                            <?= $xin_system['default_currency'];?>
+                            <?= erp_currency();?>
                             </span></div>
                           <input type="text" class="form-control" placeholder="<?= lang('Employees.xin_gross_salary');?>" value="<?= $employee_detail['basic_salary'];?>">
                         </div>
@@ -254,7 +254,7 @@ $status_label = '<i class="fas fa-certificate text-success bg-icon"></i><i class
                           <span class="text-danger">*</span></label>
                         <div class="input-group">
                           <div class="input-group-prepend"><span class="input-group-text">
-                            <?= $xin_system['default_currency'];?>
+                            <?= erp_currency();?>
                             </span></div>
                           <input type="text" class="form-control" placeholder="<?= lang('Employees.xin_hourly_rate');?>" value="<?= $employee_detail['hourly_rate'];?>">
                         </div>

@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -173,7 +177,7 @@ class Agenda extends BaseController {
 				$ipayment_method = '';
 			}
 			
-			$amount = number_to_currency($r['amount'], $xin_system['default_currency'],null,2);
+			$amount = number_to_currency($r['amount'], erp_currency(),null,2);
 			$transaction_date = set_date_format($r['transaction_date']);
 			$view = '<span data-toggle="tooltip" data-placement="top" data-state="primary" title="'.lang('Main.xin_view_details').'"><a href="'.site_url('erp/transaction-details').'/'.uencode($r['transaction_id']).'" target="_blank"><button type="button" class="btn icon-btn btn-sm btn-light-primary waves-effect waves-light"><i class="feather icon-arrow-right"></i></button></a></span>';
 			$combhr = $view;
@@ -241,9 +245,9 @@ class Agenda extends BaseController {
 			}
 			$created_at = set_date_format($r['created_at']);
 			// advance_amount
-			$advance_amount = number_to_currency($r['advance_amount'], $xin_system['default_currency'],null,2);
-			$monthly_installment = number_to_currency($r['monthly_installment'], $xin_system['default_currency'],null,2);
-			$total_paid = number_to_currency($r['total_paid'], $xin_system['default_currency'],null,2);
+			$advance_amount = number_to_currency($r['advance_amount'], erp_currency(),null,2);
+			$monthly_installment = number_to_currency($r['monthly_installment'], erp_currency(),null,2);
+			$total_paid = number_to_currency($r['total_paid'], erp_currency(),null,2);
 			$itotal_paid = $advance_amount.'<br>'.lang('Invoices.xin_paid').': '.$total_paid;
 			$iapp_status = $created_at.'<br>'.$app_status;
 			//'xin_paid' => 'Paid',
@@ -311,8 +315,8 @@ class Agenda extends BaseController {
 
 				if($r['status']==0): $status = '<span class="badge badge-warning">'.lang('Main.xin_pending').'</span>';
 				elseif($r['status']==1): $status = '<span class="badge badge-success">'.lang('Main.xin_accepted').'</span>';else: $status = '<span class="badge badge-danger">'.lang('Main.xin_rejected'); endif;
-				$expected_budget = number_to_currency($r['expected_budget'], $xin_system['default_currency'],null,2);
-				$actual_budget = number_to_currency($r['actual_budget'], $xin_system['default_currency'],null,2);
+				$expected_budget = number_to_currency($r['expected_budget'], erp_currency(),null,2);
+				$actual_budget = number_to_currency($r['actual_budget'], erp_currency(),null,2);
 				$iemployee_name = '<div class="d-inline-block align-middle">
 				<img src="'.base_url().'/public/uploads/users/thumb/'.$iuser_info['profile_photo'].'" alt="user image" class="img-radius align-top m-r-15" style="width:40px;">
 				<div class="d-inline-block">
@@ -385,9 +389,9 @@ class Agenda extends BaseController {
 			}
 			$created_at = set_date_format($r['created_at']);
 			// advance_amount
-			$advance_amount = number_to_currency($r['advance_amount'], $xin_system['default_currency'],null,2);
-			$monthly_installment = number_to_currency($r['monthly_installment'], $xin_system['default_currency'],null,2);
-			$total_paid = number_to_currency($r['total_paid'], $xin_system['default_currency'],null,2);
+			$advance_amount = number_to_currency($r['advance_amount'], erp_currency(),null,2);
+			$monthly_installment = number_to_currency($r['monthly_installment'], erp_currency(),null,2);
+			$total_paid = number_to_currency($r['total_paid'], erp_currency(),null,2);
 			$itotal_paid = $advance_amount.'<br>'.lang('Invoices.xin_paid').': '.$total_paid;
 			$iapp_status = $created_at.'<br>'.$app_status;
 			//'xin_paid' => 'Paid',
@@ -519,7 +523,7 @@ class Agenda extends BaseController {
 			// award photo
 			$cname = $category_name;	
 			// award cash
-			$cash_price = number_to_currency($r['cash_price'], $xin_system['default_currency'],null,2);
+			$cash_price = number_to_currency($r['cash_price'], erp_currency(),null,2);
 			$icname = '
 				'.$cname.'
 				<div class="overlay-edit">
@@ -788,7 +792,7 @@ class Agenda extends BaseController {
 				$smonth = strtotime($r['salary_month']);
 				$smonth = date('F, Y',$smonth);
 				$salary_month = set_date_format($r['salary_month']);
-				$net_salary = '<h6 class="text-success">'.number_to_currency($inet_salary, $xin_system['default_currency'],null,2).'</h6>';
+				$net_salary = '<h6 class="text-success">'.number_to_currency($inet_salary, erp_currency(),null,2).'</h6>';
 				$combhr = $view;
 				$links = '
 					'.$uname.'

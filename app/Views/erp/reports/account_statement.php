@@ -107,7 +107,7 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
 												$credit += $transation->amount;
 												$balance2 = $balance2 + $account_data['account_balance'];
 												
-												$amount = '<h6 class="text-success">+ '.number_to_currency($transation->amount, $xin_system['default_currency'],null,2).'</h6>';
+												$amount = '<h6 class="text-success">+ '.number_to_currency($transation->amount, erp_currency(),null,2).'</h6>';
 												$type = $ConstantsModel->where('constants_id', $transation->entity_category_id)->where('type','income_type')->first();
 												if($type){
 													$itype_name = $type['category_name'];
@@ -118,7 +118,7 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
 												$title = '<span class="text-danger">'.lang('Finance.xin_debit').'</span>';
 												$debit += $transation->amount;
 												$balance2 = $balance2 - $account_data['account_balance'];
-												$amount = '<h6 class="text-danger">- '.number_to_currency($transation->amount, $xin_system['default_currency'],null,2).'</h6>';
+												$amount = '<h6 class="text-danger">- '.number_to_currency($transation->amount, erp_currency(),null,2).'</h6>';
 												$type = $ConstantsModel->where('constants_id', $transation->entity_category_id)->where('type','expense_type')->first();
 												if($type){
 													$itype_name = $type['category_name'];
@@ -154,11 +154,11 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
                                     <tbody>
                                         <tr>
                                             <th><?= lang('Finance.xin_credit');?> : </th>
-                                            <td><?= number_to_currency($credit, $xin_system['default_currency'],null,2)?></td>
+                                            <td><?= number_to_currency($credit, erp_currency(),null,2)?></td>
                                         </tr>
                                         <tr>
                                             <th><?= lang('Finance.xin_debit');?> : </th>
-                                            <td><?= number_to_currency($debit, $xin_system['default_currency'],null,2)?></td>
+                                            <td><?= number_to_currency($debit, erp_currency(),null,2)?></td>
                                         </tr>
                                         <tr class="text-info">
                                             <td>
@@ -167,7 +167,7 @@ $ci_erp_settings = $SystemModel->where('setting_id', 1)->first();
                                             </td>
                                             <td>
                                                 <hr />
-                                                <h5 class="text-primary"><?= number_to_currency($balance2, $xin_system['default_currency'],null,2);?></h5>
+                                                <h5 class="text-primary"><?= number_to_currency($balance2, erp_currency(),null,2);?></h5>
                                             </td>
                                         </tr>
                                     </tbody>
