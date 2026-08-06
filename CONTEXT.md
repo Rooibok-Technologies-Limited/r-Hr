@@ -14,7 +14,16 @@ list) now have their full CRUD: `Finance::payees/payers` pages, `payees_list`/
 `expense1`, payers=`deposit1` cluster), on `ci_finance_entity` (table pre-existed).
 Routes wired; lang keys prefixed + 3 added; reachable via new nav tabs on the
 expense (Payees) and deposit (Payers) pages. Verified live end-to-end (add→list→
-dialog→update→delete, both types) as Demo Corp. **#6 ajax half FULLY CLOSED
+dialog→update→delete, both types) as Demo Corp.
+**2026-08-06 (later): employee-ID per-tenant prefix (9f80d88)** — prefix now derives
+from each tenant's company name (AC-2026-0001 / DC-2026-0001), 'RT' default removed;
+Add-Employee + CSV import assign pattern IDs. **Full-app probe fixes (b2d153a)** —
+probed 247 GET routes + 117 _list ajax (ajax = fully clean): implemented the two
+routed-but-missing dashboards (jobs-dashboard, finance-dashboard), removed 3 routes
+to nonexistent methods (organization-chart/staff_chart→real page is erp/org-chart;
+expired-documents), fixed app-wide trailing-slash 404s (path normalized in
+TenantBootstrap). ID-card system re-verified end-to-end (faces/card/verify/revoke/
+re-issue+token-rotation, cross-tenant 404). **#6 ajax half FULLY CLOSED
 (87d5919):** all remaining "missing" endpoints = dead JS (no trigger DOM;
 editing via *_details pages) — nothing built. [SECURITY] dead `Crm` module
 (unreachable duplicate of `Clients`) had 5 routed ajax endpoints with
