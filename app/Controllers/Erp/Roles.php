@@ -174,7 +174,7 @@ class Roles extends BaseController {
 					'role_resources'  => $role_resources
 				];
 				$RolesModel = new RolesModel();
-				$result = $RolesModel->update($id, $data);
+				$result = $RolesModel->where('company_id', effective_company_id())->update($id, $data);
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Users.xin_strole_success_updated');

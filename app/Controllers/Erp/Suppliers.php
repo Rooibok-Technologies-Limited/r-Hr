@@ -330,7 +330,7 @@ class Suppliers extends BaseController {
 					'country'  => $country,
 				];
 				$SuppliersModel = new SuppliersModel();
-				$result = $SuppliersModel->update($id,$data);	
+				$result = $SuppliersModel->where('company_id', effective_company_id())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_supplier_updated_msg');

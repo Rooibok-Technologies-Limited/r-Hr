@@ -1123,7 +1123,7 @@ class Timesheet extends BaseController {
 				if ($oldRecord) {
 					$this->auditAttendanceChanges($id, $company_id, $usession['sup_user_id'], $oldRecord, $data);
 				}
-				$result = $TimesheetModel->update($id, $data);
+				$result = $TimesheetModel->where('company_id', effective_company_id())->update($id, $data);
 				$Return['csrf_hash'] = csrf_hash();
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_attendance_updated_msg');
@@ -1226,7 +1226,7 @@ class Timesheet extends BaseController {
 					'is_approved'  => $status
 				];
 				$OvertimerequestModel = new OvertimerequestModel();
-				$result = $OvertimerequestModel->update($id, $data);	
+				$result = $OvertimerequestModel->where('company_id', effective_company_id())->update($id, $data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_overtime_updated_msg');
@@ -1489,7 +1489,7 @@ class Timesheet extends BaseController {
 				);
 				$id = udecode($this->request->getPost('time_id'));
 				$TimesheetModel = new TimesheetModel();
-				$result = $TimesheetModel->update($id, $data);
+				$result = $TimesheetModel->where('company_id', effective_company_id())->update($id, $data);
 				if ($result == TRUE) {
 					$Return['result'] = lang('Users.xin_strole_success_added');
 				} else {

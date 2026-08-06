@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 96" width="320" height="96">
+  <defs>
+    <linearGradient id="am" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7267EF"/><stop offset="1" stop-color="#3B5A45"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="14" width="68" height="68" rx="18" fill="url(#am)"/>
+  <path d="M38 30 L54 66 H46 L43 58 H33 L30 66 H22 Z M35.5 51 H40.5 L38 44 Z" fill="#fff"/>
+  <text x="88" y="52" font-family="Poppins,Segoe UI,sans-serif" font-size="40" font-weight="800" fill="#23201C" letter-spacing="1">ACME</text>
+  <text x="89" y="74" font-family="Poppins,Segoe UI,sans-serif" font-size="13" font-weight="600" fill="#7267EF" letter-spacing="5">CORPORATION</text>
+</svg>

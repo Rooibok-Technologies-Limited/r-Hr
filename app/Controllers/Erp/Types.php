@@ -2959,7 +2959,7 @@ class Types extends BaseController {
 					'company_id'  => $company_id
 				];
 				$ConstantsModel = new ConstantsModel();
-				$result = $ConstantsModel->update($id,$data);	
+				$result = $ConstantsModel->where('company_id', effective_company_id())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_data_updated_msg');
@@ -3036,7 +3036,7 @@ class Types extends BaseController {
 					'field_two'  => $fieldtwo
 				];
 				$ConstantsModel = new ConstantsModel();
-				$result = $ConstantsModel->update($id,$data);	
+				$result = $ConstantsModel->where('company_id', effective_company_id())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_tax_type_updated_msg');
@@ -3108,7 +3108,7 @@ class Types extends BaseController {
 					'leave_max_per_request' => $max_per_request > 0 ? $max_per_request : null,
 				];
 				$ConstantsModel = new ConstantsModel();
-				$result = $ConstantsModel->update($id,$data);
+				$result = $ConstantsModel->where('company_id', effective_company_id())->update($id,$data);
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_leave_type_updated_msg');

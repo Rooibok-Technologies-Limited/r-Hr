@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -297,7 +301,7 @@ class Assets extends BaseController {
 				$data = [
 					'asset_image'  => $file_name
 				];
-				$result = $AssetsModel->update($id, $data);
+				$result = $AssetsModel->where('company_id', effective_company_id())->update($id, $data);
 				$Return['csrf_hash'] = csrf_hash();	
 				$Return['result'] = lang('Main.xin_asset_image_updated');
 			} else {
@@ -413,7 +417,7 @@ class Assets extends BaseController {
 				];	
 				$AssetsModel = new AssetsModel();
 				$MainModel = new MainModel();
-				$result = $AssetsModel->update($id,$data);	
+				$result = $AssetsModel->where('company_id', effective_company_id())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					if($count_module_attributes > 0){

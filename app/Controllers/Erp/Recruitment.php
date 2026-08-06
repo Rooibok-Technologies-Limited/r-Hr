@@ -802,7 +802,7 @@ class Recruitment extends BaseController {
 					'status'  => $status
 				];
 				$JobsModel = new JobsModel();
-				$result = $JobsModel->update($id,$data);	
+				$result = $JobsModel->where('company_id', effective_company_id())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.employee_update_jobt_success');
@@ -837,7 +837,7 @@ class Recruitment extends BaseController {
 					'application_status'  => $status,
 					];
 				$JobcandidatesModel = new JobcandidatesModel();
-				$result = $JobcandidatesModel->update($id,$data2);
+				$result = $JobcandidatesModel->where('company_id', effective_company_id())->update($id,$data2);
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_candidate_updated_msg');
 				} else {
@@ -941,7 +941,7 @@ class Recruitment extends BaseController {
 						'application_status'  => $status,
 					];
 					$JobcandidatesModel = new JobcandidatesModel();
-					$result = $JobcandidatesModel->update($id,$data2);
+					$result = $JobcandidatesModel->where('company_id', effective_company_id())->update($id,$data2);
 						$Return['result'] = lang('Success.ci_candidate_updated_msg');
 					} else {
 						$Return['error'] = lang('Main.xin_error_msg');
@@ -1011,7 +1011,7 @@ class Recruitment extends BaseController {
 				];
 				$JobinterviewsModel = new JobinterviewsModel();
 				$job_int = $JobinterviewsModel->where('job_interview_id', $id)->first();
-				$result = $JobinterviewsModel->update($id,$data);
+				$result = $JobinterviewsModel->where('company_id', effective_company_id())->update($id,$data);
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					// employee details

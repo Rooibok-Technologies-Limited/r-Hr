@@ -306,7 +306,7 @@ class Trainers extends BaseController {
 					'address'  => $address
 				];
 				$TrainersModel = new TrainersModel();
-				$result = $TrainersModel->update($id,$data);	
+				$result = $TrainersModel->where('company_id', effective_company_id())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_trainer_updated_msg');

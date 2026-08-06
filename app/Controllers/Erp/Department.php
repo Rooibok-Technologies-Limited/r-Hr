@@ -286,7 +286,7 @@ class Department extends BaseController {
 					'department_head'  => $staff_id
 				];
 				$DepartmentModel = new DepartmentModel();
-				$result = $DepartmentModel->update($id, $data);
+				$result = $DepartmentModel->where('company_id', effective_company_id())->update($id, $data);
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_department_updated_msg');

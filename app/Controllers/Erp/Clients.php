@@ -561,7 +561,7 @@ class Clients extends BaseController {
 					'description'  => $description,
 				];
 				$LeadsfollowupModel = new LeadsfollowupModel();
-				$result = $LeadsfollowupModel->update($id, $data);
+				$result = $LeadsfollowupModel->where('company_id', effective_company_id())->update($id, $data);
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_lead_followup_updated_msg');
@@ -953,7 +953,7 @@ class Clients extends BaseController {
 				'gender' => $gender,
 			];
 			$LeadsModel = new LeadsModel();
-			$result = $LeadsModel->update($id, $data);	
+			$result = $LeadsModel->where('company_id', effective_company_id())->update($id, $data);	
 			$Return['csrf_hash'] = csrf_hash();	
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_lead_updated_msg');
@@ -1067,7 +1067,7 @@ class Clients extends BaseController {
 				'is_active'  => $status,
 			];
 			$UsersModel = new UsersModel();
-			$result = $UsersModel->update($id, $data);	
+			$result = $UsersModel->where('company_id', effective_company_id())->update($id, $data);	
 			$Return['csrf_hash'] = csrf_hash();	
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_client_updated_msg');
@@ -1117,7 +1117,7 @@ class Clients extends BaseController {
 				'is_active'  => $status,
 			];
 			$UsersModel = new UsersModel();
-			$result = $UsersModel->update($id, $data);	
+			$result = $UsersModel->where('company_id', effective_company_id())->update($id, $data);	
 			$Return['csrf_hash'] = csrf_hash();	
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_client_status_updated_msg');

@@ -433,7 +433,7 @@ class Visitors extends BaseController {
 					'description'  => $description,
 				];
 				$VisitorsModel = new VisitorsModel();
-				$result = $VisitorsModel->update($id,$data);	
+				$result = $VisitorsModel->where('company_id', effective_company_id())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_visitor_updated_msg');

@@ -308,7 +308,7 @@ class Warehouse extends BaseController {
 					'country'  => $country
 				];
 				$WarehouseModel = new WarehouseModel();
-				$result = $WarehouseModel->update($id,$data);	
+				$result = $WarehouseModel->where('company_id', effective_company_id())->update($id,$data);	
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_warehouse_updated_msg');
