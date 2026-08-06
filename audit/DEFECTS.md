@@ -39,3 +39,23 @@ Severity: Critical / High / Medium / Low.
   view, the vendored Stripe ThirdParty lib, and the super-only `Backup_erp` mysqli tool
   (legacy but functional). TODO/FIXME markers are all in vendored Stripe or false positives
   (phone-mask "XXX"). PHP lint: 0 failures across 1077 app files. Not fixed = not defects.
+
+## Phase C — Zero-hardcoding sweep (2026-08-06)
+Confirms the prior audit (88c72ab): the codebase is largely settings-driven. Evidence-based
+per-category findings:
+- **Currency**: erp_currency()/erp_currency_symbol() (tenant-first) — DONE earlier this session.
+- **Timezone**: live app timezone set per-request from the tenant's system_timezone
+  (BaseController date_default_timezone_set). One DEAD hardcoded line ($current_time =
+  Time::now('Africa/Kampala'), never used) removed (97e987d).
+- **Tax**: TaxEngine reads PAYE from ci_paye_bands (rate_percent) and NSSF from
+  system_setting('nssf_employee_rate'/'nssf_employer_rate') with fallbacks — dynamic.
+- **Phone**: the '256' MSISDN prefix in the MoMo/Airtel disbursement libraries is Uganda's
+  real dialing code for those payment rails — legitimate domain infra, not a leak.
+- **Brand**: tenant-facing views use system_setting('application_name')/$app_name with a
+  'Rooibok HR' safety-net fallback (fires only when unset); platform frontend (landing/
+  cookie/footer/api-docs) correctly shows the platform brand per the white-label model.
+- **Employee-ID prefix / leave caps**: per-tenant configurable (this session).
+- Minor/noted (not fixed): `frontend/contact.php` hardcodes `info@rooibok.co.ug` (placeholder
+  domain) on the platform contact page — low-risk, could move to a platform setting (Phase C tail).
+- Dead vendor template `meetings_calendar_kendo.php` points at demos.telerik.com — unused
+  (included nowhere); leave or delete in a cleanup pass.

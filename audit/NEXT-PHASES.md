@@ -72,7 +72,7 @@ remaining annual quota, and blocks when quota is 0. Leave types live in `ci_erp_
   configured number), exceed remaining (rejected), balance updates on approval.
 **Dependency:** none functionally; pairs well with Phase A staff dashboard.
 
-## PHASE C — Zero-hardcoding audit (system-wide)
+## PHASE C — Zero-hardcoding audit (system-wide) — SWEPT (97e987d, 2026-08-06): codebase largely settings-driven; dead hardcoded-timezone line removed; details in DEFECTS.md Phase C. Tail items (contact email setting, dead kendo template) minor.
 **Done already:** currency (erp_currency/erp_currency_symbol, tenant-first), employee-ID
 prefix (per-tenant), currency symbols, nav labels (lang file). 
 **Still to sweep — find & replace hardcoded values with settings/config/lang:**
