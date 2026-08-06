@@ -1,4 +1,8 @@
 <?php 
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 use App\Models\SystemModel;
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -73,6 +77,11 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
             <?= lang('Leave.xin_leave_days_per_year');?>
             <span class="text-danger">*</span></label>
           <input type="text" class="form-control" name="days_per_year" placeholder="<?= lang('Leave.xin_leave_days_per_year');?>">
+        </div>
+        <div class="form-group">
+          <label for="max_per_request"><?= lang('Leave.xin_leave_max_per_request');?></label>
+          <input type="number" min="0" class="form-control" name="max_per_request" placeholder="<?= lang('Leave.xin_leave_max_per_request');?>">
+          <small class="form-text text-muted"><?= lang('Leave.xin_leave_max_per_request_hint');?></small>
         </div>
         <div class="form-group">
           <label for="gender" class="control-label">

@@ -51,6 +51,11 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
           <span class="text-danger">*</span></label>
         <input type="text" class="form-control" name="days_per_year" placeholder="<?= lang('Leave.xin_leave_days_per_year');?>" value="<?= esc($result['field_one'] ?? '', 'attr');?>">
       </div>
+      <div class="form-group">
+        <label for="max_per_request"><?= lang('Leave.xin_leave_max_per_request');?></label>
+        <input type="number" min="0" class="form-control" name="max_per_request" placeholder="<?= lang('Leave.xin_leave_max_per_request');?>" value="<?= esc($result['leave_max_per_request'] ?? '', 'attr');?>">
+        <small class="form-text text-muted"><?= lang('Leave.xin_leave_max_per_request_hint');?></small>
+      </div>
     </div>
     <div class="col-md-12">
       <div class="form-group">

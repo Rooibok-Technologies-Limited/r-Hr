@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 
 //Dashboard override core en language system validation or define your own en language validation message
 return [
@@ -10,6 +14,9 @@ return [
 	'xin_leave_duration' => 'Leave Duration',
 	'xin_leave_days' => 'Days',
 	'xin_leave_days_per_year' => 'Days per year',
+	'xin_leave_max_per_request' => 'Max days per application',
+	'xin_leave_max_per_request_hint' => 'The most days an employee may request in one application for this leave type. Leave blank or 0 for no limit.',
+	'xin_leave_max_per_request_error' => 'You cannot apply for more than',
 	'xin_applied_on' => 'Applied On',
 	'xin_leave_attachment' => 'Leave Attachment',
 	'xin_leave_type_status' => 'Leave Type Status',

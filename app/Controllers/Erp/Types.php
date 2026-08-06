@@ -2113,16 +2113,18 @@ class Types extends BaseController {
 				} else {
 					$company_id = $usession['sup_user_id'];
 				}
+				$max_per_request = (int) $this->request->getPost('max_per_request');
 				$data = [
 					'company_id'  => $company_id,
 					'category_name' => $name,
 					'type'  => 'leave_type',
 					'field_one'  => $days_per_year,
 					'field_two'  => $requires_approval,
+					'leave_max_per_request' => $max_per_request > 0 ? $max_per_request : null,
 					'created_at' => date('d-m-Y h:i:s')
 				];
 				$ConstantsModel = new ConstantsModel();
-				$result = $ConstantsModel->insert($data);	
+				$result = $ConstantsModel->insert($data);
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_leave_type_added_msg');
@@ -3096,13 +3098,15 @@ class Types extends BaseController {
 				} else {
 					$company_id = $usession['sup_user_id'];
 				}
+				$max_per_request = (int) $this->request->getPost('max_per_request');
 				$data = [
 					'category_name' => $name,
 					'field_one'  => $days_per_year,
 					'field_two'  => $requires_approval,
+					'leave_max_per_request' => $max_per_request > 0 ? $max_per_request : null,
 				];
 				$ConstantsModel = new ConstantsModel();
-				$result = $ConstantsModel->update($id,$data);	
+				$result = $ConstantsModel->update($id,$data);
 				$Return['csrf_hash'] = csrf_hash();	
 				if ($result == TRUE) {
 					$Return['result'] = lang('Success.ci_leave_type_updated_msg');

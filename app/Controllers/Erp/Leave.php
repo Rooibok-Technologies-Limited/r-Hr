@@ -374,21 +374,25 @@ class Leave extends BaseController {
 				$UsersModel = new UsersModel();
 				$ConstantsModel = new ConstantsModel();
 				$leave_user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
-				if($leave_user_info['user_type'] == 'staff'){
-					$leave_types = $ConstantsModel->where('company_id',$leave_user_info['company_id'])->where('type','leave_type')->first();
-				} else {
-					$leave_types = $ConstantsModel->where('company_id',$usession['sup_user_id'])->where('type','leave_type')->first();
-				}
+				// Resolve the SELECTED leave type (not merely the first) so the quota +
+				// per-request cap belong to the type the employee actually chose.
+				$lt_company = $leave_user_info['user_type'] == 'staff' ? $leave_user_info['company_id'] : $usession['sup_user_id'];
+				$leave_types = $ConstantsModel->where('company_id',$lt_company)->where('type','leave_type')->where('constants_id',$leave_type)->first();
 				// check half leave
 				$no_of_days = erp_date_difference($start_date,$end_date);
 				$tinc = count_employee_leave($luser_id,$leave_type);
-				$days_per_year = $leave_types['field_one'];
+				$days_per_year = (int) ($leave_types['field_one'] ?? 0);
 				$rem_leave = $days_per_year - $tinc;
+				$max_per_request = (int) ($leave_types['leave_max_per_request'] ?? 0);
 				
 				if($rem_leave == 0){
 					$Return['error'] = lang('Main.xin_hr_cant_appply_leave_quota_completed');
 				} else if($no_of_days > $rem_leave){
 					$Return['error'] = lang('Main.xin_hr_cant_appply_morethan').$rem_leave.' '.lang('Main.xin_day');
+				}
+				// Per-request cap (tenant-admin configurable per leave type; 0/null = no cap).
+				if($Return['error']=='' && $max_per_request > 0 && $no_of_days > $max_per_request){
+					$Return['error'] = lang('Leave.xin_leave_max_per_request_error').' '.$max_per_request.' '.lang('Main.xin_day');
 				}
 				if($Return['error']!=''){
 					$Return['csrf_hash'] = csrf_hash();
