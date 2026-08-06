@@ -47,16 +47,12 @@ class Settings extends BaseController {
 			$session->setFlashdata('err_not_logged_in',lang('Dashboard.err_not_logged_in'));
 			return redirect()->to(site_url('erp/login'));
 		}
-		// Super admins always have access to settings
-		if(!empty($user_info) && $user_info['user_type'] == 'super_user'){
-			// allowed
-		} elseif(!empty($user_info) && $user_info['user_type'] == 'company'){
-			// company admins allowed
-		} else {
-			if(!in_array('settings1',staff_role_resource())) {
-				$session->setFlashdata('unauthorized_module',lang('Dashboard.xin_error_unauthorized_module'));
-				return redirect()->to(site_url('erp/desk'));
-			}
+		// System settings edit the GLOBAL platform row (setting_id=1) — super-only,
+		// mirroring super_settings(). A tenant/company must use erp/company-settings
+		// for their own config; allowing them here mutated platform-wide state. [SECURITY]
+		if (empty($user_info) || $user_info['user_type'] !== 'super_user') {
+			$session->setFlashdata('unauthorized_module', lang('Dashboard.xin_error_unauthorized_module'));
+			return redirect()->to(site_url('erp/desk'));
 		}
 		$xin_system = $SystemModel->where('setting_id', 1)->first();
 		$data['title'] = lang('Main.left_settings').' | '.$xin_system['application_name'];

@@ -88,14 +88,29 @@
       "phase": "3",
       "type": "config",
       "target": "static sweeps: lint, debug artifacts, TODO markers, dead code",
-      "status": "PENDING"
+      "status": "DONE",
+      "verification": {
+        "command": "grep debug/TODO sweeps + php -l x1077",
+        "result": "pass: 0 lint fail; debug artifacts all framework/vendor/legacy-tool (non-defect)",
+        "evidence": "audit/DEFECTS.md Static",
+        "timestamp": "2026-08-06T10:40+03"
+      }
     },
     {
       "id": "P4-ROLE-MATRIX",
       "phase": "4",
       "type": "flow",
       "target": "route probe x {anonymous, staff, company, super}",
-      "status": "PENDING"
+      "status": "DONE",
+      "defects": [
+        "D-AUTHZ-01"
+      ],
+      "verification": {
+        "command": "role_matrix.sh (11 routes x 4 roles)",
+        "result": "pass: 0 authz failures after D-AUTHZ-01 fix",
+        "evidence": "scratchpad/role_matrix_out.txt",
+        "timestamp": "2026-08-06T10:42+03"
+      }
     },
     {
       "id": "P5-CONSOLE",

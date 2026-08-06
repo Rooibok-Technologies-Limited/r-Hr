@@ -168,9 +168,10 @@ $setup_modules = !empty($xin_com_system['setup_modules']) ? unserialize($xin_com
                     </a>
                 </li>
                 <?php } ?>
-                <?php if(in_array('settings1',staff_role_resource()) || $user_type_h == 'company') {?>
+                <?php if($user_type_h == 'super_user' || $user_type_h == 'company') {?>
                 <li class="pc-h-item">
-                    <a class="pc-head-link active arrow-none mr-0" data-toggle="tooltip" data-placement="top" title="<?= lang('Main.xin_configuration_wizard');?>" href="<?= site_url('erp/system-settings');?>">
+                    <?php // super -> platform settings; company -> their own tenant settings. ?>
+                    <a class="pc-head-link active arrow-none mr-0" data-toggle="tooltip" data-placement="top" title="<?= lang('Main.xin_configuration_wizard');?>" href="<?= site_url($user_type_h == 'super_user' ? 'erp/system-settings' : 'erp/company-settings');?>">
                         <i data-feather="settings"></i>
                     </a>
                 </li>
