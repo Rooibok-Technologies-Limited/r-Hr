@@ -27,7 +27,8 @@
       "id": "RSP-S3-SWEEP",
       "phase": "S3",
       "target": "overflow/cliff/orphan detectors 320-2560",
-      "status": "PENDING"
+      "status": "IN_PROGRESS",
+      "verification": "320px: dashboard 0 overflow (navbar user-block collapse), staff-list 0 real overflow (DataTables controls stack full-width; wide table keeps .table-responsive scroll). Full 320-2560 8px sweep across all surfaces pending."
     },
     {
       "id": "RSP-S6-AUTH-RECORDS",

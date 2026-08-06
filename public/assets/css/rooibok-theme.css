@@ -345,3 +345,38 @@ html { scroll-padding-top: 74px; scroll-padding-bottom: 40px; }
 :root[data-theme="dark"] .pc-sidebar,
 :root[data-theme="dark"] .pc-header,
 :root[data-theme="dark"] .navbar { background: var(--surface-chrome) !important; border-color: var(--surface-chrome-border) !important; }
+
+/* RSP S3 — navbar mobile overflow: the top-right user block (avatar + full name
+   + username) overran the viewport at <=360px. Collapse to the avatar alone on
+   narrow widths; let the header search shrink instead of forcing overflow. */
+@media (max-width: 575.98px) {
+  .pc-header .user-name,
+  .pc-header .user-desc { display: none !important; }
+  .pc-header .pc-head-link.dropdown-toggle > span { display: none !important; }
+  .pc-header .header-search .form-control,
+  .pc-header input[type="text"][placeholder*="Search"] { min-width: 0 !important; width: 100% !important; }
+  .pc-header .ml-auto { min-width: 0 !important; }
+}
+
+/* RSP S3 — DataTables controls (search + length) overran the viewport at <=360px
+   on every list page. Stack them full-width on narrow screens; the wide table
+   itself keeps its .table-responsive horizontal scroll (acceptable for numeric
+   registers). Shared fix — applies to every list surface. */
+@media (max-width: 575.98px) {
+  .dataTables_wrapper .dataTables_filter,
+  .dataTables_wrapper .dataTables_length {
+    float: none !important;
+    width: 100% !important;
+    text-align: left !important;
+    margin-bottom: 8px;
+  }
+  .dataTables_wrapper .dataTables_filter label,
+  .dataTables_wrapper .dataTables_length label { width: 100%; display: block; }
+  .dataTables_wrapper .dataTables_filter input {
+    width: 100% !important;
+    margin-left: 0 !important;
+    box-sizing: border-box;
+  }
+}
+/* Ensure the table scroll region is genuinely scrollable + hints the affordance. */
+.box-datatable.table-responsive, .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
