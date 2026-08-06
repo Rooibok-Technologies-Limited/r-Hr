@@ -250,3 +250,32 @@ table.dataTable thead th { position: sticky; top: 0; z-index: 2; background: var
 :root[data-theme="dark"] .input-group-text { background: #141922; border-color: var(--rk-border); }
 :root[data-theme="dark"] .breadcrumb { background: transparent; }
 :root[data-theme="dark"] .border, :root[data-theme="dark"] hr { border-color: var(--rk-border) !important; }
+
+/* ===========================================================================
+   RSP S2 — Scroll terminus: every scroll region ends with deliberate breathing
+   room instead of the last card sitting flush against the viewport edge.
+   One definition, applied to the main content region + all inner scrollers.
+   Gutter: <768=24px, 768-1279=32px, >=1280=40px, plus notch safe-area.
+   =========================================================================== */
+.pc-container,
+.rk-scroll-region {
+  padding-bottom: 24px;
+}
+@media (min-width: 768px) {
+  .pc-container, .rk-scroll-region { padding-bottom: 32px; }
+}
+@media (min-width: 1280px) {
+  .pc-container, .rk-scroll-region { padding-bottom: 40px; }
+}
+@supports (padding: max(0px)) {
+  .pc-container, .rk-scroll-region { padding-bottom: max(24px, calc(env(safe-area-inset-bottom) + 24px)); }
+  @media (min-width: 768px)  { .pc-container, .rk-scroll-region { padding-bottom: max(32px, calc(env(safe-area-inset-bottom) + 32px)); } }
+  @media (min-width: 1280px) { .pc-container, .rk-scroll-region { padding-bottom: max(40px, calc(env(safe-area-inset-bottom) + 40px)); } }
+}
+/* Inner scroll regions (modals, drawers, table bodies, menus): contain overscroll
+   and carry the same terminus gutter. */
+.modal-body, .dropdown-menu.show, .pc-sidebar .navbar-content, .table-responsive {
+  overscroll-behavior: contain;
+}
+/* Programmatic scroll + anchor jumps respect the sticky navbar and the gutter. */
+html { scroll-padding-top: 74px; scroll-padding-bottom: 40px; }

@@ -77,3 +77,19 @@ hidden. This silently affected the OLD menus too. Fix: (1) repair the stored dat
 (strip backslashes, all tenant rows); (2) make the read tolerant (retry `unserialize(stripslashes())`).
 P: 2/3 (data-integrity bug). R: A real latent defect the nav restructure surfaced — the old
 sidebars had been hiding purchased modules for affected tenants.
+
+## RSP mandate (responsive/shell/scroll/payroll) — 2026-08-06
+**D-RSP-01** — Q: New RSP mandate says branch `responsive/full-audit-<date>` + extend LEDGER
+with RSP-. But all prior audit work lives on `audit/full-system-20260806` and the user said
+"continue with what you are doing now". A: Continue on the existing `audit/full-system-20260806`
+branch (it carries every prior fix); extend LEDGER.json conceptually with RSP- items in a
+separate audit/LEDGER_RSP.json. P: 1+4 (user's continue instruction + avoid fork duplication).
+R: Forking would duplicate 30+ commits; the owner merges one branch at the end.
+**D-RSP-02** — Q: RSP assumes Tailwind/token stack; this is legacy Bootstrap "pcoded" admin
+theme + jQuery. A: Map to the real stack — scales from `public/assets/css/rooibok-theme.css`
+(--rk-1..7 spacing 4-48px, --rk-radius 10px, --rk-surface/#fff, --rk-bg/#f4f5f9); scroll
+container = document.scrollingElement, main content = `.pc-container`; chrome = `.pc-header`
+(navbar) + `.pc-sidebar` (sidebar). Provider stubs: SMS = NullSmsProvider (verified active).
+P: 3. R: fidelity to intent over literal tool names.
+**D-RSP-03** — Q: Section-spacing gutter tokens vs the --rk scale. A: <768=24px(--rk-5),
+768-1279=32px(--rk-6), >=1280=40px (mandate minimums; 40 not in scale, used directly). P:1.

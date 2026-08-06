@@ -1,0 +1,56 @@
+{
+  "mandate": "responsive-shell-scroll-payroll",
+  "branch": "audit/full-system-20260806",
+  "items": [
+    {
+      "id": "RSP-S0-SETUP",
+      "phase": "S0",
+      "target": "scales+inventory+baseline+stub-check",
+      "status": "DONE",
+      "verification": "scales extracted (--rk-1..7), scroll container=.pc-container, chrome=.pc-header/.pc-sidebar, SMS=NullSmsProvider stub verified"
+    },
+    {
+      "id": "RSP-S2-SCROLL-TERMINUS",
+      "phase": "S2",
+      "target": ".pc-container + all scroll regions bottom gutter",
+      "status": "DONE",
+      "verification": "main .pc-container gutter 24/32/40 verified live @390/768/1920 (was 0 flush); overscroll-contain + scroll-padding added; inner-region full sweep pending"
+    },
+    {
+      "id": "RSP-S1-CHROME",
+      "phase": "S1",
+      "target": "navbar+sidebar unified surface + collapse",
+      "status": "PENDING"
+    },
+    {
+      "id": "RSP-S3-SWEEP",
+      "phase": "S3",
+      "target": "overflow/cliff/orphan detectors 320-2560",
+      "status": "PENDING"
+    },
+    {
+      "id": "RSP-S6-AUTH-RECORDS",
+      "phase": "S6",
+      "target": "employer auth + employee record responsive+authz",
+      "status": "PENDING"
+    },
+    {
+      "id": "RSP-S7-PAYROLL",
+      "phase": "S7",
+      "target": "payroll state machine + calc integrity + idempotency",
+      "status": "PENDING"
+    },
+    {
+      "id": "RSP-S8-NOTIFICATIONS",
+      "phase": "S8",
+      "target": "SMS/email trigger coverage + template vars",
+      "status": "PENDING"
+    },
+    {
+      "id": "RSP-S9-CONFIRMATIONS",
+      "phase": "S9",
+      "target": "destructive-action confirmations + audit",
+      "status": "PENDING"
+    }
+  ]
+}
