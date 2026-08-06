@@ -35,9 +35,11 @@ Evidence-based audit of PayrollCalculator + TaxEngine + DisbursementEngine.
   change some computed values at the sub-shilling level — it needs an explicit owner sign-off
   and a golden-master comparison, and must not be done blindly (mandate: never alter a payroll
   calc to pass a test).
-- **D-PAY-02 (Low, statutory decision):** tax rounds to 2 decimals, but UGX has no subunit —
-  amounts should arguably round to whole shillings. Changing this alters every payslip figure,
-  so it is a jurisdiction/statutory decision for the owner + accountant, not a code cleanup.
+- **D-PAY-02 (FIXED, owner-authorised 2026-08-06):** money now rounds to the CURRENCY's real
+  precision via currency_decimals()/company_currency_decimals() — UGX & other zero-decimal
+  currencies to whole units (statutorily correct), USD/GBP/EUR to 2dp. TaxEngine + PayrollCalculator
+  use a currency-aware minor-unit factor. Verified: UGX net 1M -> 763000 (was 763000.60), GBP
+  unchanged at 763000.60. Golden master regenerated to the corrected UGX baseline.
 - **FIDELITY NOTE (pre-existing, by design):** payslip net does NOT subtract advance/loan
   repayment from take-home (matches the legacy generator; flagged in PayrollCalculator). A
   payroll-correctness decision to revisit with the owner.

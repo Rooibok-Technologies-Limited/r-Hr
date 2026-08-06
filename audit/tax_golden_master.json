@@ -19,88 +19,88 @@
         "gross_salary": 335000,
         "nssf_employee": 16750,
         "nssf_employer": 33500,
-        "paye": 8324.9,
-        "total_deductions": 25074.9,
-        "net_pay": 309925.1
+        "paye": 8325,
+        "total_deductions": 25075,
+        "net_pay": 309925
     },
     "410000": {
         "gross_salary": 410000,
         "nssf_employee": 20500,
         "nssf_employer": 41000,
-        "paye": 20899.7,
-        "total_deductions": 41399.7,
-        "net_pay": 368600.3
+        "paye": 20900,
+        "total_deductions": 41400,
+        "net_pay": 368600
     },
     "500000": {
         "gross_salary": 500000,
         "nssf_employee": 25000,
         "nssf_employer": 50000,
-        "paye": 44499.4,
-        "total_deductions": 69499.4,
-        "net_pay": 430500.6
+        "paye": 44500,
+        "total_deductions": 69500,
+        "net_pay": 430500
     },
     "700000": {
         "gross_salary": 700000,
         "nssf_employee": 35000,
         "nssf_employer": 70000,
-        "paye": 101499.4,
-        "total_deductions": 136499.4,
-        "net_pay": 563500.6
+        "paye": 101500,
+        "total_deductions": 136500,
+        "net_pay": 563500
     },
     "1000000": {
         "gross_salary": 1000000,
         "nssf_employee": 50000,
         "nssf_employer": 100000,
-        "paye": 186999.4,
-        "total_deductions": 236999.4,
-        "net_pay": 763000.6
+        "paye": 187000,
+        "total_deductions": 237000,
+        "net_pay": 763000
     },
     "2410000": {
         "gross_salary": 2410000,
         "nssf_employee": 120500,
         "nssf_employer": 241000,
-        "paye": 588849.4,
-        "total_deductions": 709349.4,
-        "net_pay": 1700650.6
+        "paye": 588850,
+        "total_deductions": 709350,
+        "net_pay": 1700650
     },
     "5000000": {
         "gross_salary": 5000000,
         "nssf_employee": 250000,
         "nssf_employer": 500000,
-        "paye": 1326999.4,
-        "total_deductions": 1576999.4,
-        "net_pay": 3423000.6
+        "paye": 1327000,
+        "total_deductions": 1577000,
+        "net_pay": 3423000
     },
     "10000000": {
         "gross_salary": 10000000,
         "nssf_employee": 500000,
         "nssf_employer": 1000000,
-        "paye": 2751999.4,
-        "total_deductions": 3251999.4,
-        "net_pay": 6748000.6
+        "paye": 2752000,
+        "total_deductions": 3252000,
+        "net_pay": 6748000
     },
     "333333": {
         "gross_salary": 333333,
-        "nssf_employee": 16666.65,
-        "nssf_employer": 33333.3,
-        "paye": 8166.54,
-        "total_deductions": 24833.190000000002,
-        "net_pay": 308499.81
+        "nssf_employee": 16667,
+        "nssf_employer": 33333,
+        "paye": 8167,
+        "total_deductions": 24834,
+        "net_pay": 308499
     },
     "1234567": {
         "gross_salary": 1234567,
-        "nssf_employee": 61728.35,
-        "nssf_employer": 123456.7,
+        "nssf_employee": 61728,
+        "nssf_employer": 123457,
         "paye": 253851,
-        "total_deductions": 315579.35,
-        "net_pay": 918987.65
+        "total_deductions": 315579,
+        "net_pay": 918988
     },
     "999999": {
         "gross_salary": 999999,
-        "nssf_employee": 49999.95,
-        "nssf_employer": 99999.9,
-        "paye": 186999.12,
-        "total_deductions": 236999.07,
-        "net_pay": 762999.93
+        "nssf_employee": 50000,
+        "nssf_employer": 100000,
+        "paye": 186999,
+        "total_deductions": 236999,
+        "net_pay": 763000
     }
 }

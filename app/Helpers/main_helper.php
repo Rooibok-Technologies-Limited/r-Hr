@@ -1659,3 +1659,36 @@ if( !function_exists('erp_currency_symbol') ){
 		return $cache[$code] = $code;
 	}
 }
+
+// ---------------------------------------------------------------------------
+// Currency decimal places — money is rounded to its currency's real precision.
+// Zero-decimal currencies (UGX, KES, TZS, RWF, BIF, JPY, ...) have NO minor
+// unit: payroll/tax in those is whole units, not 2dp. Everything else = 2dp.
+// Used by the payroll integer-minor-unit arithmetic so the rounding granularity
+// matches the actual currency (D-PAY-02).
+// ---------------------------------------------------------------------------
+if( !function_exists('currency_decimals') ){
+	function currency_decimals(?string $code = null): int {
+		$zero = ['UGX','KES','TZS','RWF','BIF','JPY','KRW','VND','XAF','XOF','CLP','ISK','PYG','GNF','DJF','KMF','MGA','XPF'];
+		$code = strtoupper(trim((string) ($code ?? (function_exists('erp_currency') ? erp_currency() : 'UGX'))));
+		return in_array($code, $zero, true) ? 0 : 2;
+	}
+}
+// Decimals for a specific company's currency (worker-safe: reads the settings row
+// directly, no session dependency).
+if( !function_exists('company_currency_decimals') ){
+	function company_currency_decimals(int $companyId): int {
+		try {
+			$row = \Config\Database::connect()->table('ci_erp_company_settings')
+				->where('company_id', $companyId)->get()->getRowArray() ?: [];
+			$code = trim((string) ($row['default_currency'] ?? ''));
+			if ($code === '') {
+				$sys  = (new \App\Models\SystemModel())->where('setting_id', 1)->first() ?: [];
+				$code = trim((string) ($sys['default_currency'] ?? 'UGX'));
+			}
+			return currency_decimals($code);
+		} catch (\Throwable $e) {
+			return currency_decimals('UGX');
+		}
+	}
+}
