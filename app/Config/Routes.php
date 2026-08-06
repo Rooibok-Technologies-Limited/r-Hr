@@ -1254,6 +1254,16 @@ $routes->group('api/v1', ['namespace' => 'App\Controllers\Api\V1', 'filter' => '
 
 // --- Route/JS drift fixes: DataTables & modal ajax endpoints whose controller
 // --- methods existed but were never wired (auto-routing off). Added 32 routes.
+// --- Second sweep (single-quoted main_url+'...' JS calls the first parser missed):
+$routes->match(['get','post'], 'erp/products/product_list', 'Products::product_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/products/out_of_stock_list', 'Products::out_of_stock_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/products/expired_product_list', 'Products::expired_product_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/customfields/customfields_list', 'Customfields::customfields_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/customfields/delete_customfield', 'Customfields::delete_customfield', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/documents/delete_official_document', 'Documents::delete_official_document', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/officeshifts/delete_office_shift', 'Officeshifts::delete_office_shift', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/orderquotes/delete_quoteorder', 'Orderquotes::delete_quoteorder', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
+$routes->match(['get','post'], 'erp/settings/constants_read', 'Settings::constants_read', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/agenda/advance_salary_list/(:num)', 'Agenda::advance_salary_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/agenda/awards_list/(:num)', 'Agenda::awards_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);
 $routes->match(['get','post'], 'erp/agenda/expense_list/(:num)', 'Agenda::expense_list', ['namespace' => 'App\Controllers\Erp', 'filter' => 'checklogin']);

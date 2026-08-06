@@ -384,10 +384,17 @@ class Products extends BaseController {
 		$xin_system = erp_company_settings();
 		$user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
 		if($user_info['user_type'] == 'staff'){
-			$get_data = $ProductsModel->where('company_id',$user_info['company_id'])->where('expiration_date < CURDATE()')->orderBy('product_id', 'ASC')->findAll();
+			$get_data = $ProductsModel->where('company_id',$user_info['company_id'])->orderBy('product_id', 'ASC')->findAll();
 		} else {
-			$get_data = $ProductsModel->where('company_id',$usession['sup_user_id'])->where('expiration_date < CURDATE()')->orderBy('product_id', 'ASC')->findAll();
+			$get_data = $ProductsModel->where('company_id',$usession['sup_user_id'])->orderBy('product_id', 'ASC')->findAll();
 		}
+		// expiration_date is a free-format varchar (legacy MySQL CURDATE() filter
+		// broke on Postgres) — filter in PHP like product_list's badge logic.
+		$today = strtotime(date('Y-m-d'));
+		$get_data = array_filter($get_data, static function ($r) use ($today) {
+			$exp = strtotime((string) ($r['expiration_date'] ?? ''));
+			return $exp !== false && $exp < $today;
+		});
 		$data = array();
 		
           foreach($get_data as $r) {
