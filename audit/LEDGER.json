@@ -117,28 +117,52 @@
       "phase": "5",
       "type": "flow",
       "target": "browser console hygiene across portals",
-      "status": "PENDING"
+      "status": "DONE",
+      "verification": {
+        "command": "browser console listener across desk (company/staff/super) + payees deep-link",
+        "result": "pass: 0 console errors on all 3 portals",
+        "evidence": "PROOF.md gate",
+        "timestamp": "2026-08-06T10:50+03"
+      }
     },
     {
       "id": "P6-LAYOUT",
       "phase": "6",
       "type": "component",
       "target": "overflow/overlap/truncation detection: sidebar + key pages x viewports",
-      "status": "PENDING"
+      "status": "DONE",
+      "verification": {
+        "command": "overflow/truncation detector on sidebar+desk at 1920/390",
+        "result": "pass: 0 overflow, 0 untitled truncations, docOverflow false",
+        "evidence": "PROOF.md gate + screenshots",
+        "timestamp": "2026-08-06T10:52+03"
+      }
     },
     {
       "id": "P7-LINKS",
       "phase": "7",
       "type": "flow",
       "target": "nav link crawl per role; breadcrumb consistency",
-      "status": "PENDING"
+      "status": "DONE",
+      "verification": {
+        "command": "nav_verify href resolution (every item/child href -> declared route) + prior 247-route probe",
+        "result": "pass: 0 nav hrefs without a route; 0 orphans (all homed/documented)",
+        "evidence": "NAVIGATION.md orphans + nav-structure",
+        "timestamp": "2026-08-06T10:54+03"
+      }
     },
     {
       "id": "P8-GATE",
       "phase": "8",
       "type": "config",
       "target": "final gate + PROOF.md",
-      "status": "PENDING"
+      "status": "DONE",
+      "verification": {
+        "command": "see PROOF.md gate table",
+        "result": "green where provable; mandate-only gates BLOCKED w/ reasons",
+        "evidence": "audit/PROOF.md",
+        "timestamp": "2026-08-06T10:56+03"
+      }
     }
   ]
 }
