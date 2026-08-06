@@ -44,12 +44,19 @@ views: `company_dashboard.php`, `staff_dashboard.php`, `super_admin_dashboard.ph
 - A4. Verify each of the 4 dashboards at 1280/768/390 for overflow + a neat grid.
 **Dependency:** none. Can start immediately.
 
-## PHASE B — Leave engine: rules + tenant config (partially exists)
+## PHASE B — Leave engine: rules + tenant config — DONE (f3e29d7, 9d3bd48, 2026-08-06)
 **Current state (verified):** leave application ALREADY deducts dynamically — `Leave.php`
 computes `rem_leave = days_per_year(field_one) - taken` and rejects requests exceeding the
 remaining annual quota, and blocks when quota is 0. Leave types live in `ci_erp_constants`
 (type=leave_type, `field_one`=days/year). Staff dashboard shows per-type assigned/remaining.
-**Gaps to build:**
+**Built this session:**
+- ci_erp_constants.leave_max_per_request (migration ...000002); tenant admin sets
+  'Max days per application' on the leave-type add form + edit dialog + list column;
+  Leave::add_leave enforces it after the quota check (dynamic, no hardcoded 10/21).
+- BUGFIX: quota lookup fetched the FIRST leave type not the SELECTED one (Sick validated
+  against Annual). Now filters by chosen constants_id. Verified: cap=3 rejects 5-day, accepts 2-day.
+
+**Remaining (optional stretch):**
 - B1. **Max-days-per-single-application** rule ("only 10 at a time / 21"). Add a per-leave-type
   field (`field_two` is free — repurpose as `max_per_request`, or add a column). Enforce in
   `Leave.php` application validation: `if ($no_of_days > $max_per_request) reject`.
