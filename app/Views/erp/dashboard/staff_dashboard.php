@@ -299,7 +299,7 @@ if(!function_exists('sa_fmt_money')) { function sa_fmt_money($n) { if($n>=100000
     <a href="<?= site_url('erp/payroll-list'); ?>" class="sa-kpi-link">
       <div class="card sa-kpi-card"><div class="sa-kpi sa-kpi-warning">
         <i class="feather icon-dollar-sign sa-kpi-icon"></i>
-        <p class="sa-kpi-number">UGX <?= sa_fmt_money($this_month_pay ? (float)$this_month_pay['net_salary'] : 0); ?></p>
+        <p class="sa-kpi-number"><?= erp_currency_symbol();?> <?= sa_fmt_money($this_month_pay ? (float)$this_month_pay['net_salary'] : 0); ?></p>
         <div class="sa-kpi-label">Net pay this month</div>
         <div class="sa-kpi-trend sa-kpi-trend-up"><?= $this_month_pay ? 'Payslip ready' : 'Not yet processed'; ?></div>
       </div></div>
@@ -311,7 +311,7 @@ if(!function_exists('sa_fmt_money')) { function sa_fmt_money($n) { if($n>=100000
     <a href="<?= site_url('erp/expenses'); ?>" class="sa-kpi-link">
       <div class="card sa-kpi-card"><div class="sa-kpi sa-kpi-info">
         <i class="feather icon-file-text sa-kpi-icon"></i>
-        <p class="sa-kpi-number">UGX <?= sa_fmt_money($pending_expense_total); ?></p>
+        <p class="sa-kpi-number"><?= erp_currency_symbol();?> <?= sa_fmt_money($pending_expense_total); ?></p>
         <div class="sa-kpi-label">Pending expenses</div>
         <div class="sa-kpi-trend"><?= $pending_expense_count; ?> claims awaiting approval</div>
       </div></div>
@@ -359,9 +359,9 @@ if(!function_exists('sa_fmt_money')) { function sa_fmt_money($n) { if($n>=100000
           <?php endforeach; ?>
         </div>
         <div class="row text-center mt-3">
-          <div class="col-4"><h5 class="mb-0">UGX <?= sa_fmt_money((float)($ytd['net'] ?? 0)); ?></h5><small class="text-muted">YTD earnings</small></div>
-          <div class="col-4"><h5 class="mb-0">UGX <?= sa_fmt_money($this_month_pay ? (float)$this_month_pay['net_salary'] : 0); ?></h5><small class="text-muted">This month net</small></div>
-          <div class="col-4"><h5 class="mb-0 text-danger">UGX <?= sa_fmt_money((float)($ytd['ded'] ?? 0)); ?></h5><small class="text-muted">PAYE + NSSF deducted</small></div>
+          <div class="col-4"><h5 class="mb-0"><?= erp_currency_symbol();?> <?= sa_fmt_money((float)($ytd['net'] ?? 0)); ?></h5><small class="text-muted">YTD earnings</small></div>
+          <div class="col-4"><h5 class="mb-0"><?= erp_currency_symbol();?> <?= sa_fmt_money($this_month_pay ? (float)$this_month_pay['net_salary'] : 0); ?></h5><small class="text-muted">This month net</small></div>
+          <div class="col-4"><h5 class="mb-0 text-danger"><?= erp_currency_symbol();?> <?= sa_fmt_money((float)($ytd['ded'] ?? 0)); ?></h5><small class="text-muted">PAYE + NSSF deducted</small></div>
         </div>
         <?php endif; ?>
       </div>
@@ -473,13 +473,13 @@ if(!function_exists('sa_fmt_money')) { function sa_fmt_money($n) { if($n>=100000
             <div class="small text-muted">Submitted <?= date('d M', strtotime($ex['expense_date'])); ?></div>
           </div>
           <div class="text-right">
-            <div class="small font-weight-bold">UGX <?= sa_fmt_money((float)$ex['amount']); ?></div>
+            <div class="small font-weight-bold"><?= erp_currency_symbol();?> <?= sa_fmt_money((float)$ex['amount']); ?></div>
             <span class="badge <?= $eb; ?>"><?= $el; ?></span>
           </div>
         </div>
         <?php endforeach; ?>
         <div class="px-3 py-2 text-right">
-          <small>Pending reimbursement <strong class="text-success">UGX <?= sa_fmt_money($pending_expense_total); ?></strong></small>
+          <small>Pending reimbursement <strong class="text-success"><?= erp_currency_symbol();?> <?= sa_fmt_money($pending_expense_total); ?></strong></small>
         </div>
         <?php endif; ?>
       </div>
@@ -617,7 +617,7 @@ if(!function_exists('sa_fmt_money')) { function sa_fmt_money($n) { if($n>=100000
             <div class="small text-muted"><?= esc($aw['gift_item'] ?? ''); ?></div>
           </div>
           <?php if(!empty($aw['cash_price']) && $aw['cash_price'] > 0): ?>
-          <span class="small font-weight-bold text-success">UGX <?= sa_fmt_money((float)$aw['cash_price']); ?></span>
+          <span class="small font-weight-bold text-success"><?= erp_currency_symbol();?> <?= sa_fmt_money((float)$aw['cash_price']); ?></span>
           <?php endif; ?>
         </div>
         <?php endforeach; endif; ?>

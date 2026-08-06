@@ -15,7 +15,7 @@ $isSuper    = ! empty($is_super);
     <div class="card">
       <div class="card-body text-center">
         <h6 class="text-muted mb-2">Available balance</h6>
-        <h2 class="mb-0"><span id="w-currency">UGX</span> <span id="w-balance">—</span></h2>
+        <h2 class="mb-0"><span id="w-currency"><?= erp_currency_symbol();?></span> <span id="w-balance">—</span></h2>
       </div>
     </div>
   </div>
@@ -23,7 +23,7 @@ $isSuper    = ! empty($is_super);
     <div class="card">
       <div class="card-body text-center">
         <h6 class="text-muted mb-2">Reserved (in-flight payouts)</h6>
-        <h2 class="mb-0 text-warning"><span class="w-currency2">UGX</span> <span id="w-reserved">—</span></h2>
+        <h2 class="mb-0 text-warning"><span class="w-currency2"><?= erp_currency_symbol();?></span> <span id="w-reserved">—</span></h2>
       </div>
     </div>
   </div>
@@ -31,7 +31,7 @@ $isSuper    = ! empty($is_super);
     <div class="card">
       <div class="card-body text-center">
         <h6 class="text-muted mb-2">Total held</h6>
-        <h2 class="mb-0 text-primary"><span class="w-currency2">UGX</span> <span id="w-total">—</span></h2>
+        <h2 class="mb-0 text-primary"><span class="w-currency2"><?= erp_currency_symbol();?></span> <span id="w-total">—</span></h2>
       </div>
     </div>
   </div>
@@ -44,7 +44,7 @@ $isSuper    = ! empty($is_super);
       <div class="card-body">
         <?= csrf_field() ?>
         <div class="form-group">
-          <label class="form-label">Amount (UGX) <span class="text-danger">*</span></label>
+          <label class="form-label">Amount (<?= erp_currency_symbol();?>) <span class="text-danger">*</span></label>
           <input type="number" min="1" step="0.01" class="form-control" id="topup-amount" placeholder="e.g. 500000">
         </div>
         <?php if ($isSuper): ?>

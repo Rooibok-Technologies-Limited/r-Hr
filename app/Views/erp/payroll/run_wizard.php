@@ -7,7 +7,7 @@
  * Talks to Erp\PayrollRun JSON endpoints via fetch. The disburse step hands off
  * to the disbursement dashboard where the money maker-checker lives.
  */
-$currency = $currency ?? 'UGX';
+$currency = $currency ?? erp_currency_symbol();
 $period   = $default_period ?? date('Y-m');
 ?>
 <div class="row">

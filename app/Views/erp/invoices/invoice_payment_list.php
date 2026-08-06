@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
 $db = \Config\Database::connect();
 
 $_total_q = $db->query("SELECT COUNT(*) AS c FROM ci_finance_membership_invoices");
@@ -20,7 +24,7 @@ $total_revenue = $_rev_q ? (float)($_rev_q->getRow()->s ?? 0) : 0;
   <div class="col-md-4 col-6">
     <div class="card mb-0">
       <div class="card-body py-3 text-center">
-        <h4 class="mb-0 text-success">UGX <?= number_format($total_revenue, 0); ?></h4>
+        <h4 class="mb-0 text-success"><?= erp_currency_symbol();?> <?= number_format($total_revenue, 0); ?></h4>
         <small class="text-muted">Total Collected</small>
       </div>
     </div>
@@ -28,7 +32,7 @@ $total_revenue = $_rev_q ? (float)($_rev_q->getRow()->s ?? 0) : 0;
   <div class="col-md-4 col-12">
     <div class="card mb-0">
       <div class="card-body py-3 text-center">
-        <h4 class="mb-0 text-primary"><?= $total > 0 ? 'UGX '.number_format($total_revenue / $total, 0) : '0'; ?></h4>
+        <h4 class="mb-0 text-primary"><?= $total > 0 ? erp_currency_symbol().' '.number_format($total_revenue / $total, 0) : '0'; ?></h4>
         <small class="text-muted">Average Payment</small>
       </div>
     </div>
@@ -48,7 +52,7 @@ $total_revenue = $_rev_q ? (float)($_rev_q->getRow()->s ?? 0) : 0;
             <th>Invoice #</th>
             <th>Company</th>
             <th>Plan</th>
-            <th>Amount (UGX)</th>
+            <th>Amount (<?= erp_currency_symbol();?>)</th>
             <th>Payment Method</th>
             <th>Date</th>
             <th class="text-center">Actions</th>

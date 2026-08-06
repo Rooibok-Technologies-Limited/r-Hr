@@ -72,7 +72,9 @@ if($_diff_days < 8){
   <div class="col-xl-3 col-md-6">
     <div class="card rk-kpi rk-kpi-success"><div class="card-body">
       <div class="rk-kpi-top"><span class="rk-kpi-label">Wallet balance</span><i data-feather="credit-card"></i></div>
-      <div class="rk-kpi-value"><?= number_to_currency((float) ($rk_wallet['available'] ?? 0), $rk_wallet['currency'] ?? (erp_currency() ?? 'UGX'), null, 0); ?></div>
+      <?php // Display in the tenant's currency like every other KPI — the wallet's own
+            // denomination field was leaking a different code (UGX) next to £/$ elsewhere. ?>
+      <div class="rk-kpi-value"><?= number_to_currency((float) ($rk_wallet['available'] ?? 0), erp_currency(), null, 0); ?></div>
     </div></div>
   </div>
   <div class="col-xl-3 col-md-6">

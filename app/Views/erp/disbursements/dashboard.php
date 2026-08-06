@@ -13,7 +13,7 @@ $cap  = function ($v) { return $v > 0 ? number_format($v) : '—'; };
 <div class="row">
   <div class="col-md-4">
     <div class="card"><div class="card-body">
-      <h6 class="text-muted">Safety caps (UGX)</h6>
+      <h6 class="text-muted">Safety caps (<?= erp_currency_symbol();?>)</h6>
       <div class="d-flex justify-content-between"><span>Per transaction</span><strong><?= $cap($caps['per_txn']) ?></strong></div>
       <div class="d-flex justify-content-between"><span>Per run</span><strong><?= $cap($caps['per_run']) ?></strong></div>
       <div class="d-flex justify-content-between"><span>Per day</span><strong><?= $cap($caps['per_day']) ?></strong></div>
@@ -134,7 +134,7 @@ $cap  = function ($v) { return $v > 0 ? number_format($v) : '—'; };
     var c = document.getElementById('d-company').value; if (c) p.company_id = c;
     post(base + '/build-payroll', p).then(function (j) {
       var el = document.getElementById('d-build-result');
-      if (j.ok) { el.innerHTML = '<span class="text-success">Built batch #' + j.batch_id + ' — ' + j.count + ' lines, UGX ' + fmt(j.total) + '</span>'; toastr.success('Batch built'); loadBatches(); }
+      if (j.ok) { el.innerHTML = '<span class="text-success">Built batch #' + j.batch_id + ' — ' + j.count + ' lines, <?= erp_currency_symbol();?> ' + fmt(j.total) + '</span>'; toastr.success('Batch built'); loadBatches(); }
       else { el.innerHTML = '<span class="text-danger">' + (j.reason || 'Failed') + '</span>'; toastr.error(j.reason || 'Failed'); }
     });
   });
