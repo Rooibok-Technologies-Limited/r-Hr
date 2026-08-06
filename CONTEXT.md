@@ -72,10 +72,14 @@ polish DONE (2026-08-05). Merged to main (migrations 000001/000002/000003 run):
 - **Launch polish** — branded self-contained 404/500; legal pages (privacy/terms/
   cookies) seeded in `ci_landing_content`; Playwright smoke green.
 
-**▶ RESUME:** next big items = Phase 3 Traefik deploy (owner-run, config authored),
-remaining #6 dead-JS triage, employee-ID auto-gen (awaiting owner's format image),
-Playwright live suite, P8 notif idempotency. Legal copy is boilerplate — get counsel
-review before go-live. Detail: `.claude`-memory `hr-pending-work-2026-08` +
+**▶ RESUME:** everything actionable is DONE (P8 idempotency closed c6162e2;
+suite complete; #6 closed; employee-ID + currency shipped). BLOCKED ON OWNER:
+(1) Phase 3 deploy waits on BUYING the product domain (runbook
+docs/DEPLOY-phase3.md is domain-agnostic — set PLATFORM_HOST; owner confirmed
+2026-08-06 no domain yet; do NOT use parent-brand rooibok.tech); (2) delete old
+hr_* docker volumes (`docker volume rm hr_pg_data hr_pg_archive_data
+hr_uploads_data hr_certbot_data` — hr_redis_data already removed); (3) legal
+copy counsel review. Detail: `.claude`-memory `hr-pending-work-2026-08` +
 `hr-deploy-readiness-2026-08`.
 
 ### Prior: ADR-003 **Phase 2 — tenant enforcement + clean erp-less URLs** — DONE (2026-08-04).
