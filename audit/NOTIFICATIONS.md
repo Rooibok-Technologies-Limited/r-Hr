@@ -39,4 +39,8 @@ to call notifier->send at those transitions.
 - SMS: NullSmsProvider active in dev (no real sends); E.164 normalisation in the MoMo/Airtel libs.
 - Delivery: queued over beanstalkd (non-blocking); worker consumes emails+sms tubes.
 
-## Next (S8 continuation): implement D-NOTIF-02 triggers + per-template render tests.
+## D-NOTIF-02 progress
+- leave.approved / leave.rejected: in-app notification added at Leave::update_leave_status
+  (inapp-only — email/SMS already sent by the legacy path; no double-send). Verified live.
+
+## Next (S8 continuation): remaining D-NOTIF-02 triggers (payroll/disbursement/payslip states) + per-template render tests.

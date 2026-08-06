@@ -688,6 +688,16 @@ class Leave extends BaseController {
 						}
 						$leave_result = $LeaveModel->where('leave_id', $id)->first();
 						if($status  == 2){ //approve
+							// In-app notification to the employee (email/SMS already sent by the
+							// legacy path below — inapp-only here avoids double-sending). [S8]
+							try {
+								$ltn = $ConstantsModel->where('constants_id', $leave_result['leave_type_id'])->where('type','leave_type')->first();
+								service('notifier')->send((int) $leave_result['employee_id'], 'leave.approved', [
+									'title' => lang('Main.xin_approved').' · '.($ltn['category_name'] ?? ''),
+									'body'  => ($leave_result['from_date'] ?? '').' → '.($leave_result['to_date'] ?? '').($remarks ? ' · '.$remarks : ''),
+									'link'  => 'erp/leave-list',
+								], ['inapp']);
+							} catch (\Throwable $e) { log_message('error', 'leave.approved notify: '.$e->getMessage()); }
 							// Send mail start
 							if($xin_system['enable_email_notification'] == 1){
 								$itemplate = $EmailtemplatesModel->where('template_id', 14)->first();
@@ -711,6 +721,14 @@ class Leave extends BaseController {
 								timehrm_sms_data($istaff_info['contact_number'],$fbody);
 							}
 						} elseif($status == 3){
+							try {
+								$ltn = $ConstantsModel->where('constants_id', $leave_result['leave_type_id'])->where('type','leave_type')->first();
+								service('notifier')->send((int) $leave_result['employee_id'], 'leave.rejected', [
+									'title' => lang('Main.xin_rejected').' · '.($ltn['category_name'] ?? ''),
+									'body'  => ($leave_result['from_date'] ?? '').' → '.($leave_result['to_date'] ?? '').($remarks ? ' · '.$remarks : ''),
+									'link'  => 'erp/leave-list',
+								], ['inapp']);
+							} catch (\Throwable $e) { log_message('error', 'leave.rejected notify: '.$e->getMessage()); }
 							// Send mail start
 							if($xin_system['enable_email_notification'] == 1){
 								$itemplate = $EmailtemplatesModel->where('template_id', 15)->first();

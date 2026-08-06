@@ -48,7 +48,7 @@
       "phase": "S8",
       "target": "SMS/email trigger coverage + template vars",
       "status": "DONE",
-      "verification": "D-NOTIF-01 FIXED (all 13 email templates had code1 -> Notifier email channel dead; migration ...000003 sets real event-slug codes, 0 code1 remaining, company_registered resolves). D-NOTIF-02 coverage gap (~5 of ~25 events wired) documented in audit/NOTIFICATIONS.md for scoped implementation. Template-var safety verified (0 unresolved). SMS stub active."
+      "verification": "D-NOTIF-01 FIXED (all 13 email templates had code1 -> Notifier email channel dead; migration ...000003 sets real event-slug codes, 0 code1 remaining, company_registered resolves). D-NOTIF-02 coverage gap (~5 of ~25 events wired) documented in audit/NOTIFICATIONS.md for scoped implementation. Template-var safety verified (0 unresolved). SMS stub active. | D-NOTIF-02 partial: added in-app leave.approved/leave.rejected notifications to Leave::update_leave_status (inapp-only, no duplication of legacy email/SMS). Verified: notifier->send creates the ci_notifications row for the employee."
     },
     {
       "id": "RSP-S9-CONFIRMATIONS",
