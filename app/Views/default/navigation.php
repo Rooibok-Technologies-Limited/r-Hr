@@ -60,13 +60,15 @@ $navLabel = static function (string $token): string {
         <?php endforeach; ?>
         </ul>
       </li>
-    <?php else: ?>
-      <li class="pc-item<?= $item['active'] ? ' active' : '' ?>" data-nav-id="<?= esc($item['id']) ?>">
+    <?php else: $locked = ! empty($item['locked']); ?>
+      <li class="pc-item<?= $item['active'] ? ' active' : '' ?><?= $locked ? ' pc-locked' : '' ?>" data-nav-id="<?= esc($item['id']) ?>">
         <a href="<?= $item['external'] ? esc($item['href'], 'attr') : site_url($item['href']) ?>"
            class="pc-link"<?= $item['external'] ? ' target="_blank" rel="noopener"' : '' ?>
-           <?= $item['active'] ? 'aria-current="page"' : '' ?>>
+           <?= $item['active'] ? 'aria-current="page"' : '' ?>
+           <?= $locked ? 'title="' . $label . ' — ' . esc(lang('Nav.upgrade_hint'), 'attr') . '"' : '' ?>>
           <span class="pc-micon"><i data-feather="<?= esc($item['icon']) ?>"></i></span>
           <span class="pc-mtext" title="<?= $label ?>"><?= $label ?></span>
+          <?php if ($locked): ?><span class="pc-badge-lock" aria-hidden="true"><i data-feather="lock"></i></span><?php endif; ?>
         </a>
       </li>
     <?php endif; ?>
@@ -89,3 +91,9 @@ $navLabel = static function (string $token): string {
   });
 })();
 </script>
+<style>
+.pc-navbar .pc-locked > .pc-link { opacity: .55; }
+.pc-navbar .pc-locked .pc-badge-lock { margin-left: auto; display: inline-flex; align-items: center; }
+.pc-navbar .pc-locked .pc-badge-lock svg { width: 14px; height: 14px; }
+.nav-search .form-control { font-size: .8125rem; }
+</style>

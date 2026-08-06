@@ -60,3 +60,20 @@ the domain per the mandate's own instruction: Overview, People, Time & Leave, Ta
 Workspace (projects/tasks/CRM/inventory/documents), Engagement, Configuration for company;
 System for super admin. P: 1 ("adapt it to what this system actually does"). R: Users think
 "payroll", not "Operations".
+
+**D-008** — Q: Plan-gated tenant features (Projects, Tasks, Inventory on a plan that lacks
+them) vanished from the sidebar, making it look sparse/incomplete (user feedback). Hide or
+show-locked? A: SHOW-LOCKED for the tenant admin (company): the item renders with a lock badge
+and links to `erp/feature-locked/{feature}` (the existing upgrade page); team members (staff)
+still hide plan-locked items (they cannot upgrade — showing them is noise). Module (setup_modules)
+and role-resource gates still hard-hide. P: 1 (user's explicit "comprehensively" ask). R:
+Discoverable + upsell-friendly + matches how the rest of the product already handles plan gates
+(feature-locked interstitial exists). Comprehensive without being misleading (lock is explicit).
+
+**D-009** — Q: Company sidebar was missing Performance/Recruitment/Training even on a plan that
+grants them. Root cause? A: `ci_erp_company_settings.setup_modules` was stored with escaped
+quotes (`\"`), so `unserialize()` failed → every module read as OFF → module-gated items
+hidden. This silently affected the OLD menus too. Fix: (1) repair the stored data
+(strip backslashes, all tenant rows); (2) make the read tolerant (retry `unserialize(stripslashes())`).
+P: 2/3 (data-integrity bug). R: A real latent defect the nav restructure surfaced — the old
+sidebars had been hiding purchased modules for affected tenants.

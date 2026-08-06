@@ -57,6 +57,8 @@ class Navigation
                 'items' => [
                     ['id' => 'employees', 'label' => 'nav.employees', 'icon' => 'users', 'href' => 'erp/staff-list',
                      'resources' => ['staff2', 'shift1', 'staffexit1']],
+                    ['id' => 'roles', 'label' => 'nav.roles', 'icon' => 'shield', 'href' => 'erp/set-roles',
+                     'roles' => ['company']],
                     ['id' => 'recruitment', 'label' => 'nav.recruitment', 'icon' => 'gitlab', 'href' => 'erp/jobs-list',
                      'plan' => 'recruitment', 'module' => 'recruitment',
                      'resources' => ['ats2', 'candidate', 'interview', 'promotion']],
@@ -171,6 +173,8 @@ class Navigation
                      'children' => [
                         ['id' => 'products', 'label' => 'nav.products', 'href' => 'erp/product-list', 'resources' => ['product1']],
                         ['id' => 'out_of_stock', 'label' => 'nav.out_of_stock', 'href' => 'erp/out-of-stock-products', 'resources' => ['out_of_stock']],
+                        ['id' => 'expired_products', 'label' => 'nav.expired_products', 'href' => 'erp/expired-products', 'resources' => ['expired_product']],
+                        ['id' => 'product_categories', 'label' => 'nav.product_categories', 'href' => 'erp/products-category', 'resources' => ['product_category1']],
                         ['id' => 'suppliers', 'label' => 'nav.suppliers', 'href' => 'erp/suppliers-list', 'resources' => ['supplier1']],
                         ['id' => 'purchases', 'label' => 'nav.purchases', 'href' => 'erp/stock-purchases', 'resources' => ['purchases1', 'purchases2']],
                         ['id' => 'sales_orders', 'label' => 'nav.sales_orders', 'href' => 'erp/stock-orders', 'resources' => ['sales_order1', 'sales_order2']],

@@ -73,6 +73,9 @@ return [
     'inventory'         => 'Inventory',
     'products'          => 'Products',
     'out_of_stock'      => 'Out of Stock',
+    'roles'             => 'Roles & Permissions',
+    'expired_products'  => 'Expired Products',
+    'product_categories'=> 'Product Categories',
     'suppliers'         => 'Suppliers',
     'purchases'         => 'Purchases',
     'sales_orders'      => 'Sales Orders',
@@ -107,4 +110,5 @@ return [
 
     // command palette
     'search_placeholder' => 'Search navigation…',
+    'upgrade_hint'       => 'Upgrade to unlock',
 ];

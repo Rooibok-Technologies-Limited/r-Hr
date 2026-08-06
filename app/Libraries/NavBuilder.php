@@ -68,25 +68,40 @@ class NavBuilder
 
     private function buildItem(array $item): ?array
     {
-        if (! $this->visible($item)) {
+        // Hard filters (role, module toggle, staff resources) hide entirely.
+        if (! $this->applicable($item)) {
             return null;
         }
 
+        // Plan gate is SOFT for the tenant admin: a plan-locked feature stays in
+        // the sidebar (comprehensive + discoverable) but points at the upgrade
+        // page with a lock. Team members (staff) can't upgrade, so it hides.
+        $locked = false;
+        if (isset($item['plan']) && function_exists('plan_allows') && ! plan_allows($item['plan'])) {
+            if ($this->userType !== 'company') {
+                return null;
+            }
+            $locked = true;
+        }
+
         $children = [];
-        foreach ($item['children'] ?? [] as $child) {
-            if ($this->visible($child)) {
-                $href = $child['href'];
-                $children[] = [
-                    'id'     => $child['id'],
-                    'label'  => $child['label'],
-                    'href'   => $href,
-                    'active' => $this->isActive($href),
-                ];
+        if (! $locked) {
+            foreach ($item['children'] ?? [] as $child) {
+                if ($this->applicable($child)
+                    && ! (isset($child['plan']) && function_exists('plan_allows') && ! plan_allows($child['plan']))) {
+                    $href = $child['href'];
+                    $children[] = [
+                        'id'     => $child['id'],
+                        'label'  => $child['label'],
+                        'href'   => $href,
+                        'active' => $this->isActive($href),
+                    ];
+                }
             }
         }
 
-        $href      = $item['href'];
-        $selfActive = $this->isActive($href);
+        $href       = $locked ? ('erp/feature-locked/' . $item['plan']) : $item['href'];
+        $selfActive = ! $locked && $this->isActive($item['href']);
         $childActive = false;
         foreach ($children as $c) {
             $childActive = $childActive || $c['active'];
@@ -98,6 +113,7 @@ class NavBuilder
             'icon'        => $item['icon'] ?? 'circle',
             'href'        => $href,
             'external'    => ! empty($item['external']),
+            'locked'      => $locked,
             'children'    => $children,
             'active'      => $selfActive || $childActive,
             'childActive' => $childActive,
@@ -114,18 +130,16 @@ class NavBuilder
     }
 
     /**
-     * Full visibility test for an item or child: role, plan tier, tenant module
-     * toggle, and staff role-resource. company/super_user bypass resource checks.
+     * Hard-applicability test (NOT plan — plan is handled softly in buildItem):
+     * role, tenant module toggle, and staff role-resource. company/super_user
+     * bypass resource checks; super_user bypasses the module toggle (platform view).
      */
-    private function visible(array $node): bool
+    private function applicable(array $node): bool
     {
         if (! $this->roleAllows($node)) {
             return false;
         }
-        if (isset($node['plan']) && function_exists('plan_allows') && ! plan_allows($node['plan'])) {
-            return false;
-        }
-        if (isset($node['module']) && ! $this->moduleEnabled($node['module'])) {
+        if (isset($node['module']) && $this->userType !== 'super_user' && ! $this->moduleEnabled($node['module'])) {
             return false;
         }
         if (isset($node['resources']) && $this->userType === 'staff') {
@@ -142,9 +156,15 @@ class NavBuilder
         if ($modules === null) {
             $modules = [];
             if (function_exists('erp_company_settings')) {
-                $cs = erp_company_settings() ?: [];
-                $raw = $cs['setup_modules'] ?? '';
-                $decoded = @unserialize((string) $raw);
+                $cs  = erp_company_settings() ?: [];
+                $raw = (string) ($cs['setup_modules'] ?? '');
+                // Some tenant rows stored the serialized blob with escaped quotes
+                // (\"), which unserialize() rejects → every module read as off and
+                // Performance/Recruitment/Training wrongly vanished. Retry stripped.
+                $decoded = @unserialize($raw);
+                if (! is_array($decoded)) {
+                    $decoded = @unserialize(stripslashes($raw));
+                }
                 if (is_array($decoded)) {
                     $modules = $decoded;
                 }
