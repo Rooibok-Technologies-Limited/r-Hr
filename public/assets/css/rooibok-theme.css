@@ -279,3 +279,69 @@ table.dataTable thead th { position: sticky; top: 0; z-index: 2; background: var
 }
 /* Programmatic scroll + anchor jumps respect the sticky navbar and the gutter. */
 html { scroll-padding-top: 74px; scroll-padding-bottom: 40px; }
+
+/* ===========================================================================
+   RSP S1 — Unified chrome: the top navbar and the sidebar are ONE continuous
+   surface (single token), no seam, brand block aligned to navbar height.
+   The navbar was already dark navy; the sidebar was white — a two-component
+   look. Both now use --surface-chrome with light-on-dark foreground.
+   =========================================================================== */
+:root {
+  --surface-chrome:        #161c25;
+  --surface-chrome-hover:  #212a36;
+  --surface-chrome-active: rgba(109,95,251,.20);
+  --surface-chrome-border: #232c38;
+  --on-chrome:             #e6e9f0;
+  --on-chrome-muted:       #9aa4b2;
+}
+/* Both chrome surfaces = identical background, shared border token, no seam. */
+.pc-header,
+.pc-sidebar,
+.pc-sidebar.light-sidebar {
+  background: var(--surface-chrome) !important;
+  border-color: var(--surface-chrome-border) !important;
+}
+.pc-sidebar, .pc-sidebar.light-sidebar { border-right: 1px solid var(--surface-chrome-border) !important; box-shadow: none !important; }
+.pc-header { border-bottom: 1px solid var(--surface-chrome-border) !important; }
+/* Sidebar foreground on the dark chrome */
+.pc-sidebar .pc-navbar .pc-item .pc-link { color: var(--on-chrome) !important; }
+.pc-sidebar .pc-navbar .pc-item .pc-link .pc-micon i,
+.pc-sidebar .pc-navbar .pc-item .pc-link .pc-micon svg { color: var(--on-chrome-muted) !important; stroke: var(--on-chrome-muted) !important; }
+.pc-sidebar .pc-navbar .pc-caption label { color: var(--on-chrome-muted) !important; letter-spacing: .04em; }
+.pc-sidebar .pc-navbar .pc-item .pc-link:hover,
+.pc-sidebar .pc-navbar .pc-item .pc-link:focus-visible {
+  background: var(--surface-chrome-hover) !important;
+  color: #ffffff !important;
+}
+.pc-sidebar .pc-navbar .pc-item .pc-link:hover .pc-micon i,
+.pc-sidebar .pc-navbar .pc-item .pc-link:hover .pc-micon svg { color: #ffffff !important; stroke: #ffffff !important; }
+/* Active item — brand accent bar + subtle tint, unmistakable */
+.pc-sidebar .pc-navbar .pc-item.active > .pc-link,
+.pc-sidebar .pc-navbar .pc-item.pc-trigger > .pc-link {
+  background: var(--surface-chrome-active) !important;
+  color: #ffffff !important;
+  box-shadow: inset 3px 0 0 var(--rk-brand);
+}
+.pc-sidebar .pc-navbar .pc-item.active > .pc-link .pc-micon i,
+.pc-sidebar .pc-navbar .pc-item.active > .pc-link .pc-micon svg { color: var(--rk-brand) !important; stroke: var(--rk-brand) !important; }
+/* Submenu on dark chrome */
+.pc-sidebar .pc-navbar .pc-submenu .pc-item .pc-link { color: var(--on-chrome-muted) !important; }
+.pc-sidebar .pc-navbar .pc-submenu .pc-item .pc-link:hover,
+.pc-sidebar .pc-navbar .pc-submenu .pc-item.active .pc-link { color: #ffffff !important; }
+/* Sidebar nav-filter search box on dark chrome */
+.pc-sidebar .nav-search .form-control {
+  background: rgba(255,255,255,.06) !important;
+  border-color: var(--surface-chrome-border) !important;
+  color: var(--on-chrome) !important;
+}
+.pc-sidebar .nav-search .form-control::placeholder { color: var(--on-chrome-muted) !important; }
+/* Top navbar controls on the same chrome */
+.pc-header .pc-head-link,
+.pc-header .pc-head-link i { color: var(--on-chrome) !important; }
+.pc-header .pc-head-link:hover { background: var(--surface-chrome-hover) !important; }
+/* Brand block aligns to the chrome; no separate colour block that creates a seam */
+.pc-sidebar .m-header, .pc-sidebar .navbar-brand, .b-brand { background: transparent !important; }
+/* Dark-theme: chrome tokens already dark — point the overrides at the same token */
+:root[data-theme="dark"] .pc-sidebar,
+:root[data-theme="dark"] .pc-header,
+:root[data-theme="dark"] .navbar { background: var(--surface-chrome) !important; border-color: var(--surface-chrome-border) !important; }

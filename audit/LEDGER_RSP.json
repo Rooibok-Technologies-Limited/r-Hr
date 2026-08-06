@@ -20,7 +20,8 @@
       "id": "RSP-S1-CHROME",
       "phase": "S1",
       "target": "navbar+sidebar unified surface + collapse",
-      "status": "PENDING"
+      "status": "DONE",
+      "verification": "navbar+sidebar identical bg rgb(22,28,37) (was dark navbar/white sidebar); seam gone; light-on-dark text (white, AA), purple active accent bar; console 0 errors. Collapse-rail/flyout modes = base theme (pending S1 full)."
     },
     {
       "id": "RSP-S3-SWEEP",
