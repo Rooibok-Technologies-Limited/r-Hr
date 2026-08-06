@@ -89,7 +89,7 @@ prefix (per-tenant), currency symbols, nav labels (lang file).
 **Method:** grep sweeps per category → per-hit decision (config vs lang vs leave) → fix →
 re-verify. This is the biggest sweep; run as its own session with a checklist.
 
-## PHASE D — Full non-nav system audit (extend P3–P8)
+## PHASE D — Full non-nav system audit — IN PROGRESS (2026-08-06): D-AUTHZ-02 (Critical, global-config writes staff-reachable) + D-HOLIDAY-01 FIXED; D-IDOR-01 (31 unscoped writes) pattern-fixed on Awards, full checklist in DEFECTS.md. Remaining: IDOR sweep + layout/console across all routes.
 The mandate audit this session focused on navigation + role authz. Extend to the rest:
 - D1. Per-controller authz matrix for ALL ~78 controllers × 4 roles (this session probed 11
   representative routes; D-AUTHZ-01 found + fixed). Systematically probe every protected route.

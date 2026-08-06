@@ -59,3 +59,38 @@ per-category findings:
   domain) on the platform contact page — low-risk, could move to a platform setting (Phase C tail).
 - Dead vendor template `meetings_calendar_kendo.php` points at demos.telerik.com — unused
   (included nowhere); leave or delete in a cleanup pass.
+
+## Phase D — non-nav security audit (2026-08-06)
+### D-AUTHZ-02 (Critical, FIXED e830e67)
+A bare STAFF could POST erp/settings/update_currency and edit the GLOBAL setting_id=1 row
+("Updated System Currency"), plus 15 sibling global-config endpoints (add_logo/favicon,
+update_payment_gateway, company/currency types, religions, notification config,
+super_settings, system_info) — all on the 'checklogin' filter. Switched 16 mutation routes
+to 'superauth'; reads (_list/_info dropdown data) kept on checklogin. Verified: staff 303,
+super 200, staff reads 200.
+
+### D-HOLIDAY-01 (Medium, FIXED 18d7f19)
+Holiday add/update/delete had no method-level authz. Added canManageHolidays(resource)
+(company or staff with holiday2/3/4). Verified: bare staff -> Unauthorized, 0 rows created.
+
+### D-IDOR-01 (High, PARTIALLY FIXED — dedicated pass needed)
+**Systematic cross-tenant IDOR on write endpoints**: 31 delete/update statements run
+`->where('<pk>', $id)->delete($id)` (or update) with NO company_id scope — tenant A can
+mutate tenant B's row by id (ids are uencode-obfuscated but reversible). Awards::delete_award
+FIXED as the pattern (e830e67 adds ->where('company_id', effective_company_id())).
+REMAINING (verify each table's ownership column first — some lack company_id and scope via a
+parent/user):
+- HAS company_id (scope with effective_company_id()): Trainers:351, Visitors:478, Department:372,
+  Timesheet:1355(attendance)+1293(overtime via parent), Payroll:1617/1638(advance_salary),
+  Clients:1495(user)/1516(lead)/1537(followup).
+- NO company_id (needs per-table ownership analysis): Suppliers:375, Warehouse:353,
+  Employees:2848-2920(contract options), Estimates:641/Invoices:1067/Orders:753/
+  Orderquotes:605/Purchases:590 (item-level — scope via parent document ownership).
+- SUPER-only (superauth route filter — by design, NOT a defect): Companies:1000, Membership:563,
+  Users:717/738, Languages:355, Settings:1323/1343/1363/1483.
+Method: for each tenant-facing statement, add the actor's company scope (or verify parent
+ownership for item rows), then live-probe cross-tenant delete no-ops.
+
+### Other Phase D (remaining)
+- D4 layout forensics across top routes × viewports (nav + company dashboard done; rest pending).
+- D5 console-error sweep across every route × role (dashboards + nav done clean; rest pending).
