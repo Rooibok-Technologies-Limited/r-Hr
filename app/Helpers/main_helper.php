@@ -1692,3 +1692,23 @@ if( !function_exists('company_currency_decimals') ){
 		}
 	}
 }
+
+// ---------------------------------------------------------------------------
+// FX conversion — convert an amount between currencies using AUTO-UPDATED
+// trusted rates (App\Libraries\FxRates, cached from open.er-api.com daily).
+// Never uses manually-entered rates. Returns the amount unchanged if the rate
+// is unavailable (fail-safe). fx_rate() exposes the raw rate for correctness-
+// critical callers that must not proceed on a missing rate.
+// ---------------------------------------------------------------------------
+if( !function_exists('fx_convert') ){
+	function fx_convert(float $amount, string $from, string $to): float {
+		static $fx = null; $fx ??= new \App\Libraries\FxRates();
+		return $fx->convert($amount, $from, $to);
+	}
+}
+if( !function_exists('fx_rate') ){
+	function fx_rate(string $from, string $to): ?float {
+		static $fx = null; $fx ??= new \App\Libraries\FxRates();
+		return $fx->rate($from, $to);
+	}
+}

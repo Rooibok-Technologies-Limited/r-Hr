@@ -56,6 +56,13 @@
       "target": "destructive-action confirmations + audit",
       "status": "DONE",
       "verification": "disbursement Process (moves money) now: consequence message with actual amount+recipient count, typed DISBURSE confirmation, button disables on click (UI idempotency), re-enables on failure. Server-side idempotency (reference key) already present. Other destructive actions audit pending."
+    },
+    {
+      "id": "RSP-FX-RATES",
+      "phase": "currency",
+      "target": "auto-updated trusted FX rate service + convert helper",
+      "status": "DONE",
+      "verification": "FxRates fetches open.er-api.com daily -> ci_fx_rates cache; fx_convert/fx_rate helpers; spark fx:refresh; verified live (1M UGX->269.94 USD->233.68 EUR, GBP round-trip 500.00). Applying to stored data = owner-gated design decision (audit/CURRENCY_CONVERSION.md)."
     }
   ]
 }
