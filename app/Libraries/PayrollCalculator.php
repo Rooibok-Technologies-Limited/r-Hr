@@ -73,15 +73,19 @@ class PayrollCalculator
         $basicSalary  = (float) ($detail['basic_salary'] ?? 0);
         $wagesType    = $detail['salay_type'] ?? null;
 
-        $grossForTax  = $basicSalary + $allowanceAmount + $commissionsAmount + $otherPaymentsAmount;
+        // Gross + net summed in INTEGER MINOR UNITS (cents) so the reconciliation
+        // (net == gross − statutory − nssf − paye) is exact, never float-drifted.
+        $c = static fn ($v): int => (int) round(((float) $v) * 100);
+        $grossForTaxC = $c($basicSalary) + $c($allowanceAmount) + $c($commissionsAmount) + $c($otherPaymentsAmount);
+        $grossForTax  = $grossForTaxC / 100;
         $tax          = (new TaxEngine())->calculateDeductions($grossForTax, $companyId);
         $nssfEmployee = (float) $tax['nssf_employee'];
         $nssfEmployer = (float) $tax['nssf_employer'];
         $paye         = (float) $tax['paye'];
 
-        // Net — identical formula to the legacy generator (see FIDELITY NOTE).
-        $net = $basicSalary + $allowanceAmount + $commissionsAmount + $otherPaymentsAmount
-             - $statutoryAmount - $nssfEmployee - $paye;
+        // Net — identical formula to the legacy generator (see FIDELITY NOTE), in cents.
+        $netC = $grossForTaxC - $c($statutoryAmount) - $c($nssfEmployee) - $c($paye);
+        $net  = $netC / 100;
 
         return [
             'staff_id'                   => $staffId,
