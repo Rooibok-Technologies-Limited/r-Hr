@@ -1,0 +1,20 @@
+{
+  "mandate": "navigation-restructure-full-audit",
+  "branch": "audit/full-system-20260806",
+  "items": [
+    {"id": "P0-ENV", "phase": "0", "type": "config", "target": "environment+baseline", "status": "DONE",
+     "verification": {"command": "php -l sweep (1077 files) + curl /erp/login + probe recap", "result": "pass", "evidence": "audit/PROOF.md Baseline", "timestamp": "2026-08-06T09:55+03"},
+     "notes": "0 lint failures; app serves; no phpunit runner (noted)."},
+    {"id": "P1-INVENTORY", "phase": "1", "type": "config", "target": "audit/INVENTORY.md", "status": "IN_PROGRESS", "defects": [], "attempts": 1},
+    {"id": "P2-NAV-ANALYSIS", "phase": "2", "type": "nav", "target": "existing 3 sidebars + orphan routes", "status": "PENDING"},
+    {"id": "P2-NAV-CONFIG", "phase": "2", "type": "nav", "target": "app/Config/Navigation.php", "status": "PENDING"},
+    {"id": "P2-NAV-RENDERER", "phase": "2", "type": "component", "target": "app/Views/default/navigation.php + 3 menu views", "status": "PENDING"},
+    {"id": "P2-NAV-VERIFY", "phase": "2", "type": "nav", "target": "rendered tree == config per role; all links 200; active state", "status": "PENDING"},
+    {"id": "P3-STATIC", "phase": "3", "type": "config", "target": "static sweeps: lint, debug artifacts, TODO markers, dead code", "status": "PENDING"},
+    {"id": "P4-ROLE-MATRIX", "phase": "4", "type": "flow", "target": "route probe x {anonymous, staff, company, super}", "status": "PENDING"},
+    {"id": "P5-CONSOLE", "phase": "5", "type": "flow", "target": "browser console hygiene across portals", "status": "PENDING"},
+    {"id": "P6-LAYOUT", "phase": "6", "type": "component", "target": "overflow/overlap/truncation detection: sidebar + key pages x viewports", "status": "PENDING"},
+    {"id": "P7-LINKS", "phase": "7", "type": "flow", "target": "nav link crawl per role; breadcrumb consistency", "status": "PENDING"},
+    {"id": "P8-GATE", "phase": "8", "type": "config", "target": "final gate + PROOF.md", "status": "PENDING"}
+  ]
+}
