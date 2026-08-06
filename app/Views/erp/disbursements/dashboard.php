@@ -91,7 +91,7 @@ $cap  = function ($v) { return $v > 0 ? number_format($v) : '—'; };
   function actionBtns(b) {
     var out = '<button class="btn btn-sm btn-outline-secondary" data-act="lines" data-id="' + b.batch_id + '">Lines</button> ';
     if (b.status === 'draft')     out += '<button class="btn btn-sm btn-info" data-act="approve" data-id="' + b.batch_id + '">Approve</button> ';
-    if (b.status === 'approved' || b.status === 'processing') out += '<button class="btn btn-sm btn-primary" data-act="process" data-id="' + b.batch_id + '">Process</button> ';
+    if (b.status === 'approved' || b.status === 'processing') out += '<button class="btn btn-sm btn-primary" data-act="process" data-id="' + b.batch_id + '" data-total="' + (b.total_amount||0) + '" data-count="' + (b.total_count||0) + '">Process</button> ';
     out += '<button class="btn btn-sm btn-outline-warning" data-act="reconcile" data-id="' + b.batch_id + '">Reconcile</button>';
     return out;
   }
@@ -146,10 +146,22 @@ $cap  = function ($v) { return $v > 0 ? number_format($v) : '—'; };
     var id = btn.getAttribute('data-id'), act = btn.getAttribute('data-act');
     if (act === 'lines') { loadLines(id); return; }
     if (act === 'approve' && !confirm('Approve batch #' + id + '? (maker-checker: you must not be the preparer)')) return;
-    if (act === 'process' && !confirm('Process batch #' + id + '? This moves money.')) return;
+    // S9 — disbursement moves real money and cannot be reversed: state the consequence
+    // (actual amount + recipient count) and require typed confirmation.
+    if (act === 'process') {
+      var cur = '<?= erp_currency_symbol();?>';
+      var total = fmt(parseFloat(btn.getAttribute('data-total') || '0'));
+      var count = btn.getAttribute('data-count') || '0';
+      var typed = window.prompt('Disburse ' + cur + ' ' + total + ' to ' + count +
+        ' employee(s) from batch #' + id + '.\nThis moves real money and CANNOT be reversed.\n\nType DISBURSE to confirm:');
+      if (typed === null) return;                      // cancelled
+      if (typed.trim().toUpperCase() !== 'DISBURSE') { toastr.warning('Not confirmed — you must type DISBURSE.'); return; }
+    }
+    btn.disabled = true;                               // UI idempotency: no second click
     post(base + '/' + act, {batch_id: id}).then(function (j) {
-      if (j.ok) { toastr.success(act + ' ok'); loadBatches(); } else { toastr.error(j.reason || (act + ' failed')); }
-    });
+      if (j.ok) { toastr.success(act + ' ok'); loadBatches(); }
+      else { toastr.error(j.reason || (act + ' failed')); btn.disabled = false; }
+    }).catch(function(){ btn.disabled = false; });
   });
 
   loadBatches();
