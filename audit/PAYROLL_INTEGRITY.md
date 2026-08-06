@@ -21,7 +21,12 @@ Evidence-based audit of PayrollCalculator + TaxEngine + DisbursementEngine.
   data-driven, not hardcoded (see Phase C).
 
 ## FINDINGS (documented, NOT blindly changed — mandate integrity rule)
-- **D-PAY-01 (Medium, latent):** all monetary values are PHP `(float)` (basic_salary,
+- **D-PAY-01 (Medium) — PARTIALLY FIXED (TaxEngine migrated to integer-cents):**
+  TaxEngine now does all PAYE/NSSF arithmetic in INTEGER MINOR UNITS (cents), never floats,
+  verified 0-diff against the golden master (audit/tax_golden_master.json) across the fixture
+  spread. The statutory percentage math (the real fractional source) is now exact. Remaining:
+  PayrollCalculator sums already-2dp-exact components in float — lower risk, next slice.
+  Original note: all monetary values are PHP `(float)` (basic_salary,
   allowances, PAYE, NSSF, net). Floats cannot exactly represent decimal fractions. Today this
   does NOT produce wrong figures because (a) every fractional component is `round(...,2)` and
   (b) UGX amounts are whole shillings, so intermediate float error stays below the rounding

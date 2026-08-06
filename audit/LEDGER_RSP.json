@@ -41,7 +41,7 @@
       "phase": "S7",
       "target": "payroll state machine + calc integrity + idempotency",
       "status": "DONE",
-      "verification": "assessment: reconciles by construction + consistent 2dp tax rounding + disbursement idempotency present. D-PAY-01 (float money, latent) + D-PAY-02 (UGX 2dp vs whole-shilling) documented for owner-gated decimal migration \u2014 NOT blindly changed (integrity rule). See audit/PAYROLL_INTEGRITY.md"
+      "verification": "assessment: reconciles by construction + consistent 2dp tax rounding + disbursement idempotency present. D-PAY-01 (float money, latent) + D-PAY-02 (UGX 2dp vs whole-shilling) documented for owner-gated decimal migration \u2014 NOT blindly changed (integrity rule). See audit/PAYROLL_INTEGRITY.md | D-PAY-01 TaxEngine migrated to integer-cents (exact), 0-diff vs golden master audit/tax_golden_master.json."
     },
     {
       "id": "RSP-S8-NOTIFICATIONS",
