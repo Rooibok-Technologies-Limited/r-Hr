@@ -369,7 +369,7 @@ class Department extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$DepartmentModel = new DepartmentModel();
-			$result = $DepartmentModel->where('department_id', $id)->delete($id);
+			$result = $DepartmentModel->where('department_id', $id)->where('company_id', effective_company_id())->delete();
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_department_deleted_msg');
 			} else {

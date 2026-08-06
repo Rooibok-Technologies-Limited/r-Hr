@@ -1,5 +1,9 @@
 <?php
 /**
+ * @author Bodo Desderio <rooiboktechltd@gmail.com>
+ * @copyright 2026 Rooibok Technologies. All rights reserved.
+ */
+/**
  * NOTICE OF LICENSE
  *
  * This source file is subject to the TimeHRM License
@@ -475,7 +479,7 @@ class Visitors extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$VisitorsModel = new VisitorsModel();
-			$result = $VisitorsModel->where('visitor_id', $id)->delete($id);
+			$result = $VisitorsModel->where('visitor_id', $id)->where('company_id', effective_company_id())->delete();
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_visitor_deleted_msg');
 			} else {

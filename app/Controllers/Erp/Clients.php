@@ -1492,7 +1492,7 @@ class Clients extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$UsersModel = new UsersModel();
-			$result = $UsersModel->where('user_id', $id)->delete($id);
+			$result = $UsersModel->where('user_id', $id)->where('company_id', effective_company_id())->delete();
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_client_deleted_msg');
 			} else {
@@ -1513,7 +1513,7 @@ class Clients extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$LeadsModel = new LeadsModel();
-			$result = $LeadsModel->where('lead_id', $id)->delete($id);
+			$result = $LeadsModel->where('lead_id', $id)->where('company_id', effective_company_id())->delete();
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_lead_deleted_msg');
 			} else {
@@ -1534,7 +1534,7 @@ class Clients extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$LeadsfollowupModel = new LeadsfollowupModel();
-			$result = $LeadsfollowupModel->where('followup_id', $id)->delete($id);
+			$result = $LeadsfollowupModel->where('followup_id', $id)->where('company_id', effective_company_id())->delete();
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_lead_followup_deleted_msg');
 			} else {

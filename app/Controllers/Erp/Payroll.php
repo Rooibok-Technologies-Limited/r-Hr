@@ -1614,7 +1614,7 @@ class Payroll extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$AdvancesalaryModel = new AdvancesalaryModel();
-			$result = $AdvancesalaryModel->where('advance_salary_id', $id)->delete($id);
+			$result = $AdvancesalaryModel->where('advance_salary_id', $id)->where('company_id', effective_company_id())->delete();
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_advance_salary_deleted_msg');
 			} else {
@@ -1635,7 +1635,7 @@ class Payroll extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$AdvancesalaryModel = new AdvancesalaryModel();
-			$result = $AdvancesalaryModel->where('advance_salary_id', $id)->delete($id);
+			$result = $AdvancesalaryModel->where('advance_salary_id', $id)->where('company_id', effective_company_id())->delete();
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_loan_deleted_msg');
 			} else {

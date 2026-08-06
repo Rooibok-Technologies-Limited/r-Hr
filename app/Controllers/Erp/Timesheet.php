@@ -1290,7 +1290,7 @@ class Timesheet extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$OvertimerequestModel = new OvertimerequestModel();
-			$result = $OvertimerequestModel->where('time_request_id', $id)->delete($id);
+			$result = $OvertimerequestModel->where('time_request_id', $id)->where('company_id', effective_company_id())->delete();
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_overtime_deleted_msg');
 			} else {
@@ -1352,7 +1352,7 @@ class Timesheet extends BaseController {
 			if ($oldRecord) {
 				$this->logAttendanceAudit($id, $oldRecord['company_id'] ?? 0, $usession['sup_user_id'], 'DELETED', json_encode($oldRecord), '');
 			}
-			$result = $TimesheetModel->where('time_attendance_id', $id)->delete($id);
+			$result = $TimesheetModel->where('time_attendance_id', $id)->where('company_id', effective_company_id())->delete();
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_attendance_deleted_msg');
 			} else {
