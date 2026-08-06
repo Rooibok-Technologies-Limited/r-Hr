@@ -34,8 +34,8 @@ aggregator-backed company wallet that funds payouts via **PesaPal** or
 
 ```bash
 docker compose up -d            # app, nginx, postgres, redis, beanstalkd
-docker exec -w /var/www/html rooibok_app php spark migrate       # schema
-docker exec -u 0 -w /var/www/html rooibok_app php spark app:init # seed default assets + archive schema (idempotent)
+docker exec -w /var/www/html rhr_app php spark migrate       # schema
+docker exec -u 0 -w /var/www/html rhr_app php spark app:init # seed default assets + archive schema (idempotent)
 ```
 
 `app:init` closes two first-boot gaps: it seeds the empty `uploads_data` volume

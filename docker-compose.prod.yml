@@ -29,7 +29,7 @@ services:
     mem_limit: 128m
     ports: !reset []          # Traefik owns :80/:443 — never publish in prod
     networks:
-      - rooibok_net           # reach app:9000 (fastcgi) + db/redis
+      - rhr_net           # reach app:9000 (fastcgi) + db/redis
       - web                   # reachable by the shared Traefik edge
     labels:
       - "traefik.enable=true"

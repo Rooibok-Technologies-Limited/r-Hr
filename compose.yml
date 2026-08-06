@@ -1,12 +1,18 @@
 # @author Bodo Desderio <rooiboktechltd@gmail.com>
 # @copyright 2026 Rooibok Technologies. All rights reserved.
+
+# Project name = product ("Rooibok HR", short "rhr"), NOT the parent brand.
+# Governs volume/image/network prefixes: rooibok-hr_* volumes, rooibok-hr-*
+# built images. Containers use the short rhr_ prefix.
+name: rooibok-hr
+
 services:
 
   app:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-    container_name: rooibok_app
+    container_name: rhr_app
     restart: unless-stopped
     # The entrypoint starts as root (to chown the named volumes), applies
     # migrations + first-boot seed, then runs php-fpm whose workers drop to the
@@ -20,7 +26,7 @@ services:
       redis:
         condition: service_started
     networks:
-      - rooibok_net
+      - rhr_net
     environment:
       APP_ENV:     ${APP_ENV:-production}
       RUN_INIT:    "1"          # this replica owns migrate + app:init on boot
@@ -34,7 +40,7 @@ services:
 
   nginx:
     image: nginx:1.25-alpine
-    container_name: rooibok_nginx
+    container_name: rhr_nginx
     restart: unless-stopped
     ports:
       - "12000:80"
@@ -47,11 +53,11 @@ services:
     depends_on:
       - app
     networks:
-      - rooibok_net
+      - rhr_net
 
   postgres:
     image: postgres:16-alpine
-    container_name: rooibok_postgres
+    container_name: rhr_postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB:       ${DB_NAME:-rooibok_hr}
@@ -66,11 +72,11 @@ services:
       timeout: 5s
       retries: 10
     networks:
-      - rooibok_net
+      - rhr_net
 
   postgres_archive:
     image: postgres:16-alpine
-    container_name: rooibok_archive
+    container_name: rhr_archive
     restart: unless-stopped
     environment:
       POSTGRES_DB:       rooibok_archive
@@ -85,24 +91,24 @@ services:
       timeout: 5s
       retries: 10
     networks:
-      - rooibok_net
+      - rhr_net
 
   redis:
     image: redis:7-alpine
-    container_name: rooibok_redis
+    container_name: rhr_redis
     restart: unless-stopped
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     volumes:
       - redis_data:/data
     networks:
-      - rooibok_net
+      - rhr_net
 
   beanstalkd:
     image: schickling/beanstalkd
-    container_name: rooibok_queue
+    container_name: rhr_queue
     restart: unless-stopped
     networks:
-      - rooibok_net
+      - rhr_net
 
   # Background job processor (in-app + email + SMS fan-out over beanstalkd). Shares
   # the app image; RUN_INIT is unset so it never races migrations — it just waits
@@ -111,7 +117,7 @@ services:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-    container_name: rooibok_worker
+    container_name: rhr_worker
     restart: unless-stopped
     command: ["php", "/var/www/html/spark", "queue:worker"]
     volumes:
@@ -125,7 +131,7 @@ services:
       app:
         condition: service_started
     networks:
-      - rooibok_net
+      - rhr_net
     environment:
       APP_ENV:     ${APP_ENV:-production}
       DB_HOST:     postgres
@@ -138,7 +144,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: rooibok_pgadmin
+    container_name: rhr_pgadmin
     restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL:    ${PGADMIN_EMAIL:-admin@rooibok.local}
@@ -148,18 +154,18 @@ services:
     depends_on:
       - postgres
     networks:
-      - rooibok_net
+      - rhr_net
     profiles:
       - dev
 
   mailhog:
     image: mailhog/mailhog
-    container_name: rooibok_mail
+    container_name: rhr_mail
     restart: unless-stopped
     ports:
       - "8026:8025"
     networks:
-      - rooibok_net
+      - rhr_net
     profiles:
       - dev
 
@@ -171,5 +177,5 @@ volumes:
   certbot_data:
 
 networks:
-  rooibok_net:
+  rhr_net:
     driver: bridge
