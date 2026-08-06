@@ -3,7 +3,6 @@
  * @author Bodo Desderio <rooiboktechltd@gmail.com>
  * @copyright 2026 Rooibok Technologies. All rights reserved.
  */
-use CodeIgniter\I18n\Time;
 
 use App\Models\RolesModel;
 use App\Models\UsersModel;
@@ -51,7 +50,6 @@ try { $rk_pending_leaves = $rk_db->table('ci_leave_applications')->where('compan
 // membership
 $company_membership = $CompanymembershipModel->where('company_id', $_uid_cd)->first();
 $subs_plan = !empty($company_membership) ? $MembershipModel->where('membership_id', $company_membership['membership_id'])->first() : null;
-$current_time = Time::now('Africa/Kampala');
 $company_membership_details = company_membership_details();
 $_diff_days = $company_membership_details['diff_days'] ?? 999;
 if($_diff_days < 8){
