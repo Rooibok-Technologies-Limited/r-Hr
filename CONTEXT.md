@@ -41,8 +41,16 @@ staff role scoping (menu + 307s), super-admin pages, currency GBP→USD→GBP
 round-trip. Fixed en route: [SECURITY] finance_dashboard missing staff resource
 gate; 3 public JS files 600-perms → nginx 403 (announcements/expenses pages had
 NO working JS); 2 inline scripts ran pre-jQuery; module-script tag now emitted
-only when the file exists (8 custom pages 404'd it). NOT yet browser-walked:
-recruitment pipeline, clients/invoices/inventory deep flows. **#6 ajax half FULLY CLOSED
+only when the file exists (8 custom pages 404'd it).
+**Deep flows walked too (3ef5aa8):** recruitment (jobs/create/candidates/
+interviews), clients+leads, invoices+estimates, inventory (products/warehouse/
+suppliers/purchases/orders/create-*) — via a temporary Enterprise bump on Acme,
+reverted; plan gate re-locks. Found+fixed: the first JS-drift sweep only parsed
+double-quoted main_url calls — 9 more single-quoted endpoints wired (products
+lists, customfields, delete_official_document, delete_office_shift,
+delete_quoteorder, constants_read); Products::expired_product_list used MySQL
+CURDATE() on Postgres (500) → PHP strtotime filter. Playwright suite = COMPLETE
+across all modules. **#6 ajax half FULLY CLOSED
 (87d5919):** all remaining "missing" endpoints = dead JS (no trigger DOM;
 editing via *_details pages) — nothing built. [SECURITY] dead `Crm` module
 (unreachable duplicate of `Clients`) had 5 routed ajax endpoints with
