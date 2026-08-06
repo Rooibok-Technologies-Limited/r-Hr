@@ -276,7 +276,7 @@ $idc_b = $idc_badge_map[$idc_status] ?? $idc_badge_map['not_issued'];
                           <span class="text-danger">*</span></label>
                         <div class="input-group">
                           <div class="input-group-prepend"><span class="input-group-text">
-                            <?= erp_currency();?>
+                            <?= erp_currency_symbol();?>
                             </span></div>
                           <input type="text" class="form-control" name="basic_salary" placeholder="<?= lang('Employees.xin_gross_salary');?>" value="<?= $employee_detail['basic_salary'];?>">
                         </div>
@@ -289,7 +289,7 @@ $idc_b = $idc_badge_map[$idc_status] ?? $idc_badge_map['not_issued'];
                           </label>
                         <div class="input-group">
                           <div class="input-group-prepend"><span class="input-group-text">
-                            <?= erp_currency();?>
+                            <?= erp_currency_symbol();?>
                             </span></div>
                           <input type="text" class="form-control" name="hourly_rate" placeholder="<?= lang('Employees.xin_hourly_rate');?>" value="<?= $employee_detail['hourly_rate'];?>">
                         </div>
@@ -529,7 +529,7 @@ $idc_b = $idc_badge_map[$idc_status] ?? $idc_badge_map['not_issued'];
                           <span class="text-danger">*</span></label>
                         <div class="input-group">
                           <div class="input-group-prepend"><span class="input-group-text">
-                            <?= erp_currency();?>
+                            <?= erp_currency_symbol();?>
                             </span></div>
                           <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="contract_amount" type="text">
                         </div>
@@ -616,7 +616,7 @@ $idc_b = $idc_badge_map[$idc_status] ?? $idc_badge_map['not_issued'];
                           <span class="text-danger">*</span></label>
                         <div class="input-group">
                           <div class="input-group-prepend"><span class="input-group-text">
-                            <?= erp_currency();?>
+                            <?= erp_currency_symbol();?>
                             </span></div>
                           <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="contract_amount" type="text">
                         </div>
@@ -684,7 +684,7 @@ $idc_b = $idc_badge_map[$idc_status] ?? $idc_badge_map['not_issued'];
                           <span class="text-danger">*</span></label>
                         <div class="input-group">
                           <div class="input-group-prepend"><span class="input-group-text">
-                            <?= erp_currency();?>
+                            <?= erp_currency_symbol();?>
                             </span></div>
                           <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="contract_amount" type="text">
                         </div>
@@ -771,7 +771,7 @@ $idc_b = $idc_badge_map[$idc_status] ?? $idc_badge_map['not_issued'];
                           <span class="text-danger">*</span></label>
                         <div class="input-group">
                           <div class="input-group-prepend"><span class="input-group-text">
-                            <?= erp_currency();?>
+                            <?= erp_currency_symbol();?>
                             </span></div>
                           <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="contract_amount" type="text">
                         </div>

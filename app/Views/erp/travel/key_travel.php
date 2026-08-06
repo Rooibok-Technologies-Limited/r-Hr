@@ -186,7 +186,7 @@ $get_animate = '';
                       </label>
                       <div class="input-group">
                         <div class="input-group-prepend"><span class="input-group-text">
-                          <?= erp_currency();?>
+                          <?= erp_currency_symbol();?>
                           </span></div>
                         <input class="form-control" placeholder="<?= lang('Employees.xin_expected_travel_budget');?>" name="expected_budget" type="text">
                       </div>
@@ -199,7 +199,7 @@ $get_animate = '';
                       </label>
                       <div class="input-group">
                         <div class="input-group-prepend"><span class="input-group-text">
-                          <?= erp_currency();?>
+                          <?= erp_currency_symbol();?>
                           </span></div>
                         <input class="form-control" placeholder="<?= lang('Employees.xin_actual_travel_budget');?>" name="actual_budget" type="text">
                       </div>

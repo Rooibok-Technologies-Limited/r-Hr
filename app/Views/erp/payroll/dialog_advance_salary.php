@@ -87,7 +87,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
           </label>
           <div class="input-group">
             <div class="input-group-append"><span class="input-group-text">
-              <?= erp_currency();?>
+              <?= erp_currency_symbol();?>
               </span></div>
             <input class="form-control" placeholder="<?= lang('Invoices.xin_amount');?>" name="advance_amount" type="text" value="<?= esc($result['advance_amount'] ?? '', 'attr');?>">
           </div>
@@ -115,7 +115,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
       </label>
       <div class="input-group">
         <div class="input-group-append"><span class="input-group-text">
-          <?= erp_currency();?>
+          <?= erp_currency_symbol();?>
           </span></div>
         <input class="form-control" placeholder="<?= lang('Main.xin_emi_full_text');?>" name="emi_amount" id="mmonthly_installment" type="text" value="<?= esc($result['monthly_installment'] ?? '', 'attr');?>">
       </div>

@@ -269,7 +269,7 @@ $isManager = in_array(($_acting['user_type'] ?? ''), ['company','super_user']);
                       <span class="text-danger">*</span></label>
                     <div class="input-group">
                       <div class="input-group-prepend"><span class="input-group-text">
-                        <?= erp_currency();?>
+                        <?= erp_currency_symbol();?>
                         </span></div>
                       <input type="text" class="form-control" name="basic_salary" placeholder="<?= lang('Employees.xin_gross_salary');?>" value="0">
                     </div>
@@ -282,7 +282,7 @@ $isManager = in_array(($_acting['user_type'] ?? ''), ['company','super_user']);
                       <span class="text-danger">*</span></label>
                     <div class="input-group">
                       <div class="input-group-prepend"><span class="input-group-text">
-                        <?= erp_currency();?>
+                        <?= erp_currency_symbol();?>
                         </span></div>
                       <input type="text" class="form-control" name="hourly_rate" placeholder="<?= lang('Employees.xin_hourly_rate');?>" value="0">
                     </div>

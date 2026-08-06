@@ -93,7 +93,7 @@ if(!is_array($result)){ echo dialog_not_found(); return; }
         </label>
         <div class="input-group">
           <div class="input-group-append"><span class="input-group-text">
-            <?= erp_currency();?>
+            <?= erp_currency_symbol();?>
             </span></div>
           <input class="form-control" placeholder="<?= lang('Employees.xin_award_cash');?>" name="cash" type="text" value="<?php echo esc($result['cash_price'] ?? '', 'attr');?>">
         </div>

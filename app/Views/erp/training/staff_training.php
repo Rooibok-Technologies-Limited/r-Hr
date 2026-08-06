@@ -137,7 +137,7 @@ if($user_info['user_type'] == 'company'){
               </label>
               <div class="input-group">
                 <div class="input-group-prepend"><span class="input-group-text">
-                  <?= erp_currency();?>
+                  <?= erp_currency_symbol();?>
                   </span></div>
                 <input class="form-control" placeholder="<?= lang('Main.xin_training_cost');?>" name="training_cost" type="text" value="">
               </div>

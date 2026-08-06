@@ -1633,3 +1633,29 @@ if( !function_exists('erp_currency') ){
 		return $cur = ($code !== '' ? strtoupper($code) : 'UGX');
 	}
 }
+
+// Display symbol for the active currency: "USh 50,000" beats "UGX 50,000" on
+// screen. Regional map first (ICU's en locale keeps East-African codes as-is),
+// ICU second, the ISO code as last resort. Pass a code to symbolise any
+// currency; default = the tenant's active one.
+if( !function_exists('erp_currency_symbol') ){
+	function erp_currency_symbol(?string $code = null): string {
+		static $cache = [];
+		$code = strtoupper($code ?? erp_currency());
+		if (isset($cache[$code])) { return $cache[$code]; }
+		$map = [
+			'UGX' => 'USh', 'KES' => 'KSh', 'TZS' => 'TSh', 'RWF' => 'FRw',
+			'BIF' => 'FBu', 'ETB' => 'Br',  'ZAR' => 'R',   'GHS' => 'GH₵',
+			'NGN' => '₦',
+		];
+		if (isset($map[$code])) { return $cache[$code] = $map[$code]; }
+		try {
+			$fmt = new \NumberFormatter('en@currency=' . $code, \NumberFormatter::CURRENCY);
+			$sym = trim((string) $fmt->getSymbol(\NumberFormatter::CURRENCY_SYMBOL));
+			if ($sym !== '') { return $cache[$code] = $sym; }
+		} catch (\Throwable $e) {
+			// intl unavailable — fall through to the code
+		}
+		return $cache[$code] = $code;
+	}
+}

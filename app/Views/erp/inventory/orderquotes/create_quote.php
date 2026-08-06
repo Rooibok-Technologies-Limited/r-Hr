@@ -187,7 +187,7 @@ $xin_system = erp_company_settings();
                           </button>
                         </div>
                       </div>
-                      <?php $sc_show = erp_currency(); ?>
+                      <?php $sc_show = erp_currency_symbol(); ?>
                       <input type="hidden" class="items-sub-total" name="items_sub_total" value="0" />
                       <div class="row">
                         <div class="col-md-6 col-sm-12 text-xs-center text-md-left">&nbsp; </div>

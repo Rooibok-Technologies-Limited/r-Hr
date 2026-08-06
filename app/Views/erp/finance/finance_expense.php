@@ -129,7 +129,7 @@ $get_animate = '';
                   </label>
                   <div class="input-group">
                     <div class="input-group-prepend"><span class="input-group-text">
-                      <?= erp_currency();?>
+                      <?= erp_currency_symbol();?>
                       </span></div>
                     <input class="form-control" name="amount" type="text" placeholder="<?= lang('Invoices.xin_amount');?>">
                   </div>

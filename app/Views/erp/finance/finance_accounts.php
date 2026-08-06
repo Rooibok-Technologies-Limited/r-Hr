@@ -90,7 +90,7 @@ $user_info = $UsersModel->where('user_id', $usession['sup_user_id'])->first();
           </label>
           <div class="input-group">
             <div class="input-group-prepend"><span class="input-group-text">
-              <?= erp_currency();?>
+              <?= erp_currency_symbol();?>
               </span></div>
             <input type="text" class="form-control" name="account_balance" placeholder="<?= lang('Finance.xin_acc_initial_balance');?>">
           </div>

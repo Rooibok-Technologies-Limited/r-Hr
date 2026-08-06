@@ -96,7 +96,7 @@ $get_animate = '';
                     <div class="form-group">
                       <label for="amount">Amount <span class="text-danger">*</span></label>
                       <div class="input-group">
-                        <div class="input-group-append"><span class="input-group-text"><?= erp_currency();?></span></div>
+                        <div class="input-group-append"><span class="input-group-text"><?= erp_currency_symbol();?></span></div>
                         <input class="form-control" placeholder="Amount" name="amount" type="number" step="0.01">
                       </div>
                     </div>

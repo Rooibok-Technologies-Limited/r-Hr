@@ -202,7 +202,7 @@ $invoice_items = $OrderitemsModel->where('order_id', $invoice_id)->findAll();
                           </button>
                         </div>
                       </div>
-                      <?php $sc_show = erp_currency(); ?>
+                      <?php $sc_show = erp_currency_symbol(); ?>
                       <input type="hidden" class="items-sub-total" name="items_sub_total" value="<?= $get_invoice['sub_total_amount'];?>" />
                       <div class="row">
                         <div class="col-md-6 col-sm-12 text-xs-center text-md-left">&nbsp; </div>

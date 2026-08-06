@@ -47,7 +47,7 @@ class PayrollRun extends BaseController
         $data['path_url']    = 'payroll-run';
         $data['breadcrumbs'] = lang('Dashboard.left_payroll');
         $data['default_period'] = date('Y-m');
-        $data['currency']    = erp_currency();
+        $data['currency']    = erp_currency_symbol();
         $data['subview']     = view('erp/payroll/run_wizard', $data);
         return view('erp/layout/layout_main', $data);
     }

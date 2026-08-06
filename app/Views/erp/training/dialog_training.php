@@ -100,7 +100,7 @@ $xin_com_system = erp_company_settings();
         </label>
         <div class="input-group">
           <div class="input-group-prepend"><span class="input-group-text">
-            <?= erp_currency();?>
+            <?= erp_currency_symbol();?>
             </span></div>
           <input class="form-control" placeholder="<?= lang('Main.xin_training_cost');?>" name="training_cost" type="text" value="<?php echo esc($result['training_cost'] ?? '', 'attr');?>">
         </div>
