@@ -161,11 +161,25 @@ class QueueWorker extends BaseCommand
             return;
         }
 
+        // At-most-once paid delivery (P8): claim before the provider call. A
+        // redelivered job (worker crashed AFTER the SMS went out) finds the
+        // claim held and skips — no double billing. On a clean send failure the
+        // claim is released so beanstalkd's retry still delivers.
+        $dedupeKey = trim((string) ($payload['dedupe_key'] ?? ''));
+        if ($dedupeKey !== ''
+            && ! \App\Libraries\NotificationDedupe::claim($dedupeKey, 'sms:delivery', \App\Libraries\NotificationDedupe::WINDOW_DELIVERY)) {
+            CLI::write("  SMS to {$to} already delivered (dedupe) — skipping");
+            return;
+        }
+
         $provider = \Config\Services::smsProvider(false);
 
         if ($provider->send($to, $message)) {
             CLI::write("  SMS sent to {$to}");
         } else {
+            if ($dedupeKey !== '') {
+                \App\Libraries\NotificationDedupe::release($dedupeKey);
+            }
             throw new \RuntimeException("SMS send failed for {$to}");
         }
     }

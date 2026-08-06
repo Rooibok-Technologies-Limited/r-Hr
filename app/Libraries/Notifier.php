@@ -89,15 +89,33 @@ class Notifier
 
             // A delivery failure must never abort the business action that triggered
             // the notification (leave approval, registration, ...). Log and move on. [RELIABILITY]
+            // Each channel claims an idempotency key first (P8): the same logical
+            // notification re-dispatched inside the window (double-click, retry,
+            // webhook replay) is silently dropped. Callers may pin the identity
+            // with $data['dedupe_key']; otherwise it derives from rendered content.
             try {
+                $base = isset($data['dedupe_key']) ? (string) $data['dedupe_key'] : null;
+
                 if ($allowed['inapp']) {
-                    $this->sendInApp($user, $data, $tokens);
+                    $key = $this->dedupeKey($base, $userId, 'inapp', $event,
+                        ($data['title'] ?? '') . '|' . ($data['body'] ?? ''), $tokens);
+                    if (NotificationDedupe::claim($key, 'inapp', NotificationDedupe::WINDOW_INAPP)) {
+                        $this->sendInApp($user, $data, $tokens);
+                    }
                 }
                 if ($allowed['email'] && $emailTemplate !== null && ! empty($user['email'])) {
-                    $this->queueEmail($user['email'], $emailTemplate, $tokens);
+                    $key = $this->dedupeKey($base, $userId, 'email', $event,
+                        $emailTemplate['subject'] . '|' . $emailTemplate['message'], $tokens);
+                    if (NotificationDedupe::claim($key, 'email', NotificationDedupe::WINDOW_EMAIL)) {
+                        $this->queueEmail($user['email'], $emailTemplate, $tokens);
+                    }
                 }
                 if ($allowed['sms'] && $smsTemplate !== null && ! empty($user['contact_number'])) {
-                    $this->queueSms((int) $user['user_id'], $user['contact_number'], $smsTemplate, $tokens);
+                    $key = $this->dedupeKey($base, $userId, 'sms', $event,
+                        (string) $smsTemplate['message'], $tokens);
+                    if (NotificationDedupe::claim($key, 'sms', NotificationDedupe::WINDOW_SMS)) {
+                        $this->queueSms((int) $user['user_id'], $user['contact_number'], $smsTemplate, $tokens, $key);
+                    }
                 }
             } catch (\Throwable $e) {
                 log_message('error', 'Notifier delivery failed for user ' . $userId . ': ' . $e->getMessage());
@@ -139,13 +157,29 @@ class Notifier
         ]);
     }
 
-    private function queueSms(int $userId, string $to, array $template, array $tokens): void
+    private function queueSms(int $userId, string $to, array $template, array $tokens, string $dedupeKey = ''): void
     {
         $this->queue->push('sms', [
             'user_id' => $userId,
             'to'      => $to,
             'message' => $this->render((string) $template['message'], $tokens),
+            // Delivery-level claim (worker): redelivery of this job after a
+            // crash mid-send must not bill a second SMS.
+            'dedupe_key' => $dedupeKey !== '' ? $dedupeKey . ':delivery' : '',
         ]);
+    }
+
+    /**
+     * Idempotency key for one user + channel. A caller-supplied base pins the
+     * identity (e.g. "payslip-2026-08-run-7"); otherwise the rendered content
+     * stands in for it, so identical repeats collapse but different content
+     * (next month's payslip) always sends.
+     */
+    private function dedupeKey(?string $base, int $userId, string $channel, string $event, string $content, array $tokens): string
+    {
+        $identity = $base ?? ($event . '|' . $this->render($content, $tokens));
+
+        return sha1($identity . '|' . $userId . '|' . $channel);
     }
 
     // ------------------------------------------------------------------
