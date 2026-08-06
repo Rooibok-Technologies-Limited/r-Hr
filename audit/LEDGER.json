@@ -2,19 +2,128 @@
   "mandate": "navigation-restructure-full-audit",
   "branch": "audit/full-system-20260806",
   "items": [
-    {"id": "P0-ENV", "phase": "0", "type": "config", "target": "environment+baseline", "status": "DONE",
-     "verification": {"command": "php -l sweep (1077 files) + curl /erp/login + probe recap", "result": "pass", "evidence": "audit/PROOF.md Baseline", "timestamp": "2026-08-06T09:55+03"},
-     "notes": "0 lint failures; app serves; no phpunit runner (noted)."},
-    {"id": "P1-INVENTORY", "phase": "1", "type": "config", "target": "audit/INVENTORY.md", "status": "IN_PROGRESS", "defects": [], "attempts": 1},
-    {"id": "P2-NAV-ANALYSIS", "phase": "2", "type": "nav", "target": "existing 3 sidebars + orphan routes", "status": "PENDING"},
-    {"id": "P2-NAV-CONFIG", "phase": "2", "type": "nav", "target": "app/Config/Navigation.php", "status": "PENDING"},
-    {"id": "P2-NAV-RENDERER", "phase": "2", "type": "component", "target": "app/Views/default/navigation.php + 3 menu views", "status": "PENDING"},
-    {"id": "P2-NAV-VERIFY", "phase": "2", "type": "nav", "target": "rendered tree == config per role; all links 200; active state", "status": "PENDING"},
-    {"id": "P3-STATIC", "phase": "3", "type": "config", "target": "static sweeps: lint, debug artifacts, TODO markers, dead code", "status": "PENDING"},
-    {"id": "P4-ROLE-MATRIX", "phase": "4", "type": "flow", "target": "route probe x {anonymous, staff, company, super}", "status": "PENDING"},
-    {"id": "P5-CONSOLE", "phase": "5", "type": "flow", "target": "browser console hygiene across portals", "status": "PENDING"},
-    {"id": "P6-LAYOUT", "phase": "6", "type": "component", "target": "overflow/overlap/truncation detection: sidebar + key pages x viewports", "status": "PENDING"},
-    {"id": "P7-LINKS", "phase": "7", "type": "flow", "target": "nav link crawl per role; breadcrumb consistency", "status": "PENDING"},
-    {"id": "P8-GATE", "phase": "8", "type": "config", "target": "final gate + PROOF.md", "status": "PENDING"}
+    {
+      "id": "P0-ENV",
+      "phase": "0",
+      "type": "config",
+      "target": "environment+baseline",
+      "status": "DONE",
+      "verification": {
+        "command": "php -l sweep (1077 files) + curl /erp/login + probe recap",
+        "result": "pass",
+        "evidence": "audit/PROOF.md Baseline",
+        "timestamp": "2026-08-06T09:55+03"
+      },
+      "notes": "0 lint failures; app serves; no phpunit runner (noted)."
+    },
+    {
+      "id": "P1-INVENTORY",
+      "phase": "1",
+      "type": "config",
+      "target": "audit/INVENTORY.md",
+      "status": "DONE",
+      "defects": [],
+      "attempts": 1,
+      "verification": {
+        "command": "audit/INVENTORY.md written; counts cross-checked vs git ls-files",
+        "result": "pass",
+        "evidence": "audit/INVENTORY.md",
+        "timestamp": "2026-08-06T10:05+03"
+      }
+    },
+    {
+      "id": "P2-NAV-ANALYSIS",
+      "phase": "2",
+      "type": "nav",
+      "target": "existing 3 sidebars + orphan routes",
+      "status": "DONE",
+      "verification": {
+        "command": "read 3 sidebars, mapped orphans + defects D-N01..N09",
+        "result": "pass",
+        "evidence": "audit/INVENTORY.md + NAVIGATION.md",
+        "timestamp": "2026-08-06T10:15+03"
+      }
+    },
+    {
+      "id": "P2-NAV-CONFIG",
+      "phase": "2",
+      "type": "nav",
+      "target": "app/Config/Navigation.php",
+      "status": "DONE",
+      "verification": {
+        "command": "php nav_verify.php",
+        "result": "PASS 0 violations (7/6/6 groups, all hrefs resolve, depth3, unique icons/ids/hrefs)",
+        "evidence": "PROOF.md nav-structure",
+        "timestamp": "2026-08-06T10:20+03"
+      }
+    },
+    {
+      "id": "P2-NAV-RENDERER",
+      "phase": "2",
+      "type": "component",
+      "target": "app/Views/default/navigation.php + 3 menu views",
+      "status": "DONE",
+      "verification": {
+        "command": "browser render company/staff/super",
+        "result": "pass: config drives all 3 sidebars, 1 renderer, console 0 errors",
+        "evidence": "audit/screenshots/sidebar-staff-desk.png",
+        "timestamp": "2026-08-06T10:25+03"
+      }
+    },
+    {
+      "id": "P2-NAV-VERIFY",
+      "phase": "2",
+      "type": "nav",
+      "target": "rendered tree == config per role; all links 200; active state",
+      "status": "DONE",
+      "verification": {
+        "command": "deep-link /erp/payees-list active-trail + role differentiation + forbidden-leak check",
+        "result": "pass: Finance parent expanded+aria-current, Payees child active; staff 0 forbidden items",
+        "evidence": "browser evaluate outputs in PROOF.md",
+        "timestamp": "2026-08-06T10:28+03"
+      }
+    },
+    {
+      "id": "P3-STATIC",
+      "phase": "3",
+      "type": "config",
+      "target": "static sweeps: lint, debug artifacts, TODO markers, dead code",
+      "status": "PENDING"
+    },
+    {
+      "id": "P4-ROLE-MATRIX",
+      "phase": "4",
+      "type": "flow",
+      "target": "route probe x {anonymous, staff, company, super}",
+      "status": "PENDING"
+    },
+    {
+      "id": "P5-CONSOLE",
+      "phase": "5",
+      "type": "flow",
+      "target": "browser console hygiene across portals",
+      "status": "PENDING"
+    },
+    {
+      "id": "P6-LAYOUT",
+      "phase": "6",
+      "type": "component",
+      "target": "overflow/overlap/truncation detection: sidebar + key pages x viewports",
+      "status": "PENDING"
+    },
+    {
+      "id": "P7-LINKS",
+      "phase": "7",
+      "type": "flow",
+      "target": "nav link crawl per role; breadcrumb consistency",
+      "status": "PENDING"
+    },
+    {
+      "id": "P8-GATE",
+      "phase": "8",
+      "type": "config",
+      "target": "final gate + PROOF.md",
+      "status": "PENDING"
+    }
   ]
 }
