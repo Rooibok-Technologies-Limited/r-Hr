@@ -41,3 +41,17 @@ symbol. The safe path is (1) for viewing and (2) as an explicit, audited migrati
   allowances, expenses, invoices, wallet, disbursements): NOT wired — it is a data migration
   that needs the owner's intent (display-only vs restate) + a confirmation/audit flow. Ready
   to build once that decision is made.
+
+## IMPLEMENTED — display-only model (owner chose this 2026-08-06)
+- **base_currency** per tenant (migration ...000005; seeded = current default_currency so no
+  data is re-interpreted). Money is STORED in base_currency (fixed, contractual).
+- **default_currency** is now the DISPLAY preference (changeable in my-profile).
+- Helpers: `erp_base_currency()`, `money_convert_display($amount)`, `money_fmt($amount)` —
+  convert base→display via trusted FX, format with the display symbol + its decimals. No-op
+  when base == display (the default).
+- **Wired**: company dashboard money figures (9) now use money_fmt → real conversion.
+  Verified: Acme (base GBP) with display EUR shows £1,000 stored as **€1,165.83** (live rate),
+  stored value unchanged.
+- **Remaining (mechanical follow-up)**: migrate the other ~350 `number_to_currency($x,
+  erp_currency())` sites to `money_fmt($x)` so the whole app converts for display (not just the
+  dashboard). Same one-line swap; can be swept per-controller/view.

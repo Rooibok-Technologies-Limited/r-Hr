@@ -72,7 +72,7 @@ if($_diff_days < 8){
       <div class="rk-kpi-top"><span class="rk-kpi-label">Wallet balance</span><i data-feather="credit-card"></i></div>
       <?php // Display in the tenant's currency like every other KPI — the wallet's own
             // denomination field was leaking a different code (UGX) next to £/$ elsewhere. ?>
-      <div class="rk-kpi-value"><?= number_to_currency((float) ($rk_wallet['available'] ?? 0), erp_currency(), null, 0); ?></div>
+      <div class="rk-kpi-value"><?= money_fmt((float) ($rk_wallet['available'] ?? 0)); ?></div>
     </div></div>
   </div>
   <div class="col-xl-3 col-md-6">
@@ -104,7 +104,7 @@ if($_diff_days < 8){
                       <?= lang('Dashboard.xin_total_deposit');?>
                     </h6>
                     <h3 class="m-b-0 text-white">
-                      <?= number_to_currency(total_deposit(), erp_currency(),null,2);?>
+                      <?= money_fmt(total_deposit());?>
                     </h3>
                   </div>
                   <div class="col-auto"> <i class="fas fa-database text-white"></i> </div>
@@ -121,7 +121,7 @@ if($_diff_days < 8){
                       <?= lang('Dashboard.xin_total_payroll');?>
                     </h6>
                     <h3 class="m-b-0">
-                      <?= number_to_currency(total_payroll(), erp_currency(),null,0);?>
+                      <?= money_fmt(total_payroll());?>
                     </h3>
                   </div>
                   <div class="col-auto"> <i class="fas fa-money-bill-alt text-primary"></i> </div>
@@ -140,14 +140,14 @@ if($_diff_days < 8){
             <div class="row pb-2">
               <div class="col-auto m-b-10">
                 <h3 class="mb-1">
-                  <?= number_to_currency(erp_total_paid_invoices(), erp_currency(),null,2);?>
+                  <?= money_fmt(erp_total_paid_invoices());?>
                 </h3>
                 <span>
                 <?= lang('Invoices.xin_total_paid');?>
                 </span> </div>
               <div class="col-auto m-b-10">
                 <h3 class="mb-1">
-                  <?= number_to_currency(erp_total_unpaid_invoices(), erp_currency(),null,2);?>
+                  <?= money_fmt(erp_total_unpaid_invoices());?>
                 </h3>
                 <span>
                 <?= lang('Invoices.xin_total_unpaid');?>
@@ -260,7 +260,7 @@ if($_diff_days < 8){
                   <?= lang('Finance.xin_total_expense');?>
                 </h6>
                 <h3 class="m-b-0 text-white">
-                  <?= number_to_currency(total_expense(), erp_currency(),null,2);?>
+                  <?= money_fmt(total_expense());?>
                 </h3>
               </div>
               <div class="col-auto"> <i class="fas fa-database text-white"></i> </div>
@@ -277,7 +277,7 @@ if($_diff_days < 8){
                   <?= lang('Invoices.xin_total_paid');?>
                 </h6>
                 <h3 class="m-b-0">
-                  <?= number_to_currency(erp_total_paid_invoices(), erp_currency(),null,0);?>
+                  <?= money_fmt(erp_total_paid_invoices());?>
                 </h3>
               </div>
               <div class="col-auto"> <i class="fas fa-file-invoice-dollar text-primary"></i> </div>
@@ -296,14 +296,14 @@ if($_diff_days < 8){
         <div class="row pb-2">
           <div class="col-auto m-b-10">
             <h3 class="mb-1">
-              <?= number_to_currency(total_payroll(), erp_currency(),null,2);?>
+              <?= money_fmt(total_payroll());?>
             </h3>
             <span>
             <?= lang('Main.xin_total');?>
             </span> </div>
           <div class="col-auto m-b-10">
             <h3 class="mb-1">
-              <?= number_to_currency(payroll_this_month(), erp_currency(),null,2);?>
+              <?= money_fmt(payroll_this_month());?>
             </h3>
             <span>
             <?= lang('Payroll.xin_payroll_this_month');?>

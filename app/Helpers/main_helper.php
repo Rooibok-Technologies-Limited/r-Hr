@@ -1712,3 +1712,47 @@ if( !function_exists('fx_rate') ){
 		return $fx->rate($from, $to);
 	}
 }
+
+// ---------------------------------------------------------------------------
+// Display-only currency conversion (owner decision 2026-08-06).
+// Money is STORED in the tenant's base_currency (fixed — salaries don't
+// fluctuate). erp_currency() is the DISPLAY preference. money_fmt() converts
+// base->display for VIEWING only via trusted FX rates, then formats. When
+// base == display (the default), it is a plain format (no conversion).
+// ---------------------------------------------------------------------------
+if( !function_exists('erp_base_currency') ){
+	function erp_base_currency(): string {
+		static $base = null;
+		if ($base !== null) { return $base; }
+		$code = '';
+		$cid  = function_exists('effective_company_id') ? effective_company_id() : 0;
+		if ($cid > 0 && function_exists('erp_company_settings')) {
+			$cs = erp_company_settings() ?: [];
+			if ((int) ($cs['company_id'] ?? 0) === $cid) {
+				$code = trim((string) ($cs['base_currency'] ?? ''));
+			}
+		}
+		// Fall back to the display currency (base == display) when unset.
+		return $base = ($code !== '' ? strtoupper($code) : (function_exists('erp_currency') ? erp_currency() : 'UGX'));
+	}
+}
+if( !function_exists('money_convert_display') ){
+	// Convert a stored amount (base currency) into the display currency for VIEWING.
+	function money_convert_display(float $amount): float {
+		$base = function_exists('erp_base_currency') ? erp_base_currency() : 'UGX';
+		$disp = function_exists('erp_currency') ? erp_currency() : $base;
+		if ($base === $disp) { return $amount; }
+		return function_exists('fx_convert') ? fx_convert($amount, $base, $disp) : $amount;
+	}
+}
+if( !function_exists('money_fmt') ){
+	// Display a stored money amount: convert base->display, then format with the
+	// display currency symbol + its correct decimals. One call for every UI figure.
+	function money_fmt($amount, ?int $decimals = null): string {
+		$disp = function_exists('erp_currency') ? erp_currency() : 'UGX';
+		$dec  = $decimals ?? (function_exists('currency_decimals') ? currency_decimals($disp) : 2);
+		$val  = money_convert_display((float) $amount);
+		$sym  = function_exists('erp_currency_symbol') ? erp_currency_symbol() : $disp;
+		return $sym . ' ' . number_format($val, $dec);
+	}
+}
