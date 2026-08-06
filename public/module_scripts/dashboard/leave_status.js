@@ -3,36 +3,41 @@
  * @copyright 2026 Rooibok Technologies. All rights reserved.
  */
 'use strict';
+// Safe chart init: render only when the target container exists — a dashboard
+// script shared across portals must not throw for charts that aren't on this page.
+function rkSafeChart(sel, options){ var el = document.querySelector(sel); if(!el){ return; } try { new ApexCharts(el, options).render(); } catch(e){} }
+
 $(document).ready(function() {
-    // Guard: this dashboard script targets the super-admin dashboard widgets
-    // (activity feed + Apex charts). On dashboards that don't render them (e.g.
-    // the company dashboard) bail early to avoid PerfectScrollbar/ApexCharts
-    // "element not found" console noise.
-    if (!document.querySelector('.feed-scroll') && !document.querySelector('.pro-scroll')) {
-        return;
-    }
+    // Charts run on ANY dashboard that has their containers (each chart init
+    // below no-ops when its own container is absent). Only the super-admin
+    // activity-feed scrollbars require .feed-scroll/.pro-scroll — guard just those.
     setTimeout(function() {
         floatchart()
     }, 700);
-    // [ campaign-scroll ] start
-    var px = new PerfectScrollbar('.feed-scroll', {
-        wheelSpeed: .5,
-        swipeEasing: 0,
-        wheelPropagation: 1,
-        minScrollbarLength: 40,
-    });
-    var px = new PerfectScrollbar('.pro-scroll', {
-        wheelSpeed: .5,
-        swipeEasing: 0,
-        wheelPropagation: 1,
-        minScrollbarLength: 40,
-    });
+    // [ campaign-scroll ] start — super-admin feed only
+    if (document.querySelector('.feed-scroll')) {
+        new PerfectScrollbar('.feed-scroll', {
+            wheelSpeed: .5,
+            swipeEasing: 0,
+            wheelPropagation: 1,
+            minScrollbarLength: 40,
+        });
+    }
+    if (document.querySelector('.pro-scroll')) {
+        new PerfectScrollbar('.pro-scroll', {
+            wheelSpeed: .5,
+            swipeEasing: 0,
+            wheelPropagation: 1,
+            minScrollbarLength: 40,
+        });
+    }
     // [ campaign-scroll ] end
 });
 
 function floatchart() {
     // [ leave-type-chart ] start
     $(function() {
+		if(!document.querySelector("#leave-type-chart")){ return; }
 		$.ajax({
 		url: main_url+'leave/leave_type_chart',
 		contentType: "application/json; charset=utf-8",
@@ -93,8 +98,7 @@ function floatchart() {
             }]
         }
 		//alert(response.iseries);
-        var chart = new ApexCharts(document.querySelector("#leave-type-chart"), options);
-        chart.render();
+        rkSafeChart("#leave-type-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -105,6 +109,7 @@ function floatchart() {
     // [ leave-type-chart ] end
 	// [ membership-type-chart ] start
     $(function() {
+		if(!document.querySelector("#membership-type-chart")){ return; }
 		$.ajax({
 		url: main_url+'membership/membership_type_chart',
 		contentType: "application/json; charset=utf-8",
@@ -165,8 +170,7 @@ function floatchart() {
                 }
             }]
         }
-        var chart = new ApexCharts(document.querySelector("#membership-type-chart"), options);
-        chart.render();
+        rkSafeChart("#membership-type-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -177,6 +181,7 @@ function floatchart() {
     // [ membership-type-chart ] end
 	// [ leave-status-chart ] start
     $(function() {
+		if(!document.querySelector("#leave-status-chart")){ return; }
 		$.ajax({
 		url: main_url+'leave/leave_status_chart',
 		contentType: "application/json; charset=utf-8",
@@ -226,8 +231,7 @@ function floatchart() {
             }]
         }
 		//alert(response.iseries);
-        var chart = new ApexCharts(document.querySelector("#leave-status-chart"), options);
-        chart.render();
+        rkSafeChart("#leave-status-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -238,6 +242,7 @@ function floatchart() {
     // [ leave-status-chart ] end
 	// [ invoice-status-chart ] start
     $(function() {
+		if(!document.querySelector("#invoice-status-chart")){ return; }
 		$.ajax({
 		url: main_url+'invoices/invoice_status_chart',
 		contentType: "application/json; charset=utf-8",
@@ -287,8 +292,7 @@ function floatchart() {
             }]
         }
 		//alert(response.iseries);
-        var chart = new ApexCharts(document.querySelector("#invoice-status-chart"), options);
-        chart.render();
+        rkSafeChart("#invoice-status-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -300,6 +304,7 @@ function floatchart() {
 	// [ paid-invoice-chart ] start
     $(function() {
         $(function() {
+		if(!document.querySelector("#paid-invoice-chart")){ return; }
 			$.ajax({
 			url: main_url+'invoices/invoice_amount_chart',
 			contentType: "application/json; charset=utf-8",
@@ -345,8 +350,7 @@ function floatchart() {
 				  }
 				}]
 				};
-				var chart = new ApexCharts(document.querySelector("#paid-invoice-chart"), options);
-				chart.render();
+				rkSafeChart("#paid-invoice-chart", options);
 				},
 					error: function(data) {
 						console.log(data);
@@ -358,6 +362,7 @@ function floatchart() {
 	// [ company-invoice-chart ] start
     $(function() {
         $(function() {
+		if(!document.querySelector("#company-invoice-chart")){ return; }
 			$.ajax({
 			url: main_url+'membershipinvoices/membership_invoice_amount_chart',
 			contentType: "application/json; charset=utf-8",
@@ -398,8 +403,7 @@ function floatchart() {
 			  }
 			}
 			};
-			var chart = new ApexCharts(document.querySelector("#company-invoice-chart"), options);
-			chart.render();
+			rkSafeChart("#company-invoice-chart", options);
 			},
 				error: function(data) {
 					console.log(data);
@@ -411,6 +415,7 @@ function floatchart() {
 	// [ membership-by-country-chart ] start
     $(function() {
         $(function() {
+		if(!document.querySelector("#membership-by-country-chart")){ return; }
 			$.ajax({
 			url: main_url+'membership/membership_by_country_chart',
 			contentType: "application/json; charset=utf-8",
@@ -478,8 +483,7 @@ function floatchart() {
 			  }
 			}
 			};
-			var chart = new ApexCharts(document.querySelector("#membership-by-country-chart"), options);
-			chart.render();
+			rkSafeChart("#membership-by-country-chart", options);
 			},
 				error: function(data) {
 					console.log(data);
@@ -490,6 +494,7 @@ function floatchart() {
     // [ membership-by-country-chart ] end
 	// [ ticket-status-chart ] start
     $(function() {
+		if(!document.querySelector("#ticket-status-chart")){ return; }
 		$.ajax({
 		url: main_url+'tickets/tickets_status_chart',
 		contentType: "application/json; charset=utf-8",
@@ -539,8 +544,7 @@ function floatchart() {
             }]
         }
 		//alert(response.iseries);
-        var chart = new ApexCharts(document.querySelector("#ticket-status-chart"), options);
-        chart.render();
+        rkSafeChart("#ticket-status-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -551,6 +555,7 @@ function floatchart() {
     // [ ticket-status-chart ] end
 	// [ ticket-priority-chart ] start
     $(function() {
+		if(!document.querySelector("#ticket-priority-chart")){ return; }
 		$.ajax({
 		url: main_url+'tickets/tickets_priority_chart',
 		contentType: "application/json; charset=utf-8",
@@ -589,8 +594,7 @@ function floatchart() {
             },
 			};
 	
-			var chart = new ApexCharts(document.querySelector("#ticket-priority-chart"), options);
-			chart.render();
+			rkSafeChart("#ticket-priority-chart", options);
 			/// end
 		},
 		error: function(data) {
@@ -602,6 +606,7 @@ function floatchart() {
     // [ ticket-priority-chart ] end
 	// [ jobs-status-chart ] start
     $(function() {
+		if(!document.querySelector("#jobs-status-chart")){ return; }
 		$.ajax({
 		url: main_url+'recruitment/jobs_status_chart',
 		contentType: "application/json; charset=utf-8",
@@ -665,8 +670,7 @@ function floatchart() {
                 }
             }]
         }
-        var chart = new ApexCharts(document.querySelector("#jobs-status-chart"), options);
-        chart.render();
+        rkSafeChart("#jobs-status-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -676,6 +680,7 @@ function floatchart() {
     // [ jobs-status-chart ] end
 	// [ jobs-type-chart ] start
     $(function() {
+		if(!document.querySelector("#jobs-type-chart")){ return; }
 		$.ajax({
 		url: main_url+'recruitment/jobs_type_chart',
 		contentType: "application/json; charset=utf-8",
@@ -725,8 +730,7 @@ function floatchart() {
                 }
             }]
         };
-        var chart = new ApexCharts(document.querySelector("#jobs-type-chart"), options);
-        chart.render();
+        rkSafeChart("#jobs-type-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -736,6 +740,7 @@ function floatchart() {
     // [ jobs-type-chart ] end
 	// [ job-by-designation-chart ] start
     $(function() {
+		if(!document.querySelector("#job-by-designation-chart")){ return; }
 		$.ajax({
 		url: main_url+'recruitment/job_by_designation_chart',
 		contentType: "application/json; charset=utf-8",
@@ -785,8 +790,7 @@ function floatchart() {
                 }
             }]
         }	
-        var chart = new ApexCharts(document.querySelector("#job-by-designation-chart"), options);
-        chart.render();
+        rkSafeChart("#job-by-designation-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -797,6 +801,7 @@ function floatchart() {
     // [ job-by-designation-chart ] end
 	// [ task-status-chart ] start
     $(function() {
+		if(!document.querySelector("#task-status-chart")){ return; }
 		$.ajax({
 		url: main_url+'tasks/task_status_chart',
 		contentType: "application/json; charset=utf-8",
@@ -830,8 +835,7 @@ function floatchart() {
 		
         labels: [response.not_started_lb,response.in_progress_lb,response.completed_lb,response.cancelled_lb,response.hold_lb]
         };
-        var chart = new ApexCharts(document.querySelector("#task-status-chart"), options);
-        chart.render();
+        rkSafeChart("#task-status-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -841,6 +845,7 @@ function floatchart() {
     // [ task-status-chart ] end
 	 // [ tasks-by-projects-chart ] start
     $(function() {
+		if(!document.querySelector("#tasks-by-projects-chart")){ return; }
 		$.ajax({
 		url: main_url+'tasks/tasks_by_projects_chart',
 		contentType: "application/json; charset=utf-8",
@@ -901,8 +906,7 @@ function floatchart() {
                 }
             }]
         }
-        var chart = new ApexCharts(document.querySelector("#tasks-by-projects-chart"), options);
-        chart.render();
+        rkSafeChart("#tasks-by-projects-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -913,6 +917,7 @@ function floatchart() {
     // [ tasks-by-projects-chart ] end
 	// [ project-status-chart ] start
     $(function() {
+		if(!document.querySelector("#project-status-chart")){ return; }
 		$.ajax({
 		url: main_url+'projects/project_status_chart',
 		contentType: "application/json; charset=utf-8",
@@ -947,8 +952,7 @@ function floatchart() {
         labels: [response.not_started_lb,response.in_progress_lb,response.completed_lb,response.cancelled_lb,response.hold_lb]
         };
 		
-        var chart = new ApexCharts(document.querySelector("#project-status-chart"), options);
-        chart.render();
+        rkSafeChart("#project-status-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -958,6 +962,7 @@ function floatchart() {
     // [ project-status-chart ] end
 	// [ project-priority-chart ] start
     $(function() {
+		if(!document.querySelector("#project-priority-chart")){ return; }
 		$.ajax({
 		url: main_url+'projects/projects_priority_chart',
 		contentType: "application/json; charset=utf-8",
@@ -996,8 +1001,7 @@ function floatchart() {
             },
 			};
 	
-			var chart = new ApexCharts(document.querySelector("#project-priority-chart"), options);
-			chart.render();
+			rkSafeChart("#project-priority-chart", options);
 			/// end
 		},
 		error: function(data) {
@@ -1010,6 +1014,7 @@ function floatchart() {
 	// [ payroll-chart ] start
     $(function() {
         $(function() {
+		if(!document.querySelector("#erp-payroll-chart")){ return; }
 			$.ajax({
 			url: main_url+'payroll/payroll_chart',
 			contentType: "application/json; charset=utf-8",
@@ -1065,8 +1070,7 @@ function floatchart() {
 						}
 					}
 				};
-				var chart = new ApexCharts(document.querySelector("#erp-payroll-chart"), options);
-				chart.render();
+				rkSafeChart("#erp-payroll-chart", options);
 				},
 					error: function(data) {
 						console.log(data);
@@ -1078,6 +1082,7 @@ function floatchart() {
 	// [ staff-payroll-chart ] start
     $(function() {
         $(function() {
+		if(!document.querySelector("#staff-payroll-chart")){ return; }
 			$.ajax({
 			url: main_url+'payroll/staff_payroll_chart',
 			contentType: "application/json; charset=utf-8",
@@ -1133,8 +1138,7 @@ function floatchart() {
 						}
 					}
 				};
-				var chart = new ApexCharts(document.querySelector("#staff-payroll-chart"), options);
-				chart.render();
+				rkSafeChart("#staff-payroll-chart", options);
 				},
 					error: function(data) {
 						console.log(data);
@@ -1145,6 +1149,7 @@ function floatchart() {
     // [ staff-payroll-chart ] end
 	// [ department-wise-chart ] start
     $(function() {
+		if(!document.querySelector("#department-wise-chart")){ return; }
 		$.ajax({
 		url: main_url+'department/department_wise_chart',
 		contentType: "application/json; charset=utf-8",
@@ -1205,8 +1210,7 @@ function floatchart() {
                 }
             }]
         }
-        var chart = new ApexCharts(document.querySelector("#department-wise-chart"), options);
-        chart.render();
+        rkSafeChart("#department-wise-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -1217,6 +1221,7 @@ function floatchart() {
     // [ department-wise-chart ] end
 	// [ designation-wise-chart ] start
     $(function() {
+		if(!document.querySelector("#designation-wise-chart")){ return; }
 		$.ajax({
 		url: main_url+'designation/designation_wise_chart',
 		contentType: "application/json; charset=utf-8",
@@ -1277,8 +1282,7 @@ function floatchart() {
                 }
             }]
         }
-        var chart = new ApexCharts(document.querySelector("#designation-wise-chart"), options);
-        chart.render();
+        rkSafeChart("#designation-wise-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -1289,6 +1293,7 @@ function floatchart() {
     // [ designation-wise-chart ] end
 	// [ staff-attendance-chart ] start
     $(function() {
+		if(!document.querySelector("#staff-attendance-chart")){ return; }
 		$.ajax({
 		url: main_url+'timesheet/staff_working_status_chart',
 		contentType: "application/json; charset=utf-8",
@@ -1323,11 +1328,7 @@ function floatchart() {
                 categories: [response.total_label, response.absent_label,response.working_label],
             }
         };
-        var chart = new ApexCharts(
-            document.querySelector("#staff-attendance-chart"),
-            options
-        );
-        chart.render();
+        rkSafeChart("#staff-attendance-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -1337,6 +1338,7 @@ function floatchart() {
     // [ staff-attendance-chart ] end
 	// [ task-status-chart ] start
     $(function() {
+		if(!document.querySelector("#staff-task-status-chart")){ return; }
 		$.ajax({
 		url: main_url+'tasks/staff_task_status_chart',
 		contentType: "application/json; charset=utf-8",
@@ -1379,8 +1381,7 @@ function floatchart() {
                 }
             }]
         };
-        var chart = new ApexCharts(document.querySelector("#staff-task-status-chart"), options);
-        chart.render();
+        rkSafeChart("#staff-task-status-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -1390,6 +1391,7 @@ function floatchart() {
     // [ staff-task-status-chart ] end
 	// [ client-task-status-chart ] start
     $(function() {
+		if(!document.querySelector("#client-task-status-chart")){ return; }
 		$.ajax({
 		url: main_url+'tasks/client_task_status_chart',
 		contentType: "application/json; charset=utf-8",
@@ -1432,8 +1434,7 @@ function floatchart() {
                 }
             }]
         };
-        var chart = new ApexCharts(document.querySelector("#client-task-status-chart"), options);
-        chart.render();
+        rkSafeChart("#client-task-status-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -1443,6 +1444,7 @@ function floatchart() {
     // [ client-task-status-chart ] end
 	// [ client-project-status-chart ] start
     $(function() {
+		if(!document.querySelector("#client-project-status-chart")){ return; }
 		$.ajax({
 		url: main_url+'projects/client_project_status_chart',
 		contentType: "application/json; charset=utf-8",
@@ -1499,8 +1501,7 @@ function floatchart() {
                 }
             }]
         }
-        var chart = new ApexCharts(document.querySelector("#client-project-status-chart"), options);
-        chart.render();
+        rkSafeChart("#client-project-status-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -1510,6 +1511,7 @@ function floatchart() {
     // [ client-project-status-chart ] end
 	// [ project-status-chart ] start
     $(function() {
+		if(!document.querySelector("#staff-project-status-chart")){ return; }
 		$.ajax({
 		url: main_url+'projects/staff_project_status_chart',
 		contentType: "application/json; charset=utf-8",
@@ -1566,8 +1568,7 @@ function floatchart() {
                 }
             }]
         }
-        var chart = new ApexCharts(document.querySelector("#staff-project-status-chart"), options);
-        chart.render();
+        rkSafeChart("#staff-project-status-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -1577,6 +1578,7 @@ function floatchart() {
     // [ staff-project-status-chart ] end
 	// [ staff-ticket-status-chart ] start
     $(function() {
+		if(!document.querySelector("#staff-ticket-status-chart")){ return; }
 		$.ajax({
 		url: main_url+'tickets/staff_tickets_status_chart',
 		contentType: "application/json; charset=utf-8",
@@ -1626,8 +1628,7 @@ function floatchart() {
             }]
         }
 		//alert(response.iseries);
-        var chart = new ApexCharts(document.querySelector("#staff-ticket-status-chart"), options);
-        chart.render();
+        rkSafeChart("#staff-ticket-status-chart", options);
 		},
 		error: function(data) {
 			console.log(data);
@@ -1638,6 +1639,7 @@ function floatchart() {
     // [ staff-ticket-status-chart ] end
 	// [ staff-ticket-priority-chart ] start
     $(function() {
+		if(!document.querySelector("#staff-ticket-priority-chart")){ return; }
 		$.ajax({
 		url: main_url+'tickets/staff_tickets_priority_chart',
 		contentType: "application/json; charset=utf-8",
@@ -1676,8 +1678,7 @@ function floatchart() {
             },
 			};
 	
-			var chart = new ApexCharts(document.querySelector("#staff-ticket-priority-chart"), options);
-			chart.render();
+			rkSafeChart("#staff-ticket-priority-chart", options);
 			/// end
 		},
 		error: function(data) {
@@ -1690,6 +1691,7 @@ function floatchart() {
 	// [ client-paid-invoice-chart ] start
     $(function() {
         $(function() {
+		if(!document.querySelector("#client-paid-invoice-chart")){ return; }
 			$.ajax({
 			url: main_url+'invoices/client_invoice_amount_chart',
 			contentType: "application/json; charset=utf-8",
@@ -1732,8 +1734,7 @@ function floatchart() {
 				  }
 				}]
 				};
-				var chart = new ApexCharts(document.querySelector("#client-paid-invoice-chart"), options);
-				chart.render();
+				rkSafeChart("#client-paid-invoice-chart", options);
 				},
 					error: function(data) {
 						console.log(data);

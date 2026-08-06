@@ -120,10 +120,10 @@ if($_diff_days < 8){
                 <div class="row align-items-center m-b-0">
                   <div class="col">
                     <h6 class="m-b-5">
-                      <?= lang('Projects.xin_total_projects');?>
+                      <?= lang('Dashboard.xin_total_payroll');?>
                     </h6>
                     <h3 class="m-b-0">
-                      <?= $total_projects;?>
+                      <?= number_to_currency(total_payroll(), erp_currency(),null,0);?>
                     </h3>
                   </div>
                   <div class="col-auto"> <i class="fas fa-money-bill-alt text-primary"></i> </div>
@@ -251,23 +251,8 @@ if($_diff_days < 8){
   </div>
   <div class="col-xl-6 col-md-12">
     <div class="row">
-      <div class="col-sm-6">
-        <div class="card prod-p-card background-pattern">
-          <div class="card-body">
-            <div class="row align-items-center m-b-0">
-              <div class="col">
-                <h6 class="m-b-5">
-                  <?= lang('Dashboard.xin_total_employees');?>
-                </h6>
-                <h3 class="m-b-0">
-                  <?= $total_staff;?>
-                </h3>
-              </div>
-              <div class="col-auto"> <i class="fas fa-money-bill-alt text-primary"></i> </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <?php // 'Total Employees' KPI removed here — already shown in the top KPI row.
+            // Balanced pair: Expenses + Paid Invoices (both money, equal width). ?>
       <div class="col-sm-6">
         <div class="card prod-p-card bg-primary background-pattern-white">
           <div class="card-body">
@@ -281,6 +266,23 @@ if($_diff_days < 8){
                 </h3>
               </div>
               <div class="col-auto"> <i class="fas fa-database text-white"></i> </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="card prod-p-card background-pattern">
+          <div class="card-body">
+            <div class="row align-items-center m-b-0">
+              <div class="col">
+                <h6 class="m-b-5">
+                  <?= lang('Invoices.xin_total_paid');?>
+                </h6>
+                <h3 class="m-b-0">
+                  <?= number_to_currency(erp_total_paid_invoices(), erp_currency(),null,0);?>
+                </h3>
+              </div>
+              <div class="col-auto"> <i class="fas fa-file-invoice-dollar text-primary"></i> </div>
             </div>
           </div>
         </div>
@@ -325,6 +327,9 @@ if($_diff_days < 8){
       </div>
     </div>
     
+    <?php // Projects/Tasks status charts only when the plan includes the module —
+          // otherwise they render as empty, meaningless boxes. ?>
+    <?php if(function_exists('plan_allows') && plan_allows('projects')): ?>
     <div class="row">
       <div class="col-xl-6 col-md-12">
         <div class="card">
@@ -355,5 +360,6 @@ if($_diff_days < 8){
         </div>
       </div>
     </div>
+    <?php endif; ?>
   </div>
 </div>
