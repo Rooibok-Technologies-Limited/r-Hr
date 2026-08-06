@@ -585,7 +585,8 @@ class Awards extends BaseController {
 			$id = udecode(strip_tags(trim($this->request->getPost('_token'))));
 			$Return['csrf_hash'] = csrf_hash();
 			$AwardsModel = new AwardsModel();
-			$result = $AwardsModel->where('award_id', $id)->delete($id);
+			// Tenant-scope the delete so tenant A cannot remove tenant B's award by id. [SECURITY]
+			$result = $AwardsModel->where('award_id', $id)->where('company_id', effective_company_id())->delete();
 			if ($result == TRUE) {
 				$Return['result'] = lang('Success.ci_award_deleted_msg');
 			} else {
