@@ -17,6 +17,7 @@ return [
     'group_billing'       => 'Billing',
     'group_content'       => 'Content',
     'group_system'        => 'System',
+    'group_account'       => 'Account',
 
     // tenant items
     'dashboard'         => 'Dashboard',
@@ -84,6 +85,8 @@ return [
     'broadcasts'        => 'Broadcasts',
     'company_settings'  => 'Company Settings',
     'my_profile'        => 'My Profile',
+    'notifications'     => 'Notifications',
+    'holidays'          => 'Holidays',
 
     // super-admin items
     'audit_log'          => 'Audit Log',

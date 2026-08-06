@@ -51,12 +51,9 @@ class Holidays extends BaseController {
 			$session->setFlashdata('unauthorized_module',lang('Dashboard.xin_error_unauthorized_module'));
 			return redirect()->to(site_url('erp/desk'));
 		}
-		if($user_info['user_type'] != 'company'){
-			if(!in_array('holiday1',staff_role_resource())) {
-				$session->setFlashdata('unauthorized_module',lang('Dashboard.xin_error_unauthorized_module'));
-				return redirect()->to(site_url('erp/desk'));
-			}
-		}
+		// The holiday calendar is company-wide, read-only, non-sensitive info that
+		// every employee needs (leave planning). Viewing is open to all staff;
+		// the holiday1 resource still gates create/edit/delete actions in the view.
 		$xin_system = $SystemModel->where('setting_id', 1)->first();
 		$data['title'] = lang('Dashboard.left_holidays').' | '.$xin_system['application_name'];
 		$data['path_url'] = 'holidays';

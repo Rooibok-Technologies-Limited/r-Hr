@@ -92,6 +92,7 @@ class Navigation
                      ]],
                     ['id' => 'leave', 'label' => 'nav.leave', 'icon' => 'plus-square', 'href' => 'erp/leave-list',
                      'resources' => ['leave1', 'leave2']],
+                    ['id' => 'holidays', 'label' => 'nav.holidays', 'icon' => 'sun', 'href' => 'erp/holidays-list'],
                     ['id' => 'requests', 'label' => 'nav.requests', 'icon' => 'list', 'href' => 'erp/expense-list',
                      'roles' => ['staff'], 'resources' => ['expense1', 'loan1', 'travel1', 'advance_salary1'],
                      'children' => [
@@ -187,11 +188,17 @@ class Navigation
                 ],
             ],
             [
-                'id' => 'configuration', 'label' => 'nav.group_configuration', 'order' => 90,
-                'roles' => ['company'],
+                // Personal/account section — available to BOTH the tenant admin and
+                // every team member. Company Settings is admin-only; My Profile and
+                // Settings/Notifications are personal self-service (no role-resource
+                // gate) so a team member always has an account home + a Settings entry.
+                'id' => 'configuration', 'label' => 'nav.group_account', 'order' => 90,
+                'roles' => ['company', 'staff'],
                 'items' => [
-                    ['id' => 'company_settings', 'label' => 'nav.company_settings', 'icon' => 'settings', 'href' => 'erp/company-settings'],
+                    ['id' => 'company_settings', 'label' => 'nav.company_settings', 'icon' => 'settings',
+                     'href' => 'erp/company-settings', 'roles' => ['company']],
                     ['id' => 'my_profile', 'label' => 'nav.my_profile', 'icon' => 'user', 'href' => 'erp/my-profile'],
+                    ['id' => 'notifications', 'label' => 'nav.notifications', 'icon' => 'bell', 'href' => 'erp/notifications-page'],
                 ],
             ],
 
