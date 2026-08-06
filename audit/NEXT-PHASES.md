@@ -25,12 +25,15 @@ Operations Lead=id4.)
 
 ---
 
-## PHASE A — Dashboard redesign (neat / sleek / smart, per role)
+## PHASE A — Dashboard redesign (neat / sleek / smart, per role) — COMPANY DONE (bb92d80, 2026-08-06)
 **Why:** dashboards are dense and inconsistent across roles (user feedback). 4 dashboard
 views: `company_dashboard.php`, `staff_dashboard.php`, `super_admin_dashboard.php`,
 `clients_dashboard.php`.
 **Scope:**
-- A1. Company: tighten the KPI row (Employees/Wallet/Present/Pending) into one consistent
+- A1. Company: DONE — plan-locked empty cards removed, duplicate Employees removed,
+  money row balanced (4 equal cards), and the shared chart script fixed so ALL company
+  dashboard charts render (dept/designation donuts, invoice/payroll trends, attendance)
+  with 0 console errors (was: every chart a dead empty box). Original scope: tighten the KPI row (Employees/Wallet/Present/Pending) into one consistent
   card system; group the money panels (Deposit/Invoices/Payroll/Expenses) under a "Finance
   at a glance" band; make Projects/Tasks status cards conditional on plan (don't render empty
   boxes when the module is locked — they currently show "0" boxes even when Projects is locked).
